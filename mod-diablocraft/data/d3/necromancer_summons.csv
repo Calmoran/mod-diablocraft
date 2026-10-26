@@ -1,0 +1,6 @@
+summon,skill,rune,entry,donor_creature,script,why
+Skeletal Mage,Skeletal Mage,,900150,203,dc_minion,"Skeletal Mage (display of a robed skeleton caster): the stock creature that bears the name of the skill's summon; the module gives it its AI and no loot"
+Skeletal Warrior,Command Skeletons,,900151,48,dc_minion,"Skeletal Warrior (display of an armed skeleton): the skeletal minion Command Skeletons raises; the module gives it its AI and no loot"
+Flesh Golem,Command Golem,,900152,1805,dc_minion,"Flesh Golem (a stitched corpse golem, the name of the skill's own minion and of its Flesh Golem rune): the Golem Command Golem raises; the module gives it its AI and no loot"
+Revived Minion,Revive,,900153,6412,dc_minion,"Skeleton (a plain skeletal body): the body a revived corpse is given; the module puts the corpse's own look on it when it is raised, and gives it its AI and no loot"
+Simulacrum,Simulacrum,,900154,31216,dc_minion,"the stock Mage Mirror Image creature (the Wizard's Mirror Image donor): the module copies the Necromancer's look onto it, as the Wizard's images copy the Wizard, and gives it its AI and no loot"

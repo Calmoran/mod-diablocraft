@@ -1,0 +1,5 @@
+parameter,d3_value,tuned_value,unit,source,notes
+carrier_scale,,0.2,multiplier,tunable PLACEHOLDER; ground-loot-verdict.md verified 62894 at scale 0.2 on Rift Keeper,Retune on the invisible carrier; its model differs from the Keeper
+open_world_expiry_seconds,,600,seconds,tunable PLACEHOLDER; decisions.md 2026-09-17 Ground loot moves into ALPHA,Ten minute placeholder; rift drops last until closure
+boss_material_count,,50,count,tunable; decisions.md 2026-09-17 Rift guardian material drop,One random material among Reusable Parts Arcane Dust Veiled Crystal; pickup credits account
+ground_delivery_enabled,,0,boolean,tunable; ground-loot-delivery brief 2026-09-18; corpse-loot-minimum 2026-09-30 (q-0930-56),Rollback switch: 0 = kills put each player's drops on the corpse (personal corpse loot); 1 = the old ground carriers

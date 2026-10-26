@@ -1,0 +1,1118 @@
+d3_id,d3_name,slot,type,rarity,usable_by,item_level,level_req,weapon_min,weapon_max,weapon_aps,preset_affixes,set_name,source_file,pool_version,designated_class,craft_only
+Amulet16,Amulet,neck,Amulet,,,,,,,,,,data.json,yes,,no
+Axe_1H_206,Axe,onehand,Axe,,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,249,461,1.3,,,data.json,yes,,no
+Axe_2H_302,Two-Handed Axe,twohand,Two-Handed Axe,,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1384,1685,1.1,,,data.json,yes,,no
+Belt_207,Belt,waist,Belt,,,,,,,,,,data.json,yes,,no
+Boots_207,Boots,feet,Boots,,,,,,,,,,data.json,yes,,no
+Bow_302,Bow,twohand,Bow,,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,,,data.json,yes,,no
+Bracers_207,Bracers,wrists,Bracers,,,,,,,,,,data.json,yes,,no
+CeremonialDagger_1H_302,Ceremonial Knife,onehand,Ceremonial Knife,,witchdoctor,,,117,469,1.4,,,data.json,yes,witchdoctor,no
+ChestArmor_207,Chest Armor,torso,Chest Armor,,,,,,,,,,data.json,yes,,no
+Cloak_206,Cloak,torso,Cloak,,demonhunter,,,,,,,,data.json,yes,demonhunter,no
+Crossbow_302,Crossbow,twohand,Crossbow,,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,,,data.json,yes,,no
+CrusaderShield_206,Crusader Shield,offhand,Crusader Shield,,crusader,,,,,,,,data.json,yes,crusader,no
+Dagger_207,Dagger,onehand,Dagger,,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,,,data.json,yes,,no
+CombatStaff_2H_302,Daibo,twohand,Daibo,,monk,,,994,1845,1.15,,,data.json,yes,monk,no
+FistWeapon_1H_206,Fist Weapon,onehand,Fist Weapon,,monk,,,168,392,1.4,,,data.json,yes,monk,no
+Flail_1H_201,Flail,onehand,Flail,,crusader,,,192,355,1.4,,,data.json,yes,crusader,no
+Flail_2H_205,Two-Handed Flail,twohand,Two-Handed Flail,,crusader,,,1351,1486,1.15,,,data.json,yes,crusader,no
+Gloves_207,Gloves,hands,Gloves,,,,,,,,,,data.json,yes,,no
+HandXbow_302,Hand Crossbow,onehand,Hand Crossbow,,demonhunter,,,126,714,1.6,,,data.json,yes,demonhunter,no
+Helm_207,Helm,head,Helm,,,,,,,,,,data.json,yes,,no
+Mace_1H_207,Mace,onehand,Mace,,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,316,585,1.2,,,data.json,yes,,no
+Mace_2H_302,Two-Handed Mace,twohand,Two-Handed Mace,,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1737,1912,1,,,data.json,yes,,no
+BarbBelt_206,Mighty Belt,waist,Mighty Belt,,barbarian,,,,,,,,data.json,yes,barbarian,no
+MightyWeapon1H_204,Mighty Weapon,onehand,Mighty Weapon,,barbarian,,,249,461,1.3,,,data.json,yes,barbarian,no
+MightyWeapon2H_302,Two-Handed Mighty Weapon,twohand,Two-Handed Mighty Weapon,,barbarian,,,1462,1609,1.1,,,data.json,yes,barbarian,no
+Mojo_206,Mojo,offhand,Mojo,,witchdoctor,,,,,,,,data.json,yes,witchdoctor,no
+Pants_207,Pants,legs,Pants,,,,,,,,,,data.json,yes,,no
+NecromancerTalisman_004,Phylactery,offhand,Phylactery,,necromancer,,,,,,,,data.json,yes,necromancer,no
+Polearm_302,Polearm,twohand,Polearm,,witchdoctor;barbarian;monk;crusader;necromancer,,,1497,1823,1.05,,,data.json,yes,,no
+Quiver_207,Quiver,offhand,Quiver,,demonhunter,,,,,,,,data.json,yes,demonhunter,no
+Ring_22,Ring,finger,Ring,,,,,,,,,,data.json,yes,,no
+Scythe_1H_004,Scythe,onehand,Scythe,,necromancer,,,249,461,1.3,,,data.json,yes,necromancer,no
+Scythe_2H_004,Two-Handed Scythe,twohand,Two-Handed Scythe,,necromancer,,,1461,1607,1.1,,,data.json,yes,necromancer,no
+Shield_206,Shield,offhand,Shield,,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,,,data.json,yes,,no
+Shoulders_207,Shoulders,shoulders,Shoulders,,,,,,,,,,data.json,yes,,no
+Orb_206,Source,offhand,Source,,wizard,,,,,,,,data.json,yes,wizard,no
+Spear_203,Spear,onehand,Spear,,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,,,data.json,yes,,no
+SpiritStone_206,Spirit Stone,head,Spirit Stone,,monk,,,,,,,,data.json,yes,monk,no
+Staff_302,Staff,twohand,Staff,,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,,,data.json,yes,,no
+Sword_1H_207,Sword,onehand,Sword,,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,,,data.json,yes,,no
+Sword_2H_302,Two-Handed Sword,twohand,Two-Handed Sword,,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1137,1702,1.15,,,data.json,yes,,no
+VoodooMask_206,Voodoo Mask,head,Voodoo Mask,,witchdoctor,,,,,,,,data.json,yes,witchdoctor,no
+Wand_302,Wand,onehand,Wand,,wizard,,,193,357,1.4,,,data.json,yes,wizard,no
+WizardHat_206,Wizard Hat,head,Wizard Hat,,wizard,,,,,,,,data.json,yes,wizard,no
+Unique_Amulet_105_x1,Golden Gorget of Leoric,neck,Amulet,legendary,,,,,,,mainstat;chc;resall;custom,,data.json,yes,,no
+Unique_Mace_1H_101_x1,Mad Monarch's Scepter,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,316,585,1.2,wpnphy;mainstat;damage;custom,,data.json,yes,,no
+Unique_Shoulder_103_x1,Pauldrons of the Skeleton King,shoulders,Shoulders,legendary,,,,,,,mainstat;vit;armor;custom,,data.json,yes,,no
+P3_Unique_Ring_107,Ring of Royal Grandeur,finger,Ring,legendary,,,,,,,mainstat;ias;lph;custom,,data.json,yes,,no
+Unique_Bracer_105_x1,Sanguinary Vambraces,wrists,Bracers,legendary,,,,,,,mainstat;chc;thorns;custom,,data.json,yes,,no
+Unique_Cloak_102_x1,Cloak of Deception,torso,Cloak,legendary,demonhunter,,,,,,mainstat;vit;armor;custom,,data.json,yes,demonhunter,no
+Unique_Shield_107_x1,Coven's Criterion,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,vit;block;custom,,data.json,yes,,no
+Unique_Gloves_103_x1,Gloves of Worship,hands,Gloves,legendary,,,,,,,mainstat;lph;chd;custom,,data.json,yes,,no
+Unique_Boots_103_x1,Illusory Boots,feet,Boots,legendary,,,,,,,mainstat;resall;ms;custom,,data.json,yes,,no
+Unique_Ring_108_x1,Avarice Band,finger,Ring,legendary,,,,,,,mainstat;chc;gf;custom,,data.json,yes,,no
+Unique_Axe_2H_103_x1,Burst of Wrath,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1384,1685,1.1,mainstat;sockets;custom,,data.json,yes,,no
+Unique_Boots_102_x1,Boots of Disregard,feet,Boots,legendary,,,,,,,vit;armor;regen;custom,,data.json,yes,,no
+Unique_Dagger_103_x1,Envious Blade,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,wpnpsn;mainstat;custom,,data.json,yes,,no
+Unique_Amulet_106_x1,Overwhelming Desire,neck,Amulet,legendary,,,,,,,mainstat;cdr;custom,,data.json,yes,,no
+Unique_Helm_103_x1,Pride's Fall,head,Helm,legendary,,,,,,,mainstat;vit;chc;custom,,data.json,yes,,no
+Unique_Ring_109_x1,Pandemonium Loop,finger,Ring,legendary,,,,,,,mainstat;hitfear;custom,,data.json,yes,,no
+Unique_CruShield_108_x1,Salvation,offhand,Crusader Shield,legendary,crusader,,,,,,mainstat;block;custom,,data.json,yes,crusader,no
+Unique_Pants_102_x1,Death's Bargain,legs,Pants,legendary,,,,,,,mainstat;regen;custom,,data.json,yes,,no
+Unique_HandXBow_102_x1,Helltrapper,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,mainstat;custom,,data.json,yes,demonhunter,no
+Unique_Belt_103_x1,Insatiable Belt,waist,Belt,legendary,,,,,,,mainstat;vit;pickup;custom,,data.json,yes,,no
+Unique_Mace_2H_104_x1,Soulsmasher,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1737,1912,1,mainstat;laek;custom,,data.json,yes,,no
+P71_Ethereal_21,Arioc's Needle,onehand,Hyperion Spear,ethereal,witchdoctor,5,,353,526,1.2,wpnpsn;damage;int;weaponias;chd;chc;damage_witchdoctor_decay;dura;ethereal_paragon;extra_passive;custom,,data.json,yes,witchdoctor,no
+P71_Ethereal_14,Ghostflame,onehand,Legend Spike,ethereal,witchdoctor,5,,107,321,1.5,wpnarc;damage;int;weaponias;damage_witchdoctor_secondary;cdr;manapercrit;pickup;dura;ethereal_speed;extra_passive;custom,,data.json,yes,witchdoctor,no
+P71_Ethereal_07,The Gidbinn,onehand,Ancient Blade,ethereal,witchdoctor,5,,168,392,1.4,wpnphy;damage;int;weaponias;chd;chc;damage_witchdoctor_voodoo;cdr;dura;ethereal_globe;extra_passive;custom,,data.json,yes,witchdoctor,no
+P71_Ethereal_06,Astreon's Iron Ward,onehand,Caduceus,ethereal,crusader,5,,316,585,1.2,wpnhol;damage;str;weaponias;chd;chc;damage_crusader;cdr;dura;ethereal_paragon;extra_passive;custom,,data.json,yes,crusader,no
+P71_Ethereal_20,Khalim's Will,onehand,Flail,ethereal,crusader,5,,192,355,1.4,wpnlit;str;weaponias;chc;lph;damage_crusader;cdr;wrathregen;dura;ethereal_steedcharge;extra_passive;custom,,data.json,yes,crusader,no
+P71_Ethereal_13,The Redeemer,onehand,Mighty Scepter,ethereal,crusader,5,,316,585,1.2,wpnphy;dmghol;damage;str;damage_crusader;damage_undead;damage_demons;cdr;pickup;dura;lvlreq;ethereal_speed;extra_passive;custom,,data.json,yes,crusader,no
+P71_Ethereal_05,Bartuc's Cut-Throat,onehand,Greater Talons,ethereal,monk,5,,168,392,1.4,wpnphy;damage;str;dex;chc;lph;damage_monk;dura;ethereal_damage;extra_passive;custom,,data.json,yes,monk,no
+P71_Ethereal_19,Jade Talon,onehand,Wrist Sword,ethereal,monk,5,,168,392,1.4,wpnphy;damage;dex;resall;lph;damage_monk;cdr;spiritpercrit;dura;ethereal_speed;extra_passive;custom,,data.json,yes,monk,no
+P71_Ethereal_12,Shadow Killer,onehand,Battle Cestus,ethereal,monk,5,,168,392,1.4,wpnphy;damage;dex;lph;damage_monk;cdr;rcr;spiritpercrit;hitfreeze;dura;ethereal_dmgred;extra_passive;custom,,data.json,yes,monk,no
+P71_Ethereal_17,Blackbog's Sharp,onehand,Cinquedeas,ethereal,necromancer,5,,117,469,1.4,wpnpsn;dmgpsn;int;weaponias;armor;damage_necromancer;cdr;hitslow;dura;ethereal_damage;extra_passive;custom,,data.json,yes,necromancer,no
+P71_Ethereal_03,Blackhand Key,onehand,Grave Wand,ethereal,necromancer,5,,193,357,1.4,wpnphy;int;resall;weaponias;life;damage_necromancer;cdr;damage_undead;dura;ethereal_fear;extra_passive;custom,,data.json,yes,necromancer,no
+P71_Ethereal_10,Soul Harvest,onehand,Scythe,ethereal,necromancer,5,,249,461,1.3,wpnphy;damage;int;resall;chc;damage_necromancer;cdr;maxessence;dura;ethereal_speed;extra_passive;custom,,data.json,yes,necromancer,no
+P71_Ethereal_09,Buriza-Do Kyanon,twohand,Ballista,ethereal,demonhunter,5,,779,945,1.1,wpncol;damage;dex;weaponias;armor;damage_demonhunter;hitfreeze;dura;ethereal_frozen;ethereal_paragon;extra_passive;custom,,data.json,yes,demonhunter,no
+P71_Ethereal_16,Doomslinger,onehand,Repeating Crossbow,ethereal,demonhunter,5,,126,714,1.6,wpnphy;damage;dex;weaponias;life;area;damage_demonhunter;cdr;rcr;ethereal_movespeed;dura;extra_passive;custom,,data.json,yes,demonhunter,no
+P71_Ethereal_02,Windforce,twohand,Hydra Bow,ethereal,demonhunter,5,,143,815,1.4,wpnphy;damage;str;dex;weaponias;ms;hitknockback;dura;damage_demonhunter_archery;ethereal_paragon;maxdisc;rcr;extra_passive;custom,,data.json,yes,demonhunter,no
+P71_Ethereal_15,Doombringer,onehand,Champion Sword,ethereal,barbarian,5,,168,392,1.4,wpnphy;damage;str;life;chc;lph;damage_barbarian;dura;ethereal_dmgred;extra_passive;custom,,data.json,yes,barbarian,no
+P71_Ethereal_01,The Grandfather,twohand,Colossus Blade,ethereal,barbarian,5,,1137,1702,1.15,wpnphy;damage;weaponias;life;chc;damage_barbarian;cdr;dura;allstats;ethereal_paragon;extra_passive;custom,,data.json,yes,barbarian,no
+P71_Ethereal_08,Gimmershred,onehand,Flying Axe,ethereal,barbarian,5,,249,461,1.3,wpncol;wpnfir;wpnlit;damage;weaponias;edmg;damage_barbarian;cdr;dura;ethereal_movespeed;extra_passive;custom,,data.json,yes,barbarian,no
+P71_Ethereal_11,Mang Song's Lesson,twohand,Archon Staff,ethereal,wizard,5,,1229,1839,1.1,wpnphy;dmgcol;dmgfir;dmglit;dmgarc;int;damage_wizard;apregen;damage_undead;dura;extra_passive;custom,,data.json,yes,wizard,no
+P71_Ethereal_04,The Oculus,onehand,Swirling Crystal,ethereal,wizard,5,,193,357,1.4,wpnphy;damage;int;vit;resall;edmg;damage_wizard;cdr;apoc;dura;ethereal_dmgred;extra_passive;custom,,data.json,yes,wizard,no
+P71_Ethereal_18,Wizardspike,onehand,Bone Knife,ethereal,wizard,5,,107,321,1.5,wpnphy;int;resall;weaponias;damage_wizard;cdr;apregen;maxap;dura;ethereal_damage;extra_passive;custom,,data.json,yes,wizard,no
+Unique_Boots_009_x1,Lut Socks,feet,Boots,legendary,,11,,,,,mainstat;custom,,item_feet.js,yes,barbarian,no
+Unique_Boots_010_x1,The Crudest Boots,feet,Boots,legendary,,,,,,,mainstat;vit,,item_feet.js,no,,no
+P1_Unique_Boots_010,The Crudest Boots,feet,Boots,legendary,,,,,,,mainstat;ms;custom,,item_feet.js,no,monk,no
+Unique_Boots_001_x1,Boj Anglers,feet,Boots,legendary,,,,,,,mainstat;skill_head,,item_feet.js,yes,,no
+Unique_Boots_104_x1,Irontoe Mudsputters,feet,Boots,legendary,,34,,,,,mainstat;vit;custom,,item_feet.js,yes,,no
+Unique_Boots_007_x1,Fire Walkers,feet,Boots,legendary,,,,,,,mainstat;ms;custom,,item_feet.js,no,,no
+Unique_Boots_007_p2,Fire Walkers,feet,Boots,legendary,,51,,,,,mainstat;ms;custom,,item_feet.js,yes,,no
+Unique_Boots_008_x1,Ice Climbers,feet,Boots,legendary,,60,,,,,mainstat;resall;colddef;custom,,item_feet.js,yes,,no
+Unique_Boots_005_x1,Board Walkers,feet,Boots,legendary,,,,,,,ms,,item_feet.js,yes,,no
+Unique_Boots_019_x1,Blackthorne's Spurs,feet,Boots,set,,60,,,,,mainstat;vit,Blackthorne's Battlegear,item_feet.js,yes,,no
+Unique_Boots_012_x1,Immortal King's Stride,feet,Boots,set,,60,,,,,mainstat;resall,Immortal King's Call,item_feet.js,yes,barbarian,no
+Unique_Boots_011_x1,Natalya's Bloody Footprints,feet,Boots,set,,60,,,,,mainstat;resall,Natalya's Vengeance,item_feet.js,yes,demonhunter,no
+Unique_Boots_013_x1,Zunimassa's Trail,feet,Boots,set,,60,,,,,mainstat;vit,Zunimassa's Haunt,item_feet.js,yes,witchdoctor,no
+Unique_Boots_Set_08_x1,Eight-Demon Boots,feet,Boots,set,,70,,,,,mainstat;vit,Raiment of a Thousand Storms,item_feet.js,yes,,no
+Unique_Boots_Set_06_x1,Firebird's Tarsi,feet,Boots,set,,70,,,,,mainstat;vit,Firebird's Finery,item_feet.js,yes,,no
+Unique_Boots_Set_16_x1,Helltooth Greaves,feet,Boots,set,,70,,,,,mainstat;vit,Helltooth Harness,item_feet.js,yes,,no
+Unique_Boots_Set_09_x1,Jade Harvester's Swiftness,feet,Boots,set,,70,,,,,mainstat;vit,Raiment of the Jade Harvester,item_feet.js,yes,witchdoctor,no
+Unique_Boots_Set_07_x1,Marauder's Treads,feet,Boots,set,,70,,,,,mainstat;vit,Embodiment of the Marauder,item_feet.js,yes,,no
+Unique_Boots_Set_05_x1,Raekor's Striders,feet,Boots,set,,70,,,,,mainstat;vit,The Legacy of Raekor,item_feet.js,yes,,no
+Unique_Boots_Set_01_p1,Roland's Stride,feet,Boots,set,,70,,,,,mainstat;vit,Roland's Legacy,item_feet.js,yes,,no
+Unique_Boots_Set_10_x1,Sabatons of Akkhan,feet,Boots,set,,70,,,,,mainstat;vit,Armor of Akkhan,item_feet.js,yes,,no
+Unique_Boots_Set_14_x1,The Shadow's Heels,feet,Boots,set,,70,,,,,mainstat;vit,The Shadow’s Mantle,item_feet.js,yes,demonhunter,no
+Unique_Boots_Set_13_x1,Vyr's Swaggering Stance,feet,Boots,set,,70,,,,,mainstat;skill_head,Vyr's Amazing Arcana,item_feet.js,yes,wizard,no
+Unique_Boots_014_x1,Asheara's Finders,feet,Boots,set,,,,,,,,Asheara's Vestments,item_feet.js,yes,,yes
+Unique_Boots_015_x1,Cain's Travelers,feet,Boots,set,,,,,,,,Cain's Destiny,item_feet.js,no,,yes
+Unique_Boots_017_x1,Captain Crimson's Waders,feet,Boots,set,,,,,,,,Captain Crimson's Trimmings,item_feet.js,no,,yes
+Unique_Boots_018_x1,Sage's Passage,feet,Boots,set,,,,,,,,Sage's Journey,item_feet.js,yes,,yes
+P2_Unique_Boots_01,Nilfur's Boast,feet,Boots,legendary,,,,,,,mainstat;resall;custom,,item_feet.js,no,wizard,no
+P2_Unique_Boots_02,Inna's Sandals,feet,Boots,set,,60,,,,,mainstat;resall,Inna's Mantra,item_feet.js,yes,monk,no
+Unique_Boots_Set_02_p2,Striders of Destiny,feet,Boots,set,,70,,,,,mainstat;vit,Delsere's Magnum Opus,item_feet.js,yes,,no
+Unique_Boots_Set_03_p2,Hell Walkers,feet,Boots,set,,70,,,,,mainstat;vit,Unhallowed Essence,item_feet.js,yes,,no
+Unique_Boots_Set_01_p2,Sabaton of the Wastes,feet,Boots,set,,70,,,,,mainstat;vit,Wrath of the Wastes,item_feet.js,yes,,no
+Unique_Boots_Set_01_p3,Uliana's Destiny,feet,Boots,set,,70,,,,,mainstat;vit,Uliana's Stratagem,item_feet.js,yes,,no
+Unique_Boots_Set_02_p3,Arachyr's Stride,feet,Boots,set,,70,,,,,mainstat;vit,Spirit of Arachyr,item_feet.js,yes,,no
+Unique_Boots_Set_03_p3,Foundation of the Light,feet,Boots,set,,70,,,,,mainstat;vit,Seeker of the Light,item_feet.js,yes,,no
+P4_Unique_Boots_001,Rivera Dancers,feet,Boots,legendary,,11,,,,,mainstat;resall;custom,,item_feet.js,yes,monk,no
+Unique_Boots_Set_12_x1,Zeal of the Invoker,feet,Boots,set,,70,,,,,mainstat;thorns,Thorns of the Invoker,item_feet.js,yes,,no
+Unique_Boots_Set_15_x1,Foundation of the Earth,feet,Boots,set,,70,,,,,mainstat;vit,Might of the Earth,item_feet.js,yes,barbarian,no
+P41_Unique_Boots_01,Nilfur's Boast,feet,Boots,legendary,,,,,,,mainstat;resall;custom,,item_feet.js,no,wizard,no
+P6_Necro_Set_1_Boots,Rathma's Ossified Sabatons,feet,Boots,set,,70,,,,,mainstat;vit,Bones of Rathma,item_feet.js,yes,,no
+P6_Necro_Set_2_Boots,Trag'Oul's Stalwart Greaves,feet,Boots,set,,70,,,,,mainstat;vit,Trag'Oul's Avatar,item_feet.js,yes,,no
+P6_Necro_Set_3_Boots,Inarius's Perseverance,feet,Boots,set,,70,,,,,mainstat;vit,Grace of Inarius,item_feet.js,yes,,no
+P6_Necro_Set_4_Boots,Pestilence Battle Boots,feet,Boots,set,,70,,,,,mainstat;vit,Pestilence Master's Shroud,item_feet.js,yes,,no
+P6_Necro_Unique_Boots_21,Steuart's Greaves,feet,Boots,legendary,,,,,,,mainstat;ms;custom,,item_feet.js,no,necromancer,no
+P6_Necro_Unique_Boots_22,Bryner's Journey,feet,Boots,legendary,,35,,,,,mainstat;custom,,item_feet.js,yes,necromancer,no
+P61_Necro_Unique_Boots_21,Steuart's Greaves,feet,Boots,legendary,,52,,,,,mainstat;ms;custom,,item_feet.js,yes,necromancer,no
+P61_Unique_Boots_01,Nilfur's Boast,feet,Boots,legendary,,60,,,,,mainstat;resall;custom,,item_feet.js,yes,wizard,no
+P66_Unique_Boots_015,Cain's Travelers,feet,Boots,set,,,,,,,,Cain's Destiny,item_feet.js,yes,,yes
+P66_Unique_Boots_017,Captain Crimson's Waders,feet,Boots,set,,,,,,,,Captain Crimson's Trimmings,item_feet.js,yes,,yes
+P67_Unique_Boots_Set_01,Greaves of Valor,feet,Boots,set,,70,,,,,mainstat;vit,Aegis of Valor,item_feet.js,yes,,no
+P67_Unique_Boots_Set_02,Weaves of Justice,feet,Boots,set,,70,,,,,mainstat;vit,Patterns of Justice,item_feet.js,yes,,no
+P68_Unique_Boots_Set_05,Heel of Savages,feet,Boots,set,,70,,,,,mainstat;vit,Horde of the Ninety Savages,item_feet.js,yes,,no
+P68_Unique_Boots_Set_04,Mundunugu's Dance,feet,Boots,set,,70,,,,,mainstat;vit,Mundunugu's Regalia,item_feet.js,yes,,no
+P68_Unique_Boots_Set_03,Typhon's Tarsus,feet,Boots,set,,70,,,,,mainstat;vit,The Typhon's Veil,item_feet.js,yes,,no
+P69_Unique_Boots_Set_06,Antique Vintage Boots,feet,Boots,set,,70,,,,,mainstat;vit,Gears of Dreadlands,item_feet.js,yes,,no
+P69_Necro_Set_5_Boots,Extravagant Shoes,feet,Boots,set,,70,,,,,mainstat;vit,Masquerade of the Burning Carnival,item_feet.js,yes,,no
+P71_Unique_Boots_010,The Crudest Boots,feet,Boots,legendary,,11,,,,,mainstat;ms;custom,,data.json,yes,monk,no
+Unique_Ring_024_x1,Hellfire Ring,finger,Ring,legendary,,,,,,,expmul;custom,,item_finger.js,yes,,yes
+Unique_Ring_021_x1,Manald Heal,finger,Ring,legendary,,,,,,,mainstat;resource,,item_finger.js,no,,no
+Unique_Ring_018_x1,Nagelring,finger,Ring,legendary,,,,,,,mainstat;mf,,item_finger.js,no,,no
+Unique_Ring_018_p2,Nagelring,finger,Ring,legendary,,40,,,,,mainstat;custom;mf,,item_finger.js,yes,,no
+Unique_Ring_005_x1,Stolen Ring,finger,Ring,legendary,,,,,,,mainstat;gf;pickup,,item_finger.js,yes,,no
+Unique_Ring_002_x1,Leoric's Signet,finger,Ring,legendary,,15,,,,,mainstat;chc;expmul,,item_finger.js,yes,,no
+Unique_Ring_009_x1,Band of Untold Secrets,finger,Ring,legendary,,,,,,,mainstat;ms,,item_finger.js,yes,,no
+Unique_Ring_006_x1,Broken Promises,finger,Ring,legendary,,,,,,,mainstat;rcr,,item_finger.js,no,,no
+Unique_Ring_006_p2,Broken Promises,finger,Ring,legendary,,31,,,,,mainstat;rcr;custom,,item_finger.js,yes,,no
+Unique_Ring_004_x1,Puzzle Ring,finger,Ring,legendary,,31,,,,,mainstat;gf;ias;custom,,item_finger.js,yes,,no
+Unique_Ring_106_x1,Band of Rue Chambers,finger,Ring,legendary,,34,,,,,mainstat;ias;custom,,item_finger.js,yes,,no
+Unique_Ring_104_x1,Rechel's Ring of Larceny,finger,Ring,legendary,,34,,,,,mainstat;hitfear;custom,,item_finger.js,yes,,no
+Unique_Ring_103_x1,Rogar's Huge Stone,finger,Ring,legendary,,34,,,,,mainstat;custom,,item_finger.js,yes,,no
+Unique_Ring_101_x1,The Tall Man's Finger,finger,Ring,legendary,,34,,,,,mainstat;custom,,item_finger.js,yes,witchdoctor,no
+Unique_Ring_102_x1,Wyrdward,finger,Ring,legendary,,,,,,,mainstat;custom,,item_finger.js,no,,no
+Unique_Ring_102_p2,Wyrdward,finger,Ring,legendary,,34,,,,,mainstat;custom,,item_finger.js,yes,,no
+Unique_Ring_020_x1,Bul-Kathos's Wedding Band,finger,Ring,legendary,,51,,,,,mainstat;chd;custom,,item_finger.js,yes,,no
+Unique_Ring_007_x1,Eternal Union,finger,Ring,legendary,,,,,,,mainstat;life,,item_finger.js,no,,no
+Unique_Ring_007_p1,Eternal Union,finger,Ring,legendary,,,,,,,mainstat;custom,,item_finger.js,no,crusader,no
+Unique_Ring_008_x1,Justice Lantern,finger,Ring,legendary,,,,,,,mainstat;block;ccr,,item_finger.js,no,,no
+Unique_Ring_023_x1,Obsidian Ring of the Zodiac,finger,Ring,legendary,,,,,,,cdr;rcr;dura;ias;chc,,item_finger.js,no,,no
+Unique_Ring_023_p2,Obsidian Ring of the Zodiac,finger,Ring,legendary,,51,,,,,cdr;rcr;dura;ias;chc;custom,,item_finger.js,yes,,no
+Unique_Ring_001_x1,Band of Hollow Whispers,finger,Ring,legendary,,60,,,,,mainstat;custom,,item_finger.js,yes,witchdoctor,no
+Unique_Ring_003_x1,Krede's Flame,finger,Ring,legendary,,60,,,,,mainstat;custom,,item_finger.js,yes,,no
+Unique_Ring_017_x1,Oculus Ring,finger,Ring,legendary,,,,,,,mainstat;resall;ias;edef,,item_finger.js,no,,no
+Unique_Ring_017_p2,Oculus Ring,finger,Ring,legendary,,,,,,,mainstat;resall;custom;ias;edef,,item_finger.js,no,,no
+Unique_Ring_022_x1,Skull Grasp,finger,Ring,legendary,,,,,,,mainstat;chc,,item_finger.js,no,,no
+P2_Unique_Ring_01,Skull Grasp,finger,Ring,legendary,,,,,,,mainstat;chc;custom,,item_finger.js,no,barbarian,no
+Unique_Ring_019_x1,Stone of Jordan,finger,Ring,legendary,,,,,,,mainstat;elemental;resource;edmg,,item_finger.js,no,,no
+Unique_Ring_010_x1,Unity,finger,Ring,legendary,,60,,,,,mainstat;chc;edmg;custom,,item_finger.js,yes,,no
+Unique_Ring_015_x1,Litany of the Undaunted,finger,Ring,set,,60,,,,,mainstat;sockets,Legacy of Nightmares,item_finger.js,yes,,no
+Unique_Ring_014_x1,The Wailing Host,finger,Ring,set,,60,,,,,mainstat;sockets,Legacy of Nightmares,item_finger.js,yes,,no
+Unique_Ring_013_x1,The Compass Rose,finger,Ring,set,,60,,,,,mainstat;ms,Endless Walk,item_finger.js,yes,,no
+Unique_Ring_011_x1,Natalya's Reflection,finger,Ring,set,,60,,,,,mainstat;sockets,Natalya's Vengeance,item_finger.js,yes,demonhunter,no
+Unique_Ring_012_x1,Zunimassa's Pox,finger,Ring,set,,60,,,,,mainstat;sockets,Zunimassa's Haunt,item_finger.js,yes,witchdoctor,no
+Unique_Ring_Set_001_x1,Focus,finger,Ring,set,,70,,,,,mainstat;sockets,Bastions of Will,item_finger.js,yes,,no
+Unique_Ring_Set_002_x1,Restraint,finger,Ring,set,,70,,,,,mainstat;sockets,Bastions of Will,item_finger.js,yes,,no
+p2_Unique_Ring_Wizard_001,Halo of Arlyse,finger,Ring,legendary,,60,,,,,mainstat;sockets;custom,,item_finger.js,yes,wizard,no
+P2_Unique_Ring_03,Arcstone,finger,Ring,legendary,,34,,,,,mainstat;custom,,item_finger.js,yes,,no
+P2_Unique_Ring_04,Convention of Elements,finger,Ring,legendary,,60,,,,,mainstat;chc;sockets;custom,,item_finger.js,yes,,no
+P2_Unique_Ring_02,The Short Man's Finger,finger,Ring,legendary,,,,,,,mainstat;chd;custom,,item_finger.js,no,witchdoctor,no
+P4_Unique_Ring_01,Ring of Emptiness,finger,Ring,legendary,,,,,,,mainstat;chc;custom,,item_finger.js,no,witchdoctor,no
+P4_Unique_Ring_02,Elusive Ring,finger,Ring,legendary,,60,,,,,mainstat;chc;custom,,item_finger.js,yes,demonhunter,no
+P4_Unique_Ring_03,Justice Lantern,finger,Ring,legendary,,51,,,,,mainstat;sockets;block;custom;ccr,,item_finger.js,yes,,no
+P4_Unique_Ring_05,Band of Might,finger,Ring,legendary,,,,,,,mainstat;chc;custom,,item_finger.js,no,barbarian,no
+Unique_Ring_017_p4,Oculus Ring,finger,Ring,legendary,,60,,,,,sockets;custom,,item_finger.js,yes,,no
+P41_Unique_Ring_02,Skull Grasp,finger,Ring,legendary,,,,,,,mainstat;chc;custom,,item_finger.js,no,barbarian,no
+P41_Unique_Ring_01,Halo of Karini,finger,Ring,legendary,,,,,,,mainstat;sockets;custom,,item_finger.js,no,wizard,no
+P42_Unique_Ring_Haunt,Ring of Emptiness,finger,Ring,legendary,,60,,,,,mainstat;chc;custom,,item_finger.js,yes,witchdoctor,no
+P43_Unique_Ring_021_x1,Manald Heal,finger,Ring,legendary,,27,,,,,mainstat;custom,,item_finger.js,yes,,no
+p43_RetroRing_001,Empyrean Band,finger,Ring,magic,,,,,,,mainstat;ccr,,item_finger.js,yes,,no
+p43_RetroRing_002,Ring of Truth,finger,Ring,magic,,,,,,,vit;resall,,item_finger.js,yes,,no
+P6_Unique_Ring_01,Circle of Nailuj's Evol,finger,Ring,legendary,,11,,,,,mainstat;chd;custom,,item_finger.js,yes,necromancer,no
+P6_Unique_Ring_02,Briggs' Wrath,finger,Ring,legendary,,70,,,,,mainstat;chc;custom,,item_finger.js,yes,,no
+P6_Unique_Ring_03,Krysbin's Sentence,finger,Ring,legendary,,52,,,,,mainstat;ias;custom,,item_finger.js,yes,,no
+P6_Unique_Ring_04,Lornelle's Sunstone,finger,Ring,legendary,,39,,,,,mainstat;custom,,item_finger.js,yes,,no
+P61_Unique_Ring_01,The Short Man's Finger,finger,Ring,legendary,,34,,,,,mainstat;chd;custom,,item_finger.js,yes,witchdoctor,no
+P61_Unique_Ring_02,Skull Grasp,finger,Ring,legendary,,60,,,,,mainstat;chc;custom,,item_finger.js,yes,barbarian,no
+P61_Unique_Ring_03,Halo of Karini,finger,Ring,legendary,,34,,,,,mainstat;sockets;custom,,item_finger.js,yes,wizard,no
+P61_Unique_Ring_05,Band of Might,finger,Ring,legendary,,11,,,,,mainstat;chc;custom,,item_finger.js,yes,barbarian,no
+P69_Unique_Ring_019,Stone of Jordan,finger,Ring,legendary,,60,,,,,mainstat;elemental;resource;edmg;custom,,item_finger.js,yes,,no
+P74_Unique_Ring_007,Eternal Union,finger,Ring,legendary,,51,,,,,mainstat;custom,,data.json,yes,crusader,no
+Unique_Gloves_007_x1,Stone Gauntlets,hands,Gloves,legendary,,,,,,,mainstat;hitimmobilize,,item_hands.js,no,,no
+Unique_Gloves_014_x1,Magefist,hands,Gloves,legendary,,,,,,,mainstat;ias;dmgfir,,item_hands.js,no,,no
+Unique_Gloves_101_x1,St. Archew's Gage,hands,Gloves,legendary,,,,,,,mainstat;custom,,item_hands.js,no,,no
+Unique_Gloves_101_p2,St. Archew's Gage,hands,Gloves,legendary,,34,,,,,mainstat;custom,,item_hands.js,yes,,no
+Unique_Gloves_011_x1,Gladiator Gauntlets,hands,Gloves,legendary,,51,,,,,mainstat;chc;custom,,item_hands.js,yes,,no
+Unique_Gloves_002_x1,Frostburn,hands,Gloves,legendary,,,,,,,mainstat;chc;dmgcol;custom,,item_hands.js,no,,no
+Unique_Gloves_003_x1,Tasker and Theo,hands,Gloves,legendary,,60,,,,,mainstat;ias;custom,,item_hands.js,yes,,no
+Unique_Gloves_001_x1,Penders Purchase,hands,Gloves,legendary,,,,,,,,,item_hands.js,yes,,no
+Unique_Gloves_008_x1,Immortal King's Irons,hands,Gloves,set,,60,,,,,mainstat;chc,Immortal King's Call,item_hands.js,yes,barbarian,no
+Unique_Gloves_Set_06_x1,Firebird's Talons,hands,Gloves,set,,70,,,,,mainstat;chc,Firebird's Finery,item_hands.js,yes,,no
+Unique_Gloves_Set_08_x1,Fists of Thunder,hands,Gloves,set,,70,,,,,mainstat;chc,Raiment of a Thousand Storms,item_hands.js,yes,,no
+Unique_Gloves_Set_10_x1,Gauntlets of Akkhan,hands,Gloves,set,,70,,,,,mainstat;chc,Armor of Akkhan,item_hands.js,yes,,no
+Unique_Gloves_Set_16_x1,Helltooth Gauntlets,hands,Gloves,set,,70,,,,,mainstat;chc,Helltooth Harness,item_hands.js,yes,,no
+Unique_Gloves_Set_09_x1,Jade Harvester's Mercy,hands,Gloves,set,,70,,,,,mainstat;chc,Raiment of the Jade Harvester,item_hands.js,yes,witchdoctor,no
+Unique_Gloves_Set_07_x1,Marauder's Gloves,hands,Gloves,set,,70,,,,,mainstat;chc,Embodiment of the Marauder,item_hands.js,yes,,no
+Unique_Gloves_Set_12_x1,Pride of the Invoker,hands,Gloves,set,,70,,,,,mainstat;thorns,Thorns of the Invoker,item_hands.js,yes,,no
+Unique_Gloves_Set_15_x1,Pull of the Earth,hands,Gloves,set,,70,,,,,mainstat;chc,Might of the Earth,item_hands.js,yes,barbarian,no
+Unique_Gloves_Set_05_x1,Raekor's Wraps,hands,Gloves,set,,70,,,,,mainstat;chc,The Legacy of Raekor,item_hands.js,yes,,no
+Unique_Gloves_Set_01_p1,Roland's Grasp,hands,Gloves,set,,70,,,,,mainstat;chc,Roland's Legacy,item_hands.js,yes,,no
+Unique_Gloves_Set_11_x1,Sunwuko's Paws,hands,Gloves,set,,70,,,,,mainstat;chc,Monkey King's Garb,item_hands.js,yes,monk,no
+Unique_Gloves_Set_14_x1,The Shadow's Grasp,hands,Gloves,set,,70,,,,,mainstat;chc,The Shadow’s Mantle,item_hands.js,yes,demonhunter,no
+Unique_Gloves_Set_13_x1,Vyr's Grasping Gauntlets,hands,Gloves,set,,70,,,,,mainstat;chc,Vyr's Amazing Arcana,item_hands.js,yes,wizard,no
+Unique_Gloves_009_x1,Asheara's Ward,hands,Gloves,set,,,,,,,,Asheara's Vestments,item_hands.js,yes,,yes
+Unique_Gloves_015_x1,Cain's Scrivener,hands,Gloves,set,,,,,,,,Cain's Destiny,item_hands.js,no,,yes
+Unique_Gloves_017_x1,Sage's Purchase,hands,Gloves,set,,,,,,,,Sage's Journey,item_hands.js,yes,,yes
+P2_Unique_Gloves_01,Natalya's Touch,hands,Gloves,set,,60,,,,,mainstat;chc,Natalya's Vengeance,item_hands.js,yes,demonhunter,no
+P2_Unique_Gloves_04,Inna's Hold,hands,Gloves,set,,60,,,,,mainstat;chc,Inna's Mantra,item_hands.js,yes,monk,no
+P2_Unique_Gloves_03,Zunimassa's Finger Wraps,hands,Gloves,set,,60,,,,,mainstat;chc,Zunimassa's Haunt,item_hands.js,yes,witchdoctor,no
+P2_Unique_Gloves_02,Tal Rasha's Grasp,hands,Gloves,set,,60,,,,,mainstat;chc,Tal Rasha's Elements,item_hands.js,yes,wizard,no
+Unique_Gloves_Set_02_p2,Fierce Gauntlets,hands,Gloves,set,,70,,,,,mainstat;chc,Delsere's Magnum Opus,item_hands.js,yes,,no
+Unique_Gloves_Set_03_p2,Fiendish Grips,hands,Gloves,set,,70,,,,,mainstat;chc,Unhallowed Essence,item_hands.js,yes,,no
+Unique_Gloves_Set_01_p2,Gauntlet of the Wastes,hands,Gloves,set,,70,,,,,mainstat;chc,Wrath of the Wastes,item_hands.js,yes,,no
+Unique_Gloves_Set_01_p3,Uliana's Fury,hands,Gloves,set,,70,,,,,mainstat;chc,Uliana's Stratagem,item_hands.js,yes,,no
+Unique_Gloves_Set_02_p3,Arachyr's Claws ,hands,Gloves,set,,70,,,,,mainstat;chc,Spirit of Arachyr,item_hands.js,yes,,no
+Unique_Gloves_Set_03_p3,Will of the Light,hands,Gloves,set,,70,,,,,mainstat;chc,Seeker of the Light,item_hands.js,yes,,no
+P41_Unique_Gloves_014,Magefist,hands,Gloves,legendary,,34,,,,,mainstat;chc;custom,,item_hands.js,yes,,no
+P41_Unique_Gloves_002,Frostburn,hands,Gloves,legendary,,60,,,,,mainstat;chc;custom,,item_hands.js,yes,,no
+P6_Necro_Set_1_Gloves,Rathma's Macabre Vambraces,hands,Gloves,set,,70,,,,,mainstat;chc,Bones of Rathma,item_hands.js,yes,,no
+P6_Necro_Set_2_Gloves,Trag'Oul's Claws,hands,Gloves,set,,70,,,,,mainstat;chc,Trag'Oul's Avatar,item_hands.js,yes,,no
+P6_Necro_Set_3_Gloves,Inarius's Will,hands,Gloves,set,,70,,,,,mainstat;chc,Grace of Inarius,item_hands.js,yes,,no
+P6_Necro_Set_4_Gloves,Pestilence Gloves,hands,Gloves,set,,70,,,,,mainstat;chc,Pestilence Master's Shroud,item_hands.js,yes,,no
+P6_Necro_Unique_Gloves_21,Moribund Gauntlets,hands,Gloves,legendary,,47,,,,,mainstat;chc;custom,,item_hands.js,yes,,no
+P6_Necro_Unique_Gloves_22,Grasps of Essence,hands,Gloves,legendary,,,,,,,mainstat;chc;custom,,item_hands.js,no,necromancer,no
+P66_Unique_Gloves_015,Cain's Scrivener,hands,Gloves,set,,,,,,,,Cain's Destiny,item_hands.js,yes,,yes
+P66_Unique_Gloves_007,Stone Gauntlets,hands,Gloves,legendary,,31,,,,,mainstat;hitimmobilize;custom,,item_hands.js,yes,,no
+P67_Unique_Gloves_Set_02,Bazubands of Justice,hands,Gloves,set,,70,,,,,mainstat;chc,Patterns of Justice,item_hands.js,yes,,no
+P67_Unique_Gloves_Set_01,Gauntlets of Valor,hands,Gloves,set,,70,,,,,mainstat;chc,Aegis of Valor,item_hands.js,yes,,no
+P68_Unique_Gloves_Set_05,Claws of Savages,hands,Gloves,set,,70,,,,,mainstat;chc,Horde of the Ninety Savages,item_hands.js,yes,,no
+P68_Unique_Gloves_Set_04,Mundunugu's Rhythm,hands,Gloves,set,,70,,,,,mainstat;chc,Mundunugu's Regalia,item_hands.js,yes,,no
+P68_Unique_Gloves_Set_03,Typhon's Claws,hands,Gloves,set,,70,,,,,mainstat;chc,The Typhon's Veil,item_hands.js,yes,,no
+P69_Unique_Gloves_Set_06,Gas Powered Automail Forearm,hands,Gloves,set,,70,,,,,mainstat;chc,Gears of Dreadlands,item_hands.js,yes,,no
+P69_Necro_Unique_Gloves_22,Grasps of Essence,hands,Gloves,legendary,,16,,,,,mainstat;chc;custom,,item_hands.js,yes,necromancer,no
+P69_Necro_Set_5_Gloves,Lavishing Gloves,hands,Gloves,set,,70,,,,,mainstat;chc,Masquerade of the Burning Carnival,item_hands.js,yes,,no
+Unique_Helm_001_x1,Broken Crown,head,Helm,legendary,,,,,,,mainstat;chc;expadd,,item_head.js,no,,no
+P2_Unique_Helm_001,Broken Crown,head,Helm,legendary,,20,,,,,mainstat;sockets;custom,,item_head.js,yes,,no
+Unique_Helm_002_x1,Leoric's Crown,head,Helm,legendary,,,,,,,mainstat;chc,,item_head.js,no,,no
+Unique_Helm_002_p1,Leoric's Crown,head,Helm,legendary,,5,,,,,mainstat;sockets;custom,,item_head.js,yes,,no
+Unique_Helm_007_x1,Blind Faith,head,Helm,legendary,,31,,,,,mainstat;hitblind,,item_head.js,yes,,no
+Unique_Helm_102_x1,Deathseer's Cowl,head,Helm,legendary,,34,,,,,mainstat;sockets;custom,,item_head.js,yes,,no
+Unique_Helm_004_x1,Skull of Resonance,head,Helm,legendary,,51,,,,,mainstat;resall;sockets;custom,,item_head.js,yes,barbarian,no
+Unique_Helm_003_x1,Andariel's Visage,head,Helm,legendary,,,,,,,mainstat;elemental;ias;respsn;firetaken;custom,,item_head.js,no,,no
+Unique_Helm_003_p2,Andariel's Visage,head,Helm,legendary,,60,,,,,mainstat;elemental;ias;respsn;firetaken;custom,,item_head.js,yes,,no
+Unique_Helm_006_x1,Mempo of Twilight,head,Helm,legendary,,,,,,,mainstat;resall;ias;sockets,,item_head.js,no,,no
+Unique_Helm_011_x1,The Helm of Rule,head,Helm,legendary,,,,,,,vit;block,,item_head.js,yes,,no
+Unique_Helm_008_x1,Immortal King's Triumph,head,Helm,set,,60,,,,,mainstat;sockets,Immortal King's Call,item_head.js,yes,barbarian,no
+Unique_Helm_009_x1,Natalya's Sight,head,Helm,set,,60,,,,,mainstat;sockets,Natalya's Vengeance,item_head.js,yes,demonhunter,no
+Unique_Helm_010_x1,Tal Rasha's Guise of Wisdom,head,Helm,set,,60,,,,,mainstat;sockets;chc,Tal Rasha's Elements,item_head.js,yes,wizard,no
+Unique_Helm_Set_12_x1,Crown of the Invoker,head,Helm,set,,70,,,,,mainstat;sockets;thorns,Thorns of the Invoker,item_head.js,yes,,no
+Unique_Helm_Set_15_x1,Eyes of the Earth,head,Helm,set,,70,,,,,mainstat;sockets,Might of the Earth,item_head.js,yes,barbarian,no
+Unique_Helm_Set_06_x1,Firebird's Plume,head,Helm,set,,70,,,,,mainstat;sockets,Firebird's Finery,item_head.js,yes,,no
+Unique_Helm_Set_16_x1,Helltooth Mask,head,Helm,set,,70,,,,,mainstat;sockets,Helltooth Harness,item_head.js,yes,,no
+Unique_Helm_Set_10_x1,Helm of Akkhan,head,Helm,set,,70,,,,,mainstat;sockets,Armor of Akkhan,item_head.js,yes,,no
+Unique_Helm_Set_09_x1,Jade Harvester's Wisdom,head,Helm,set,,70,,,,,mainstat;sockets,Raiment of the Jade Harvester,item_head.js,yes,witchdoctor,no
+Unique_Helm_Set_07_x1,Marauder's Visage,head,Helm,set,,70,,,,,mainstat;sockets,Embodiment of the Marauder,item_head.js,yes,,no
+Unique_Helm_Set_08_x1,Mask of the Searing Sky,head,Helm,set,,70,,,,,mainstat;sockets,Raiment of a Thousand Storms,item_head.js,yes,,no
+Unique_Helm_Set_05_x1,Raekor's Will,head,Helm,set,,70,,,,,mainstat;sockets,The Legacy of Raekor,item_head.js,yes,,no
+Unique_Helm_Set_01_p1,Roland's Visage,head,Helm,set,,70,,,,,mainstat;sockets,Roland's Legacy,item_head.js,yes,,no
+Unique_Helm_Set_11_x1,Sunwuko's Crown,head,Helm,set,,70,,,,,mainstat;sockets,Monkey King's Garb,item_head.js,yes,monk,no
+Unique_Helm_014_x1,Aughild's Spike,head,Helm,set,,,,,,,resall,Aughild's Authority,item_head.js,no,,yes
+Unique_Helm_012_x1,Cain's Insight,head,Helm,set,,,,,,,expadd,Cain's Destiny,item_head.js,no,,yes
+Unique_Helm_015_x1,Guardian's Gaze,head,Helm,set,,,,,,,ms,Guardian's Jeopardy,item_head.js,no,,yes
+P74_Unique_Helm_015,Guardian's Gaze,head,Helm,set,,,,,,,,Guardian's Jeopardy,data.json,yes,,yes
+Unique_Helm_016_x1,Sage's Apogee,head,Helm,set,,,,,,,sockets,Sage's Journey,item_head.js,yes,,yes
+P1_Unique_WizardHat_003,The Swami,head,Wizard Hat,legendary,wizard,,,,,,mainstat;apoc;maxap;custom,,item_head.js,no,wizard,no
+Unique_WizardHat_001_x1,Dark Mage's Shade,head,Wizard Hat,legendary,wizard,31,,,,,mainstat;custom,,item_head.js,yes,wizard,no
+Unique_WizardHat_101_x1,Archmage's Vicalyke,head,Wizard Hat,legendary,wizard,34,,,,,mainstat;custom,,item_head.js,yes,wizard,no
+Unique_WizardHat_103_x1,The Magistrate,head,Wizard Hat,legendary,wizard,,,,,,mainstat;sockets;custom,,item_head.js,no,wizard,no
+Unique_WizardHat_102_x1,Velvet Camaral,head,Wizard Hat,legendary,wizard,34,,,,,mainstat;sockets;custom,,item_head.js,yes,wizard,no
+Unique_WizardHat_004_x1,Storm Crow,head,Wizard Hat,legendary,wizard,60,,,,,mainstat;dmglit;custom,,item_head.js,yes,wizard,no
+Unique_VoodooMask_006_x1,Split Tusk,head,Voodoo Mask,legendary,witchdoctor,11,,,,,mainstat;maxmana,,item_head.js,yes,witchdoctor,no
+Unique_VoodooMask_005_x1,Quetzalcoatl,head,Voodoo Mask,legendary,witchdoctor,31,,,,,mainstat;custom,,item_head.js,yes,witchdoctor,no
+Unique_VoodooMask_101_x1,Carnevil,head,Voodoo Mask,legendary,witchdoctor,,,,,,mainstat;chc;custom,,item_head.js,no,witchdoctor,no
+Unique_VoodooMask_102_x1,Mask of Jeram,head,Voodoo Mask,legendary,witchdoctor,,,,,,mainstat;sockets;custom,,item_head.js,no,witchdoctor,no
+Unique_VoodooMask_002_x1,The Grin Reaper,head,Voodoo Mask,legendary,witchdoctor,51,,,,,mainstat;sockets;custom,,item_head.js,yes,witchdoctor,no
+Unique_VoodooMask_001_x1,Tiklandian Visage,head,Voodoo Mask,legendary,witchdoctor,60,,,,,mainstat;custom,,item_head.js,yes,witchdoctor,no
+Unique_VoodooMask_008_x1,Visage of Giyua,head,Voodoo Mask,legendary,witchdoctor,60,,,,,mainstat;custom,,item_head.js,yes,witchdoctor,no
+Unique_VoodooMask_007_x1,Zunimassa's Vision,head,Voodoo Mask,set,witchdoctor,60,,,,,mainstat;sockets,Zunimassa's Haunt,item_head.js,yes,witchdoctor,no
+Unique_SpiritStone_005_x1,See No Evil,head,Spirit Stone,legendary,monk,11,,,,,mainstat;expadd,,item_head.js,yes,monk,no
+Unique_SpiritStone_004_x1,Gyana Na Kashu,head,Spirit Stone,legendary,monk,19,,,,,mainstat;sockets;skill_monk_lashingtailkick;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_003_x1,Erlang Shen,head,Spirit Stone,legendary,monk,31,,,,,mainstat;ccr,,item_head.js,yes,monk,no
+Unique_SpiritStone_002_x1,The Mind's Eye,head,Spirit Stone,legendary,monk,31,,,,,mainstat;sockets;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_103_x1,Eye of Peshkov,head,Spirit Stone,legendary,monk,34,,,,,mainstat;sockets;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_102_x1,Kekegi's Unbreakable Spirit,head,Spirit Stone,legendary,monk,34,,,,,mainstat;chc;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_101_x1,The Laws of Seph,head,Spirit Stone,legendary,monk,34,,,,,mainstat;sockets;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_001_x1,Bezoar Stone,head,Spirit Stone,legendary,monk,51,,,,,mainstat,,item_head.js,yes,monk,no
+Unique_SpiritStone_006_x1,The Eye of the Storm,head,Spirit Stone,legendary,monk,51,,,,,mainstat;dmglit,,item_head.js,yes,monk,no
+P1_Unique_SpiritStone_008,Madstone,head,Spirit Stone,legendary,monk,60,,,,,mainstat;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_007_x1,Tzo Krin's Gaze,head,Spirit Stone,legendary,monk,60,,,,,mainstat;skill_monk_waveoflight;custom,,item_head.js,yes,monk,no
+Unique_SpiritStone_009_x1,Inna's Radiance,head,Spirit Stone,set,monk,60,,,,,mainstat;sockets,Inna's Mantra,item_head.js,yes,monk,no
+Unique_WizardHat_104_x1,Crown of the Primus,head,Wizard Hat,legendary,wizard,,,,,,mainstat;sockets;custom,,item_head.js,no,wizard,no
+Unique_Helm_Set_02_p2,Shrouded Mask,head,Helm,set,,70,,,,,mainstat;sockets,Delsere's Magnum Opus,item_head.js,yes,,no
+Unique_Helm_Set_03_p2,Accursed Visage,head,Helm,set,,70,,,,,mainstat;sockets,Unhallowed Essence,item_head.js,yes,,no
+Unique_Helm_Set_01_p2,Helm of the Wastes,head,Helm,set,,70,,,,,mainstat;sockets,Wrath of the Wastes,item_head.js,yes,,no
+P3_Unique_WizardHat_003,The Swami,head,Wizard Hat,legendary,wizard,30,,,,,mainstat;apoc;maxap;custom,,item_head.js,yes,wizard,no
+Unique_Helm_Set_01_p3,Uliana's Spirit,head,Helm,set,,70,,,,,mainstat;sockets,Uliana's Stratagem,item_head.js,yes,,no
+Unique_Helm_Set_02_p3,Arachyr's Visage,head,Helm,set,,70,,,,,mainstat;sockets,Spirit of Arachyr,item_head.js,yes,,no
+Unique_Helm_Set_03_p3,Crown of the Light,head,Helm,set,,70,,,,,mainstat;sockets,Seeker of the Light,item_head.js,yes,,no
+Unique_Helm_Set_13_x1,Vyr's Sightless Skull,head,Helm,set,,70,,,,,mainstat;sockets,Vyr's Amazing Arcana,item_head.js,yes,wizard,no
+P4_Unique_Helm_102,Warhelm of Kassar,head,Helm,legendary,,34,,,,,mainstat;sockets;custom,,item_head.js,yes,crusader,no
+P4_Unique_Helm_103,Visage of Gunes,head,Helm,legendary,,34,,,,,mainstat;sockets;custom,,item_head.js,yes,demonhunter,no
+Unique_Helm_Set_14_x1,The Shadow's Mask,head,Helm,set,,70,,,,,mainstat;sockets,The Shadow’s Mantle,item_head.js,yes,demonhunter,no
+p43_RetroHelm_001,Harlequin Crest,head,Helm,magic,,,,,,,vit;resall,,item_head.js,yes,,no
+p43_RetroHelm_002,The Undead Crown,head,Helm,magic,,,,,,,laek,,item_head.js,yes,,no
+p43_RetroHelm_003,Veil of Steel,head,Helm,magic,,,,,,,mainstat;vit;resall,,item_head.js,yes,,no
+P6_Necro_Set_1_Helm,Rathma's Skull Helm,head,Helm,set,,70,,,,,mainstat;sockets,Bones of Rathma,item_head.js,yes,,no
+P6_Necro_Set_2_Helm,Trag'Oul's Guise,head,Helm,set,,70,,,,,mainstat;sockets,Trag'Oul's Avatar,item_head.js,yes,,no
+P6_Necro_Set_3_Helm,Inarius's Understanding,head,Helm,set,,70,,,,,mainstat;sockets,Grace of Inarius,item_head.js,yes,,no
+P6_Necro_Set_4_Helm,Pestilence Mask,head,Helm,set,,70,,,,,mainstat;sockets,Pestilence Master's Shroud,item_head.js,yes,,no
+P6_Necro_Unique_Helm_21,Mask of Scarlet Death,head,Helm,legendary,,40,,,,,mainstat;sockets;custom,,item_head.js,yes,necromancer,no
+P6_Necro_Unique_Helm_22,Fate's Vow,head,Helm,legendary,,,,,,,mainstat;sockets;custom,,item_head.js,no,necromancer,no
+P61_Necro_Unique_Helm_22,Fate's Vow,head,Helm,legendary,,60,,,,,mainstat;sockets;custom,,item_head.js,yes,necromancer,no
+P61_Unique_VoodooMask_102_x1,Mask of Jeram,head,Voodoo Mask,legendary,witchdoctor,34,,,,,mainstat;sockets;custom,,item_head.js,yes,witchdoctor,no
+P65_Unique_VoodooMask_101_x1,Carnevil,head,Voodoo Mask,legendary,witchdoctor,34,,,,,mainstat;chc;custom,,item_head.js,yes,witchdoctor,no
+P66_Unique_Helm_014,Aughild's Spike,head,Helm,set,,,,,,,resall,Aughild's Authority,item_head.js,yes,,yes
+P66_Unique_Helm_012,Cain's Insight,head,Helm,set,,,,,,,expadd,Cain's Destiny,item_head.js,yes,,yes
+P67_Unique_Helm_Set_01,Crown of Valor,head,Helm,set,,70,,,,,mainstat;sockets,Aegis of Valor,item_head.js,yes,,no
+P67_Unique_Helm_Set_02,Decree of Justice,head,Helm,set,,70,,,,,mainstat;sockets,Patterns of Justice,item_head.js,yes,,no
+P68_Unique_Helm_Set_04,Mundunugu's Headdress,head,Voodoo Mask,set,witchdoctor,70,,,,,mainstat;sockets,Mundunugu's Regalia,item_head.js,yes,witchdoctor,no
+P68_Unique_Helm_Set_05,Skull of Savages,head,Helm,set,,70,,,,,mainstat;sockets,Horde of the Ninety Savages,item_head.js,yes,,no
+P68_Unique_WizardHat_103,The Magistrate,head,Wizard Hat,legendary,wizard,34,,,,,mainstat;sockets;custom,,item_head.js,yes,wizard,no
+P68_Unique_Helm_Set_03,Typhon's Frons,head,Helm,set,,70,,,,,mainstat;sockets,The Typhon's Veil,item_head.js,yes,,no
+P69_Unique_Helm_Set_06,Dystopian Goggles,head,Helm,set,,70,,,,,mainstat;sockets,Gears of Dreadlands,item_head.js,yes,,no
+P69_Necro_Set_5_Helm,Luxurious Bauta,head,Helm,set,,70,,,,,mainstat;sockets,Masquerade of the Burning Carnival,item_head.js,yes,,no
+P74_Unique_WizardHat_104,Crown of the Primus,head,Wizard Hat,legendary,wizard,53,,,,,mainstat;sockets;custom,,data.json,yes,wizard,no
+P74_Unique_Helm_006,Mempo of Twilight,head,Helm,legendary,,60,,,,,mainstat;resall;ias;sockets;custom,,data.json,yes,wizard,no
+Unique_Pants_007_x1,Pox Faulds,legs,Pants,legendary,,,,,,,mainstat;custom,,item_legs.js,no,,no
+Unique_Pants_007_p2,Pox Faulds,legs,Pants,legendary,,11,,,,,mainstat;custom,,item_legs.js,yes,,no
+Unique_Pants_002_x1,Hammer Jammers,legs,Pants,legendary,,,,,,,mainstat;ms;gf,,item_legs.js,no,,no
+Unique_Pants_101_x1,Hexing Pants of Mr. Yan,legs,Pants,legendary,,34,,,,,mainstat;custom,,item_legs.js,yes,,no
+Unique_Pants_001_x1,Swamp Land Waders,legs,Pants,legendary,,,,,,,mainstat;dmgpsn;ccr;sockets,,item_legs.js,no,,no
+Unique_Pants_006_x1,Depth Diggers,legs,Pants,legendary,,,,,,,mainstat;resall;gf,,item_legs.js,no,,no
+Unique_Pants_006_p1,Depth Diggers,legs,Pants,legendary,,60,,,,,mainstat;resall;custom,,item_legs.js,yes,,no
+Unique_Pants_005_x1,Skelon's Deceit,legs,Pants,legendary,,,,,,,,,item_legs.js,yes,,no
+Unique_Pants_013_x1,Blackthorne's Jousting Mail,legs,Pants,set,,60,,,,,mainstat;sockets;elemental,Blackthorne's Battlegear,item_legs.js,yes,,no
+Unique_Pants_008_x1,Inna's Temperance,legs,Pants,set,,60,,,,,mainstat;sockets,Inna's Mantra,item_legs.js,yes,monk,no
+Unique_Pants_Set_10_x1,Cuisses of Akkhan,legs,Pants,set,,70,,,,,mainstat;sockets,Armor of Akkhan,item_legs.js,yes,,no
+Unique_Pants_Set_06_x1,Firebird's Down,legs,Pants,set,,70,,,,,mainstat;sockets,Firebird's Finery,item_legs.js,yes,,no
+Unique_Pants_Set_16_x1,Helltooth Leg Guards,legs,Pants,set,,70,,,,,mainstat;sockets,Helltooth Harness,item_legs.js,yes,,no
+Unique_Pants_Set_09_x1,Jade Harvester's Courage,legs,Pants,set,,70,,,,,mainstat;sockets,Raiment of the Jade Harvester,item_legs.js,yes,witchdoctor,no
+Unique_Pants_Set_07_x1,Marauder's Encasement,legs,Pants,set,,70,,,,,mainstat;sockets,Embodiment of the Marauder,item_legs.js,yes,,no
+Unique_Pants_Set_05_x1,Raekor's Breeches,legs,Pants,set,,70,,,,,mainstat;sockets,The Legacy of Raekor,item_legs.js,yes,,no
+Unique_Pants_Set_01_p1,Roland's Determination,legs,Pants,set,,70,,,,,mainstat;sockets,Roland's Legacy,item_legs.js,yes,,no
+Unique_Pants_Set_08_x1,Scales of the Dancing Serpent,legs,Pants,set,,70,,,,,mainstat;sockets,Raiment of a Thousand Storms,item_legs.js,yes,,no
+Unique_Pants_Set_14_x1,The Shadow's Coil,legs,Pants,set,,70,,,,,mainstat;sockets,The Shadow’s Mantle,item_legs.js,yes,demonhunter,no
+Unique_Pants_Set_13_x1,Vyr's Fantastic Finery,legs,Pants,set,,70,,,,,mainstat;sockets,Vyr's Amazing Arcana,item_legs.js,yes,wizard,no
+Unique_Pants_Set_15_x1,Weight of the Earth,legs,Pants,set,,70,,,,,mainstat;sockets,Might of the Earth,item_legs.js,yes,barbarian,no
+Unique_Pants_009_x1,Asheara's Pace,legs,Pants,set,,,,,,,,Asheara's Vestments,item_legs.js,yes,,yes
+Unique_Pants_010_x1,Cain's Habit,legs,Pants,set,,,,,,,,Cain's Destiny,item_legs.js,no,,yes
+Unique_Pants_012_x1,Captain Crimson's Thrust,legs,Pants,set,,,,,,,,Captain Crimson's Trimmings,item_legs.js,no,,yes
+Unique_Pants_014_x1,Demon's Plate,legs,Pants,set,,,,,,,,Demon's Hide,item_legs.js,yes,,yes
+P2_Unique_Pants_02,Immortal King's Stature,legs,Pants,set,,60,,,,,mainstat;sockets,Immortal King's Call,item_legs.js,yes,barbarian,no
+P2_Unique_Pants_01,Natalya's Leggings,legs,Pants,set,,60,,,,,mainstat;sockets,Natalya's Vengeance,item_legs.js,yes,demonhunter,no
+P2_Unique_Pants_04,Zunimassa's Cloth,legs,Pants,set,,60,,,,,mainstat;sockets,Zunimassa's Haunt,item_legs.js,yes,witchdoctor,no
+P2_Unique_Pants_03,Tal Rasha's Stride,legs,Pants,set,,60,,,,,mainstat;sockets,Tal Rasha's Elements,item_legs.js,yes,wizard,no
+Unique_Pants_Set_02_p2,Leg Guards of Mystery,legs,Pants,set,,70,,,,,mainstat;sockets,Delsere's Magnum Opus,item_legs.js,yes,,no
+Unique_Pants_Set_03_p2,Unholy Plates,legs,Pants,set,,70,,,,,mainstat;sockets,Unhallowed Essence,item_legs.js,yes,,no
+Unique_Pants_Set_01_p2,Tasset of the Wastes,legs,Pants,set,,70,,,,,mainstat;sockets,Wrath of the Wastes,item_legs.js,yes,,no
+Unique_Pants_Set_01_p3,Uliana's Burden,legs,Pants,set,,70,,,,,mainstat;sockets,Uliana's Stratagem,item_legs.js,yes,,no
+Unique_Pants_Set_02_p3,Arachyr's Legs,legs,Pants,set,,70,,,,,mainstat;sockets,Spirit of Arachyr,item_legs.js,yes,,no
+Unique_Pants_Set_03_p3,Towers of the Light,legs,Pants,set,,70,,,,,mainstat;sockets,Seeker of the Light,item_legs.js,yes,,no
+P4_Unique_Pants_002,Hammer Jammers,legs,Pants,legendary,,31,,,,,mainstat;sockets;custom,,item_legs.js,yes,crusader,no
+Unique_Pants_Set_11_x1,Sunwuko's Leggings,legs,Pants,set,,70,,,,,mainstat;sockets,Monkey King's Garb,item_legs.js,yes,monk,no
+Unique_Pants_Set_12_x1,Renewal of the Invoker,legs,Pants,set,,70,,,,,mainstat;sockets;thorns,Thorns of the Invoker,item_legs.js,yes,,no
+P41_Unique_Pants_001,Swamp Land Waders,legs,Pants,legendary,,51,,,,,mainstat;elemental;sockets;custom,,item_legs.js,yes,witchdoctor,no
+P6_Necro_Set_1_Pants,Rathma's Skeletal Legplates,legs,Pants,set,,70,,,,,mainstat;sockets,Bones of Rathma,item_legs.js,yes,,no
+P6_Necro_Set_2_Pants,Trag'Oul's Hide,legs,Pants,set,,70,,,,,mainstat;sockets,Trag'Oul's Avatar,item_legs.js,yes,,no
+P6_Necro_Set_3_Pants,Inarius's Reticence,legs,Pants,set,,70,,,,,mainstat;sockets,Grace of Inarius,item_legs.js,yes,,no
+P6_Necro_Set_4_Pants,Pestilence Incantations,legs,Pants,set,,70,,,,,mainstat;sockets,Pestilence Master's Shroud,item_legs.js,yes,,no
+P6_Necro_Unique_Pants_21,Golemskin Breeches,legs,Pants,legendary,,,,,,,mainstat;sockets;custom,,item_legs.js,no,,no
+P6_Necro_Unique_Pants_22,Defiler Cuisses,legs,Pants,legendary,,,,,,,mainstat;sockets;custom,,item_legs.js,no,necromancer,no
+P61_Necro_Unique_Pants_21,Golemskin Breeches,legs,Pants,legendary,,23,,,,,mainstat;sockets;custom,,item_legs.js,yes,necromancer,no
+P61_Necro_Unique_Pants_22,Defiler Cuisses,legs,Pants,legendary,,,,,,,mainstat;sockets;custom,,item_legs.js,no,necromancer,no
+P66_Unique_Pants_010,Cain's Habit,legs,Pants,set,,,,,,,,Cain's Destiny,item_legs.js,yes,,yes
+P66_Unique_Pants_012,Captain Crimson's Thrust,legs,Pants,set,,,,,,,,Captain Crimson's Trimmings,item_legs.js,yes,,yes
+P67_Unique_Pants_Set_01,Chausses of Valor,legs,Pants,set,,70,,,,,mainstat;sockets,Aegis of Valor,item_legs.js,yes,,no
+P67_Unique_Pants_Set_02,Mountains of Justice,legs,Pants,set,,70,,,,,mainstat;sockets,Patterns of Justice,item_legs.js,yes,,no
+P68_Unique_Pants_Set_05,Leggings of Savages,legs,Pants,set,,70,,,,,mainstat;sockets,Horde of the Ninety Savages,item_legs.js,yes,,no
+P68_Unique_Pants_Set_04,Mundunugu's Decoration,legs,Pants,set,,70,,,,,mainstat;sockets,Mundunugu's Regalia,item_legs.js,yes,,no
+P68_Unique_Pants_Set_03,Typhon's Abdomen,legs,Pants,set,,70,,,,,mainstat;sockets,The Typhon's Veil,item_legs.js,yes,,no
+P69_Unique_Pants_Set_06,Cold Cathode Trousers,legs,Pants,set,,70,,,,,mainstat;sockets,Gears of Dreadlands,item_legs.js,yes,,no
+P69_Necro_Set_5_Pants,Elegant Pants,legs,Pants,set,,70,,,,,mainstat;sockets,Masquerade of the Burning Carnival,item_legs.js,yes,,no
+P7_Necro_Unique_Pants_22,Defiler Cuisses,legs,Pants,legendary,,42,,,,,mainstat;sockets;custom,,data.json,yes,necromancer,no
+x1_Amulet_norm_unique_25,Hellfire Amulet,neck,Amulet,legendary,,,,,,,mainstat;sockets;extra_passive,,item_neck.js,yes,,yes
+Unique_Amulet_003_x1,Moonlight Ward,neck,Amulet,legendary,,11,,,,,chc;dmgarc;custom,,item_neck.js,yes,,no
+Unique_Amulet_010_x1,Squirt's Necklace,neck,Amulet,legendary,,,,,,,mainstat;gf;chd,,item_neck.js,no,,no
+Unique_Amulet_014_x1,Eye of Etlich,neck,Amulet,legendary,,31,,,,,elemental;rangedef,,item_neck.js,yes,,no
+Unique_Amulet_009_x1,Rondal's Locket,neck,Amulet,legendary,,31,,,,,mainstat;healbonus,,item_neck.js,yes,,no
+Unique_Amulet_012_x1,Talisman of Aranoch,neck,Amulet,legendary,,31,,,,,mainstat;custom,,item_neck.js,yes,,no
+Unique_Amulet_102_x1,Ancestors' Grace,neck,Amulet,legendary,,34,,,,,mainstat;vit;custom,,item_neck.js,yes,,no
+Unique_Amulet_103_x1,Countess Julia's Cameo,neck,Amulet,legendary,,34,,,,,mainstat;ias;custom,,item_neck.js,yes,,no
+Unique_Amulet_107_x1,Dovu Energy Trap,neck,Amulet,legendary,,34,,,,,mainstat;cdr;custom,,item_neck.js,yes,,no
+Unique_Amulet_101_x1,Haunt of Vaxo,neck,Amulet,legendary,,34,,,,,mainstat;chc;custom,,item_neck.js,yes,,no
+Unique_Amulet_108_x1,Rakoff's Glass of Life,neck,Amulet,legendary,,34,,,,,mainstat;healbonus;custom,,item_neck.js,yes,,no
+Unique_Amulet_104_x1,The Ess of Johan,neck,Amulet,legendary,,34,,,,,mainstat;cdr;custom,,item_neck.js,yes,,no
+Unique_Amulet_013_x1,Holy Beacon,neck,Amulet,legendary,,51,,,,,mainstat;dmghol;spiritregen,,item_neck.js,yes,,no
+Unique_Amulet_002_p1,Kymbo's Gold,neck,Amulet,legendary,,51,,,,,mainstat;gf;custom,,item_neck.js,yes,,no
+Unique_Amulet_001_x1,The Flavor of Time,neck,Amulet,legendary,,,,,,,cdr;ms,,item_neck.js,no,,no
+Unique_Amulet_015_x1,Mara's Kaleidoscope,neck,Amulet,legendary,,60,,,,,mainstat;chc;custom,,item_neck.js,yes,,no
+Unique_Amulet_005_x1,Ouroboros,neck,Amulet,legendary,,60,,,,,mainstat;chc,,item_neck.js,yes,,no
+Unique_Amulet_006_x1,The Star of Azkaranth,neck,Amulet,legendary,,60,,,,,mainstat;cdr;custom,,item_neck.js,yes,,no
+Unique_Amulet_004_x1,Xephirian Amulet,neck,Amulet,legendary,,60,,,,,mainstat;ias;custom,,item_neck.js,yes,,no
+Unique_Amulet_109_x1_210,Halcyon's Ascent,neck,Amulet,legendary,,61,,,,,mainstat;sockets;custom,,item_neck.js,yes,demonhunter,no
+Unique_Amulet_016_x1,Blackthorne's Duncraig Cross,neck,Amulet,set,,60,,,,,mainstat;chc,Blackthorne's Battlegear,item_neck.js,yes,,no
+Unique_Amulet_007_x1,Tal Rasha's Allegiance,neck,Amulet,set,,60,,,,,mainstat;chd,Tal Rasha's Elements,item_neck.js,yes,wizard,no
+Unique_Amulet_008_x1,The Traveler's Pledge,neck,Amulet,set,,60,,,,,mainstat;chd,Endless Walk,item_neck.js,yes,,no
+Unique_Amulet_Set_11_x1,Sunwuko's Shines,neck,Amulet,set,,70,,,,,mainstat;sockets,Monkey King's Garb,item_neck.js,yes,monk,no
+P43_AkkhanSet_Amulet,Talisman of Akkhan,neck,Amulet,set,,70,,,,,mainstat;chc,Armor of Akkhan,item_neck.js,yes,,no
+p43_RetroAmulet_001,Optic Amulet,neck,Amulet,magic,,,,,,,resall;meleedef,,item_neck.js,yes,,no
+P6_Unique_Amulet_01,The Johnstone,neck,Amulet,legendary,,61,,,,,mainstat;chd;custom,,item_neck.js,yes,necromancer,no
+P6_Unique_Amulet_02,Haunted Visions,neck,Amulet,legendary,,,,,,,mainstat;sockets;custom,,item_neck.js,no,necromancer,no
+P6_Unique_Amulet_03,Wisdom of Kalan,neck,Amulet,legendary,,22,,,,,mainstat;ias;custom,,item_neck.js,yes,necromancer,no
+P66_Unique_Amulet_010,Squirt's Necklace,neck,Amulet,legendary,,11,,,,,mainstat;gf;chd;custom,,item_neck.js,yes,,no
+P66_Unique_Amulet_001,The Flavor of Time,neck,Amulet,legendary,,51,,,,,cdr;ms;custom,,item_neck.js,yes,,no
+P69_Unique_Amulet_02,Haunted Visions,neck,Amulet,legendary,,70,,,,,mainstat;sockets;custom,,item_neck.js,yes,necromancer,no
+Unique_Shield_007_x1,Denial,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,mainstat;resall;ccr,,item_offhand.js,no,,no
+P2_Unique_Shield_007,Denial,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,mainstat;custom,,item_offhand.js,no,crusader,no
+Unique_Shield_101_x1,Defender of Westmarch,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,mainstat;block;custom,,item_offhand.js,no,,no
+Unique_Shield_101_p2,Defender of Westmarch,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,34,,,,,mainstat;block;custom,,item_offhand.js,yes,,no
+Unique_Shield_102_x1,Eberli Charo,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,34,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+Unique_Shield_004_x1,Freeze of Deflection,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,34,,,,,mainstat;custom,,item_offhand.js,yes,,no
+Unique_Shield_104_x1,Vo'Toyias Spiker,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,34,,,,,mainstat;thorns;custom,,item_offhand.js,yes,crusader,no
+Unique_Shield_008_x1,Lidless Wall,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,51,,,,,mainstat;elemental;resource,,item_offhand.js,yes,,no
+Unique_Shield_002_x1,Ivory Tower,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,mainstat;vit;meleedef,,item_offhand.js,no,,no
+P2_Unique_Shield_002,Ivory Tower,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,60,,,,,mainstat;vit;custom,,item_offhand.js,yes,,no
+Unique_Shield_009_x1,Stormshield,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,60,,,,,mainstat;meleedef;baseblock,,item_offhand.js,yes,,no
+Unique_Shield_011_x1,Wall of Man,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,custom,,item_offhand.js,yes,,no
+Unique_Shield_012_x1,Hallowed Barricade,offhand,Shield,set,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,,,,,,dmghol,Hallowed Protectors,item_offhand.js,yes,,yes
+Unique_CruShield_104_x1,Akarat's Awakening,offhand,Crusader Shield,legendary,crusader,34,,,,,mainstat;block;custom,,item_offhand.js,yes,crusader,no
+Unique_CruShield_103_x1,Hallowed Bulwark,offhand,Crusader Shield,legendary,crusader,34,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+Unique_CruShield_105_x1,Hellskull,offhand,Crusader Shield,legendary,crusader,34,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+Unique_CruShield_102_x1,Jekangbord,offhand,Crusader Shield,legendary,crusader,,,,,,mainstat;custom,,item_offhand.js,no,crusader,no
+Unique_CruShield_106_x1,Sublime Conviction,offhand,Crusader Shield,legendary,crusader,34,,,,,mainstat;block;custom,,item_offhand.js,yes,crusader,no
+Unique_CruShield_107_x1,The Final Witness,offhand,Crusader Shield,legendary,crusader,34,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+P1_CruShield_norm_unique_01,Frydehr's Wrath,offhand,Crusader Shield,legendary,crusader,,,,,,mainstat;custom,,item_offhand.js,no,crusader,no
+P1_CruShield_norm_unique_02,Unrelenting Phalanx,offhand,Crusader Shield,legendary,crusader,70,,,,,mainstat;skill_crusader_phalanx;custom,,item_offhand.js,yes,crusader,no
+Unique_CruShield_101_x1,Piro Marella,offhand,Crusader Shield,legendary,crusader,,,,,,custom,,item_offhand.js,yes,crusader,no
+Unique_Mojo_003_x1,Gazing Demise,offhand,Mojo,legendary,witchdoctor,,,,,,mainstat;regen;manaregen,,item_offhand.js,no,witchdoctor,no
+Unique_Mojo_004_x1,Homunculus,offhand,Mojo,legendary,witchdoctor,,,,,,mainstat;maxmana;custom,,item_offhand.js,no,witchdoctor,no
+Unique_Mojo_004_p2,Homunculus,offhand,Mojo,legendary,witchdoctor,,,,,,mainstat;chc;maxmana;custom;skill_witchdoctor_sacrifice,,item_offhand.js,no,witchdoctor,no
+Unique_Mojo_102_x1,Shukrani's Triumph,offhand,Mojo,legendary,witchdoctor,,,,,,mainstat;chc;manaregen;custom,,item_offhand.js,no,witchdoctor,no
+Unique_Mojo_009_x1,Thing of the Deep,offhand,Mojo,legendary,witchdoctor,,,,,,mainstat;chc;manaregen;maxmana;pickup,,item_offhand.js,no,witchdoctor,no
+Unique_Mojo_008_x1,Uhkapian Serpent,offhand,Mojo,legendary,witchdoctor,60,,,,,mainstat;chc;custom,,item_offhand.js,yes,witchdoctor,no
+Unique_Mojo_002_x1,Spite,offhand,Mojo,legendary,witchdoctor,,,,,,,,item_offhand.js,no,witchdoctor,no
+Unique_Mojo_010_x1,Manajuma's Gory Fetch,offhand,Mojo,set,witchdoctor,60,,,,,mainstat;chc,Manajuma's Way,item_offhand.js,yes,witchdoctor,no
+Unique_Mojo_011_x1,Zunimassa's String of Skulls,offhand,Mojo,set,witchdoctor,60,,,,,mainstat;vit;chc;skill_witchdoctor_fetisharmy,Zunimassa's Haunt,item_offhand.js,yes,witchdoctor,no
+Unique_Orb_005_x1,Winter Flurry,offhand,Source,legendary,wizard,,,,,,mainstat;dmgcol;custom,,item_offhand.js,no,wizard,no
+Unique_Orb_103_x1,Light of Grace,offhand,Source,legendary,wizard,34,,,,,mainstat;chc;custom,,item_offhand.js,yes,wizard,no
+Unique_Orb_101_x1,Mirrorball,offhand,Source,legendary,wizard,,,,,,mainstat;chc;custom,,item_offhand.js,no,wizard,no
+Unique_Orb_102_x1,Myken's Ball of Hate,offhand,Source,legendary,wizard,34,,,,,mainstat;chc;custom,,item_offhand.js,yes,wizard,no
+Unique_Orb_001_x1,The Oculus,offhand,Source,legendary,wizard,60,,,,,mainstat;apoc;skill_wizard_teleport_cooldown;custom,,item_offhand.js,no,wizard,no
+Unique_Orb_003_x1,Triumvirate,offhand,Source,legendary,wizard,,,,,,mainstat;chc;maxap;dmgfir;dmglit;dmgarc,,item_offhand.js,no,wizard,no
+P2_Unique_Orb_003,Triumvirate,offhand,Source,legendary,wizard,,,,,,mainstat;chc;custom,,item_offhand.js,no,wizard,no
+Unique_Orb_004_x1,Cosmic Strand,offhand,Source,legendary,wizard,,,,,,custom,,item_offhand.js,yes,wizard,no
+Unique_Orb_011_x1,Chantodo's Force,offhand,Source,set,wizard,60,,,,,mainstat;chc;apoc;maxap,Chantodo's Resolve,item_offhand.js,yes,wizard,no
+Unique_Orb_012_x1,Tal Rasha's Unwavering Glare,offhand,Source,set,wizard,60,,,,,mainstat;chc;skill_wizard_meteor,Tal Rasha's Elements,item_offhand.js,yes,wizard,no
+Unique_Orb_Set_06_x1,Firebird's Eye,offhand,Source,set,wizard,70,,,,,mainstat;dmgfir,Firebird's Finery,item_offhand.js,yes,wizard,no
+Unique_Quiver_006_x1,Fletcher's Pride,offhand,Quiver,legendary,demonhunter,11,,,,,mainstat;rcr,,item_offhand.js,yes,demonhunter,no
+Unique_Quiver_002_x1,Sin Seekers,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;chc,,item_offhand.js,no,demonhunter,no
+Unique_Quiver_004_x1,Holy Point Shot,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;elemental,,item_offhand.js,no,demonhunter,no
+Unique_Quiver_005_x1,Silver Star Piercers,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;bleed,,item_offhand.js,yes,demonhunter,no
+Unique_Quiver_005_p1,Spines of Seething Hatred,offhand,Quiver,legendary,demonhunter,31,,,,,mainstat;custom,,item_offhand.js,yes,demonhunter,no
+Unique_Quiver_102_x1,Bombardier's Rucksack,offhand,Quiver,legendary,demonhunter,,,,,,dex;chc;skill_demonhunter_sentry;custom,,item_offhand.js,no,demonhunter,no
+Unique_Quiver_103_x1,Emimei's Duffel,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;custom,,item_offhand.js,no,demonhunter,no
+Unique_Quiver_101_x1,The Ninth Cirri Satchel,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;custom,,item_offhand.js,no,demonhunter,no
+Unique_Quiver_001_p1,Meticulous Bolts,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;custom,,item_offhand.js,yes,demonhunter,no
+Unique_Quiver_007_x1,Dead Man's Legacy,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;chc,,item_offhand.js,no,demonhunter,no
+P2_Unique_Quiver_007,Dead Man's Legacy,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;chc;custom,,item_offhand.js,no,demonhunter,no
+Unique_Quiver_003_x1,Archfiend Arrows,offhand,Quiver,legendary,demonhunter,,,,,,chc;edmg,,item_offhand.js,yes,demonhunter,no
+P2_mojo_norm_unique_02,Henri's Perquisition,offhand,Mojo,legendary,witchdoctor,70,,,,,chc;mainstat;custom;dura,,item_offhand.js,yes,witchdoctor,no
+Unique_Shield_103_x1,Guard of Johanna,offhand,Crusader Shield,legendary,crusader,15,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+P4_Unique_Mojo_001,Vile Hive,offhand,Mojo,legendary,witchdoctor,70,,,,,mainstat;chc;custom,,item_offhand.js,yes,witchdoctor,no
+P4_Unique_Mojo_002,Thing of the Deep,offhand,Mojo,legendary,witchdoctor,51,,,,,mainstat;chc;maxmana;custom,,item_offhand.js,yes,witchdoctor,no
+P4_Unique_Mojo_003,Wilken's Reach,offhand,Mojo,legendary,witchdoctor,70,,,,,mainstat;chc;maxmana;skill_witchdoctor_graspofthedead;custom,,item_offhand.js,yes,witchdoctor,no
+P4_Unique_Orb_001,Primordial Soul,offhand,Source,legendary,wizard,70,,,,,mainstat;chc;custom,,item_offhand.js,yes,wizard,no
+P4_Unique_Orb_002,Etched Sigil,offhand,Source,legendary,wizard,,,,,,mainstat;chc;custom,,item_offhand.js,no,wizard,no
+P4_Unique_Orb_003,Triumvirate,offhand,Source,legendary,wizard,,,,,,mainstat;chc;custom,,item_offhand.js,no,wizard,no
+P43_Unique_Quiver_001,Sin Seekers,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;chc;skill_demonhunter_rapidfire;custom,,item_offhand.js,no,demonhunter,no
+P4_Unique_Shield_Set_01_x1,Shield of the Steed,offhand,Crusader Shield,set,crusader,70,,,,,mainstat;chc,Norvald's Fervor,item_offhand.js,yes,crusader,no
+Unique_Shield_106_x1,Shield of Fury,offhand,Crusader Shield,legendary,crusader,,,,,,mainstat;custom,,item_offhand.js,no,crusader,no
+P4_Unique_Orb_004,Orb of Infinite Depth,offhand,Source,legendary,wizard,,,,,,mainstat;chc;custom,,item_offhand.js,no,wizard,no
+P41_Unique_Quiver_001,Augustine's Panacea,offhand,Quiver,legendary,demonhunter,51,,,,,mainstat;chc;custom,,item_offhand.js,yes,demonhunter,no
+P42_Unique_Mojo_003_x1,Gazing Demise,offhand,Mojo,legendary,witchdoctor,,,,,,mainstat;regen;manaregen;custom,,item_offhand.js,no,witchdoctor,no
+P42_Unique_Mojo_004,Homunculus,offhand,Mojo,legendary,witchdoctor,31,,,,,mainstat;chc;maxmana;custom;skill_witchdoctor_sacrifice,,item_offhand.js,yes,witchdoctor,no
+P5_Unique_Quiver_004_x1,Holy Point Shot,offhand,Quiver,legendary,demonhunter,,,,,,mainstat;elemental;custom,,item_offhand.js,no,demonhunter,no
+P6_Unique_Phylactery_01,Lost Time,offhand,Phylactery,legendary,necromancer,,,,,,mainstat;custom,,item_offhand.js,no,necromancer,no
+P6_Unique_Phylactery_02,Bone Ringer,offhand,Phylactery,legendary,necromancer,61,,,,,mainstat;chc;custom,,item_offhand.js,yes,necromancer,no
+P6_Unique_Phylactery_03,Leger's Disdain,offhand,Phylactery,legendary,necromancer,,,,,,mainstat;vit;custom,,item_offhand.js,no,necromancer,no
+P6_Unique_Phylactery_04,Iron Rose,offhand,Phylactery,legendary,necromancer,,,,,,mainstat;vit;custom,,item_offhand.js,no,necromancer,no
+P6_Unique_Shield_01,Jesseth Skullshield,offhand,Shield,set,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,70,,,,,mainstat;cdr,Jesseth Arms,item_offhand.js,yes,,no
+P61_CruShield_norm_unique_01,Frydehr's Wrath,offhand,Crusader Shield,legendary,crusader,70,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+P61_Unique_CruShield_102_x1,Jekangbord,offhand,Crusader Shield,legendary,crusader,,,,,,mainstat;custom,,item_offhand.js,no,crusader,no
+P61_Unique_Orb_003,Triumvirate,offhand,Source,legendary,wizard,60,,,,,mainstat;chc;custom,,item_offhand.js,yes,wizard,no
+P61_Unique_Orb_004,Orb of Infinite Depth,offhand,Source,legendary,wizard,70,,,,,mainstat;chc;custom,,item_offhand.js,yes,wizard,no
+P61_Unique_Phylactery_01,Lost Time,offhand,Phylactery,legendary,necromancer,30,,,,,mainstat;custom,,item_offhand.js,yes,necromancer,no
+P61_Unique_Phylactery_03,Leger's Disdain,offhand,Phylactery,legendary,necromancer,45,,,,,mainstat;vit;custom,,item_offhand.js,yes,necromancer,no
+P61_Unique_Quiver_007,Dead Man's Legacy,offhand,Quiver,legendary,demonhunter,60,,,,,mainstat;chc;custom,,item_offhand.js,yes,demonhunter,no
+P61_Unique_Shield_007,Denial,offhand,Shield,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;demonhunter;templar;shaman,15,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+P61_Unique_Shield_106_x1,Shield of Fury,offhand,Crusader Shield,legendary,crusader,33,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+P61_Unique_Orb_002,Etched Sigil,offhand,Source,legendary,wizard,,,,,,mainstat;chc;custom,,item_offhand.js,no,wizard,no
+P65_Unique_Phylactery_04,Iron Rose,offhand,Phylactery,legendary,necromancer,,,,,,mainstat;vit;custom,,item_offhand.js,no,necromancer,no
+P65_Unique_CruShield_102_x1,Jekangbord,offhand,Crusader Shield,legendary,crusader,34,,,,,mainstat;custom,,item_offhand.js,yes,crusader,no
+P65_Unique_Quiver_001,Sin Seekers,offhand,Quiver,legendary,demonhunter,30,,,,,mainstat;chc;skill_demonhunter_rapidfire;custom,,item_offhand.js,yes,demonhunter,no
+P66_Unique_Mojo_002,Spite,offhand,Mojo,legendary,witchdoctor,,,,,,maxmana;chc;custom,,item_offhand.js,yes,witchdoctor,no
+P68_Unique_Mojo_003,Gazing Demise,offhand,Mojo,legendary,witchdoctor,11,,,,,mainstat;manaregen;custom,,item_offhand.js,yes,witchdoctor,no
+P69_Unique_Quiver_103,Emimei's Duffel,offhand,Quiver,legendary,demonhunter,34,,,,,mainstat;custom,,item_offhand.js,yes,demonhunter,no
+P69_Unique_Quiver_004,Holy Point Shot,offhand,Quiver,legendary,demonhunter,31,,,,,mainstat;elemental;custom,,item_offhand.js,yes,demonhunter,no
+P69_Unique_Quiver_101,The Ninth Cirri Satchel,offhand,Quiver,legendary,demonhunter,34,,,,,mainstat;custom,,item_offhand.js,yes,demonhunter,no
+P610_Unique_Orb_002,Etched Sigil,offhand,Source,legendary,wizard,33,,,,,mainstat;chc;custom,,data.json,yes,wizard,no
+P610_Unique_Orb_005,Winter Flurry,offhand,Source,legendary,wizard,13,,,,,mainstat;dmgcol;custom,,data.json,yes,wizard,no
+P610_Unique_Mojo_001,Ursua's Trodden Effigy,offhand,Mojo,legendary,witchdoctor,60,,,,,mainstat;chc;custom,,data.json,yes,witchdoctor,no
+P72_Unique_Quiver_102,Bombardier's Rucksack,offhand,Quiver,legendary,demonhunter,34,,,,,dex;chc;skill_demonhunter_sentry;custom,,data.json,yes,demonhunter,no
+P72_Unique_Mojo_102,Shukrani's Triumph,offhand,Mojo,legendary,witchdoctor,34,,,,,mainstat;chc;manaregen;custom,,data.json,yes,witchdoctor,no
+P74_Unique_Phylactery_04,Iron Rose,offhand,Phylactery,legendary,necromancer,35,,,,,mainstat;vit;custom,,data.json,yes,necromancer,no
+P74_Unique_Orb_101,Mirrorball,offhand,Source,legendary,wizard,34,,,,,mainstat;chc;custom,,data.json,yes,wizard,no
+Unique_Axe_1H_003_x1,Genzaniku,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,11,,249,461,1.3,custom,,item_onehand.js,yes,,no
+Unique_Axe_1H_001_x1,Flesh Tearer,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,249,461,1.3,wpnphy;bleed,,item_onehand.js,yes,,no
+Unique_Axe_1H_103_x1,Hack,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,249,461,1.3,mainstat;custom,,item_onehand.js,yes,,no
+Unique_Axe_1H_006_x1,The Butcher's Sickle,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,51,,249,461,1.3,custom,,item_onehand.js,yes,,no
+Unique_Axe_1H_007_x1,The Burning Axe of Sankis,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,249,461,1.3,wpnfir;dmgfir;custom,,item_onehand.js,yes,,no
+Unique_Axe_1H_004_x1,Utar's Roar,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,249,461,1.3,wpncol;dmgcol,,item_onehand.js,yes,,no
+Unique_Axe_1H_013_x1,Hallowed Breach,onehand,Axe,set,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,249,461,1.3,wpnhol,Hallowed Protectors,item_onehand.js,yes,,yes
+Unique_Dagger_003_x1,The Barber,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat;damage;chd,,item_onehand.js,no,,no
+Unique_Dagger_007_x1,Pig Sticker,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,107,321,1.5,mainstat;damage_beasts;damage_humans;custom,,item_onehand.js,yes,,no
+Unique_Dagger_002_x1,Kill,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,wpnpsn;weaponias,,item_onehand.js,yes,,no
+Unique_Dagger_010_x1_210,Wizardspike,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat;custom,,item_onehand.js,no,,no
+Unique_Dagger_006_x1,Blood-Magic Edge,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,wpnphy;weaponias;custom,,item_onehand.js,yes,,no
+Unique_Mace_1H_002_x1,Odyn Son,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,11,,316,585,1.2,wpnlit;dmglit;custom,,item_onehand.js,yes,,no
+Unique_Mace_1H_005_x1,Nutcracker,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,316,585,1.2,wpnphy,,item_onehand.js,yes,,no
+Unique_Mace_1H_007_x1,Telranden's Hand,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,316,585,1.2,wpnarc;mainstat;weaponias,,item_onehand.js,yes,,no
+Unique_Mace_1H_103_x1,Jace's Hammer of Vigilance,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,316,585,1.2,wpnhol;mainstat;skill_crusader_blessedhammer;custom,,item_onehand.js,yes,crusader,no
+Unique_Mace_1H_102_x1,Solanium,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,316,585,1.2,wpnhol;sockets;custom,,item_onehand.js,yes,,no
+Unique_Mace_1H_008_x1,Nailbiter,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,51,,316,585,1.2,wpnphy;damage;thorns,,item_onehand.js,yes,,no
+Unique_Mace_1H_003_x1,Neanderthal,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,51,,316,585,1.2,wpnphy;mainstat;thorns,,item_onehand.js,yes,,no
+Unique_Mace_1H_001_x1,Echoing Fury,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,316,585,1.2,wpnphy;mainstat;weaponias;damage;hitfear,,item_onehand.js,no,,no
+Unique_Mace_1H_011_x1,Sun Keeper,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,316,585,1.2,wpnhol;mainstat;gf;edmg,,item_onehand.js,yes,,no
+Unique_Mace_1H_009_x1,Devastator,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,316,585,1.2,wpnfir;dmgfir,,item_onehand.js,yes,,no
+Unique_Spear_004_x1,Scrimshaw,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,wpnlit;mainstat;damage,,item_onehand.js,no,,no
+Unique_Spear_001_x1,Arreat's Law,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,wpnphy;mainstat;sockets,,item_onehand.js,no,,no
+Unique_Spear_002_x1,The Three Hundredth Spear,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,mainstat;skill_barbarian_weaponthrow;skill_barbarian_ancientspear,,item_onehand.js,no,barbarian,no
+Unique_Spear_003_x1,Empyrean Messenger,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,353,526,1.2,wpnhol;mainstat;edmg,,item_onehand.js,yes,,no
+Unique_Spear_101_x1,"Akanesh, the Herald of Righteousness",onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,353,526,1.2,wpnhol;mainstat;dmghol,,item_onehand.js,yes,,no
+Unique_Sword_1H_017_x1,Monster Hunter,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,11,,168,392,1.4,wpnfir;damage_beasts,,item_onehand.js,yes,,no
+Unique_Sword_1H_002_x1,Wildwood,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,11,,168,392,1.4,wpnpsn;mainstat;damage;expadd,,item_onehand.js,yes,,no
+Unique_Sword_1H_014_x1,Doombringer,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,168,392,1.4,mainstat;dmgphy,,item_onehand.js,no,,no
+Unique_Sword_1H_003_x1,The Ancient Bonesaber of Zumakalis,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,168,392,1.4,wpnarc;mainstat;weaponias,,item_onehand.js,yes,,no
+Unique_Sword_1H_102_x1,Exarian,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,168,392,1.4,chd,,item_onehand.js,yes,,no
+Unique_Sword_1H_104_x1,Fulminator,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,wpnlit;weaponias;custom,,item_onehand.js,no,,no
+Unique_Sword_1H_103_x1,Gift of Silaria,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,168,392,1.4,mainstat;ms,,item_onehand.js,yes,,no
+Unique_Sword_1H_109_x1,Rimeheart,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,168,392,1.4,wpncol;mainstat;custom,,item_onehand.js,yes,,no
+Unique_Sword_1H_101_x1,"Thunderfury, Blessed Blade of the Windseeker",onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,168,392,1.4,wpnlit;mainstat;sockets;custom,,item_onehand.js,yes,,no
+Unique_Sword_1H_007_x1,Sever,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,51,,168,392,1.4,wpnphy;mainstat;damage;damage_demons;custom,,item_onehand.js,yes,,no
+Unique_Sword_1H_004_x1,Skycutter,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,51,,168,392,1.4,wpnhol;mainstat;dmghol;custom,,item_onehand.js,yes,,no
+Unique_Sword_1H_012_x1,Azurewrath,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,wpncol;dmgcol;hitfreeze;custom,,item_onehand.js,no,,no
+Unique_Sword_1H_011_x1,Devil Tongue,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,168,392,1.4,wpnfir;mainstat;damage;gf,,item_onehand.js,yes,,no
+Unique_Sword_1H_Promo_02_x1,Shard of Hate,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,,no
+Unique_Sword_1H_019_x1,Griswold's Perfection,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,wpnfir,,item_onehand.js,yes,,no
+Unique_Sword_1H_Set_03_x1,Little Rogue,onehand,Sword,set,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,mainstat,Istvan's Paired Blades,item_onehand.js,yes,,no
+Unique_Sword_1H_Set_02_x1,The Slanderer,onehand,Sword,set,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,mainstat,Istvan's Paired Blades,item_onehand.js,yes,,no
+Unique_Sword_1H_018_x1,Born's Furious Wrath,onehand,Sword,set,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,wpnhol,Born's Command,item_onehand.js,yes,,yes
+Unique_CeremonialDagger_003_x1,Deadly Rebirth,onehand,Ceremonial Knife,legendary,witchdoctor,11,,117,469,1.4,wpnarc;mainstat;skill_witchdoctor_graspofthedead;custom,,item_onehand.js,yes,witchdoctor,no
+Unique_CeremonialDagger_102_x1,Rhen'ho Flayer,onehand,Ceremonial Knife,legendary,witchdoctor,15,,117,469,1.4,mainstat;custom,,item_onehand.js,yes,witchdoctor,no
+P1_CeremonialDagger_norm_unique_01,Sacred Harvester,onehand,Ceremonial Knife,legendary,witchdoctor,15,,117,469,1.4,mainstat;custom,,item_onehand.js,yes,witchdoctor,no
+P1_CeremonialDagger_norm_unique_02,The Dagger of Darts,onehand,Ceremonial Knife,legendary,witchdoctor,,,117,469,1.4,mainstat;custom,,item_onehand.js,no,witchdoctor,no
+Unique_CeremonialDagger_008_x1,Last Breath,onehand,Ceremonial Knife,legendary,witchdoctor,,,117,469,1.4,mainstat;skill_witchdoctor_massconfusion_cooldown,,item_onehand.js,no,witchdoctor,no
+Unique_CeremonialDagger_004_x1,The Spider Queen's Grasp,onehand,Ceremonial Knife,legendary,witchdoctor,,,117,469,1.4,mainstat;manaregen;skill_witchdoctor_corpsespiders;custom,,item_onehand.js,no,witchdoctor,no
+Unique_CeremonialDagger_101_x1,Starmetal Kukri,onehand,Ceremonial Knife,legendary,witchdoctor,34,,117,469,1.4,mainstat;chd;custom,,item_onehand.js,yes,witchdoctor,no
+Unique_CeremonialDagger_001_x1,Anessazi Edge,onehand,Ceremonial Knife,legendary,witchdoctor,51,,117,469,1.4,mainstat;custom,,item_onehand.js,yes,witchdoctor,no
+Unique_CeremonialDagger_002_x1,The Gidbinn,onehand,Ceremonial Knife,legendary,witchdoctor,60,,117,469,1.4,mainstat;manaregen;custom,,item_onehand.js,no,witchdoctor,no
+Unique_CeremonialDagger_006_x1,Living Umbral Oath,onehand,Ceremonial Knife,legendary,witchdoctor,,,117,469,1.4,wpnphy,,item_onehand.js,yes,witchdoctor,no
+Unique_CeremonialDagger_009_x1,Manajuma's Carving Knife,onehand,Ceremonial Knife,set,witchdoctor,60,,117,469,1.4,wpnpsn;mainstat,Manajuma's Way,item_onehand.js,yes,witchdoctor,no
+Unique_CeremonialDagger_011_x1,Hallowed Sufferance,onehand,Ceremonial Knife,set,witchdoctor,,,117,469,1.4,wpnhol,Hallowed Protectors,item_onehand.js,yes,witchdoctor,yes
+Unique_Fist_007_x1,Fleshrake,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnphy;mainstat;lifespirit,,item_onehand.js,no,monk,no
+Unique_Fist_003_x1,Rabid Strike,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnpsn;mainstat;chd;hitslow,,item_onehand.js,no,monk,no
+Unique_Fist_013_x1,Scarbringer,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnhol;bleed,,item_onehand.js,no,monk,no
+Unique_Fist_012_x1,Sledge Fist,onehand,Fist Weapon,legendary,monk,31,,168,392,1.4,mainstat;hitstun,,item_onehand.js,yes,monk,no
+Unique_Fist_101_x1,Jawbreaker,onehand,Fist Weapon,legendary,monk,34,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+Unique_Fist_005_x1,Logan's Claw,onehand,Fist Weapon,legendary,monk,51,,168,392,1.4,wpnpsn;mainstat;lph,,item_onehand.js,yes,monk,no
+Unique_Fist_008_x1,Crystal Fist,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnhol;mainstat;damage;dura,,item_onehand.js,no,monk,no
+Unique_Fist_009_x1,The Fist of Az'Turrasq,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,spiritregen;mainstat;custom,,item_onehand.js,no,monk,no
+Unique_Fist_006_x1,Won Khim Lau,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnlit;mainstat;dmglit,,item_onehand.js,no,monk,no
+P1_fistWeapon_norm_unique_02,Vengeful Wind,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,mainstat;custom,,item_onehand.js,no,monk,no
+Unique_Fist_004_x1,Demon Claw,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnfir,,item_onehand.js,yes,monk,no
+Unique_Fist_011_x1,Shenlong's Fist of Legend,onehand,Fist Weapon,set,monk,60,,168,392,1.4,wpnlit;mainstat,Shenlong's Spirit,item_onehand.js,yes,monk,no
+Unique_Fist_010_x1,Shenlong's Relentless Assault,onehand,Fist Weapon,set,monk,60,,168,392,1.4,wpnlit;mainstat,Shenlong's Spirit,item_onehand.js,yes,monk,no
+Unique_Fist_015_x1,Hallowed Hold,onehand,Fist Weapon,set,monk,,,168,392,1.4,wpnhol,Hallowed Protectors,item_onehand.js,yes,monk,yes
+Unique_Flail_1H_106_x1,Darklight,onehand,Flail,legendary,crusader,,,192,355,1.4,wpnlit;mainstat;custom,,item_onehand.js,no,crusader,no
+Unique_Flail_1H_105_x1,Gyrfalcon's Foote,onehand,Flail,legendary,crusader,,,192,355,1.4,mainstat;custom,,item_onehand.js,no,crusader,no
+Unique_Flail_1H_107_x1,Inviolable Faith,onehand,Flail,legendary,crusader,34,,192,355,1.4,wpnhol;sockets;custom,,item_onehand.js,yes,crusader,no
+Unique_Flail_1H_102_x1,Justinian's Mercy,onehand,Flail,legendary,crusader,34,,192,355,1.4,sockets;custom,,item_onehand.js,yes,crusader,no
+Unique_Flail_1H_104_x1,Kassar's Retribution,onehand,Flail,legendary,crusader,34,,192,355,1.4,mainstat;custom,,item_onehand.js,yes,crusader,no
+Unique_Flail_1H_103_x1,Swiftmount,onehand,Flail,legendary,crusader,34,,192,355,1.4,mainstat;custom,,item_onehand.js,yes,crusader,no
+Unique_Flail_1H_101_x1,Golden Scourge,onehand,Flail,legendary,crusader,,,192,355,1.4,wpnhol;dmghol;custom,,item_onehand.js,yes,crusader,no
+Unique_Mighty_1H_006_x1,Fjord Cutter,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,wpncol;mainstat;hitfreeze;custom,,item_onehand.js,no,barbarian,no
+Unique_Mighty_1H_012_x1,Ambo's Pride,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,wpnphy;mainstat;bleed,,item_onehand.js,no,barbarian,no
+Unique_Mighty_1H_005_x1,Blade of the Warlord,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,wpnhol;mainstat;sockets,,item_onehand.js,no,barbarian,no
+Unique_Mighty_1H_102_x1,Remorseless,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,mainstat;custom,,item_onehand.js,no,barbarian,no
+Unique_Mighty_1H_001_x1,Night's Reaping,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,wpncol;life,,item_onehand.js,yes,barbarian,no
+Unique_Mighty_1H_010_x1,Bul-Kathos's Solemn Vow,onehand,Mighty Weapon,set,barbarian,60,,249,461,1.3,wpnhol;mainstat,Bul-Kathos's Oath,item_onehand.js,yes,barbarian,no
+Unique_Mighty_1H_011_x1,Bul-Kathos's Warrior Blood,onehand,Mighty Weapon,set,barbarian,60,,249,461,1.3,wpnhol;mainstat,Bul-Kathos's Oath,item_onehand.js,yes,barbarian,no
+Unique_Mighty_1H_015_x1,Hallowed Nemesis,onehand,Mighty Weapon,set,barbarian,,,249,461,1.3,wpnhol,Hallowed Protectors,item_onehand.js,yes,barbarian,yes
+Unique_Dagger_104_x1,Eun-jang-do,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,107,321,1.5,wpncol;mainstat;custom,,item_onehand.js,yes,,no
+Unique_Sword_1H_113_x1,In-geom,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,wpnhol;mainstat;damage;custom,,item_onehand.js,yes,,no
+Unique_Axe_1H_005_104,Sky Splitter,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,249,461,1.3,wpnhol;damage;weaponias;regen;mainstat;custom,,item_onehand.js,no,crusader,no
+Unique_Axe_1H_005_p2,Sky Splitter,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,249,461,1.3,wpnhol;mainstat;custom,,item_onehand.js,yes,crusader,no
+Unique_Sword_1H_021_x1,Spectrum,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,mainstat,,item_onehand.js,yes,,no
+Unique_Offhand_001_x1,The Horadric Hamburger,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat,,item_onehand.js,yes,,no
+P1_fistWeapon_norm_unique_01,Lion's Claw,onehand,Fist Weapon,legendary,monk,70,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+P1_flail1H_norm_unique_01,Johanna's Argument,onehand,Flail,legendary,crusader,15,,192,355,1.4,mainstat;custom,,item_onehand.js,yes,crusader,no
+P3_Unique_Mighty_1H_006,Fjord Cutter,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,wpncol;mainstat;hitfreeze;custom,,item_onehand.js,no,barbarian,no
+P3_Unique_Spear_001,Arreat's Law,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,wpnphy;mainstat;custom,,item_onehand.js,no,barbarian,no
+P3_Unique_Sword_1H_012,Azurewrath,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,168,392,1.4,wpncol;dmgcol;hitfreeze;custom,,item_onehand.js,yes,,no
+P3_Unique_Sword_1H_104,Fulminator,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,34,,168,392,1.4,wpnlit;mainstat;custom,,item_onehand.js,yes,,no
+Unique_Mighty_1H_103_x1,Dishonored Legacy,onehand,Mighty Weapon,legendary,barbarian,70,,249,461,1.3,mainstat;custom,,item_onehand.js,yes,barbarian,no
+Unique_Spear_004_p3,Scrimshaw,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,wpnphy;mainstat;damage;skill_witchdoctor_zombiecharger;custom,,item_onehand.js,no,witchdoctor,no
+P4_Unique_Axe_1H_102,Mordullu's Promise,onehand,Axe,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,249,461,1.3,mainstat;custom,,item_onehand.js,yes,witchdoctor,no
+P4_Unique_CeremonialDagger_008,Last Breath,onehand,Ceremonial Knife,legendary,witchdoctor,25,,117,469,1.4,mainstat;custom,,item_onehand.js,yes,witchdoctor,no
+P4_Unique_Dagger_002,Voo's Juicer,onehand,Ceremonial Knife,legendary,witchdoctor,51,,117,469,1.4,mainstat;wpncol;skill_witchdoctor_spiritbarrage;custom,,item_onehand.js,yes,witchdoctor,no
+P4_Unique_Fist_102,Kyoshiro's Blade,onehand,Fist Weapon,legendary,monk,70,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+P4_Unique_Mighty_1H_005,Blade of the Warlord,onehand,Mighty Weapon,legendary,barbarian,60,,249,461,1.3,mainstat;wpnhol;custom,,item_onehand.js,yes,barbarian,no
+P4_Unique_Mighty_1H_104,Oathkeeper,onehand,Mighty Weapon,legendary,barbarian,70,,249,461,1.3,mainstat;custom,,item_onehand.js,yes,barbarian,no
+P4_Unique_Spear_002,The Three Hundredth Spear,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,353,526,1.2,mainstat;custom,,item_onehand.js,no,barbarian,no
+P4_Unique_Sword_1H_01,Sword of Ill Will,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,demonhunter,no
+P4_fistWeapon_norm_unique_02,Vengeful Wind,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,mainstat;custom,,item_onehand.js,no,monk,no
+Unique_Dagger_101_x1,Karlei's Point,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat;wpncol;custom,,item_onehand.js,no,demonhunter,no
+Unique_Dagger_102_x1,Lord Greenstone's Fan,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat;wpncol;custom,,item_onehand.js,no,demonhunter,no
+Unique_Sword_1H_107_x1,The Twisted Sword,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,mainstat;custom,,item_onehand.js,no,wizard,no
+Unique_Sword_1H_112_x1,Deathwish,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,mainstat;custom,,item_onehand.js,no,wizard,no
+P4_Unique_Fist_009_x1,The Fist of Az'Turrasq,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,mainstat;custom,,item_onehand.js,no,monk,no
+P41_Unique_Dagger_102_x1,Lord Greenstone's Fan,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat;wpncol;custom,,item_onehand.js,no,demonhunter,no
+P41_Unique_Fist_007,Fleshrake,onehand,Fist Weapon,legendary,monk,12,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+P41_Unique_Fist_008,Crystal Fist,onehand,Fist Weapon,legendary,monk,12,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+P42_Unique_Fist_013_x1,Scarbringer,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,wpnhol;mainstat;custom,,item_onehand.js,no,monk,no
+P42_Unique_Flail_1H_106_x1,Darklight,onehand,Flail,legendary,crusader,,,192,355,1.4,wpnlit;mainstat;custom,,item_onehand.js,no,crusader,no
+P43_Unique_Dagger_003_x1,The Barber,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,107,321,1.5,mainstat;damage;chd;custom,,item_onehand.js,no,witchdoctor,no
+P43_Unique_Fist_003_x1,Rabid Strike,onehand,Fist Weapon,legendary,monk,,,168,392,1.4,mainstat;chd;custom,,item_onehand.js,no,monk,no
+p43_RetroAxe_001,The Butcher's Cleaver,onehand,Axe,magic,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,249,461,1.3,mainstat;damage;dura,,item_onehand.js,yes,,no
+p43_RetroSword_002,Griswold's Edge,onehand,Sword,magic,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,damage;weaponias,,item_onehand.js,yes,,no
+p43_RetroSword_1H_001,King's Sword of Haste,onehand,Sword,magic,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,,,168,392,1.4,damage;ms,,item_onehand.js,yes,,no
+P5_Unique_Dagger_003_x1,The Barber,onehand,Ceremonial Knife,legendary,witchdoctor,,,107,321,1.5,mainstat;wpncol;custom,,item_onehand.js,no,witchdoctor,no
+P6_Unique_Scythe1H_01,Funerary Pick,onehand,Scythe,legendary,necromancer,,,249,461,1.3,mainstat;vit;custom,,item_onehand.js,no,necromancer,no
+P6_Unique_Scythe1H_02,Trag'Oul's Corroded Fang,onehand,Scythe,legendary,necromancer,35,,249,461,1.3,mainstat;custom,,item_onehand.js,yes,necromancer,no
+P6_Unique_Scythe1H_03,Scythe of the Cycle,onehand,Scythe,legendary,necromancer,,,249,461,1.3,mainstat;custom,,item_onehand.js,no,necromancer,no
+P6_Unique_Scythe1H_04,Jesseth Skullscythe,onehand,Scythe,set,necromancer,70,,249,461,1.3,mainstat;weaponias,Jesseth Arms,item_onehand.js,yes,necromancer,no
+P6_Unique_Spear_01,Spear of Jairo,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,15,,353,526,1.2,wpnphy;mainstat;custom,,item_onehand.js,yes,,no
+P61_Unique_Dagger_101_x1,Karlei's Point,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,107,321,1.5,mainstat;wpncol;custom,,item_onehand.js,yes,demonhunter,no
+P61_Unique_Dagger_102_x1,Lord Greenstone's Fan,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,107,321,1.5,mainstat;wpncol;custom,,item_onehand.js,yes,demonhunter,no
+P61_Unique_Fist_009_x1,The Fist of Az'Turrasq,onehand,Fist Weapon,legendary,monk,60,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+P61_Unique_Fist_013_x1,Scarbringer,onehand,Fist Weapon,legendary,monk,31,,168,392,1.4,wpnhol;mainstat;custom,,item_onehand.js,yes,monk,no
+P61_Unique_Flail_1H_105_x1,Gyrfalcon's Foote,onehand,Flail,legendary,crusader,34,,192,355,1.4,mainstat;custom,,item_onehand.js,yes,crusader,no
+P61_Unique_Scythe1H_03,Scythe of the Cycle,onehand,Scythe,legendary,necromancer,61,,249,461,1.3,mainstat;custom,,item_onehand.js,yes,necromancer,no
+P61_Unique_Sword_1H_112_x1,Deathwish,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,wizard,no
+P65_CeremonialDagger_norm_unique_02,The Dagger of Darts,onehand,Ceremonial Knife,legendary,witchdoctor,15,,117,469,1.4,mainstat;custom,,item_onehand.js,yes,witchdoctor,no
+P66_Unique_Mace_1H_001,Echoing Fury,onehand,Mace,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,316,585,1.2,wpnphy;mainstat;weaponias;damage;custom;hitfear,,item_onehand.js,yes,barbarian,no
+P67_Unique_Mighty_1H_012,Ambo's Pride,onehand,Mighty Weapon,legendary,barbarian,31,,249,461,1.3,wpnphy;mainstat;bleed;custom,,item_onehand.js,yes,barbarian,no
+P67_Unique_Flail_1H_106,Darklight,onehand,Flail,legendary,crusader,34,,192,355,1.4,wpnlit;mainstat;custom,,item_onehand.js,yes,crusader,no
+P67_Unique_Mighty_1H_006,Fjord Cutter,onehand,Mighty Weapon,legendary,barbarian,11,,249,461,1.3,wpncol;mainstat;hitfreeze;custom,,item_onehand.js,yes,barbarian,no
+P67_Unique_Mighty_1H_102,Remorseless,onehand,Mighty Weapon,legendary,barbarian,,,249,461,1.3,mainstat;custom,,item_onehand.js,no,barbarian,no
+P67_fistWeapon_norm_unique_02,Vengeful Wind,onehand,Fist Weapon,legendary,monk,70,,168,392,1.4,mainstat;custom,,item_onehand.js,yes,monk,no
+P67_Unique_Fist_006,Won Khim Lau,onehand,Fist Weapon,legendary,monk,60,,168,392,1.4,wpnlit;mainstat;dmglit;custom,,item_onehand.js,yes,monk,no
+P68_Unique_Dagger_003,The Barber,onehand,Ceremonial Knife,legendary,witchdoctor,17,,117,469,1.4,mainstat;wpncol;custom,,item_onehand.js,yes,witchdoctor,no
+P610_Unique_Spear_004,Scrimshaw,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,353,526,1.2,wpnphy;mainstat;damage;skill_witchdoctor_zombiecharger;custom,,data.json,yes,witchdoctor,no
+P610_Unique_Dagger_010,Wizardspike,onehand,Dagger,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,60,,107,321,1.5,mainstat;custom,,data.json,no,wizard,no
+P610_Unique_Sword_1H_107,The Twisted Sword,onehand,Sword,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,70,,168,392,1.4,mainstat;custom,,data.json,yes,wizard,no
+P71_Unique_Fist_003,Rabid Strike,onehand,Fist Weapon,legendary,monk,61,,168,392,1.4,mainstat;chd;custom,,data.json,yes,monk,no
+P72_Unique_Mighty_1H_102,Remorseless,onehand,Mighty Weapon,legendary,barbarian,70,,249,461,1.3,mainstat;custom,,data.json,yes,barbarian,no
+P72_Unique_CeremonialDagger_004,The Spider Queen's Grasp,onehand,Ceremonial Knife,legendary,witchdoctor,31,,117,469,1.4,mainstat;manaregen;skill_witchdoctor_corpsespiders;custom,,data.json,yes,witchdoctor,no
+P73_Unique_Spear_001,Arreat's Law,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,31,,353,526,1.2,wpnphy;mainstat;custom,,data.json,yes,barbarian,no
+P73_Unique_Spear_002,The Three Hundredth Spear,onehand,Spear,legendary,wizard;witchdoctor;demonhunter;barbarian;monk;crusader;necromancer;templar;enchantress;shaman,51,,353,526,1.2,mainstat;custom,,data.json,yes,barbarian,no
+P74_Unique_Scythe1H_01,Funerary Pick,onehand,Scythe,legendary,necromancer,11,,249,461,1.3,mainstat;vit;custom,,data.json,yes,necromancer,no
+Unique_Bow_005_x1,Uskang,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,wpnlit;mainstat;expadd,,data.json,no,,no
+Unique_Bow_005_p1,Uskang,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,11,,143,815,1.4,wpnlit;mainstat;dmglit,,data.json,yes,,no
+Unique_Bow_001_x1,Etrayu,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,wpnphy;mainstat;dura,,data.json,no,,no
+Unique_Bow_001_p1,Etrayu,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,31,,143,815,1.4,wpncol;mainstat;dmgcol;dura,,data.json,yes,,no
+Unique_Bow_008_x1,The Raven's Wing,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,31,,143,815,1.4,mainstat;gf;custom,,data.json,yes,,no
+Unique_Bow_101_x1,Kridershot,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,34,,143,815,1.4,mainstat;damage;custom,,data.json,yes,demonhunter,no
+Unique_Bow_015_x1,Cluckeye,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,mainstat;custom,,data.json,no,,no
+Unique_Bow_009_x1,Windforce,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,60,,143,815,1.4,mainstat;hitknockback,,data.json,no,,no
+Unique_Bow_103_x1,Leonine Bow of Hashir,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,mainstat;custom,,data.json,no,demonhunter,no
+Unique_Bow_010_x1,Sydyru Crust,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,wpnpsn;weaponias;edmg,,data.json,yes,,no
+Unique_Bow_007_x1,Unbound Bolt,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,wpncol;weaponias;chd,,data.json,yes,,no
+Unique_XBow_001_x1,Demon Machine,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,11,,779,945,1.1,wpnfir;mainstat;custom,,data.json,yes,,no
+Unique_XBow_011_x1,Buriza-Do Kyanon,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,31,,779,945,1.1,wpncol;mainstat;hitfreeze;custom,,data.json,no,,no
+Unique_XBow_006_x1,Bakkan Caster,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,34,,779,945,1.1,mainstat,,data.json,yes,,no
+Unique_XBow_012_x1,Pus Spitter,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,51,,779,945,1.1,wpnpsn;mainstat;custom,,data.json,yes,,no
+Unique_XBow_002_x1,Hellrack,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,60,,779,945,1.1,wpnfir;sockets;mainstat;custom,,data.json,yes,,no
+Unique_XBow_003_x1,Manticore,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,wpnpsn;mainstat;sockets,,data.json,no,,no
+Unique_Xbow_101_x1,Chanon Bolter,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,mainstat;custom,,data.json,no,demonhunter,no
+Unique_Xbow_102_x1,Wojahnni Assaulter,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,mainstat;custom,,data.json,no,demonhunter,no
+Unique_XBow_004_x1,Arcane Barb,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,wpnarc,,data.json,yes,,no
+Unique_HandXBow_005_x1,Izzuccob,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,wpnphy;mainstat;maxdisc,,data.json,yes,demonhunter,no
+Unique_HandXBow_004_x1,Balefire Caster,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,wpnfir;mainstat,,data.json,no,demonhunter,no
+Unique_HandXBow_004_p1,Balefire Caster,onehand,Hand Crossbow,legendary,demonhunter,31,,126,714,1.6,wpnfir;mainstat;dmgfir,,data.json,yes,demonhunter,no
+Unique_HandXBow_101_x1,K'mar Tenclip,onehand,Hand Crossbow,legendary,demonhunter,34,,126,714,1.6,mainstat;sockets;skill_demonhunter_strafe;custom,,data.json,yes,demonhunter,no
+Unique_HandXBow_007_x1,Dawn,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,wpnhol;mainstat;hitstun,,data.json,no,demonhunter,no
+Unique_HandXBow_012_x1,Calamity,onehand,Hand Crossbow,legendary,demonhunter,60,,126,714,1.6,mainstat;custom,,data.json,yes,demonhunter,no
+Unique_HandXBow_006_x1,Blitzbolter,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,wpnhol,,data.json,yes,demonhunter,no
+Unique_HandXBow_002_x1,Danetta's Revenge,onehand,Hand Crossbow,set,demonhunter,60,,126,714,1.6,mainstat;custom,Danetta's Hatred,data.json,yes,demonhunter,no
+Unique_HandXBow_001_x1,Danetta's Spite,onehand,Hand Crossbow,set,demonhunter,60,,126,714,1.6,mainstat;custom,Danetta's Hatred,data.json,yes,demonhunter,no
+Unique_HandXBow_003_x1,Natalya's Slayer,onehand,Hand Crossbow,set,demonhunter,60,,126,714,1.6,wpncol;mainstat;damage;sockets;skill_demonhunter_spiketrap,Natalya's Vengeance,data.json,yes,demonhunter,no
+Unique_HandXBow_016_x1,Hallowed Condemnation,onehand,Hand Crossbow,set,demonhunter,,,126,714,1.6,wpnhol,Hallowed Protectors,data.json,yes,demonhunter,yes
+Unique_Wand_003_x1,Starfire,onehand,Wand,legendary,wizard,,,193,357,1.4,wpncol;mainstat,,data.json,no,wizard,no
+Unique_Wand_006_x1,Blackhand Key,onehand,Wand,legendary,wizard,31,,193,357,1.4,wpnarc;mainstat;maxap,,data.json,no,wizard,no
+Unique_Wand_102_x1,Serpent's Sparker,onehand,Wand,legendary,wizard,,,193,357,1.4,mainstat;custom,,data.json,no,wizard,no
+Unique_Wand_101_x1,Wand of Woh,onehand,Wand,legendary,wizard,,,193,357,1.4,mainstat;custom,,data.json,no,wizard,no
+Unique_Wand_010_x1,Fragment of Destiny,onehand,Wand,legendary,wizard,,,193,357,1.4,mainstat;skill_wizard_spectralblade,,data.json,no,wizard,no
+Unique_Wand_002_x1,Gesture of Orpheus,onehand,Wand,legendary,wizard,,,193,357,1.4,wpnarc;mainstat;dmgarc;custom,,data.json,no,wizard,no
+P2_Unique_Wand_002,Gesture of Orpheus,onehand,Wand,legendary,wizard,51,,193,357,1.4,wpnarc;mainstat;elemental;custom,,data.json,yes,wizard,no
+Unique_Wand_013_x1,Slorak's Madness,onehand,Wand,legendary,wizard,60,,193,357,1.4,wpnarc;mainstat;skill_wizard_disintegrate;custom,,data.json,yes,wizard,no
+P1_Wand_norm_unique_01,Aether Walker,onehand,Wand,legendary,wizard,70,,193,357,1.4,mainstat;custom,,data.json,yes,wizard,no
+Unique_Wand_009_x1,Atrophy,onehand,Wand,legendary,wizard,,,193,357,1.4,wpnfir,,data.json,yes,wizard,no
+Unique_Wand_012_x1,Chantodo's Will,onehand,Wand,set,wizard,60,,193,357,1.4,mainstat,Chantodo's Resolve,data.json,yes,wizard,no
+Unique_Wand_018_x1,Hallowed Baton,onehand,Wand,set,wizard,,,193,357,1.4,wpnhol,Hallowed Protectors,data.json,yes,wizard,yes
+Unique_Bow_102_x1,Odyssey's End,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,mainstat;custom,,data.json,no,demonhunter,no
+P2_handXbow_norm_unique_03,The Demon's Demise,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,mainstat,,data.json,no,demonhunter,no
+P43_Unique_HandXBow_005,Valla's Bequest,onehand,Hand Crossbow,legendary,demonhunter,30,,126,714,1.6,mainstat;skill_demonhunter_strafe;custom,,data.json,yes,demonhunter,no
+Unique_Bow_104_x1,Yang's Recurve,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,143,815,1.4,mainstat;damage;rcr;custom,,data.json,no,demonhunter,no
+P1_Wand_norm_unique_02,Unstable Scepter,onehand,Wand,legendary,wizard,,,193,357,1.4,mainstat;custom,,data.json,no,wizard,no
+P4_Unique_HandXBow_001,Dawn,onehand,Hand Crossbow,legendary,demonhunter,61,,126,714,1.6,mainstat;wpnhol;custom,,data.json,yes,demonhunter,no
+P4_Unique_HandXBow_01,Lianna's Wings,onehand,Hand Crossbow,legendary,demonhunter,70,,126,714,1.6,mainstat;wpnhol;custom,,data.json,yes,demonhunter,no
+P4_Unique_HandXBow_02,Fortress Ballista,onehand,Hand Crossbow,legendary,demonhunter,70,,126,714,1.6,mainstat;custom,,data.json,yes,demonhunter,no
+P4_Unique_XBow_001,Manticore,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,mainstat;wpnpsn;custom,,data.json,no,demonhunter,no
+P4_Unique_Wand_010,Fragment of Destiny,onehand,Wand,legendary,wizard,,,193,357,1.4,mainstat;custom,,data.json,no,wizard,no
+P41_Unique_Xbow_102,Wojahnni Assaulter,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,,,779,945,1.1,mainstat;custom,,data.json,no,demonhunter,no
+P42_handXbow_norm_unique_03,The Demon's Demise,onehand,Hand Crossbow,legendary,demonhunter,,,126,714,1.6,mainstat;custom,,data.json,no,demonhunter,no
+P42_Unique_Wand_003_x1,Starfire,onehand,Wand,legendary,wizard,11,,193,357,1.4,wpncol;mainstat;custom,,data.json,yes,wizard,no
+P61_Unique_Bow_104_x1,Yang's Recurve,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,70,,143,815,1.4,mainstat;damage;rcr;custom,,data.json,yes,demonhunter,no
+P61_Unique_Wand_101_x1,Wand of Woh,onehand,Wand,legendary,wizard,34,,193,357,1.4,mainstat;custom,,data.json,yes,wizard,no
+P61_Unique_XBow_001,Manticore,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,60,,779,945,1.1,mainstat;wpnpsn;custom,,data.json,yes,demonhunter,no
+P61_Wand_norm_unique_02,Unstable Scepter,onehand,Wand,legendary,wizard,11,,193,357,1.4,mainstat;custom,,data.json,yes,wizard,no
+P65_Unique_Xbow_102,Wojahnni Assaulter,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,70,,779,945,1.1,mainstat;custom,,data.json,yes,demonhunter,no
+P68_Unique_Wand_102,Serpent's Sparker,onehand,Wand,legendary,wizard,34,,193,357,1.4,mainstat;custom,,data.json,yes,wizard,no
+P69_Unique_Bow_103,Leonine Bow of Hashir,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,70,,143,815,1.4,mainstat;custom,,data.json,yes,demonhunter,no
+P69_Unique_Bow_102,Odyssey's End,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,70,,143,815,1.4,mainstat;custom,,data.json,yes,demonhunter,no
+P610_Unique_Wand_010,Fragment of Destiny,onehand,Wand,legendary,wizard,51,,193,357,1.4,mainstat;custom,,data.json,yes,wizard,no
+P75_Unique_Xbow_101,Chanon Bolter,twohand,Crossbow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,70,,779,945,1.1,mainstat;custom,,data.json,yes,demonhunter,no
+P75_handXbow_norm_unique_03,The Demon's Demise,onehand,Hand Crossbow,legendary,demonhunter,70,,126,714,1.6,mainstat;custom,,data.json,yes,demonhunter,no
+P76_Unique_Bow_015,Cluckeye,twohand,Bow,legendary,wizard;witchdoctor;demonhunter;necromancer;scoundrel,51,,143,815,1.4,mainstat;custom,,data.json,yes,witchdoctor,no
+Unique_Shoulder_001_x1,Homing Pads,shoulders,Shoulders,legendary,,13,,,,,mainstat;gf;custom,,item_shoulders.js,yes,,no
+Unique_Shoulder_002_x1,Death Watch Mantle,shoulders,Shoulders,legendary,,,,,,,mainstat;custom,,item_shoulders.js,no,demonhunter,no
+Unique_Shoulder_002_p2,Death Watch Mantle,shoulders,Shoulders,legendary,,31,,,,,mainstat;custom,,item_shoulders.js,yes,demonhunter,no
+Unique_Shoulder_101_x1,Profane Pauldrons,shoulders,Shoulders,legendary,,,,,,,mainstat;pickup;healbonus,,item_shoulders.js,yes,,no
+Unique_Shoulder_102_x1,Spaulders of Zakara,shoulders,Shoulders,legendary,,34,,,,,mainstat;custom,,item_shoulders.js,yes,,no
+Unique_Shoulder_003_x1,Vile Ward,shoulders,Shoulders,legendary,,,,,,,mainstat;resall,,item_shoulders.js,no,,no
+Unique_Shoulder_003_p1,Vile Ward,shoulders,Shoulders,legendary,,60,,,,,mainstat;custom,,item_shoulders.js,yes,barbarian,no
+Unique_Shoulder_007_x1,Corruption,shoulders,Shoulders,legendary,,,,,,,pickup;healbonus,,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_12_x1,Burden of the Invoker,shoulders,Shoulders,set,,70,,,,,mainstat;thorns,Thorns of the Invoker,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_06_x1,Firebird's Pinions,shoulders,Shoulders,set,,70,,,,,mainstat;rcr,Firebird's Finery,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_16_x1,Helltooth Mantle,shoulders,Shoulders,set,,70,,,,,mainstat;cdr,Helltooth Harness,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_09_x1,Jade Harvester's Joy,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Raiment of the Jade Harvester,item_shoulders.js,yes,witchdoctor,no
+Unique_Shoulder_Set_08_x1,Mantle of the Upside-Down Sinners,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Raiment of a Thousand Storms,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_07_x1,Marauder's Spines,shoulders,Shoulders,set,,70,,,,,mainstat;rcr,Embodiment of the Marauder,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_10_x1,Pauldrons of Akkhan,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Armor of Akkhan,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_05_x1,Raekor's Burden,shoulders,Shoulders,set,,70,,,,,mainstat;resall,The Legacy of Raekor,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_01_p1,Roland's Mantle,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Roland's Legacy,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_15_x1,Spires of the Earth,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Might of the Earth,item_shoulders.js,yes,barbarian,no
+Unique_Shoulder_Set_11_x1,Sunwuko's Balance,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Monkey King's Garb,item_shoulders.js,yes,monk,no
+Unique_Shoulder_017_x1,Asheara's Custodian,shoulders,Shoulders,set,,,,,,,,Asheara's Vestments,item_shoulders.js,yes,,yes
+Unique_Shoulder_008_x1,Aughild's Power,shoulders,Shoulders,set,,,,,,,,Aughild's Authority,item_shoulders.js,no,,yes
+Unique_Shoulder_006_x1,Born's Privilege,shoulders,Shoulders,set,,,,,,,,Born's Command,item_shoulders.js,yes,,yes
+Unique_Shoulder_009_x1,Demon's Aileron,shoulders,Shoulders,set,,,,,,,,Demon's Hide,item_shoulders.js,yes,,yes
+Unique_Shoulder_Set_02_p2,Dashing Pauldrons of Despair,shoulders,Shoulders,set,,70,,,,,mainstat;armor,Delsere's Magnum Opus,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_03_p2,Unsanctified Shoulders,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Unhallowed Essence,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_01_p2,Pauldrons of the Wastes,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Wrath of the Wastes,item_shoulders.js,yes,,no
+P3_Unique_Shoulder_102,Fury of the Ancients,shoulders,Shoulders,legendary,,,,,,,mainstat;custom,,item_shoulders.js,no,barbarian,no
+Unique_Shoulder_Set_01_p3,Uliana's Strength,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Uliana's Stratagem,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_02_p3,Arachyr's Mantle,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Spirit of Arachyr,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_03_p3,Mountain of the Light,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Seeker of the Light,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_13_x1,Vyr's Proud Pauldrons,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Vyr's Amazing Arcana,item_shoulders.js,yes,wizard,no
+P4_Unique_Shoulder_101,Lefebvre's Soliloquy,shoulders,Shoulders,legendary,,34,,,,,mainstat;custom,,item_shoulders.js,yes,monk,no
+P4_Unique_Shoulder_103,Mantle of Channeling,shoulders,Shoulders,legendary,,34,,,,,mainstat;vit;custom,,item_shoulders.js,yes,,no
+Unique_Shoulder_Set_14_x1,The Shadow's Burden,shoulders,Shoulders,set,,70,,,,,mainstat;resall,The Shadow’s Mantle,item_shoulders.js,yes,demonhunter,no
+P6_Necro_Set_1_Shoulders,Rathma's Spikes,shoulders,Shoulders,set,,70,,,,,mainstat;cdr,Bones of Rathma,item_shoulders.js,yes,,no
+P6_Necro_Set_2_Shoulders,Trag'Oul's Heart,shoulders,Shoulders,set,,70,,,,,mainstat;regen,Trag'Oul's Avatar,item_shoulders.js,yes,,no
+P6_Necro_Set_3_Shoulders,Inarius's Martyrdom,shoulders,Shoulders,set,,70,,,,,mainstat,Grace of Inarius,item_shoulders.js,yes,,no
+P6_Necro_Set_4_Shoulders,Pestilence Defense,shoulders,Shoulders,set,,70,,,,,mainstat;rcr,Pestilence Master's Shroud,item_shoulders.js,yes,,no
+P6_Necro_Unique_Shoulders_21,Corpsewhisper Pauldrons,shoulders,Shoulders,legendary,,30,,,,,mainstat;custom,,item_shoulders.js,no,necromancer,no
+P6_Necro_Unique_Shoulders_22,Razeth's Volition,shoulders,Shoulders,legendary,,,,,,,mainstat;rcr;custom,,item_shoulders.js,no,necromancer,no
+P66_Unique_Shoulder_008,Aughild's Power,shoulders,Shoulders,set,,,,,,,,Aughild's Authority,item_shoulders.js,yes,,yes
+P67_Unique_Shoulder_102,Fury of the Ancients,shoulders,Shoulders,legendary,,34,,,,,mainstat;custom,,item_shoulders.js,yes,barbarian,no
+P67_Unique_Shoulder_Set_02,Mirrors of Justice,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Patterns of Justice,item_shoulders.js,yes,,no
+P67_Unique_Shoulder_Set_01,Spaulders of Valor,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Aegis of Valor,item_shoulders.js,yes,,no
+P68_Unique_Shoulder_Set_04,Mundunugu's Descendant,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Mundunugu's Regalia,item_shoulders.js,yes,,no
+P68_Unique_Shoulder_Set_05,Spines of Savages,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Horde of the Ninety Savages,item_shoulders.js,yes,,no
+P68_Unique_Shoulder_Set_03,Typhon's Tibia,shoulders,Shoulders,set,,70,,,,,mainstat,The Typhon's Veil,item_shoulders.js,yes,,no
+P69_Necro_Set_5_Shoulders,Glamorous Gigot,shoulders,Shoulders,set,,70,,,,,mainstat,Masquerade of the Burning Carnival,item_shoulders.js,yes,,no
+P69_Unique_Shoulder_Set_06,Mechanical Pauldrons,shoulders,Shoulders,set,,70,,,,,mainstat;resall,Gears of Dreadlands,item_shoulders.js,yes,,no
+P69_Necro_Unique_Shoulders_22,Razeth's Volition,shoulders,Shoulders,legendary,,19,,,,,mainstat;rcr;custom,,item_shoulders.js,yes,necromancer,no
+P77_Necro_Unique_Shoulders_21,Corpsewhisper Pauldrons,shoulders,Shoulders,legendary,,,,,,,mainstat;custom,,data.json,yes,necromancer,no
+Unique_Chest_012_x1,Aquila Cuirass,torso,Chest Armor,legendary,,,,,,,mainstat;vit,,item_torso.js,no,,no
+Unique_Chest_018_x1,Heart of Iron,torso,Chest Armor,legendary,,,,,,,mainstat;resall,,item_torso.js,no,,no
+Unique_Chest_010_x1,Chaingmail,torso,Chest Armor,legendary,,31,,,,,mainstat;resall;custom,,item_torso.js,yes,,no
+Unique_Chest_006_x1,Cindercoat,torso,Chest Armor,legendary,,34,,,,,mainstat;dmgfir;custom,,item_torso.js,yes,,no
+Unique_Chest_101_x1,Shi Mizu's Haori,torso,Chest Armor,legendary,,34,,,,,mainstat;custom,,item_torso.js,yes,,no
+Unique_Chest_001_x1,Goldskin,torso,Chest Armor,legendary,,51,,,,,mainstat;resall;gf;custom,,item_torso.js,yes,,no
+Unique_Chest_002_x1,Tyrael's Might,torso,Chest Armor,legendary,,60,,,,,mainstat;resall;dura;damage_demons,,item_torso.js,yes,,no
+Unique_Chest_102_x1,Armor of the Kind Regent,torso,Chest Armor,legendary,,70,,,,,mainstat;custom,,item_torso.js,yes,crusader,no
+Unique_Chest_019_x1,Mantle of the Rydraelm,torso,Chest Armor,legendary,,,,,,,,,item_torso.js,yes,,no
+Unique_ChestArmor_028_x1,Blackthorne's Surcoat,torso,Chest Armor,set,,60,,,,,mainstat;sockets,Blackthorne's Battlegear,item_torso.js,yes,,no
+Unique_Chest_013_x1,Immortal King's Eternal Reign,torso,Chest Armor,set,,60,,,,,mainstat;sockets,Immortal King's Call,item_torso.js,yes,barbarian,no
+Unique_Chest_015_x1,Inna's Vast Expanse,torso,Chest Armor,set,,60,,,,,mainstat;sockets,Inna's Mantra,item_torso.js,yes,monk,no
+Unique_Chest_014_x1,Tal Rasha's Relentless Pursuit,torso,Chest Armor,set,,60,,,,,mainstat;vit;ias;sockets,Tal Rasha's Elements,item_torso.js,yes,wizard,no
+Unique_Chest_016_x1,Zunimassa's Marrow,torso,Chest Armor,set,,60,,,,,mainstat;sockets,Zunimassa's Haunt,item_torso.js,yes,witchdoctor,no
+Unique_Chest_Set_10_x1,Breastplate of Akkhan,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Armor of Akkhan,item_torso.js,yes,,no
+Unique_Chest_Set_06_x1,Firebird's Breast,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Firebird's Finery,item_torso.js,yes,,no
+Unique_Chest_Set_08_x1,Heart of the Crashing Wave,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Raiment of a Thousand Storms,item_torso.js,yes,,no
+Unique_Chest_Set_16_x1,Helltooth Tunic,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Helltooth Harness,item_torso.js,yes,,no
+Unique_Chest_Set_09_x1,Jade Harvester's Peace,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Raiment of the Jade Harvester,item_torso.js,yes,witchdoctor,no
+Unique_Chest_Set_07_x1,Marauder's Carapace,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Embodiment of the Marauder,item_torso.js,yes,,no
+Unique_Chest_Set_05_x1,Raekor's Heart,torso,Chest Armor,set,,70,,,,,mainstat;sockets,The Legacy of Raekor,item_torso.js,yes,,no
+Unique_Chest_Set_01_p1,Roland's Bearing,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Roland's Legacy,item_torso.js,yes,,no
+Unique_Chest_Set_14_x1,The Shadow's Bane,torso,Chest Armor,set,,70,,,,,mainstat;sockets,The Shadow’s Mantle,item_torso.js,yes,demonhunter,no
+Unique_Chest_Set_13_x1,Vyr's Astonishing Aura,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Vyr's Amazing Arcana,item_torso.js,yes,wizard,no
+Unique_Chest_026_x1,Aughild's Rule,torso,Chest Armor,set,,,,,,,,Aughild's Authority,item_torso.js,no,,yes
+Unique_Chest_025_x1,Born's Frozen Soul,torso,Chest Armor,set,,,,,,,,Born's Command,item_torso.js,yes,,yes
+Unique_Chest_027_x1,Demon's Marrow,torso,Chest Armor,set,,,,,,,,Demon's Hide,item_torso.js,yes,,yes
+Unique_Cloak_005_x1,Beckon Sail,torso,Cloak,legendary,demonhunter,34,,,,,mainstat;sockets;custom,,item_torso.js,yes,demonhunter,no
+Unique_Cloak_101_x1,Blackfeather,torso,Cloak,legendary,demonhunter,34,,,,,mainstat;sockets;custom,,item_torso.js,yes,demonhunter,no
+Unique_Cloak_002_p1,The Cloak of Garwulf,torso,Cloak,legendary,demonhunter,61,,,,,mainstat;sockets;custom,,item_torso.js,yes,demonhunter,no
+Unique_Cloak_001_x1,The Cape of the Dark Night,torso,Cloak,legendary,demonhunter,61,,,,,mainstat;custom,,item_torso.js,yes,demonhunter,no
+Unique_Cloak_006_x1,Natalya's Embrace,torso,Cloak,set,demonhunter,60,,,,,mainstat;sockets,Natalya's Vengeance,item_torso.js,yes,demonhunter,no
+Unique_Chest_Set_02_p2,Harness of Truth,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Delsere's Magnum Opus,item_torso.js,yes,,no
+Unique_Chest_Set_03_p2,Cage of the Hellborn,torso,Cloak,set,demonhunter,70,,,,,mainstat;sockets,Unhallowed Essence,item_torso.js,yes,demonhunter,no
+Unique_Chest_Set_01_p2,Cuirass of the Wastes,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Wrath of the Wastes,item_torso.js,yes,,no
+Unique_Chest_Set_01_p3,Uliana's Heart,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Uliana's Stratagem,item_torso.js,yes,,no
+Unique_Chest_Set_02_p3,Arachyr's Carapace,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Spirit of Arachyr,item_torso.js,yes,,no
+Unique_Chest_Set_03_p3,Heart of the Light,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Seeker of the Light,item_torso.js,yes,,no
+P4_Unique_Chest_012,Aquila Cuirass,torso,Chest Armor,legendary,,23,,,,,mainstat;sockets;custom,,item_torso.js,yes,,no
+P4_Unique_Chest_018,Heart of Iron,torso,Chest Armor,legendary,,11,,,,,mainstat;vit;thorns;custom,,item_torso.js,yes,,no
+Unique_Chest_Set_11_x1,Sunwuko's Soul,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Monkey King's Garb,item_torso.js,yes,monk,no
+Unique_Chest_Set_15_x1,Spirit of the Earth,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Might of the Earth,item_torso.js,yes,barbarian,no
+p43_RetroArmor_001,Godly Plate of the Whale,torso,Chest Armor,magic,,,,,,,vit;meleedef,,item_torso.js,yes,,no
+p43_RetroArmor_002,Arkaine's Valor,torso,Chest Armor,magic,,,,,,,vit;ccr,,item_torso.js,yes,,no
+P6_Necro_Set_1_Chest,Rathma's Ribcage Plate,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Bones of Rathma,item_torso.js,yes,,no
+P6_Necro_Set_2_Chest,Trag'Oul's Scales,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Trag'Oul's Avatar,item_torso.js,yes,,no
+P6_Necro_Set_3_Chest,Inarius's Conviction,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Grace of Inarius,item_torso.js,yes,,no
+P6_Necro_Set_4_Chest,Pestilence Robe,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Pestilence Master's Shroud,item_torso.js,yes,,no
+P6_Necro_Unique_Chest_21,Bloodsong Mail,torso,Chest Armor,legendary,,65,,,,,mainstat;sockets;custom,,item_torso.js,yes,,no
+P6_Necro_Unique_Chest_22,Requiem Cereplate,torso,Chest Armor,legendary,,70,,,,,mainstat;sockets;custom,,item_torso.js,yes,necromancer,no
+P66_Unique_Chest_026,Aughild's Rule,torso,Chest Armor,set,,,,,,,,Aughild's Authority,item_torso.js,yes,,yes
+P67_Unique_Chest_Set_01,Brigandine of Valor,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Aegis of Valor,item_torso.js,yes,,no
+P67_Unique_Chest_Set_02,Lamellars of Justice,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Patterns of Justice,item_torso.js,yes,,no
+P68_Unique_Chest_Set_05,Markings of Savages,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Horde of the Ninety Savages,item_torso.js,yes,,no
+P68_Unique_Chest_Set_04,Mundunugu's Robe,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Mundunugu's Regalia,item_torso.js,yes,,no
+P68_Unique_Chest_Set_03,Typhon's Thorax,torso,Chest Armor,set,,70,,,,,mainstat;sockets,The Typhon's Veil,item_torso.js,yes,,no
+P69_Unique_Chest_Set_06,Galvanized Vest,torso,Cloak,set,demonhunter,70,,,,,mainstat;sockets,Gears of Dreadlands,item_torso.js,yes,demonhunter,no
+P69_Necro_Set_5_Chest,Sophisticated Vest,torso,Chest Armor,set,,70,,,,,mainstat;sockets,Masquerade of the Burning Carnival,item_torso.js,yes,,no
+Unique_Axe_2H_003_x1,The Executioner,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1384,1685,1.1,wpnphy;mainstat;expadd,,item_twohand.js,no,,no
+Unique_Axe_2H_001_x1,Butcher's Carver,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,31,,1384,1685,1.1,mainstat;custom,,item_twohand.js,yes,,no
+Unique_Axe_2H_011_x1,Messerschmidt's Reaver,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1384,1685,1.1,wpnfir;mainstat;laek,,item_twohand.js,no,,no
+Unique_Axe_2H_009_x1,Skorn,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,60,,1384,1685,1.1,mainstat;bleed;sockets,,item_twohand.js,yes,,no
+Unique_Axe_2H_010_x1,Cinder Switch,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1384,1685,1.1,wpnfir;custom,,item_twohand.js,yes,,no
+Unique_Mace_2H_003_x1,Arthef's Spark of Life,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,12,,1737,1912,1,mainstat;custom,,item_twohand.js,yes,,no
+Unique_Mace_2H_001_x1,Crushbane,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,12,,1737,1912,1,wpncol;mainstat,,item_twohand.js,yes,,no
+Unique_Mace_2H_010_x1,Skywarden,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,31,,1737,1912,1,wpnhol;mainstat;custom,,item_twohand.js,yes,,no
+Unique_Mace_2H_012_x1,Wrath of the Bone King,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1737,1912,1,wpnphy;onhit;laek,,item_twohand.js,no,,no
+Unique_Mace_2H_012_p1,Wrath of the Bone King,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,31,,1737,1912,1,wpncol;dmgcol;onhit;laek,,item_twohand.js,yes,,no
+Unique_Mace_2H_103_x1,The Furnace,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,34,,1737,1912,1,wpnfir;mainstat;custom,,item_twohand.js,yes,,no
+Unique_Mace_2H_009_x1,Schaefer's Hammer,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1737,1912,1,wpnlit;dmglit;custom,,item_twohand.js,no,,no
+Unique_Mace_2H_009_p2,Schaefer's Hammer,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,60,,1737,1912,1,wpnlit;dmglit;custom,,item_twohand.js,yes,,no
+Unique_Mace_2H_002_x1,Sledge of Athskeleng,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,60,,1737,1912,1,wpnphy;mainstat;damage;ms,,item_twohand.js,yes,,no
+Unique_Mace_2H_006_x1,Sunder,twohand,Two-Handed Mace,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1737,1912,1,wpnfir;custom,,item_twohand.js,yes,,no
+Unique_Polearm_002_x1,Pledge of Caldeum,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,11,,1497,1823,1.05,wpnfir;mainstat,,item_twohand.js,yes,,no
+Unique_Polearm_004_x1,Standoff,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,,,1497,1823,1.05,wpncol;mainstat;sockets,,item_twohand.js,no,,no
+Unique_Polearm_101_x1,Bovine Bardiche,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,34,,1497,1823,1.05,wpnlit;mainstat;custom,,item_twohand.js,yes,,no
+Unique_Polearm_003_x1,Heart Slaughter,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,,,1497,1823,1.05,wpnphy;mainstat;laek,,item_twohand.js,no,,no
+Unique_Polearm_003_p1,Heart Slaughter,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,51,,1497,1823,1.05,wpnphy;mainstat;dmgphy;laek,,item_twohand.js,yes,,no
+Unique_Polearm_001_x1,Vigilance,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,60,,1497,1823,1.05,wpnhol;mainstat;custom,,item_twohand.js,yes,monk,no
+Unique_Staff_008_x1,Autumn's Call,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnhol;mainstat;expadd,,item_twohand.js,yes,,no
+Unique_Staff_001_x1,The Broken Staff,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,31,,1229,1839,1.1,wpnlit;mainstat;sockets;dura,,item_twohand.js,yes,,no
+Unique_Staff_101_x1,"Ahavarion, Spear of Lycander",twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,34,,1229,1839,1.1,wpnhol;sockets;custom,,item_twohand.js,yes,,no
+Unique_Staff_103_x1,The Smoldering Core,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnfir;mainstat;sockets;custom,,item_twohand.js,no,wizard,no
+Unique_Staff_102_x1,Valthek's Rebuke,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnarc;mainstat;sockets;custom,,item_twohand.js,no,wizard,no
+Unique_Staff_006_x1,Maloth's Focus,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,51,,1229,1839,1.1,wpnfir;mainstat;custom,,item_twohand.js,yes,,no
+Unique_Staff_003_x1,Wormwood,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnpsn;mainstat;hitfear,,item_twohand.js,no,,no
+P2_Unique_Staff_003,Wormwood,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,51,,1229,1839,1.1,wpnpsn;mainstat;dmgpsn;custom,,item_twohand.js,yes,witchdoctor,no
+Unique_Staff_009_x1,The Grand Vizier,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnfir;mainstat;gf,,item_twohand.js,no,,no
+Unique_Staff_009_p1,The Grand Vizier,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnfir;mainstat;custom,,item_twohand.js,no,wizard,no
+Unique_Staff_007_x1,The Tormentor,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,60,,1229,1839,1.1,wpnarc;mainstat;custom,,item_twohand.js,yes,,no
+Unique_Staff_002_x1,Mark of the Magi,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,wpnarc,,item_twohand.js,yes,,no
+Unique_Sword_2H_012_x1,Faithful Memory,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1137,1702,1.15,wpnhol;mainstat;thorns,,item_twohand.js,no,,no
+Unique_Sword_2H_002_x1,The Zweihander,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,11,,1137,1702,1.15,wpnphy;mainstat;expadd,,item_twohand.js,yes,,no
+Unique_Sword_2H_011_x1,Blackguard,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,31,,1137,1702,1.15,wpnphy;mainstat;damage;ccr,,item_twohand.js,yes,,no
+Unique_Sword_2H_004_x1,Scourge,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,31,,1137,1702,1.15,wpnpsn;sockets;custom,,item_twohand.js,yes,,no
+Unique_Sword_2H_101_x1,Stalgard's Decimator,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,34,,1137,1702,1.15,mainstat;custom,,item_twohand.js,yes,,no
+Unique_Sword_2H_007_x1,Blade of Prophecy,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1137,1702,1.15,mainstat;custom,,item_twohand.js,no,crusader,no
+Unique_Sword_2H_008_x1,The Sultan of the Blinding Sand,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,51,,1137,1702,1.15,wpnhol;mainstat;hitblind,,item_twohand.js,yes,,no
+Unique_Sword_2H_010_x1,Maximus,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,60,,1137,1702,1.15,wpnfir;mainstat;dmgfir;custom,,item_twohand.js,yes,,no
+Unique_Sword_2H_001_x1,The Grandfather,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,60,,1137,1702,1.15,wpnphy;mainstat;life;dura,,item_twohand.js,no,,no
+Unique_Sword_2H_003_x1,Warmonger,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,60,,1137,1702,1.15,wpnphy;mainstat;sockets,,item_twohand.js,yes,,no
+Unique_Sword_2H_102_x1,Cam's Rebuttal,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,62,,1137,1702,1.15,mainstat;custom,,item_twohand.js,yes,crusader,no
+Unique_CombatStaff_2H_002_x1,Balance,twohand,Daibo,legendary,monk,,,994,1845,1.15,wpnhol;mainstat,,item_twohand.js,no,monk,no
+Unique_CombatStaff_2H_005_x1,The Flow of Eternity,twohand,Daibo,legendary,monk,,,994,1845,1.15,mainstat;custom,,item_twohand.js,no,monk,no
+Unique_CombatStaff_2H_007_x1,The Paddle,twohand,Daibo,legendary,monk,31,,994,1845,1.15,wpnphy;mainstat;custom,,item_twohand.js,yes,monk,no
+Unique_CombatStaff_2H_101_x1,Staff of Kyro,twohand,Daibo,legendary,monk,34,,994,1845,1.15,mainstat;sockets;skill_monk_deadlyreach,,item_twohand.js,yes,monk,no
+Unique_CombatStaff_2H_102_x1,Warstaff of General Quang,twohand,Daibo,legendary,monk,34,,994,1845,1.15,mainstat;custom,,item_twohand.js,yes,monk,no
+Unique_CombatStaff_2H_003_x1,Incense Torch of the Grand Temple,twohand,Daibo,legendary,monk,,,994,1845,1.15,mainstat;custom,,item_twohand.js,no,monk,no
+Unique_CombatStaff_2H_009_x1,Flying Dragon,twohand,Daibo,legendary,monk,60,,994,1845,1.15,mainstat;custom,,item_twohand.js,yes,monk,no
+Unique_CombatStaff_2H_008_x1,Lai Yui's Persuader,twohand,Daibo,legendary,monk,,,994,1845,1.15,wpncol,,item_twohand.js,yes,monk,no
+Unique_CombatStaff_2H_004_x1,Rozpedin's Force,twohand,Daibo,legendary,monk,,,994,1845,1.15,wpnhol,,item_twohand.js,yes,monk,no
+Unique_CombatStaff_2H_001_x1,Inna's Reach,twohand,Daibo,set,monk,60,,994,1845,1.15,mainstat;skill_monk_mystically,Inna's Mantra,item_twohand.js,yes,monk,no
+Unique_Flail_2H_102_x1,Baleful Remnant,twohand,Two-Handed Flail,legendary,crusader,34,,1351,1486,1.15,sockets;custom,,item_twohand.js,yes,crusader,no
+Unique_Flail_2H_103_x1,Fate of the Fell,twohand,Two-Handed Flail,legendary,crusader,,,1351,1486,1.15,wpnfir;mainstat;custom,,item_twohand.js,no,crusader,no
+Unique_Flail_2H_104_x1,Golden Flense,twohand,Two-Handed Flail,legendary,crusader,,,1351,1486,1.15,mainstat;custom,,item_twohand.js,no,crusader,no
+P2_Unique_Flail_2H_104,Golden Flense,twohand,Two-Handed Flail,legendary,crusader,,,1351,1486,1.15,mainstat;custom,,item_twohand.js,no,crusader,no
+Unique_Flail_2H_101_x1,The Mortal Drama,twohand,Two-Handed Flail,legendary,crusader,,,1351,1486,1.15,mainstat;custom,,item_twohand.js,no,crusader,no
+Unique_Mighty_2H_004_x1,Bastion's Revered,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,wpncol;mainstat;maxfury,,item_twohand.js,no,barbarian,no
+Unique_Mighty_2H_004_p1,Bastion's Revered,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,wpncol;mainstat;sockets;custom,,item_twohand.js,no,barbarian,no
+Unique_Mighty_2H_006_x1,Fury of the Vanished Peak,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,mainstat;skill_barbarian_seismicslam;custom,,item_twohand.js,no,barbarian,no
+Unique_Mighty_2H_101_x1,Madawc's Sorrow,twohand,Two-Handed Mighty Weapon,legendary,barbarian,34,,1462,1609,1.1,mainstat;custom,,item_twohand.js,yes,barbarian,no
+Unique_Mighty_2H_001_x1,The Gavel of Judgment,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,wpnhol;mainstat,,item_twohand.js,no,barbarian,no
+P2_Unique_Mighty_2H_001,The Gavel of Judgment,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,wpnhol;mainstat;custom,,item_twohand.js,no,barbarian,no
+Unique_Mighty_2H_012_x1,War of the Dead,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,wpnphy,,item_twohand.js,yes,barbarian,no
+Unique_Mighty_2H_010_x1,Immortal King's Boulder Breaker,twohand,Two-Handed Mighty Weapon,set,barbarian,60,,1462,1609,1.1,mainstat;dura;skill_barbarian_calloftheancients,Immortal King's Call,item_twohand.js,yes,barbarian,no
+Unique_Sword_2H_103_x1,Blood Brother,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,70,,1137,1702,1.15,mainstat;damage;custom,,item_twohand.js,yes,,no
+Unique_Sword_2H_104_x1,Corrupted Ashbringer,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,70,,1137,1702,1.15,mainstat;wpnpsn;custom;damage_undead,,item_twohand.js,yes,,no
+Unique_Staff_104_x1,SuWong Diviner,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,34,,1229,1839,1.1,wpnfir;mainstat;damage;skill_witchdoctor_acidcloud;custom,,item_twohand.js,yes,witchdoctor,no
+P4_Unique_CombatStaff_2H_001,Balance,twohand,Daibo,legendary,monk,,,994,1845,1.15,mainstat;wpnhol;custom,,item_twohand.js,no,monk,no
+P4_Unique_Flail_2H_001,Akkhan's Addendum,twohand,Two-Handed Flail,legendary,crusader,28,,1351,1486,1.15,mainstat;custom,,item_twohand.js,yes,crusader,no
+P4_Unique_Mighty_2H_101,Blade of the Tribes,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,mainstat;skill_barbarian_earthquake;custom,,item_twohand.js,no,barbarian,no
+P4_Unique_Polearm_01,Standoff,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,,,1497,1823,1.05,mainstat;wpncol;custom,,item_twohand.js,no,barbarian,no
+P4_Unique_Flail_2H_Set_01_x1,Flail of the Charge,twohand,Two-Handed Flail,set,crusader,70,,1351,1486,1.15,mainstat,Norvald's Fervor,item_twohand.js,yes,crusader,no
+P4_Unique_Staff_001,Staff of Chiroptera,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,mainstat;custom,,item_twohand.js,no,witchdoctor,no
+P4_flail2H_norm_unique_01,Akkhan's Leniency,twohand,Two-Handed Flail,legendary,crusader,,,1351,1486,1.15,mainstat;custom,,item_twohand.js,no,crusader,no
+P4_Unique_Mighty_2H_006,Fury of the Vanished Peak,twohand,Two-Handed Mighty Weapon,legendary,barbarian,,,1462,1609,1.1,mainstat;lifefury;custom,,item_twohand.js,no,barbarian,no
+P41_Unique_CombatStaff_2H_005,The Flow of Eternity,twohand,Daibo,legendary,monk,31,,994,1845,1.15,mainstat;custom,,item_twohand.js,yes,monk,no
+P4_Unique_Flail_2H_002,Flail of the Ascended,twohand,Two-Handed Flail,legendary,crusader,13,,1351,1486,1.15,mainstat;custom,,item_twohand.js,yes,crusader,no
+P43_Unique_Sword_2H_012_x1,Faithful Memory,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,,,1137,1702,1.15,wpnhol;mainstat;custom,,item_twohand.js,no,crusader,no
+p43_RetroStaff_001,Archangel's Staff of the Apocalypse,twohand,Staff,magic,wizard;witchdoctor;monk;necromancer;enchantress;shaman,,,1229,1839,1.1,chd,,item_twohand.js,yes,,no
+P6_Unique_Scythe2H_01,Maltorius' Petrified Spike,twohand,Two-Handed Scythe,legendary,necromancer,,,1461,1607,1.1,mainstat;damage;custom,,item_twohand.js,no,necromancer,no
+P6_Unique_Scythe2H_02,Bloodtide Blade,twohand,Two-Handed Scythe,legendary,necromancer,,,1461,1607,1.1,mainstat;vit;custom,,item_twohand.js,no,necromancer,no
+P6_Unique_Scythe2H_03,Reilena's Shadowhook,twohand,Two-Handed Scythe,legendary,necromancer,20,,1461,1607,1.1,mainstat;custom,,item_twohand.js,yes,necromancer,no
+P6_Unique_Scythe2H_04,Nayr's Black Death,twohand,Two-Handed Scythe,legendary,necromancer,,,1461,1607,1.1,mainstat;custom,,item_twohand.js,no,necromancer,no
+P61_Unique_CombatStaff_2H_001,Balance,twohand,Daibo,legendary,monk,12,,994,1845,1.15,mainstat;wpnhol;custom,,item_twohand.js,yes,monk,no
+P61_Unique_CombatStaff_2H_003_x1,Incense Torch of the Grand Temple,twohand,Daibo,legendary,monk,51,,994,1845,1.15,mainstat;custom,,item_twohand.js,yes,monk,no
+P61_Unique_Flail_2H_103_x1,Fate of the Fell,twohand,Two-Handed Flail,legendary,crusader,34,,1351,1486,1.15,wpnfir;mainstat;custom,,item_twohand.js,yes,crusader,no
+P61_Unique_Flail_2H_104,Golden Flense,twohand,Two-Handed Flail,legendary,crusader,34,,1351,1486,1.15,mainstat;custom,,item_twohand.js,yes,crusader,no
+P61_Unique_Mighty_2H_001,The Gavel of Judgment,twohand,Two-Handed Mighty Weapon,legendary,barbarian,51,,1462,1609,1.1,wpnhol;mainstat;custom,,item_twohand.js,yes,barbarian,no
+P61_Unique_Mighty_2H_006,Fury of the Vanished Peak,twohand,Two-Handed Mighty Weapon,legendary,barbarian,34,,1462,1609,1.1,mainstat;lifefury;custom,,item_twohand.js,yes,barbarian,no
+P61_Unique_Polearm_01,Standoff,twohand,Polearm,legendary,witchdoctor;barbarian;monk;crusader;necromancer,31,,1497,1823,1.05,mainstat;wpncol;custom,,item_twohand.js,yes,barbarian,no
+P61_Unique_Scythe2H_01,Maltorius' Petrified Spike,twohand,Two-Handed Scythe,legendary,necromancer,25,,1461,1607,1.1,mainstat;damage;custom,,item_twohand.js,yes,necromancer,no
+P61_Unique_Scythe2H_02,Bloodtide Blade,twohand,Two-Handed Scythe,legendary,necromancer,,,1461,1607,1.1,mainstat;vit;custom,,item_twohand.js,no,necromancer,no
+P61_Unique_Scythe2H_04,Nayr's Black Death,twohand,Two-Handed Scythe,legendary,necromancer,70,,1461,1607,1.1,mainstat;custom,,item_twohand.js,yes,necromancer,no
+P61_Unique_Staff_001,Staff of Chiroptera,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,11,,1229,1839,1.1,mainstat;custom,,item_twohand.js,yes,witchdoctor,no
+P61_Unique_Sword_2H_007_x1,Blade of Prophecy,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,51,,1137,1702,1.15,mainstat;custom,,item_twohand.js,yes,crusader,no
+P61_Unique_Sword_2H_012_x1,Faithful Memory,twohand,Two-Handed Sword,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,19,,1137,1702,1.15,wpnhol;mainstat;custom,,item_twohand.js,yes,crusader,no
+P61_Unique_Staff_009,The Grand Vizier,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,60,,1229,1839,1.1,wpnfir;mainstat;custom,,item_twohand.js,yes,wizard,no
+P65_flail2H_norm_unique_01,Akkhan's Leniency,twohand,Two-Handed Flail,legendary,crusader,,,1351,1486,1.15,mainstat;custom,,item_twohand.js,no,crusader,no
+P65_Unique_Scythe2H_02,Bloodtide Blade,twohand,Two-Handed Scythe,legendary,necromancer,50,,1461,1607,1.1,mainstat;vit;custom,,item_twohand.js,yes,necromancer,no
+P66_Unique_Axe_2H_011,Messerschmidt's Reaver,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,51,,1384,1685,1.1,wpnfir;mainstat;laek;custom,,item_twohand.js,yes,,no
+P66_Unique_Axe_2H_003,The Executioner,twohand,Two-Handed Axe,legendary,wizard;witchdoctor;barbarian;monk;crusader;necromancer;enchantress;shaman,11,,1384,1685,1.1,wpnphy;mainstat;expadd;custom,,item_twohand.js,yes,,no
+P68_Unique_Mighty_2H_004,Bastion's Revered,twohand,Two-Handed Mighty Weapon,legendary,barbarian,31,,1462,1609,1.1,wpncol;mainstat;sockets;custom,,item_twohand.js,yes,barbarian,no
+P610_Unique_Mighty_2H_101,Blade of the Tribes,twohand,Two-Handed Mighty Weapon,legendary,barbarian,70,,1462,1609,1.1,mainstat;custom,,data.json,yes,barbarian,no
+P610_Unique_Flail_2H_101,The Mortal Drama,twohand,Two-Handed Flail,legendary,crusader,64,,1351,1486,1.15,mainstat;custom,,data.json,yes,crusader,no
+P610_Unique_Staff_102,Valthek's Rebuke,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,34,,1229,1839,1.1,wpnarc;mainstat;sockets;custom,,data.json,yes,wizard,no
+P74_Unique_Staff_103,The Smoldering Core,twohand,Staff,legendary,wizard;witchdoctor;monk;necromancer;enchantress;shaman,34,,1229,1839,1.1,wpnfir;mainstat;sockets;custom,,data.json,yes,wizard,no
+P76_flail2H_norm_unique_01,Akkhan's Leniency,twohand,Two-Handed Flail,legendary,crusader,70,,1351,1486,1.15,mainstat;custom,,data.json,yes,crusader,no
+Unique_Belt_010_x1,Goldwrap,waist,Belt,legendary,,11,,,,,mainstat;gf;custom,,item_waist.js,yes,,no
+Unique_Belt_002_x1,Vigilante Belt,waist,Belt,legendary,,,,,,,mainstat;cdr,,item_waist.js,no,,no
+Unique_Belt_001_x1,Saffron Wrap,waist,Belt,legendary,,,,,,,mainstat;rcr;ccr,,item_waist.js,no,,no
+Unique_Belt_008_x1,String of Ears,waist,Belt,legendary,,,,,,,mainstat;meleedef,,item_waist.js,no,,no
+Unique_Belt_104_x1,Cord of the Sherma,waist,Belt,legendary,,,,,,,mainstat;vit;pickup;custom,,item_waist.js,no,,no
+Unique_Belt_104_p2,Cord of the Sherma,waist,Belt,legendary,,34,,,,,mainstat;vit;pickup;custom,,item_waist.js,yes,,no
+Unique_Belt_105_x1,Harrington Waistguard,waist,Belt,legendary,,34,,,,,mainstat;gf;custom,,item_waist.js,yes,,no
+Unique_Belt_107_x1,Hwoj Wrap,waist,Belt,legendary,,34,,,,,mainstat;resall;custom,,item_waist.js,yes,witchdoctor,no
+Unique_Belt_101_x1,Razor Strop,waist,Belt,legendary,,34,,,,,mainstat;pickup;custom,,item_waist.js,yes,,no
+Unique_Belt_102_p1,Sash of Knives,waist,Belt,legendary,,,,,,,mainstat;custom,,item_waist.js,no,,no
+Unique_Belt_102_p2,Sash of Knives,waist,Belt,legendary,,34,,,,,mainstat;custom,,item_waist.js,yes,,no
+Unique_Belt_108_x1,Sebor's Nightmare,waist,Belt,legendary,,,,,,,mainstat;pickup;custom,,item_waist.js,no,witchdoctor,no
+Unique_Belt_108_p2,Sebor's Nightmare,waist,Belt,legendary,,34,,,,,mainstat;pickup;custom,,item_waist.js,yes,witchdoctor,no
+Unique_Belt_003_x1,Angel Hair Braid,waist,Belt,legendary,,,,,,,mainstat;life;resall;dura,,item_waist.js,no,,no
+Unique_Belt_003_p1,Angel Hair Braid,waist,Belt,legendary,,51,,,,,mainstat;dura;custom,,item_waist.js,yes,crusader,no
+Unique_BarbBelt_003_x1,Thundergod's Vigor,waist,Belt,legendary,,51,,,,,mainstat;vit;dmglit;reslit;custom;basearmor,,item_waist.js,yes,,no
+Unique_Belt_005_x1,Hellcat Waistguard,waist,Belt,legendary,,,,,,,mainstat;vit;ias;edmg,,item_waist.js,no,,no
+Unique_Belt_009_x1,The Witching Hour,waist,Belt,legendary,,60,,,,,ias;chd,,item_waist.js,yes,,no
+Unique_Belt_106_x1,Jang's Envelopment,waist,Belt,legendary,,64,,,,,mainstat;custom,,item_waist.js,yes,wizard,no
+Unique_Belt_004_x1,Fleeting Strap,waist,Belt,legendary,,,,,,,ias,,item_waist.js,yes,,no
+Unique_Belt_015_x1,Blackthorne's Notched Belt,waist,Belt,set,,60,,,,,mainstat;vit;gf,Blackthorne's Battlegear,item_waist.js,yes,,no
+Unique_Belt_007_x1,Inna's Favor,waist,Belt,set,,60,,,,,mainstat;resall,Inna's Mantra,item_waist.js,yes,monk,no
+Unique_Belt_006_x1,Tal Rasha's Brace,waist,Belt,set,,60,,,,,mainstat;resall,Tal Rasha's Elements,item_waist.js,yes,wizard,no
+Unique_Belt_Set_02_x1,Krelm's Buff Belt,waist,Belt,set,,70,,,,,mainstat;custom,Krelm’s Buff Bulwark,item_waist.js,yes,,no
+Unique_Belt_012_x1,Captain Crimson's Silk Girdle,waist,Belt,set,,,,,,,,Captain Crimson's Trimmings,item_waist.js,no,,yes
+Unique_Belt_014_x1,Demon's Restraint,waist,Belt,set,,,,,,,,Demon's Hide,item_waist.js,yes,,yes
+Unique_Belt_013_x1,Guardian's Case,waist,Belt,set,,,,,,,,Guardian's Jeopardy,item_waist.js,no,,yes
+P74_Unique_Belt_013,Guardian's Case,waist,Belt,set,,,,,,,,Guardian's Jeopardy,data.json,yes,,yes
+Unique_BarbBelt_004_x1,Girdle of Giants,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;ias;maxfury,,item_waist.js,no,barbarian,no
+Unique_BarbBelt_006_x1,The Undisputed Champion,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;resall;lifefury,,item_waist.js,no,barbarian,no
+P2_Unique_BarbBelt_006,The Undisputed Champion,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;resall;custom,,item_waist.js,no,barbarian,no
+Unique_BarbBelt_007_x1,Kotuur's Brace,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;block,,item_waist.js,yes,barbarian,no
+Unique_BarbBelt_002_x1,Pride of Cassius,waist,Mighty Belt,legendary,barbarian,31,,,,,mainstat;resall;custom,,item_waist.js,yes,barbarian,no
+Unique_BarbBelt_101_x1,Chilanik's Chain,waist,Mighty Belt,legendary,barbarian,34,,,,,mainstat;custom,,item_waist.js,yes,barbarian,no
+Unique_BarbBelt_001_x1,Dread Iron,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;ms;edef;dura,,item_waist.js,no,barbarian,no
+Unique_BarbBelt_008_x1,Ageless Might,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;resall,,item_waist.js,yes,barbarian,no
+Unique_BarbBelt_005_x1,Lamentation,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;chc,,item_waist.js,no,barbarian,no
+Unique_BarbBelt_005_p1,Lamentation,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;custom,,item_waist.js,no,barbarian,no
+Unique_BarbBelt_009_x1,Immortal King's Tribal Binding,waist,Mighty Belt,set,barbarian,60,,,,,mainstat;resall,Immortal King's Call,item_waist.js,yes,barbarian,no
+P2_Unique_Belt_008,Belt of the Trove,waist,Belt,legendary,,,,,,,mainstat;resall;meleedef;custom;basearmor,,item_waist.js,no,crusader,no
+P2_Unique_Belt_05,Blessed of Haull,waist,Belt,legendary,,34,,,,,mainstat;resall;custom,,item_waist.js,yes,crusader,no
+P2_Unique_Belt_04,Omnislash,waist,Belt,legendary,,34,,,,,mainstat;resall;custom,,item_waist.js,yes,crusader,no
+P2_Unique_Belt_01,Crashing Rain,waist,Belt,legendary,,34,,,,,mainstat;vit;custom,,item_waist.js,yes,demonhunter,no
+P2_Unique_Belt_03,Haunting Girdle,waist,Belt,legendary,,34,,,,,mainstat;vit;custom,,item_waist.js,yes,witchdoctor,no
+P2_Unique_Belt_02,Belt of Transcendence,waist,Belt,legendary,,34,,,,,mainstat;vit;custom,,item_waist.js,yes,,no
+P2_Unique_BarbBelt_001,Dread Iron,waist,Mighty Belt,legendary,barbarian,61,,,,,mainstat;vit;skill_barbarian_avalanche;custom,,item_waist.js,yes,barbarian,no
+P2_Unique_Belt_06,Omryn's Chain,waist,Belt,legendary,,34,,,,,mainstat;custom,,item_waist.js,yes,demonhunter,no
+P3_Unique_Belt_005,Hunter's Wrath,waist,Belt,legendary,,,,,,,mainstat;vit;custom,,item_waist.js,no,,no
+P3_Unique_Belt_01,Sacred Harness,waist,Belt,legendary,,25,,,,,mainstat;custom,,item_waist.js,yes,crusader,no
+P3_Unique_Belt_02,Fazula's Improbable Chain,waist,Belt,legendary,,,,,,,mainstat;custom,,item_waist.js,no,wizard,no
+P3_Unique_Belt_03,Binding of the Lost,waist,Belt,legendary,,,,,,,mainstat;custom,,item_waist.js,no,monk,no
+P4_Unique_Belt_01,Chain of Shadows,waist,Belt,legendary,,34,,,,,mainstat;vit;custom,,item_waist.js,yes,demonhunter,no
+P4_Unique_Belt_02,The Shame of Delsere,waist,Belt,legendary,,20,,,,,mainstat;custom,,item_waist.js,yes,,no
+P4_Unique_Belt_03,String of Ears,waist,Belt,legendary,,31,,,,,mainstat;vit;custom,,item_waist.js,yes,,no
+P4_Unique_Belt_04,Zoey's Secret,waist,Belt,legendary,,70,,,,,mainstat;vit;custom,,item_waist.js,yes,demonhunter,no
+P4_Unique_Belt_05,Kyoshiro's Soul,waist,Belt,legendary,,24,,,,,mainstat;skill_monk_sweepingwind;custom,,item_waist.js,yes,monk,no
+P4_Unique_Belt_06,Hergbrash's Binding,waist,Belt,legendary,,33,,,,,mainstat;custom,,item_waist.js,yes,wizard,no
+P4_Unique_Belt_07,Fazula's Improbable Chain,waist,Belt,legendary,,33,,,,,mainstat;custom,,item_waist.js,yes,wizard,no
+P41_Unique_Belt_007,Bakuli Jungle Wraps,waist,Belt,legendary,,,,,,,mainstat;resall;custom,,item_waist.js,no,witchdoctor,no
+P42_Crusader_FoH_Belt,Khassett's Cord of Righteousness,waist,Belt,legendary,,70,,,,,mainstat;custom,,item_waist.js,yes,crusader,no
+P42_Unique_BarbBelt_EQ,Girdle of Giants,waist,Mighty Belt,legendary,barbarian,,,,,,mainstat;ias;maxfury;custom,,item_waist.js,no,barbarian,no
+P43_Unique_Belt_001_x1,Saffron Wrap,waist,Belt,legendary,,9,,,,,mainstat;custom,,item_waist.js,yes,barbarian,no
+P43_Unique_Belt_005_x1,Hellcat Waistguard,waist,Belt,legendary,,15,,,,,mainstat;custom,,item_waist.js,yes,demonhunter,no
+P6_Unique_Belt_01,Dayntee's Binding,waist,Belt,legendary,,,,,,,mainstat;custom,,item_waist.js,no,necromancer,no
+P61_Unique_BarbBelt_EQ,Girdle of Giants,waist,Mighty Belt,legendary,barbarian,11,,,,,mainstat;ias;maxfury;custom,,item_waist.js,yes,barbarian,no
+P61_Unique_Belt_007,Bakuli Jungle Wraps,waist,Belt,legendary,,31,,,,,mainstat;resall;custom,,item_waist.js,yes,witchdoctor,no
+P61_Unique_Belt_01,Dayntee's Binding,waist,Belt,legendary,,22,,,,,mainstat;custom,,item_waist.js,yes,,no
+P61_Unique_Belt_03,Binding of the Lost,waist,Belt,legendary,,20,,,,,mainstat;custom,,item_waist.js,yes,monk,no
+P66_Unique_Belt_012,Captain Crimson's Silk Girdle,waist,Belt,set,,,,,,,,Captain Crimson's Trimmings,item_waist.js,yes,,yes
+P66_Unique_Belt_016,Sage's Ribbon,waist,Belt,set,,,,,,,,Sage's Journey,item_waist.js,yes,,yes
+P67_Unique_BarbBelt_005,Lamentation,waist,Mighty Belt,legendary,barbarian,60,,,,,mainstat;custom,,item_waist.js,yes,barbarian,no
+P68_Unique_BarbBelt_006,The Undisputed Champion,waist,Mighty Belt,legendary,barbarian,11,,,,,mainstat;resall;custom,,item_waist.js,yes,barbarian,no
+P69_Unique_Belt_005,Hunter's Wrath,waist,Belt,legendary,,70,,,,,mainstat;vit;custom,,item_waist.js,yes,,no
+P610_Unique_Belt_008,Belt of the Trove,waist,Belt,legendary,,60,,,,,mainstat;resall;meleedef;custom;basearmor,,data.json,yes,crusader,no
+P72_Unique_Belt_007,Brood of Araneae,waist,Belt,legendary,,34,,,,,mainstat;vit;custom,,data.json,yes,witchdoctor,no
+P76_Unique_Belt_002,Vigilante Belt,waist,Belt,legendary,,11,,,,,mainstat;cdr;custom,,data.json,yes,crusader,no
+Unique_Bracer_006_x1,Gungdo Gear,wrists,Bracers,legendary,,,,,,,mainstat;vit;ccr,,item_wrists.js,no,,no
+P2_Unique_Bracer_006,Gungdo Gear,wrists,Bracers,legendary,,,,,,,mainstat;elemental;custom,,item_wrists.js,no,monk,no
+Unique_Bracer_004_x1,Steady Strikers,wrists,Bracers,legendary,,,,,,,mainstat;ias,,item_wrists.js,yes,,no
+Unique_Bracer_003_x1,Slave Bonds,wrists,Bracers,legendary,,,,,,,mainstat;ms;laek,,item_wrists.js,yes,,no
+Unique_Bracer_102_x1,Ancient Parthan Defenders,wrists,Bracers,legendary,,34,,,,,mainstat;custom,,item_wrists.js,yes,,no
+Unique_Bracer_107_x1,Custerian Wristguards,wrists,Bracers,legendary,,34,,,,,chc;gf;custom,,item_wrists.js,yes,,no
+Unique_Bracer_106_x1,Nemesis Bracers,wrists,Bracers,legendary,,34,,,,,mainstat;custom,,item_wrists.js,yes,,no
+Unique_Bracer_101_x1,Warzechian Armguards,wrists,Bracers,legendary,,34,,,,,mainstat;chc;pickup;custom,,item_wrists.js,yes,,no
+Unique_Bracer_002_x1,Promise of Glory,wrists,Bracers,legendary,,51,,,,,mainstat;chc;custom,,item_wrists.js,yes,,no
+Unique_Bracer_005_x1,Lacuni Prowlers,wrists,Bracers,legendary,,60,,,,,ias;ms,,item_wrists.js,yes,,no
+Unique_Bracer_007_x1,Strongarm Bracers,wrists,Bracers,legendary,,60,,,,,mainstat;vit;custom,,item_wrists.js,yes,,no
+Unique_Bracer_104_x1,Trag'Oul Coils,wrists,Bracers,legendary,,,,,,,mainstat;custom,,item_wrists.js,no,,no
+Unique_Bracer_001_x1,Kethrye's Splint,wrists,Bracers,legendary,,,,,,,,,item_wrists.js,yes,,no
+Unique_Bracer_103_x1,Reaper's Wraps,wrists,Bracers,legendary,,,,,,,custom,,item_wrists.js,yes,,no
+Unique_Bracer_Set_02_x1,Krelm's Buff Bracers,wrists,Bracers,set,,70,,,,,mainstat;custom,Krelm’s Buff Bulwark,item_wrists.js,yes,,no
+Unique_Bracer_Set_12_x1,Shackles of the Invoker,wrists,Bracers,set,,70,,,,,mainstat;thorns,Thorns of the Invoker,item_wrists.js,yes,,no
+Unique_Bracer_009_x1,Aughild's Search,wrists,Bracers,set,,,,,,,,Aughild's Authority,item_wrists.js,no,,yes
+Unique_Bracer_011_x1,Demon's Animus,wrists,Bracers,set,,,,,,,,Demon's Hide,item_wrists.js,yes,,yes
+Unique_Bracer_010_x1,Guardian's Aversion,wrists,Bracers,set,,,,,,,,Guardian's Jeopardy,item_wrists.js,no,,yes
+P74_Unique_Bracer_010,Guardian's Aversion,wrists,Bracers,set,,,,,,,,Guardian's Jeopardy,data.json,yes,,yes
+P2_Unique_Bracer_110,Drakon's Lesson,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,crusader,no
+P2_Unique_Bracer_003,Mortick's Brace,wrists,Bracers,legendary,,31,,,,,custom,,item_wrists.js,yes,barbarian,no
+Unique_Bracer_108_x1,Ranslor's Folly,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,wizard,no
+P2_Unique_Bracer_109,Spirit Guards,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,,no
+P3_Unique_Bracer_101,Gabriel's Vambraces,wrists,Bracers,legendary,,15,,,,,mainstat;chc;custom,,item_wrists.js,yes,crusader,no
+P3_Unique_Bracer_103,Wraps of Clarity,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,,no
+P3_Unique_Bracer_104,Bracers of Destruction,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,barbarian,no
+P3_Unique_Bracer_105,Bracers of the First Men,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,barbarian,no
+P3_Unique_Bracer_106,Jeram's Bracers,wrists,Bracers,legendary,,31,,,,,mainstat;chc;custom,,item_wrists.js,yes,witchdoctor,no
+P3_Unique_Bracer_107,Coils of the First Spider,wrists,Bracers,legendary,,70,,,,,mainstat;chc;regen;custom,,item_wrists.js,yes,witchdoctor,no
+P4_Unique_Bracer_101,Skular's Salvation,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,barbarian,no
+P4_Unique_Bracer_102,Lakumba's Ornament,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,witchdoctor,no
+P4_Unique_Bracer_103,Akkhan's Manacles,wrists,Bracers,legendary,,23,,,,,mainstat;chc;custom,,item_wrists.js,yes,crusader,no
+P4_Unique_Bracer_104,Bracer of Fury,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,crusader,no
+P4_Unique_Bracer_105,Pinto's Pride,wrists,Bracers,legendary,,15,,,,,mainstat;chc;custom,,item_wrists.js,yes,monk,no
+P4_Unique_Bracer_106,Vambraces of Sescheron,wrists,Bracers,legendary,,33,,,,,mainstat;chc;custom,,item_wrists.js,yes,,no
+P4_Unique_Bracer_107,Cesar's Memento,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,monk,no
+P4_Unique_Bracer_108,Bindings of the Lesser Gods,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,monk,no
+P4_Unique_Bracer_110,Drakon's Lesson,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,item_wrists.js,yes,crusader,no
+P4_Unique_Bracer_004,Ashnagarr's Blood Bracer,wrists,Bracers,legendary,,11,,,,,mainstat;chc;custom,,item_wrists.js,yes,,no
+P42_Unique_Bracer_SpikeTrap,Trag'Oul Coils,wrists,Bracers,legendary,,,,,,,mainstat;custom,,item_wrists.js,no,demonhunter,no
+P61_Unique_Bracer_100,Bracers of Destruction,wrists,Bracers,legendary,,,,,,,mainstat;chc;custom,,item_wrists.js,no,barbarian,no
+P61_Unique_Bracer_104,Bracer of Fury,wrists,Bracers,legendary,,33,,,,,mainstat;chc;custom,,item_wrists.js,yes,crusader,no
+P61_Unique_Bracer_105,Bracers of the First Men,wrists,Bracers,legendary,,15,,,,,mainstat;chc;custom,,item_wrists.js,yes,barbarian,no
+P61_Unique_Bracer_107,Cesar's Memento,wrists,Bracers,legendary,,12,,,,,mainstat;chc;custom,,item_wrists.js,yes,monk,no
+P61_Unique_Bracer_108_x1,Ranslor's Folly,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,item_wrists.js,yes,wizard,no
+P61_Unique_Bracer_103,Wraps of Clarity,wrists,Bracers,legendary,,15,,,,,mainstat;chc;custom,,item_wrists.js,yes,,no
+P61_Unique_Bracer_109,Spirit Guards,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,item_wrists.js,yes,,no
+P66_Unique_Bracer_009,Aughild's Search,wrists,Bracers,set,,,,,,,,Aughild's Authority,item_wrists.js,yes,,yes
+P67_Unique_Bracer_100,Bracers of Destruction,wrists,Bracers,legendary,,15,,,,,mainstat;chc;custom,,item_wrists.js,yes,barbarian,no
+P610_Unique_Bracer_22,Gelmindor's Marrow Guards,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,data.json,yes,necromancer,no
+P610_Unique_Bracer_006,Gungdo Gear,wrists,Bracers,legendary,,13,,,,,mainstat;elemental;custom,,data.json,yes,monk,no
+P7_Unique_Bracer_23,Bonds of C'Lena,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,data.json,yes,necromancer,no
+P71_Unique_Bracer_108,Bindings of the Lesser Gods,wrists,Bracers,legendary,,17,,,,,mainstat;chc;custom,,data.json,yes,monk,no
+P72_Unique_Bracer_102,Lakumba's Ornament,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,data.json,yes,witchdoctor,no
+P73_Unique_Bracer_101,Skular's Salvation,wrists,Bracers,legendary,,70,,,,,mainstat;chc;custom,,data.json,yes,barbarian,no
+P75_Unique_Bracer_SpikeTrap,Trag'Oul Coils,wrists,Bracers,legendary,,70,,,,,mainstat;custom,,data.json,yes,demonhunter,no
+Shaman_RitualMace_001,Ritual Mace,onehand,Ritual Mace,,shaman,,,192,355,1.3,,,torment_shaman,yes,shaman,no
+Shaman_Totem_001,Totem,offhand,Totem,,shaman,,,,,,,,torment_shaman,yes,shaman,no
+Shaman_Unique_RitualMace_001,Earthcaller's Gavel,onehand,Ritual Mace,legendary,shaman,,,192,355,1.3,,,torment_shaman,yes,shaman,no

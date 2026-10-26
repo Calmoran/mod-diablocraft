@@ -1,0 +1,3 @@
+kind,key,shown_name,source
+passive,Leech (Demon Hunter),Leech,"ruling 2026-10-21 (q-1021-47 (b)): the Demon Hunter's passive reads plain Leech to the player; its key stays Leech (Demon Hunter) because the Necromancer's skill Leech holds the plain one (diablocraft-kev3m)"
+skill,Earthquake (Shaman),Earthquake,"ruling 2026-10-23 (q-1021-130): the Shaman keeps every draft name, so its skill reads plain Earthquake to the player; its key carries the class because the Barbarian's Earthquake holds the plain one (diablocraft-xnrvn.5, xnrvn.6)"

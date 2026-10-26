@@ -1,0 +1,77 @@
+diff --git a/WoW/Source/Magic/MagicClient/Spell_C.cpp b/WoW/Source/Magic/MagicClient/Spell_C.cpp
+index 3633a92..ca8b31b 100644
+--- a/WoW/Source/Magic/MagicClient/Spell_C.cpp
++++ b/WoW/Source/Magic/MagicClient/Spell_C.cpp
+@@ -2525,7 +2525,17 @@ const char* GetUnitPowerString(const CGUnit_C* unit, uint32_t powerType) {
+ // Power show a tenth).
+ uint32_t Spell_C_GetUnitPowerDisplayMod(const CGUnit_C* unit, uint32_t powerType) {
+     if (GetClassPowerString(unit, powerType)) {
+-        uint32_t scale = TormentPowers::UnitsPerPointFor(unit->m_unit->m_unitFieldBytes0[1], powerType);
++        return Spell_C_GetClassPowerDisplayMod(unit->m_unit->m_unitFieldBytes0[1], powerType);
++    }
++
++    return Spell_C_GetPowerDisplayMod(powerType);
++}
++
++// Torment: the same divide for a player known only by class id (a party member out of range has no unit, only the name
++// cache's class): the class's row for the slot gives its storage scale, else the stock divide.
++uint32_t Spell_C_GetClassPowerDisplayMod(uint32_t classId, uint32_t powerType) {
++    if (TormentPowers::TokenFor(classId, powerType)) {
++        uint32_t scale = TormentPowers::UnitsPerPointFor(classId, powerType);
+         return scale ? scale : 1;
+     }
+ 
+diff --git a/WoW/Source/Magic/MagicClient/Spell_C.h b/WoW/Source/Magic/MagicClient/Spell_C.h
+index 07271ac..3409812 100644
+--- a/WoW/Source/Magic/MagicClient/Spell_C.h
++++ b/WoW/Source/Magic/MagicClient/Spell_C.h
+@@ -352,5 +352,6 @@ const char* GetPowerString(uint32_t powerType);
+ const char* GetClassPowerString(const CGUnit_C* unit, uint32_t powerType);
+ const char* GetUnitPowerString(const CGUnit_C* unit, uint32_t powerType);
+ uint32_t Spell_C_GetUnitPowerDisplayMod(const CGUnit_C* unit, uint32_t powerType);
++uint32_t Spell_C_GetClassPowerDisplayMod(uint32_t classId, uint32_t powerType);
+ 
+ #endif
+diff --git a/WoW/Source/Ui/ScriptEvents_Scripts.cpp b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+index 07c8bb5..7924be1 100644
+--- a/WoW/Source/Ui/ScriptEvents_Scripts.cpp
++++ b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+@@ -878,6 +878,20 @@ static int32_t Script_UnitName(lua_State* L) {
+     return 2;
+ }
+ 
++// Torment: what a party member's power slot is divided by when the member is out of range and only the party state holds it.
++// A class power shows through its row's storage scale (so a class stored one unit a point shows its true number), as it does
++// for a unit in range; the class is the name cache's. A member whose class is not cached yet, and any slot with no row,
++// keep the stock divide.
++static uint32_t PartyMemberPowerDisplayMod(const WOWGUID& guid, uint32_t powerType) {
++    NameCache* name = g_nameDBCache.GetRecord(guid.m_guid, WOWGUID(), nullptr, nullptr, false);
++
++    if (name) {
++        return Spell_C_GetClassPowerDisplayMod(name->m_class, powerType);
++    }
++
++    return Spell_C_GetPowerDisplayMod(powerType);
++}
++
+ // VERIFY: 5bacc158 manual
+ // OFFSET: 0x0060ED40
+ static int32_t Script_UnitPower(lua_State* L) {
+@@ -913,7 +927,7 @@ static int32_t Script_UnitPower(lua_State* L) {
+         }
+     } else if (CGPartyMemberState* state = CGPartyMemberStateRepository::GetState(unitGuid)) {
+         if (powerType == 7 || powerType == state->m_powerType) {
+-            power = state->m_power / Spell_C_GetPowerDisplayMod(state->m_powerType);
++            power = state->m_power / PartyMemberPowerDisplayMod(unitGuid, state->m_powerType);
+         }
+     } else if (CGPartyPetState* petState = CGPartyMemberStateRepository::FindPetState(unitGuid)) {
+         if (powerType == 7 || powerType == petState->m_powerType) {
+@@ -958,7 +972,7 @@ static int32_t Script_UnitPowerMax(lua_State* L) {
+         power = unit->m_unit->m_unitFieldMaxpower[powerType] / Spell_C_GetUnitPowerDisplayMod(unit, powerType);
+     } else if (CGPartyMemberState* state = CGPartyMemberStateRepository::GetState(unitGuid)) {
+         if (powerType == 7 || powerType == state->m_powerType) {
+-            power = state->m_maxPower / Spell_C_GetPowerDisplayMod(state->m_powerType);
++            power = state->m_maxPower / PartyMemberPowerDisplayMod(unitGuid, state->m_powerType);
+         }
+     } else if (CGPartyPetState* petState = CGPartyMemberStateRepository::FindPetState(unitGuid)) {
+         if (powerType == 7 || powerType == petState->m_powerType) {

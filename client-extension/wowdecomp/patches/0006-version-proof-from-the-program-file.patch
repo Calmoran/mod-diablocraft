@@ -1,0 +1,176 @@
+diff --git a/Engine/Source/Os/Win64/OsVersionHash.cpp b/Engine/Source/Os/Win64/OsVersionHash.cpp
+index eaf008c..79056ef 100644
+--- a/Engine/Source/Os/Win64/OsVersionHash.cpp
++++ b/Engine/Source/Os/Win64/OsVersionHash.cpp
+@@ -71,6 +71,11 @@ static int32_t AddRelocationEntries(OsVersionHash& hash, const uint8_t* image, u
+         return 1;
+     }
+ 
++    // Torment: an image laid out from its file holds the file's values, nothing to put back.
++    if (!unrelocate) {
++        return 1;
++    }
++
+     const uint8_t* block = image + directory->VirtualAddress;
+     const uint8_t* end = block + directory->Size;
+ 
+@@ -433,15 +438,15 @@ static int32_t ComputeChecksum(IOsVersionHashCallback& callback, const uint8_t*
+ 
+     OsVersionHash hash;
+ 
+-    if (!AddHeaderEntries(hash, image, imageBase, sizeOfHeaders, 1, is32Bit)) {
++    if (!AddHeaderEntries(hash, image, imageBase, sizeOfHeaders, unrelocate, is32Bit)) {
+         return 0;
+     }
+ 
+-    if (!AddRelocationEntries(hash, image, imageBase, relocationDirectory, 1, is32Bit)) {
++    if (!AddRelocationEntries(hash, image, imageBase, relocationDirectory, unrelocate, is32Bit)) {
+         return 0;
+     }
+ 
+-    if (!AddImportEntries(hash, image, imports, importDirectory->VirtualAddress, importDirectory->Size, 1, is32Bit)) {
++    if (!AddImportEntries(hash, image, imports, importDirectory->VirtualAddress, importDirectory->Size, unrelocate, is32Bit)) {
+         return 0;
+     }
+ 
+@@ -452,12 +457,12 @@ static int32_t ComputeChecksum(IOsVersionHashCallback& callback, const uint8_t*
+     headers.SizeOfRawData = (sizeOfHeaders + fileAlignment - 1) & ~(fileAlignment - 1);
+     headers.Characteristics = IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ;
+ 
+-    if (!HashSection(callback, hash, image, imageBase, &headers, sectionAlignment, 1, is32Bit)) {
++    if (!HashSection(callback, hash, image, imageBase, &headers, sectionAlignment, unrelocate, is32Bit)) {
+         return 0;
+     }
+ 
+     for (WORD i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++) {
+-        if (!HashSection(callback, hash, image, imageBase, &sections[i], sectionAlignment, 1, is32Bit)) {
++        if (!HashSection(callback, hash, image, imageBase, &sections[i], sectionAlignment, unrelocate, is32Bit)) {
+             return 0;
+         }
+     }
+@@ -465,6 +470,113 @@ static int32_t ComputeChecksum(IOsVersionHashCallback& callback, const uint8_t*
+     return 1;
+ }
+ 
++// Torment: the program's own fingerprint is taken over its file on disk, not over its loaded image.
++// Windows writes the load address into an ASLR-moved exe's in-memory ImageBase, so the walk on the
++// loaded image sees no move, puts no relocation back and hashes the moved bytes: the proof followed
++// each boot's load address and no build_info seed could hold. Laid out from the file as the loader
++// maps it, the image is the one the exe has at its file base, the same on every boot, and the
++// authserver's seed for a build is version_seed.py's answer for that exe file
++// (client-extension/wowdecomp/login-mark.md). ASLR stays on.
++static int32_t ComputeProgramFileChecksum(IOsVersionHashCallback& callback) {
++    const DWORD pathCapacity = 32768;
++    wchar_t* path = static_cast<wchar_t*>(SMemAlloc(pathCapacity * sizeof(wchar_t), __FILE__, __LINE__, 0));
++    if (!path) {
++        return 0;
++    }
++
++    DWORD pathLength = GetModuleFileNameW(nullptr, path, pathCapacity);
++    HANDLE file = INVALID_HANDLE_VALUE;
++    if (pathLength && pathLength < pathCapacity) {
++        file = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
++    }
++    SMemFree(path, __FILE__, __LINE__, 0);
++
++    if (file == INVALID_HANDLE_VALUE) {
++        return 0;
++    }
++
++    uint8_t* pe = nullptr;
++    uint32_t peSize = 0;
++    LARGE_INTEGER fileSize;
++    if (GetFileSizeEx(file, &fileSize) && fileSize.QuadPart > 0 && fileSize.QuadPart <= 0x40000000) {
++        peSize = static_cast<uint32_t>(fileSize.QuadPart);
++        pe = static_cast<uint8_t*>(SMemAlloc(peSize, __FILE__, __LINE__, 0));
++
++        DWORD bytesRead = 0;
++        if (pe && (!ReadFile(file, pe, peSize, &bytesRead, nullptr) || bytesRead != peSize)) {
++            SMemFree(pe, __FILE__, __LINE__, 0);
++            pe = nullptr;
++        }
++    }
++    CloseHandle(file);
++
++    if (!pe) {
++        return 0;
++    }
++
++    // The headers ComputeChecksum reads must lie in the file, and every section's data in the image.
++    uint32_t sizeOfImage = 0;
++    uint32_t sizeOfHeaders = 0;
++    const IMAGE_DOS_HEADER* dosHeader = reinterpret_cast<const IMAGE_DOS_HEADER*>(pe);
++    const IMAGE_NT_HEADERS32* ntHeaders = nullptr;
++    const IMAGE_SECTION_HEADER* sections = nullptr;
++
++    if (peSize >= sizeof(IMAGE_DOS_HEADER) && dosHeader->e_magic == IMAGE_DOS_SIGNATURE && dosHeader->e_lfanew > 0
++        && static_cast<uint64_t>(dosHeader->e_lfanew) + sizeof(IMAGE_NT_HEADERS64) <= peSize) {
++        ntHeaders = reinterpret_cast<const IMAGE_NT_HEADERS32*>(pe + dosHeader->e_lfanew);
++
++        if (ntHeaders->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
++            const IMAGE_OPTIONAL_HEADER64& optionalHeader = reinterpret_cast<const IMAGE_NT_HEADERS64*>(ntHeaders)->OptionalHeader;
++            sizeOfImage = optionalHeader.SizeOfImage;
++            sizeOfHeaders = optionalHeader.SizeOfHeaders;
++        } else if (ntHeaders->OptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
++            sizeOfImage = ntHeaders->OptionalHeader.SizeOfImage;
++            sizeOfHeaders = ntHeaders->OptionalHeader.SizeOfHeaders;
++        }
++
++        sections = IMAGE_FIRST_SECTION(ntHeaders);
++        uint64_t sectionsEnd = static_cast<uint64_t>(reinterpret_cast<const uint8_t*>(sections + ntHeaders->FileHeader.NumberOfSections) - pe);
++        if (sectionsEnd > sizeOfHeaders || sizeOfHeaders > peSize || sizeOfHeaders > sizeOfImage) {
++            sizeOfImage = 0;
++        }
++    }
++
++    uint8_t* image = sizeOfImage ? static_cast<uint8_t*>(SMemAlloc(sizeOfImage, __FILE__, __LINE__, 0)) : nullptr;
++    int32_t result = 0;
++
++    if (image) {
++        memset(image, 0, sizeOfImage);
++        memcpy(image, pe, sizeOfHeaders);
++
++        bool laidOut = true;
++        for (WORD i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++) {
++            const IMAGE_SECTION_HEADER& section = sections[i];
++            uint32_t size = section.Misc.VirtualSize && section.Misc.VirtualSize < section.SizeOfRawData ? section.Misc.VirtualSize : section.SizeOfRawData;
++
++            if (static_cast<uint64_t>(section.PointerToRawData) + size > peSize || static_cast<uint64_t>(section.VirtualAddress) + size > sizeOfImage) {
++                laidOut = false;
++                break;
++            }
++
++            memcpy(image + section.VirtualAddress, pe + section.PointerToRawData, size);
++        }
++
++        if (laidOut) {
++            __try {
++                result = ComputeChecksum(callback, image, 0);
++            } __except (GetExceptionCode() == EXCEPTION_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
++                result = 0;
++            }
++        }
++
++        SMemFree(image, __FILE__, __LINE__, 0);
++    }
++
++    SMemFree(pe, __FILE__, __LINE__, 0);
++
++    return result;
++}
++
+ // OFFSET: 0x00871F90
+ int32_t IOsVersionChecksum(IOsVersionHashCallback& callback, const char* path, int32_t loaded) {
+     if (!path && !loaded) {
+@@ -472,6 +584,11 @@ int32_t IOsVersionChecksum(IOsVersionHashCallback& callback, const char* path, i
+     }
+ 
+     if (loaded) {
++        // Torment: the program itself (no path) is hashed from its file, see ComputeProgramFileChecksum.
++        if (!path) {
++            return ComputeProgramFileChecksum(callback);
++        }
++
+         uint16_t* widePath = nullptr;
+ 
+         if (path) {

@@ -1,0 +1,25 @@
+spell_id,skill,rune,damage_pct,fury,behavior,proc_pct,duration_ms,magnitude,max_stacks,lockout_ms,source
+81000,Frenzy,,220,4,plain,0,0,0,0,0,barbarian_skills.csv: Frenzy; ruling 2026-09-12 split/main coefficients
+81023,Frenzy,Maniac,220,4,maniac,0,0,2.5,0,0,barbarian_runes.csv: Maniac; barbarian_skills.csv: Frenzy; ruling 2026-09-12 split/main coefficients
+81024,Frenzy,Sidearm,220,4,sidearm,25,0,300,0,0,barbarian_runes.csv: Sidearm; ruling 2026-09-13 geometry
+81025,Frenzy,Vanguard,220,4,vanguard,0,0,5,0,0,barbarian_runes.csv: Vanguard; barbarian_skills.csv: Frenzy; ruling 2026-09-12 split/main coefficients
+81026,Frenzy,Smite,220,4,smite,30,1500,0,0,0,barbarian_runes.csv: Smite; barbarian_skills.csv: Frenzy; ruling 2026-09-12 split/main coefficients
+81027,Frenzy,Berserk,220,6,plain,0,0,0,0,0,barbarian_runes.csv: Berserk; barbarian_skills.csv: Frenzy; ruling 2026-09-12 split/main coefficients
+81001,Weapon Throw,,275,6,plain,0,0,0,0,0,barbarian_skills.csv: Weapon Throw; ruling 2026-09-12 split/main coefficients
+81028,Weapon Throw,Mighty Throw,400.0,6,plain,0,0,0,0,0,barbarian_runes.csv: Mighty Throw; barbarian_skills.csv: Weapon Throw; ruling 2026-09-12 split/main coefficients
+81029,Weapon Throw,Ricochet,275,6,ricochet,0,0,0,0,0,barbarian_runes.csv: Ricochet; barbarian_skills.csv: Weapon Throw; ruling 2026-09-12 split/main coefficients
+81030,Weapon Throw,Throwing Hammer,275,6,hammer,40,1000,0,0,0,barbarian_runes.csv: Throwing Hammer; barbarian_skills.csv: Weapon Throw; ruling 2026-09-12 split/main coefficients
+81031,Weapon Throw,Balanced Weapon,275,9,plain,0,0,0,0,0,barbarian_runes.csv: Balanced Weapon; barbarian_skills.csv: Weapon Throw; ruling 2026-09-12 split/main coefficients
+81032,Weapon Throw,Stupefy,275,6,stupefy,15,3000,0,0,0,barbarian_runes.csv: Stupefy; barbarian_skills.csv: Weapon Throw; ruling 2026-09-12 split/main coefficients
+81002,Bash,,320,6,plain,0,0,0,0,0,barbarian_skills.csv: Bash; ruling 2026-09-12 split/main coefficients
+81033,Bash,Onslaught,320,6,onslaught,0,3000,10,0,0,barbarian_runes.csv: Onslaught; barbarian_skills.csv: Bash; ruling 2026-09-12 split/main coefficients
+81034,Bash,Punish,320,6,punish,0,5000,4,3,0,barbarian_runes.csv: Punish; barbarian_skills.csv: Bash; ruling 2026-09-12 split/main coefficients
+81035,Bash,Frostbite,320,6,frostbite,100,1500,0,0,5000,barbarian_runes.csv: Frostbite; barbarian_skills.csv: Bash; ruling 2026-09-12 split/main coefficients
+81036,Bash,Instigation,320,9,plain,0,0,0,0,0,barbarian_runes.csv: Instigation; barbarian_skills.csv: Bash; ruling 2026-09-12 split/main coefficients
+81037,Bash,Pulverize,320,6,pulverize,100,0,100,0,0,barbarian_runes.csv: Pulverize; ruling 2026-09-13 geometry
+81003,Cleave,,200,6,plain,0,0,0,0,0,barbarian_skills.csv: Cleave; ruling 2026-09-12 split/main coefficients
+81038,Cleave,Broad Sweep,235.0,6,broad,0,0,0,0,0,barbarian_runes.csv: Broad Sweep; barbarian_skills.csv: Cleave; ruling 2026-09-12 split/main coefficients
+81039,Cleave,Gathering Storm,200,6,gathering,100,3000,10,0,0,barbarian_runes.csv: Gathering Storm; ruling 2026-09-13 damage taken confirmed; chill placeholder in primary_mechanics.csv
+81040,Cleave,Scattering Blast,200,6,scattering,0,0,80,0,0,barbarian_runes.csv: Scattering Blast; ruling 2026-09-13 geometry
+81041,Cleave,Reaping Swing,200,6,reaping,0,0,1,0,0,ruling 2026-09-13: base 6 plus 1 per additional enemy; three targets = 8
+81042,Cleave,Rupture,200,6,rupture,0,0,160,0,0,barbarian_runes.csv: Rupture; barbarian_skills.csv: Cleave; ruling 2026-09-12 split/main coefficients

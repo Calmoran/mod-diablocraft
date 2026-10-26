@@ -1,0 +1,34 @@
+name,d3_value,value,unit,notes
+artisan_interaction_range_yards,,5,yards,Codex audit 82: current artisan interaction range; no published origin found; existing literal preserved as the designer tuning.
+repair_minimum_gold,,1,gold,Codex audit 98: current minimum nonzero repair price; no published origin found; the designer tuning.
+gm_material_grant_max_count,,1000000,count,Codex audit 99: GM material-grant safety limit; no published origin found; existing value preserved.
+gm_gem_grant_max_count,,20,count,Codex audit 102: GM test gem-grant count cap; no published origin found; existing value preserved.
+starter_item_level,,70,level,Codex literal audit 42; mod-diablocraft/src/common/dc_world.cpp:241; Starter gear roll level; origin: 08-world W6/§5; Keep aligned with start-level policy.
+base_item_level,,70,level,Codex literal audit 114; mod-diablocraft/scripts/generate_crafting.py:155; Generated base-item template level; origin: 07-crafting R2; Template-wide display/repair input.
+durability_donor_min_level,,60,level,Codex literal audit 116; mod-diablocraft/scripts/generate_crafting.py:156; Lowest native durability donor level; origin: none found; Changes inherited repair/durability baseline.
+durability_donor_max_level,,70,level,Codex literal audit 117; mod-diablocraft/scripts/generate_crafting.py:156; Highest native durability donor level; origin: none found; Changes inherited repair/durability baseline.
+gem_quality,,3,count,"Codex literal audit 118; mod-diablocraft/scripts/generate_crafting.py:165; Gem item native rarity; origin: none found; Rare-quality cosmetic/template policy, not D3 gem rank."
+gem_item_level,,70,level,Codex literal audit 119; mod-diablocraft/scripts/generate_crafting.py:165; Gem template item level; origin: none found; Template/display policy.
+gem_required_level,,0,level,Codex literal audit 120; mod-diablocraft/scripts/generate_crafting.py:165; Gem template required character level; origin: none found; Allows use at any character level.
+gem_stack_count,,200,count,Codex literal audit 122; mod-diablocraft/scripts/generate_crafting.py:165; Normal gem stack limit; origin: none found; Direct bag-capacity effect.
+starter_mainhand_count,,1,count,Codex CSV inventory starter_kit.csv mainhand/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_head_count,,1,count,Codex CSV inventory starter_kit.csv head/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_neck_count,,1,count,Codex CSV inventory starter_kit.csv neck/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_shoulders_count,,1,count,Codex CSV inventory starter_kit.csv shoulders/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_torso_count,,1,count,Codex CSV inventory starter_kit.csv torso/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_waist_count,,1,count,Codex CSV inventory starter_kit.csv waist/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_legs_count,,1,count,Codex CSV inventory starter_kit.csv legs/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_feet_count,,1,count,Codex CSV inventory starter_kit.csv feet/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_wrists_count,,1,count,Codex CSV inventory starter_kit.csv wrists/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_hands_count,,1,count,Codex CSV inventory starter_kit.csv hands/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_finger_count,,2,count,Codex CSV inventory starter_kit.csv finger/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+starter_offhand_count,,1,count,Codex CSV inventory starter_kit.csv offhand/count; 08-world W6 and the designer starter-kit policy; rarity remains metadata.
+artisan_burst,,10,count,"diablocraft-488x: DCARTISAN (Blacksmith and Mystic window) requests a player may send at once; ruling q-0930-49 (2026-09-30). Blank would mean the window route refuses every request (docs/contracts/window-bridge.md, Budget)."
+artisan_per_second,,5,count,"diablocraft-488x: DCARTISAN tokens per second a player gets back; ruling q-0930-49 (2026-09-30). Blank would mean the window route refuses every request (docs/contracts/window-bridge.md, Budget)."
+jeweler_burst,,10,count,"diablocraft-488x: DCJEWELER (Jeweler window) requests a player may send at once; ruling q-0930-49 (2026-09-30). Blank would mean the window route refuses every request (docs/contracts/window-bridge.md, Budget)."
+jeweler_per_second,,5,count,"diablocraft-488x: DCJEWELER tokens per second a player gets back; ruling q-0930-49 (2026-09-30). Blank would mean the window route refuses every request (docs/contracts/window-bridge.md, Budget)."
+blacksmith_cast_seconds,,2,seconds,ruling 2026-10-01: one custom two-second bar for the entire exact craft quantity.
+cube_set_min_pieces,3,,count,"diablocraft-wpt7l.7: D3's Skill of Nilfur takes a set item only from a set of at least this many pieces (cube_costs.csv: 'set must have at least 3 items'; maxroll: not 2-piece sets), counted over the set's pieces in the drop pool."
+cube_burst,,10,count,"diablocraft-wpt7l.4: DCCUBE (Kanai's Cube window) requests a player may send at once; the same 10 the designer set for every window route (artisan_burst, jeweler_burst, q-0930-49), copied; his to change. Blank would mean the route refuses every request (docs/contracts/window-bridge.md, Budget)."
+cube_per_second,,5,count,"diablocraft-wpt7l.4: DCCUBE tokens per second a player gets back; the same 5 the designer set for every window route (artisan_per_second, jeweler_per_second, q-0930-49), copied; his to change. Blank would mean the route refuses every request (docs/contracts/window-bridge.md, Budget)."
+made_primal_worn_limit,,1,count,"diablocraft-wpt7l.3: how many Primal Ancient items made in Kanai's Cube (a maker set, dc_made_rule.h) a player may wear at once; decisions.md 2026-10-10 (the designer: 'a player may wear only one item made this way; dropped Primals have no limit'), D3's Curiosity of Lorath Nahr rule (cube_recipes.csv: only one upgraded Primal Item may be worn at a time). The check refuses only a new equip, so a lowered limit leaves worn items worn. Blank or 0 would refuse every made Primal."

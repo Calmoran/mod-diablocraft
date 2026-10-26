@@ -1,0 +1,8 @@
+test,rule,reason
+mod-diablocraft/scripts/tests/tooling/test_server_auto_restart.py,nightly;solo,measured 2026-10-05: its 2.8-6 s restart-gap check read 6.46 s under 8 jobs; it also shares the auto-restart scratch folder with the pane-guard test
+mod-diablocraft/scripts/tests/tooling/test_harness_core_limit.py,nightly,checks that every test registers its harness (harness check)
+mod-diablocraft/scripts/tests/tooling/test_check_aio_served.py,nightly,tests check_aio_served.py (the gate's own AIO stage; the stage still runs)
+mod-diablocraft/scripts/tests/tooling/test_numbers_out_of_prose.py,nightly,checks our numbers-out-of-prose rule on the docs (a tool check; ruling 2026-10-05)
+mod-diablocraft/scripts/tests/tooling/test_file_names.py,always,reads file names from git and no file: a new misnamed file would not reach the gate through a changed file
+mod-diablocraft/scripts/tests/tooling/test_file_size.py,always,counts the lines of every src .cpp; a new long file would not reach the gate through a file it read
+mod-diablocraft/scripts/tests/release/test_merged_migrations_frozen.py,always,reads git (the merge-base with nightly) and no tracked file: an edit to a merged migration is a diff against git, so a changed file would never select it

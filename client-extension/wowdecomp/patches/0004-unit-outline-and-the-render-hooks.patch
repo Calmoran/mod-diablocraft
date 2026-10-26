@@ -1,0 +1,1136 @@
+diff --git a/Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.cpp b/Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.cpp
+index 1dcadfe..2168b9a 100644
+--- a/Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.cpp
++++ b/Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.cpp
+@@ -5,6 +5,7 @@
+ #include "Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.h"
+ #include "Engine/Source/Gx/Blit.h"
+ #include "Engine/Source/Gx/CGxBuf.h"
++#include "Engine/Source/Gx/RenderHooks.h"
+ #include "Engine/Source/Gx/CGxPool.h"
+ #include "Engine/Source/Gx/CGxTex.h"
+ #include "Engine/Source/Gx/Gx.h"
+@@ -2655,6 +2656,11 @@ int32_t CGxDeviceD3d::ICreateD3dDevice(const CGxFormat& format) {
+ // VERIFY: 7e7b165d manual
+ // OFFSET: 0x00690150
+ void CGxDeviceD3d::IReleaseD3dResources(int32_t freeTextures) {
++    // Torment: the outline and the loot beam release their D3DPOOL_DEFAULT resources before a reset.
++    if (g_gxRenderHooks.deviceLost) {
++        g_gxRenderHooks.deviceLost(this->m_d3dDevice);
++    }
++
+     this->ITexForceRecreation(freeTextures);
+     this->IReleaseD3dShaders(freeTextures);
+     this->IReleaseD3dPools(freeTextures);
+@@ -3227,6 +3233,12 @@ void CGxDeviceD3d::ScenePresent() {
+         int32_t scrShotClick = this->m_scrShotClick;
+ 
+         CGxDevice::ScenePresent();
++
++        // Torment: the frame is drawn; the unit outline adds its halo before the scene ends.
++        if (g_gxRenderHooks.sceneEnd) {
++            g_gxRenderHooks.sceneEnd(this->m_d3dDevice);
++        }
++
+         this->ISceneEnd();
+         this->ICursorDraw();
+ 
+diff --git a/Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.cpp b/Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.cpp
+index 953e1c4..4885ebc 100644
+--- a/Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.cpp
++++ b/Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.cpp
+@@ -6,6 +6,7 @@
+ #include "Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.h"
+ #include "Engine/Source/Gx/Blit.h"
+ #include "Engine/Source/Gx/CGxBuf.h"
++#include "Engine/Source/Gx/RenderHooks.h"
+ #include "Engine/Source/Gx/CGxPool.h"
+ #include "Engine/Source/Gx/CGxTex.h"
+ #include "Engine/Source/Gx/Gx.h"
+@@ -2625,6 +2626,11 @@ int32_t CGxDeviceD3d9Ex::ICreateD3dDevice(const CGxFormat& format) {
+ // VERIFY: 22679807 manual
+ // OFFSET: 0x006A1CE0
+ void CGxDeviceD3d9Ex::IReleaseD3dResources(int32_t freeTextures) {
++    // Torment: the outline and the loot beam release their D3DPOOL_DEFAULT resources before a reset.
++    if (g_gxRenderHooks.deviceLost) {
++        g_gxRenderHooks.deviceLost(this->m_d3dDevice);
++    }
++
+     this->ITexForceRecreation(freeTextures);
+     this->IReleaseD3dShaders(freeTextures);
+     this->IReleaseD3dPools(freeTextures);
+@@ -3028,6 +3034,12 @@ void CGxDeviceD3d9Ex::ScenePresent() {
+         int32_t scrShotClick = this->m_scrShotClick;
+ 
+         CGxDevice::ScenePresent();
++
++        // Torment: the frame is drawn; the unit outline adds its halo before the scene ends.
++        if (g_gxRenderHooks.sceneEnd) {
++            g_gxRenderHooks.sceneEnd(this->m_d3dDevice);
++        }
++
+         this->ISceneEnd();
+         this->ICursorDraw();
+ 
+diff --git a/Engine/Source/Gx/RenderHooks.cpp b/Engine/Source/Gx/RenderHooks.cpp
+new file mode 100644
+index 0000000..ec56d76
+--- /dev/null
++++ b/Engine/Source/Gx/RenderHooks.cpp
+@@ -0,0 +1,3 @@
++#include "Engine/Source/Gx/RenderHooks.h"
++
++GxRenderHooks g_gxRenderHooks = {};
+diff --git a/Engine/Source/Gx/RenderHooks.h b/Engine/Source/Gx/RenderHooks.h
+new file mode 100644
+index 0000000..259842b
+--- /dev/null
++++ b/Engine/Source/Gx/RenderHooks.h
+@@ -0,0 +1,25 @@
++#ifndef ENGINE_SOURCE_GX_RENDERHOOKS_H
++#define ENGINE_SOURCE_GX_RENDERHOOKS_H
++
++class CGxBatch;
++class CM2Model;
++
++// Three points in the engine's frame where the game draws its own additions (the unit outline and the
++// loot beam, WoW/Source/Ui/Torment). The engine keeps one function pointer per point and calls it when
++// it is set; the game sets them once at start (TormentRenderInstall). The engine does not depend on the
++// game's code, so a pointer left null draws exactly what the engine drew before.
++struct GxRenderHooks {
++    // The frame is drawn, the cursor not yet: called by the Direct3D devices' ScenePresent before
++    // ISceneEnd. d3dDevice is the IDirect3DDevice9.
++    void (*sceneEnd)(void* d3dDevice);
++    // The device is about to reset or go away: release every D3DPOOL_DEFAULT resource. Called first
++    // thing in the Direct3D devices' IReleaseD3dResources.
++    void (*deviceLost)(void* d3dDevice);
++    // One model batch has just been drawn by CM2SceneRender::DrawBatch; its vertex and index buffers
++    // are still bound, so the batch can be drawn again with other shaders.
++    void (*m2BatchDrawn)(const CM2Model* model, const CGxBatch* batch);
++};
++
++extern GxRenderHooks g_gxRenderHooks;
++
++#endif
+diff --git a/Engine/Source/Model2/CM2SceneRender.cpp b/Engine/Source/Model2/CM2SceneRender.cpp
+index 4f95136..ed8ed02 100644
+--- a/Engine/Source/Model2/CM2SceneRender.cpp
++++ b/Engine/Source/Model2/CM2SceneRender.cpp
+@@ -4,6 +4,7 @@
+ #include "Engine/Source/Gx/CGxBuf.h"
+ #include "Engine/Source/Gx/CGxDevice/CGxDevice.h"
+ #include "Engine/Source/Gx/Gx.h"
++#include "Engine/Source/Gx/RenderHooks.h"
+ #include "Engine/Source/Model2/M2Cache.h"
+ #include "Engine/Source/Model2/M2Light.h"
+ #include "Engine/Source/Model2/M2Model.h"
+@@ -489,6 +490,12 @@ void CM2SceneRender::DrawBatch() {
+         batch.m_maxIndex = this->m_curSkinSection->m_vertexCount - 1;
+         g_theGxDevicePtr->Draw(&batch, 1);
+     }
++
++    // Torment: each branch drew the batch once and its buffers are still bound; the unit outline stamps the
++    // hovered unit's silhouette from it.
++    if (g_gxRenderHooks.m2BatchDrawn) {
++        g_gxRenderHooks.m2BatchDrawn(this->m_curModel, &batch);
++    }
+ }
+ 
+ // VERIFY: eebe62d2 manual
+diff --git a/WoW/Source/Client.cpp b/WoW/Source/Client.cpp
+index 1207fb9..07eb680 100644
+--- a/WoW/Source/Client.cpp
++++ b/WoW/Source/Client.cpp
+@@ -112,6 +112,7 @@
+ #include "WoW/Source/WowSvcs/WowSvcsClient/ClientServices.h"
+ #include "WoW/Source/WowSvcs/WowSvcsClient/FriendList.h"
+ #include "WoW/Source/WowSysMessageOutput.h"
++#include "WoW/Source/Ui/Torment/TormentRender.h"
+ 
+ namespace {
+ 
+@@ -1070,6 +1071,8 @@ static void InitializeClient() {
+ // OFFSET: 0x004047E0
+ int32_t InitializeEngineCallback(const void* data, void* param) {
+     BaseInitializeContext();
++    // Torment: the engine's render hooks point at the outline and the loot beam before anything draws.
++    TormentRenderInstall();
+     HeapUsageInitialize();
+     AsyncFileReadRegisterCVars();
+     TextureInitialize();
+diff --git a/WoW/Source/Ui/Torment/TormentGx.cpp b/WoW/Source/Ui/Torment/TormentGx.cpp
+new file mode 100644
+index 0000000..433f5e6
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/TormentGx.cpp
+@@ -0,0 +1,166 @@
++// Small Direct3D 9 helpers for the game's own render additions (see TormentGx.h).
++//
++// A port of the matching helpers in WarcraftXL/wxl-core at 748d77b (src/game/Gx.cpp) and of the state
++// guard in WarcraftXL/wxl-unit-outline at 4e8123e (src/Outline.cpp).
++//
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#include "WoW/Source/Ui/Torment/TormentGx.h"
++#include <d3dcompiler.h>
++#include <cstring>
++
++namespace torment {
++    namespace gx {
++        namespace {
++            // Resolved by name rather than linked: the compiler DLL is not on every machine, and a missing
++            // one must leave the effect off rather than stop the client from starting.
++            pD3DCompile ResolveD3DCompile() {
++                static const pD3DCompile compile = [] {
++                    HMODULE module = GetModuleHandleA("d3dcompiler_47.dll");
++
++                    if (!module) {
++                        module = LoadLibraryA("d3dcompiler_47.dll");
++                    }
++
++                    return module ? reinterpret_cast<pD3DCompile>(GetProcAddress(module, "D3DCompile")) : nullptr;
++                }();
++
++                return compile;
++            }
++        }
++
++        IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* device, const char* hlsl, const char* profile) {
++            if (!device || !hlsl) {
++                return nullptr;
++            }
++
++            const pD3DCompile compile = ResolveD3DCompile();
++
++            if (!compile) {
++                return nullptr;
++            }
++
++            ID3DBlob* code = nullptr;
++            ID3DBlob* errors = nullptr;
++            HRESULT hr = compile(hlsl, std::strlen(hlsl), nullptr, nullptr, nullptr, "main", profile, 0, 0, &code, &errors);
++            SafeRelease(errors);
++
++            if (FAILED(hr) || !code) {
++                SafeRelease(code);
++                return nullptr;
++            }
++
++            IDirect3DPixelShader9* shader = nullptr;
++            hr = device->CreatePixelShader(static_cast<const DWORD*>(code->GetBufferPointer()), &shader);
++            code->Release();
++
++            return SUCCEEDED(hr) ? shader : nullptr;
++        }
++
++        bool RenderTarget::EnsureBackbufferSized(IDirect3DDevice9* device, D3DFORMAT format, unsigned divisor) {
++            if (!device) {
++                return false;
++            }
++
++            if (this->surface) {
++                return true;
++            }
++
++            IDirect3DSurface9* backBuffer = nullptr;
++
++            if (FAILED(device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)) || !backBuffer) {
++                return false;
++            }
++
++            D3DSURFACE_DESC desc;
++            backBuffer->GetDesc(&desc);
++            backBuffer->Release();
++
++            const UINT div = divisor ? divisor : 1;
++            const UINT width = desc.Width / div > 0 ? desc.Width / div : 1;
++            const UINT height = desc.Height / div > 0 ? desc.Height / div : 1;
++
++            IDirect3DTexture9* tex = nullptr;
++
++            if (FAILED(device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &tex, nullptr)) || !tex) {
++                return false;
++            }
++
++            IDirect3DSurface9* surf = nullptr;
++            tex->GetSurfaceLevel(0, &surf);
++
++            this->texture = tex;
++            this->surface = surf;
++            this->width = static_cast<int>(width);
++            this->height = static_cast<int>(height);
++
++            return true;
++        }
++
++        void RenderTarget::Release() {
++            SafeRelease(this->surface);
++            SafeRelease(this->texture);
++            this->width = 0;
++            this->height = 0;
++        }
++
++        void DrawFullscreenQuad(IDirect3DDevice9* device) {
++            if (!device) {
++                return;
++            }
++
++            D3DVIEWPORT9 viewport;
++            device->GetViewport(&viewport);
++            const float w = static_cast<float>(viewport.Width);
++            const float h = static_cast<float>(viewport.Height);
++
++            // XYZRHW plus one texture coordinate; the -0.5 shift lines texel centres up with pixel centres.
++            struct Vertex {
++                float x, y, z, rhw, u, v;
++            };
++
++            const Vertex quad[4] = {
++                { -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f },
++                { w - 0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f },
++                { -0.5f, h - 0.5f, 0.0f, 1.0f, 0.0f, 1.0f },
++                { w - 0.5f, h - 0.5f, 0.0f, 1.0f, 1.0f, 1.0f },
++            };
++
++            device->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
++            device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, quad, sizeof(Vertex));
++        }
++
++        ScopedStateBlock::ScopedStateBlock(IDirect3DDevice9* device) {
++            if (device && SUCCEEDED(device->CreateStateBlock(D3DSBT_ALL, &this->m_state)) && this->m_state) {
++                this->m_state->Capture();
++            }
++        }
++
++        ScopedStateBlock::~ScopedStateBlock() {
++            this->Restore();
++        }
++
++        void ScopedStateBlock::Restore() {
++            if (!this->m_state) {
++                return;
++            }
++
++            this->m_state->Apply();
++            this->m_state->Release();
++            this->m_state = nullptr;
++        }
++    }
++}
+diff --git a/WoW/Source/Ui/Torment/TormentGx.h b/WoW/Source/Ui/Torment/TormentGx.h
+new file mode 100644
+index 0000000..23d2653
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/TormentGx.h
+@@ -0,0 +1,83 @@
++// Small Direct3D 9 helpers for the game's own render additions: runtime pixel-shader compile, a
++// back-buffer-sized render target, a fullscreen quad and a whole-device state save.
++//
++// A port of the matching helpers in WarcraftXL/wxl-core at 748d77b (src/game/Gx.cpp) and of the state
++// guard in WarcraftXL/wxl-unit-outline at 4e8123e (src/Outline.cpp), rewritten against the
++// IDirect3DDevice9 interface directly instead of wxl-core's vtable facade.
++//
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#ifndef WOW_SOURCE_UI_TORMENT_TORMENTGX_H
++#define WOW_SOURCE_UI_TORMENT_TORMENTGX_H
++
++#include <d3d9.h>
++
++namespace torment {
++    namespace gx {
++        // Releases a COM object and nulls the pointer.
++        template <class T>
++        inline void SafeRelease(T*& object) {
++            if (object) {
++                object->Release();
++                object = nullptr;
++            }
++        }
++
++        // Compiles HLSL source into a pixel shader on the device. d3dcompiler_47.dll is resolved by name
++        // on first use, so a machine without it gets a null shader (the effect stays off) instead of a
++        // load failure. Returns null on any failure.
++        IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* device, const char* hlsl, const char* profile);
++
++        // A render target texture sized to the back buffer (divided by a divisor). It lives in
++        // D3DPOOL_DEFAULT, so its owner releases it before the device is reset.
++        struct RenderTarget {
++            IDirect3DTexture9* texture = nullptr;
++            IDirect3DSurface9* surface = nullptr;
++            int width = 0;
++            int height = 0;
++
++            // Creates the target when it does not exist yet; true when it exists afterwards. divisor 2
++            // halves both dimensions, which a pass whose output is blurred can afford.
++            bool EnsureBackbufferSized(IDirect3DDevice9* device, D3DFORMAT format, unsigned divisor = 1);
++
++            // Releases the texture and its surface and zeroes the size, so the next Ensure recreates it.
++            void Release();
++        };
++
++        // Draws a quad covering the current viewport, texture coordinates 0..1, sampling stage 0, as
++        // pretransformed vertices with the half-pixel offset so texels map 1:1 to pixels. It leaves the
++        // FVF set and stream 0 unbound (DrawPrimitiveUP does that), so callers wrap it in a state save.
++        void DrawFullscreenQuad(IDirect3DDevice9* device);
++
++        // Captures every device state a D3DSBT_ALL state block holds and applies it back on Restore or at
++        // scope exit. Render targets and the depth-stencil surface are not part of a state block; save
++        // those by hand.
++        class ScopedStateBlock {
++            public:
++            explicit ScopedStateBlock(IDirect3DDevice9* device);
++            ~ScopedStateBlock();
++            ScopedStateBlock(const ScopedStateBlock&) = delete;
++            ScopedStateBlock& operator=(const ScopedStateBlock&) = delete;
++
++            void Restore();
++
++            private:
++            IDirect3DStateBlock9* m_state = nullptr;
++        };
++    }
++}
++
++#endif
+diff --git a/WoW/Source/Ui/Torment/TormentRender.cpp b/WoW/Source/Ui/Torment/TormentRender.cpp
+new file mode 100644
+index 0000000..e7e6344
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/TormentRender.cpp
+@@ -0,0 +1,65 @@
++#include "WoW/Source/Ui/Torment/TormentRender.h"
++#include "Engine/Source/Gx/CGxBuf.h"
++#include "Engine/Source/Gx/CGxDevice/CGxDevice.h"
++#include "Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.h"
++#include "Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.h"
++#include "Engine/Source/Gx/RenderHooks.h"
++#include "Engine/Source/Gx/Types.h"
++#include "WoW/Source/Ui/Torment/UnitOutline.h"
++
++namespace {
++    // The Direct3D device behind the engine's device; null for OpenGL, which draws none of Torment's additions.
++    IDirect3DDevice9* ActiveD3dDevice() {
++        CGxDevice* device = g_theGxDevicePtr;
++
++        if (!device) {
++            return nullptr;
++        }
++
++        switch (device->m_api) {
++            case GxApi_D3d9:
++                return static_cast<CGxDeviceD3d*>(device)->m_d3dDevice;
++            case GxApi_D3d9Ex:
++                return static_cast<CGxDeviceD3d9Ex*>(device)->m_d3dDevice;
++            default:
++                return nullptr;
++        }
++    }
++
++    void OnSceneEnd(void* d3dDevice) {
++        UnitOutlineSceneEnd(static_cast<IDirect3DDevice9*>(d3dDevice));
++    }
++
++    void OnDeviceLost(void* d3dDevice) {
++        UnitOutlineDeviceLost();
++    }
++
++    // The values CGxDeviceD3d::Draw (and its D3d9Ex twin) has just passed to DrawIndexedPrimitive for this batch,
++    // read back from the same device members while they still hold them.
++    void OnM2BatchDrawn(const CM2Model* model, const CGxBatch* batch) {
++        CGxDevice* device = g_theGxDevicePtr;
++        IDirect3DDevice9* d3dDevice = ActiveD3dDevice();
++
++        if (!d3dDevice || !device->m_context || device->m_intF5C || !batch->m_count) {
++            return;
++        }
++
++        TormentM2Draw draw;
++        draw.device = d3dDevice;
++        draw.model = model;
++        draw.primType = CGxDeviceD3d::s_primitiveConversion[batch->m_primType];
++        draw.baseVertex = device->m_caps.unk_0010 ? 0 : static_cast<INT>(device->m_primVertexFormatBuf[0]->m_index / device->m_primVertexFormatBuf[0]->m_itemSize);
++        draw.minIndex = batch->m_minIndex;
++        draw.numVerts = batch->m_maxIndex - batch->m_minIndex + 1;
++        draw.startIndex = batch->m_start + (device->m_primIndexBuf->m_index >> 1);
++        draw.primCount = device->PrimCalcCount(batch->m_primType, batch->m_count);
++
++        UnitOutlineM2BatchDrawn(draw);
++    }
++}
++
++void TormentRenderInstall() {
++    g_gxRenderHooks.sceneEnd = OnSceneEnd;
++    g_gxRenderHooks.deviceLost = OnDeviceLost;
++    g_gxRenderHooks.m2BatchDrawn = OnM2BatchDrawn;
++}
+diff --git a/WoW/Source/Ui/Torment/TormentRender.h b/WoW/Source/Ui/Torment/TormentRender.h
+new file mode 100644
+index 0000000..3231032
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/TormentRender.h
+@@ -0,0 +1,26 @@
++#ifndef WOW_SOURCE_UI_TORMENT_TORMENTRENDER_H
++#define WOW_SOURCE_UI_TORMENT_TORMENTRENDER_H
++
++#include <d3d9.h>
++#include <cstdint>
++
++class CM2Model;
++
++// One model batch the engine has just drawn, as the Direct3D call that drew it: drawing it again with
++// the same values while its buffers are still bound puts the same triangles on screen.
++struct TormentM2Draw {
++    IDirect3DDevice9* device;
++    const CM2Model* model;
++    D3DPRIMITIVETYPE primType;
++    INT baseVertex;
++    UINT minIndex;
++    UINT numVerts;
++    UINT startIndex;
++    UINT primCount;
++};
++
++// Sets the engine's render hooks (Engine/Source/Gx/RenderHooks.h) to the game's handlers. Called once
++// from the engine init callback.
++void TormentRenderInstall();
++
++#endif
+diff --git a/WoW/Source/Ui/Torment/UnitOutline.cpp b/WoW/Source/Ui/Torment/UnitOutline.cpp
+new file mode 100644
+index 0000000..4fc4667
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/UnitOutline.cpp
+@@ -0,0 +1,474 @@
++// A reaction-coloured silhouette outline on the unit under the cursor.
++//
++// A port of WarcraftXL/wxl-unit-outline at 4e8123e (src/Outline.cpp). Shaders, passes, colours, spread
++// and intensity are the module's; what changed is how it reaches the game: the unit under the cursor,
++// the player, the reaction and the model chain are read from the client's own objects, and the three
++// render points are called by the engine (Engine/Source/Gx/RenderHooks.h) instead of hooked. Only the
++// unit under the cursor is outlined; the module's outline of the current target is left out.
++//
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#include "WoW/Source/Ui/Torment/UnitOutline.h"
++#include "WoW/Source/Ui/Torment/TormentGx.h"
++#include "WoW/Source/Ui/Torment/UnitOutlineShaders.h"
++#include "Engine/Source/Model2/M2Model.h"
++#include "WoW/Source/Object/ObjectClient/Object_C.h"
++#include "WoW/Source/Object/ObjectClient/Unit_C.h"
++#include "WoW/Source/Object/Types.h"
++#include "WoW/Source/Object/WGUID.h"
++#include "WoW/Source/ObjectMgrClient/ObjectMgrClient.h"
++#include "WoW/Source/Ui/GameUI.h"
++#include <d3d9.h>
++
++namespace unitoutline {
++    namespace gx = torment::gx;
++
++    // Blur resolution relative to the frame. Half costs a quarter of the fetches, and the upscale it
++    // implies is only visible when the sampler is left on point filtering; the outline pass states
++    // linear, so the halo, which is low-frequency by construction, survives it.
++    constexpr unsigned kBlurDivisor = 2;
++
++    // Frame pixels between blur taps, and the halo's opacity multiplier.
++    constexpr float kSpread = 1.5f;
++    constexpr float kIntensity = 2.0f;
++
++    // How far up a model's attachment chain a batch is matched against the outlined model, so weapons,
++    // shoulders and other attached models are outlined with their wearer.
++    constexpr int kMaxAttachHops = 8;
++
++    // The reaction a unit gets when there is no active player to react to: friendly.
++    constexpr int32_t kReactionNoPlayer = 5;
++
++    struct Target {
++        const CM2Model* model;
++        float color[4];
++        bool isPlayer;
++    };
++
++    class Outline {
++        public:
++        void SceneEnd(IDirect3DDevice9* device);
++        void M2BatchDrawn(const TormentM2Draw& draw);
++        void DeviceLost();
++
++        private:
++        bool EnsureResources(IDirect3DDevice9* device);
++        void Discard();
++        void ReleaseTargets();
++        void RebuildTargets();
++        void AddTarget(WOWGUID guid, const CGUnit_C* player);
++        int32_t FindTarget(const CM2Model* model) const;
++        bool ShouldStampBatch(IDirect3DDevice9* device) const;
++        void StampSilhouette(const TormentM2Draw& draw, int32_t index);
++        void OutlinePass(IDirect3DDevice9* device);
++        void ClearMask(IDirect3DDevice9* device);
++        static void ColorForReaction(int32_t reaction, float* rgba);
++
++        static constexpr int32_t kMaxTargets = 1;
++
++        Target m_targets[kMaxTargets] = {};
++        int32_t m_count = 0;
++        IDirect3DDevice9* m_device = nullptr; // the device the resources below belong to
++        gx::RenderTarget m_mask;              // the silhouette
++        gx::RenderTarget m_blurA;             // horizontal pass output
++        gx::RenderTarget m_blurB;             // vertical pass output
++        IDirect3DPixelShader9* m_fillPS = nullptr;  // stamps a batch into the mask, following its cutout
++        IDirect3DPixelShader9* m_blurPS = nullptr;  // one Gaussian, run once per axis
++        IDirect3DPixelShader9* m_applyPS = nullptr; // blurred field minus silhouette, into the frame
++        bool m_stamped = false;               // a silhouette reached the mask this frame
++    };
++
++    static Outline s_outline;
++
++    // Reaction levels as CGUnit_C::UnitReaction returns them: below 2 hostile, below 4 neutral, else
++    // friendly.
++    void Outline::ColorForReaction(int32_t reaction, float* c) {
++        if (reaction < 2) {
++            c[0] = 1.0f; c[1] = 0.0f; c[2] = 0.0f;
++        } else if (reaction < 4) {
++            c[0] = 1.0f; c[1] = 1.0f; c[2] = 0.0f;
++        } else {
++            c[0] = 0.0f; c[1] = 1.0f; c[2] = 0.0f;
++        }
++
++        c[3] = 1.0f;
++    }
++
++    void Outline::ReleaseTargets() {
++        this->m_mask.Release();
++        this->m_blurA.Release();
++        this->m_blurB.Release();
++    }
++
++    // Drops everything tied to a device. Shaders and targets hold the device alive until they are
++    // released, so this is also what lets an old device go.
++    void Outline::Discard() {
++        gx::SafeRelease(this->m_fillPS);
++        gx::SafeRelease(this->m_blurPS);
++        gx::SafeRelease(this->m_applyPS);
++        this->ReleaseTargets();
++        this->m_stamped = false;
++        this->m_count = 0;
++    }
++
++    bool Outline::EnsureResources(IDirect3DDevice9* device) {
++        // A device that is destroyed and created again, rather than reset, arrives as a new pointer.
++        // Shaders and targets belong to the device that made them, so the pointer changing is the
++        // signal to rebuild: handing the old ones to the new device faults the driver rather than
++        // failing a call.
++        if (device != this->m_device) {
++            this->Discard();
++            this->m_device = device;
++        }
++
++        if (!this->m_fillPS) {
++            this->m_fillPS = gx::CompilePixelShader(device, kFillHLSL, "ps_2_0");
++        }
++
++        if (!this->m_blurPS) {
++            this->m_blurPS = gx::CompilePixelShader(device, kBlurHLSL, "ps_2_0");
++        }
++
++        if (!this->m_applyPS) {
++            this->m_applyPS = gx::CompilePixelShader(device, kApplyHLSL, "ps_2_0");
++        }
++
++        // A freshly created target holds whatever was in that memory, and the mask is otherwise only
++        // wiped after a frame that stamped into it, so its first clear belongs here.
++        if (!this->m_mask.surface && this->m_mask.EnsureBackbufferSized(device, D3DFMT_A8R8G8B8)) {
++            this->ClearMask(device);
++        }
++
++        if (!this->m_blurA.surface) {
++            this->m_blurA.EnsureBackbufferSized(device, D3DFMT_A8R8G8B8, kBlurDivisor);
++        }
++
++        if (!this->m_blurB.surface) {
++            this->m_blurB.EnsureBackbufferSized(device, D3DFMT_A8R8G8B8, kBlurDivisor);
++        }
++
++        return this->m_fillPS && this->m_blurPS && this->m_applyPS
++            && this->m_mask.surface && this->m_blurA.surface && this->m_blurB.surface;
++    }
++
++    // The batch's model or any model it is attached to, up the attachment chain.
++    int32_t Outline::FindTarget(const CM2Model* model) const {
++        for (int32_t hop = 0; model && hop < kMaxAttachHops; hop++, model = model->m_attachParent) {
++            for (int32_t i = 0; i < this->m_count; i++) {
++                if (this->m_targets[i].model == model) {
++                    return i;
++                }
++            }
++        }
++
++        return -1;
++    }
++
++    void Outline::AddTarget(WOWGUID guid, const CGUnit_C* player) {
++        if (!guid || this->m_count >= kMaxTargets) {
++            return;
++        }
++
++        // A player's GUID has a zero high half.
++        const bool isPlayer = (guid.m_guid >> 32) == 0;
++
++        CGObject_C* object = ClntObjMgrObjectPtr(guid, isPlayer ? TYPEMASK_PLAYER : TYPEMASK_UNIT, __FILE__, __LINE__);
++
++        if (!object) {
++            return;
++        }
++
++        const CM2Model* model = object->m_worldModel;
++
++        if (!model) {
++            return;
++        }
++
++        for (int32_t i = 0; i < this->m_count; i++) {
++            if (this->m_targets[i].model == model) {
++                return;
++            }
++        }
++
++        // The unit's reaction toward the player, as the module asked it.
++        const CGUnit_C* unit = static_cast<const CGUnit_C*>(object);
++        const int32_t reaction = player ? unit->UnitReaction(player) : kReactionNoPlayer;
++
++        Target& target = this->m_targets[this->m_count];
++        target.model = model;
++        target.isPlayer = isPlayer;
++        ColorForReaction(reaction, target.color);
++        this->m_count++;
++    }
++
++    void Outline::RebuildTargets() {
++        const CGUnit_C* player = static_cast<const CGUnit_C*>(
++            ClntObjMgrObjectPtr(ClntObjMgrGetActivePlayer(), TYPEMASK_PLAYER, __FILE__, __LINE__)
++        );
++
++        this->m_count = 0;
++        this->AddTarget(CGGameUI::m_currentObjectTrack, player);
++    }
++
++    bool Outline::ShouldStampBatch(IDirect3DDevice9* device) const {
++        // Attached particles, glows and billboards draw through the same model path as the mesh. The
++        // silhouette is the geometry that claims to be solid: a blended batch is not one, and neither is
++        // a batch that declines to write depth, since an effect must not occlude what is behind it.
++        // Letting either in puts a broad card in the mask, which the blur turns into a blob next to the
++        // unit.
++        DWORD alphaBlend = 0;
++        DWORD zWrite = 0;
++        device->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphaBlend);
++        device->GetRenderState(D3DRS_ZWRITEENABLE, &zWrite);
++
++        return alphaBlend == 0 && zWrite != 0;
++    }
++
++    // Draws the batch again into the mask. No state block: this runs once per model batch, and capturing
++    // the whole device to recover four render states and one constant was the module's largest CPU
++    // cost. Everything changed here is saved and put back by hand, so the device leaves this function in
++    // the state the engine's own state cache expects.
++    void Outline::StampSilhouette(const TormentM2Draw& draw, int32_t index) {
++        IDirect3DDevice9* device = draw.device;
++        const Target& target = this->m_targets[index];
++
++        IDirect3DSurface9* oldRT = nullptr;
++        IDirect3DSurface9* oldDS = nullptr;
++        IDirect3DPixelShader9* oldPS = nullptr;
++        D3DVIEWPORT9 oldViewport;
++        float oldC0[4] = {};
++        DWORD oldAlphaBlend = 0;
++        DWORD oldZEnable = 0;
++        DWORD oldZWrite = 0;
++        DWORD oldZFunc = 0;
++
++        device->GetRenderTarget(0, &oldRT);
++        device->GetDepthStencilSurface(&oldDS);
++        device->GetPixelShader(&oldPS);
++        device->GetViewport(&oldViewport);
++        device->GetPixelShaderConstantF(0, oldC0, 1);
++        device->GetRenderState(D3DRS_ALPHABLENDENABLE, &oldAlphaBlend);
++        device->GetRenderState(D3DRS_ZENABLE, &oldZEnable);
++        device->GetRenderState(D3DRS_ZWRITEENABLE, &oldZWrite);
++        device->GetRenderState(D3DRS_ZFUNC, &oldZFunc);
++
++        device->SetRenderTarget(0, this->m_mask.surface);
++
++        if (target.isPlayer) {
++            // Players: test against the scene's depth so walls hide the outline.
++            device->SetDepthStencilSurface(oldDS);
++            device->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
++            device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
++            device->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
++        } else {
++            // Creatures: seen through walls, no depth.
++            device->SetDepthStencilSurface(nullptr);
++            device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
++        }
++
++        this->m_stamped = true;
++        device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
++        device->SetPixelShader(this->m_fillPS);
++        device->SetPixelShaderConstantF(0, target.color, 1);
++        device->DrawIndexedPrimitive(draw.primType, draw.baseVertex, draw.minIndex, draw.numVerts, draw.startIndex, draw.primCount);
++
++        device->SetPixelShader(oldPS);
++        device->SetRenderTarget(0, oldRT);
++        device->SetDepthStencilSurface(oldDS);
++        device->SetViewport(&oldViewport);
++        device->SetRenderState(D3DRS_ALPHABLENDENABLE, oldAlphaBlend);
++        device->SetRenderState(D3DRS_ZENABLE, oldZEnable);
++        device->SetRenderState(D3DRS_ZWRITEENABLE, oldZWrite);
++        device->SetRenderState(D3DRS_ZFUNC, oldZFunc);
++        device->SetPixelShaderConstantF(0, oldC0, 1);
++
++        gx::SafeRelease(oldRT);
++        gx::SafeRelease(oldDS);
++        gx::SafeRelease(oldPS);
++    }
++
++    // mask -> blurA (horizontal) -> blurB (vertical) -> frame. A blur reaches further than a neighbour
++    // test, so the falloff is a gradient rather than a one-texel step and the width is a radius rather
++    // than a tap offset. The state block does not capture render targets, so those are saved by hand.
++    void Outline::OutlinePass(IDirect3DDevice9* device) {
++        gx::ScopedStateBlock state(device);
++        IDirect3DSurface9* oldRT = nullptr;
++        IDirect3DSurface9* oldDS = nullptr;
++        device->GetRenderTarget(0, &oldRT);
++        device->GetDepthStencilSurface(&oldDS);
++
++        device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
++        device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
++        device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
++
++        // The blur passes have to overwrite their target completely. Four states inherited from the
++        // frame can reject a pixel instead, and any pixel not written keeps what the previous frame left
++        // there, which reads as old halos frozen in screen space.
++        device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
++        device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
++        device->SetRenderState(D3DRS_STENCILENABLE, FALSE);
++        device->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0F);
++
++        // Sampling is inherited too. Point filtering would quantise the kernel back to texel centres and
++        // defeat the fractional offsets, and wrap addressing lets the taps at the frame's edge pull in
++        // the opposite side.
++        for (DWORD stage = 0; stage < 2; stage++) {
++            device->SetSamplerState(stage, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
++            device->SetSamplerState(stage, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
++            device->SetSamplerState(stage, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
++            device->SetSamplerState(stage, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
++            device->SetSamplerState(stage, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
++        }
++
++        device->SetVertexShader(nullptr);
++        device->SetDepthStencilSurface(nullptr);
++        device->SetPixelShader(this->m_blurPS);
++
++        // The step is in blur-target texels and the spread in frame pixels, hence the divisor.
++        const float step = kSpread / static_cast<float>(kBlurDivisor);
++
++        const float horizontal[4] = { 1.0f / static_cast<float>(this->m_blurA.width), 0.0f, step, 0.0f };
++        device->SetRenderTarget(0, this->m_blurA.surface);
++        device->SetTexture(0, this->m_mask.texture);
++        device->SetPixelShaderConstantF(0, horizontal, 1);
++        gx::DrawFullscreenQuad(device);
++
++        const float vertical[4] = { 0.0f, 1.0f / static_cast<float>(this->m_blurB.height), step, 0.0f };
++        device->SetRenderTarget(0, this->m_blurB.surface);
++        device->SetTexture(0, this->m_blurA.texture);
++        device->SetPixelShaderConstantF(0, vertical, 1);
++        gx::DrawFullscreenQuad(device);
++
++        const float apply[4] = { kIntensity, 0.0f, 0.0f, 0.0f };
++        device->SetRenderTarget(0, oldRT);
++        device->SetDepthStencilSurface(oldDS);
++        device->SetTexture(0, this->m_blurB.texture);
++        device->SetTexture(1, this->m_mask.texture);
++        device->SetPixelShader(this->m_applyPS);
++        device->SetPixelShaderConstantF(0, apply, 1);
++        device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
++        device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
++        device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
++        gx::DrawFullscreenQuad(device);
++
++        device->SetPixelShader(nullptr);
++        state.Restore();
++
++        // After the restore, not before: the block captured the bindings from before this pass, so
++        // unbinding first would just be undone. The mask becomes a render target again next frame, and
++        // a surface bound as both target and texture source is invalid, which shows up as the mask
++        // keeping its contents and silhouettes piling up.
++        device->SetTexture(0, nullptr);
++        device->SetTexture(1, nullptr);
++
++        gx::SafeRelease(oldRT);
++        gx::SafeRelease(oldDS);
++    }
++
++    // Stages 0 and 1 are unbound first: the blur and the composite sampled the mask, and a surface still
++    // bound as a texture cannot be made a render target; the clear would be dropped and the silhouettes
++    // would survive into the next frame.
++    void Outline::ClearMask(IDirect3DDevice9* device) {
++        gx::ScopedStateBlock state(device);
++        IDirect3DSurface9* oldRT = nullptr;
++        IDirect3DSurface9* oldDS = nullptr;
++        device->GetRenderTarget(0, &oldRT);
++        device->GetDepthStencilSurface(&oldDS);
++
++        device->SetTexture(0, nullptr);
++        device->SetTexture(1, nullptr);
++        device->SetRenderTarget(0, this->m_mask.surface);
++        device->SetDepthStencilSurface(nullptr);
++
++        // A clear is bounded by the scissor rect the same way a draw is, so an inherited one would leave
++        // part of the mask untouched.
++        device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
++        device->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0F);
++        device->Clear(0, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
++
++        device->SetRenderTarget(0, oldRT);
++        device->SetDepthStencilSurface(oldDS);
++        gx::SafeRelease(oldRT);
++        gx::SafeRelease(oldDS);
++    }
++
++    void Outline::M2BatchDrawn(const TormentM2Draw& draw) {
++        // Not merely "are the resources there" but "are they this device's": a batch can arrive on a
++        // freshly created device before the scene end that rebuilds them.
++        if (this->m_count == 0 || !draw.device || draw.device != this->m_device) {
++            return;
++        }
++
++        if (!this->m_fillPS || !this->m_mask.surface) {
++            return;
++        }
++
++        const int32_t index = this->FindTarget(draw.model);
++
++        if (index < 0) {
++            return;
++        }
++
++        if (!this->ShouldStampBatch(draw.device)) {
++            return;
++        }
++
++        this->StampSilhouette(draw, index);
++    }
++
++    void Outline::SceneEnd(IDirect3DDevice9* device) {
++        const bool stamped = this->m_stamped;
++        this->m_stamped = false;
++
++        if (!device) {
++            return;
++        }
++
++        // First and unconditionally: it creates the shaders and targets, and nothing can be stamped until
++        // it has.
++        if (!this->EnsureResources(device)) {
++            return;
++        }
++
++        // The clear is paired with the stamping: the mask starts empty and is wiped at the end of every
++        // frame that wrote into it, so a frame that stamps nothing finds it already empty.
++        if (stamped) {
++            this->OutlinePass(device);
++            this->ClearMask(device);
++        }
++
++        this->RebuildTargets();
++    }
++
++    // The targets are D3DPOOL_DEFAULT resources, so they go before the engine resets the device; the
++    // next scene end recreates them. The pixel shaders are not pool resources and survive a reset.
++    void Outline::DeviceLost() {
++        this->ReleaseTargets();
++        this->m_stamped = false;
++    }
++}
++
++void UnitOutlineSceneEnd(IDirect3DDevice9* device) {
++    unitoutline::s_outline.SceneEnd(device);
++}
++
++void UnitOutlineM2BatchDrawn(const TormentM2Draw& draw) {
++    unitoutline::s_outline.M2BatchDrawn(draw);
++}
++
++void UnitOutlineDeviceLost() {
++    unitoutline::s_outline.DeviceLost();
++}
+diff --git a/WoW/Source/Ui/Torment/UnitOutline.h b/WoW/Source/Ui/Torment/UnitOutline.h
+new file mode 100644
+index 0000000..3dcaaa0
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/UnitOutline.h
+@@ -0,0 +1,42 @@
++// A reaction-coloured silhouette outline on the unit under the cursor.
++//
++// A port of WarcraftXL/wxl-unit-outline at 4e8123e, with its outline of the current target removed so
++// only the unit under the cursor is outlined.
++//
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#ifndef WOW_SOURCE_UI_TORMENT_UNITOUTLINE_H
++#define WOW_SOURCE_UI_TORMENT_UNITOUTLINE_H
++
++#include <d3d9.h>
++#include "WoW/Source/Ui/Torment/TormentRender.h"
++
++// The pipeline spans two frames. At scene end of frame N the outline picks the unit to outline in
++// frame N+1; during frame N+1 every batch of that unit's model (or of a model attached to it) is drawn
++// a second time into a mask; at scene end of N+1 the mask is blurred and composited into the frame as
++// a halo, the mask is cleared, and the next unit is picked.
++
++// The frame is drawn and the cursor is not: composite the halo, then pick next frame's unit.
++void UnitOutlineSceneEnd(IDirect3DDevice9* device);
++
++// One model batch was just drawn with its buffers still bound: stamp it into the mask when it belongs
++// to the outlined unit.
++void UnitOutlineM2BatchDrawn(const TormentM2Draw& draw);
++
++// The device is about to be reset or destroyed: release the D3DPOOL_DEFAULT render targets.
++void UnitOutlineDeviceLost();
++
++#endif
+diff --git a/WoW/Source/Ui/Torment/UnitOutlineShaders.h b/WoW/Source/Ui/Torment/UnitOutlineShaders.h
+new file mode 100644
+index 0000000..f053ceb
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/UnitOutlineShaders.h
+@@ -0,0 +1,78 @@
++// The unit outline's pixel shaders, compiled at run time (ps_2_0) by UnitOutline.cpp.
++//
++// A port of WarcraftXL/wxl-unit-outline at 4e8123e (src/Hlsl.hpp); the HLSL is unchanged.
++//
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#ifndef WOW_SOURCE_UI_TORMENT_UNITOUTLINESHADERS_H
++#define WOW_SOURCE_UI_TORMENT_UNITOUTLINESHADERS_H
++
++namespace unitoutline {
++    // Writes a batch into the mask, following the diffuse cutout. Wings, hair and fur are cards whose
++    // shape lives entirely in texture alpha, so filling their quads solid traces the card instead of
++    // the creature and the silhouette comes out as straight polygon edges.
++    //
++    // 0.5 is the cutout threshold the art is authored against, and the silhouette has to match what
++    // the engine actually draws. A card does not end on a hard alpha edge -- it ramps down -- so a
++    // lower threshold keeps the transparent fringe and outlines pixels nobody can see, which reads as
++    // an angular shape floating around the model.
++    constexpr const char kFillHLSL[] =
++        "sampler2D s0 : register(s0);\n"
++        "float4 c0 : register(c0);\n"
++        "float4 main(float2 uv : TEXCOORD0) : COLOR0 {\n"
++        "  clip(tex2D(s0, uv).a - 0.5);\n"
++        "  return c0;\n"
++        "}\n";
++
++    // A 9-tap Gaussian taken in 5 fetches, run twice with c0.xy carrying the axis. One shader rather
++    // than separate horizontal and vertical ones: the axis is a constant here, so a second compile
++    // would buy nothing.
++    //
++    // The fractional offsets are the trick: each one lands between two texels, so bilinear filtering
++    // returns their weighted pair in a single fetch. Fewer fetches than the 9 point taps it replaces
++    // and a smoother result, since the kernel is no longer quantised to texel centres. It relies on
++    // linear filtering being set -- the outline pass states it rather than inheriting it.
++    //
++    // RGB is premultiplied by coverage -- the fill writes colour only where it writes alpha, and the
++    // mask is cleared to zero -- so colour and coverage blur together and divide back out in apply.
++    constexpr const char kBlurHLSL[] =
++        "sampler2D m : register(s0);\n"
++        "float4 p : register(c0);\n" // xy = texel step along the axis, z = spread
++        "float4 main(float2 uv : TEXCOORD0) : COLOR0 {\n"
++        "  float2 o = p.xy * p.z;\n"
++        "  float4 s = tex2D(m, uv) * 0.2270270270;\n"
++        "  s += (tex2D(m, uv + o*1.3846153846) + tex2D(m, uv - o*1.3846153846)) * 0.3162162162;\n"
++        "  s += (tex2D(m, uv + o*3.2307692308) + tex2D(m, uv - o*3.2307692308)) * 0.0702702703;\n"
++        "  return s;\n"
++        "}\n";
++
++    // The halo is the blurred field with the silhouette punched back out, so the unit itself stays
++    // untouched and only the falloff around it is drawn.
++    constexpr const char kApplyHLSL[] =
++        "sampler2D b : register(s0);\n" // blurred silhouette
++        "sampler2D m : register(s1);\n" // original silhouette
++        "float4 p : register(c0);\n"    // x = intensity
++        "float4 main(float2 uv : TEXCOORD0) : COLOR0 {\n"
++        "  float4 blur = tex2D(b, uv);\n"
++        "  float inside = tex2D(m, uv).a;\n"
++        "  float halo = saturate(blur.a * p.x) * (1.0 - inside);\n"
++        "  clip(halo - 0.004);\n"
++        "  float3 col = blur.a > 0.001 ? blur.rgb / blur.a : float3(1,1,1);\n"
++        "  return float4(col, halo);\n"
++        "}\n";
++}
++
++#endif

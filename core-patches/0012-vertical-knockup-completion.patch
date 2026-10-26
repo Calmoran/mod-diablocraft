@@ -1,0 +1,181 @@
+# Reason: Execute vertical parabolic knock-up and report exact effect-spline completion to modules.
+# Approved: ruling 2026-09-13.
+Constant (audit 251, 0.01f): Native minimum spline velocity; Unchanged engine numerical validity check.
+Constant (audit 252, 2.f): Ballistic flight-time coefficient; Physics formula, not an ability height/speed.
+
+--- a/src/server/game/Movement/MotionMaster.cpp
++++ b/src/server/game/Movement/MotionMaster.cpp
+@@ -617,6 +617,18 @@ void MotionMaster::MoveTakeoff(uint32 id, float x, float y, float z, float speed
+     MoveTakeoff(id, pos, speed, skipAnimation);
+ }
+ 
++void MotionMaster::MoveVerticalKnockback(float height, uint32 id)
++{
++    if (!_owner->IsCreature() || _owner->IsClientControlled() || !std::isfinite(height) || height <= 0)
++        return;
++    Movement::MoveSplineInit init(_owner);
++    init.MoveTo(_owner->GetPositionX(), _owner->GetPositionY(), _owner->GetPositionZ());
++    init.SetParabolic(height, 0);
++    init.SetOrientationFixed(true);
++    init.SetVerticalDuration(std::max(1, int32(2000.f * std::sqrt(2.f * height / Movement::gravity))));
++    Mutate(new EffectMovementGenerator(init, id), MOTION_SLOT_CONTROLLED);
++}
++
+ void MotionMaster::MoveKnockbackFrom(float srcX, float srcY, float speedXY, float speedZ,
+     bool allowClientControlled /*= false*/)
+ {
+--- a/src/server/game/Movement/MotionMaster.h
++++ b/src/server/game/Movement/MotionMaster.h
+@@ -252,6 +252,7 @@ public:
+ 
+     void MoveCharge(float x, float y, float z, float speed = SPEED_CHARGE, uint32 id = EVENT_CHARGE, Movement::PointsArray const* path = nullptr, bool generatePath = false, float orientation = 0.0f, ObjectGuid targetGUID = ObjectGuid::Empty);
+     void MoveCharge(PathGenerator const& path, float speed = SPEED_CHARGE, ObjectGuid targetGUID = ObjectGuid::Empty);
++    void MoveVerticalKnockback(float height, uint32 id);
+     void MoveKnockbackFrom(float srcX, float srcY, float speedXY, float speedZ, bool allowClientControlled = false);
+     void MoveJumpTo(float angle, float speedXY, float speedZ);
+     void MoveJump(Position const& pos, float speedXY, float speedZ, uint32 id = 0)
+--- a/src/server/game/Movement/MovementGenerators/PointMovementGenerator.cpp
++++ b/src/server/game/Movement/MovementGenerators/PointMovementGenerator.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "PointMovementGenerator.h"
++#include "ScriptMgr.h"
+ #include "Creature.h"
+ #include "CreatureAI.h"
+ #include "MoveSpline.h"
+@@ -363,13 +364,17 @@ bool EffectMovementGenerator::Update(Unit* unit, uint32)
+     return !unit->movespline->Finalized();
+ }
+ 
+-void EffectMovementGenerator::Initialize(Unit*)
++void EffectMovementGenerator::Initialize(Unit* unit)
+ {
+-    i_spline.Launch();
++    m_launched = i_spline.Launch() > 0;
++    m_splineId = unit->movespline->GetId();
+ }
+ 
+ void EffectMovementGenerator::Finalize(Unit* unit)
+ {
++    bool const completed = m_launched && unit->movespline->GetId() == m_splineId &&
++        unit->movespline->Finalized() && unit->movespline->timePassed() == unit->movespline->Duration();
++    sScriptMgr->OnEffectMovementFinalized(unit, m_Id, m_splineId, completed);
+     if (!unit->IsCreature())
+         return;
+ 
+--- a/src/server/game/Movement/MovementGenerators/PointMovementGenerator.h
++++ b/src/server/game/Movement/MovementGenerators/PointMovementGenerator.h
+@@ -93,6 +93,8 @@ public:
+     MovementGeneratorType GetMovementGeneratorType() override { return EFFECT_MOTION_TYPE; }
+ private:
+     uint32 m_Id;
++    uint32 m_splineId = 0;
++    bool m_launched = false;
+     Movement::MoveSplineInit i_spline;
+ };
+ 
+--- a/src/server/game/Movement/Spline/MoveSpline.cpp
++++ b/src/server/game/Movement/Spline/MoveSpline.cpp
+@@ -135,6 +135,17 @@ namespace Movement
+             spline.init_spline(&args.path[0], args.path.size(), modes[args.flags.isSmooth()], args.initialOrientation);
+         }
+ 
++        // Explicit duration supports a vertical parabola without lateral travel.
++        if (args.explicitDuration > 0)
++        {
++            CommonInitializer init(args.velocity);
++            spline.initLengths(init); // allocate timestamp storage before overriding it
++            spline.set_length(spline.first(), 0);
++            spline.set_length(spline.last(), args.explicitDuration);
++            point_Idx = spline.first();
++            return;
++        }
++
+         // init spline timestamps
+         if (splineflags.falling)
+         {
+@@ -211,6 +222,9 @@ namespace Movement
+             return false;\
+         }
+         CHECK(path.size() > 1);
++        CHECK(explicitDuration >= 0);
++        CHECK(!explicitDuration || (path.size() == 2 && path.front() == path.back() &&
++            flags.parabolic && !flags.cyclic && !flags.falling && !flags.animation));
+         CHECK(velocity > 0.01f);
+         CHECK(time_perc >= 0.f && time_perc <= 1.f);
+         //CHECK(_checkPathBounds());
+--- a/src/server/game/Movement/Spline/MoveSplineInit.cpp
++++ b/src/server/game/Movement/Spline/MoveSplineInit.cpp
+@@ -63,6 +63,10 @@ namespace Movement
+ 
+         // corrent first vertex
+         args.path[0] = real_position;
++        // A vertical launch starts and ends at the exact current spline position,
++        // including when replacing a moving target or operating on a transport.
++        if (args.explicitDuration > 0 && args.path.size() == 2)
++            args.path[1] = real_position;
+         args.initialOrientation = real_position.orientation;
+         move_spline.onTransport = transport;
+ 
+--- a/src/server/game/Movement/Spline/MoveSplineInit.h
++++ b/src/server/game/Movement/Spline/MoveSplineInit.h
+@@ -78,6 +78,7 @@ namespace Movement
+          * can't be combined with final animation
+          */
+         void SetParabolic(float amplitude, float start_time);
++        void SetVerticalDuration(int32 duration) { args.explicitDuration = duration; }
+         /* Plays animation after movement done
+          * can't be combined with parabolic movement
+          */
+--- a/src/server/game/Movement/Spline/MoveSplineInitArgs.h
++++ b/src/server/game/Movement/Spline/MoveSplineInitArgs.h
+@@ -56,6 +56,7 @@ namespace Movement
+         float parabolic_amplitude{0.f};
+         float time_perc{0.f};
+         uint32 splineId{0};
++        int32 explicitDuration{0}; // opt-in stationary parabolic motion only
+         float initialOrientation{0.f};
+         bool HasVelocity{false};
+         bool TransformForTransport{true};
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
+@@ -200,3 +200,9 @@ bool ScriptMgr::ProvideSpellLineGeometry(Spell* cast, uint8 effect, Unit* caster
+     }
+     return false;
+ }
++
++void ScriptMgr::OnEffectMovementFinalized(Unit* unit, uint32 effectId, uint32 splineId, bool completed)
++{
++    CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_EFFECT_MOVEMENT_FINALIZED,
++        script->OnEffectMovementFinalized(unit, effectId, splineId, completed));
++}
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.h
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.h
+@@ -49,6 +49,7 @@ enum UnitHook
+     UNITHOOK_PROVIDE_FINAL_SPELL_DAMAGE,
+     UNITHOOK_IS_SPELL_DIMINISHING_EXEMPT,
+     UNITHOOK_PROVIDE_SPELL_LINE_GEOMETRY,
++    UNITHOOK_ON_EFFECT_MOVEMENT_FINALIZED,
+     UNITHOOK_END
+ };
+ 
+@@ -95,6 +96,8 @@ public:
+     virtual bool ProvideSpellLineGeometry(Spell* /*cast*/, uint8 /*effect*/, Unit* /*caster*/,
+         Position& /*origin*/, float& /*direction*/, float& /*length*/, float& /*width*/) { return false; }
+ 
++    virtual void OnEffectMovementFinalized(Unit* /*unit*/, uint32 /*effectId*/, uint32 /*splineId*/, bool /*completed*/) { }
++
+     // Called when Heal is Recieved
+     virtual void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*heal*/, SpellInfo const* /*spellInfo*/) { }
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -570,6 +570,7 @@ public: /* UnitScript */
+     void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage, SpellInfo const* spellInfo);
+     void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
+     bool ProvideSpellLineGeometry(Spell* cast, uint8 effect, Unit* caster, Position& origin, float& direction, float& length, float& width);
++    void OnEffectMovementFinalized(Unit* unit, uint32 effectId, uint32 splineId, bool completed);
+     bool IsSpellDiminishingExempt(Spell* cast, Unit* caster, Unit* target, SpellInfo const* info);
+     bool ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim, SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical);
+     void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* spellInfo);

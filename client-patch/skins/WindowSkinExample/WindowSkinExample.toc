@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: WindowSkinExample
+## Notes: An example window skin for Diablocraft: one window (the Cube) drawn on the skin's own canvas. Not shipped.
+## Author: Diablocraft
+## Version: 0.1
+## Dependencies: Torment
+
+# One file: a skin has no logic, it only fills Diablocraft.ART slots (Torment/SKINNING.md, "Windows").
+WindowSkinExample.lua

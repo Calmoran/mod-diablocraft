@@ -1,0 +1,122 @@
+{
+  "tool": "build_tooltip_fonts.py",
+  "fontTools": "4.66.1",
+  "unicodes": "U+0020-U+007E,U+00A0-U+00FF,U+2010-U+2027,U+2030,U+2039-U+203A,U+20AC,U+2122",
+  "serif_unicodes": "U+0020-U+007E",
+  "fonts": [
+    {
+      "output": "Exocet.ttf",
+      "source": "ExocetLight.otf",
+      "source_sha256": "d0b7d6a61626a39ca513b156778df9fb7c69bace064fc32e1f6880d7b3c8265b",
+      "source_bytes": 53180,
+      "output_sha256": "327d1cae4b21db7e2c38cc37e842834b36749267f1a763879dd06a14f6239021",
+      "output_bytes": 83944,
+      "outlines": "glyf",
+      "tables": [
+        "OS/2",
+        "cmap",
+        "glyf",
+        "head",
+        "hhea",
+        "hmtx",
+        "loca",
+        "maxp",
+        "name",
+        "post"
+      ],
+      "use": "D3 Exocet: item names, the banner, the EQUIPPED plaque"
+    },
+    {
+      "output": "SansSerif.ttf",
+      "source": "SansSerif.ttf",
+      "source_sha256": "e1bda1fe6e85fd67c33734becb7301643fe1eaa4c2dbfd8c129fad66afeba848",
+      "source_bytes": 7235724,
+      "output_sha256": "5bb11f7b7541212842e64799491be5523ca86cd8ef18ff70de530d01076f7dfd",
+      "output_bytes": 19748,
+      "outlines": "glyf",
+      "tables": [
+        "GSUB",
+        "OS/2",
+        "cmap",
+        "gasp",
+        "glyf",
+        "head",
+        "hhea",
+        "hmtx",
+        "loca",
+        "maxp",
+        "name",
+        "post"
+      ],
+      "use": "D3 SansSerif: body text, labels, numbers, flavour (BlizzardGlobal)"
+    },
+    {
+      "output": "Serif.ttf",
+      "source": "Serif.ttf",
+      "source_sha256": "ad682aac26c578446e13cf27757473774a6deede41970862eab9fd5d8c563d12",
+      "source_bytes": 19512280,
+      "output_sha256": "e724172b29b4ae5e8cb42055252be35f58eded104ca96ed9d89bd4b901330031",
+      "output_bytes": 14260,
+      "outlines": "glyf",
+      "tables": [
+        "OS/2",
+        "cmap",
+        "gasp",
+        "glyf",
+        "head",
+        "hhea",
+        "hmtx",
+        "loca",
+        "maxp",
+        "name",
+        "post"
+      ],
+      "use": "D3 Serif: the big damage/armor number (D3Serif)"
+    }
+  ],
+  "not_shipped": [
+    {
+      "source": "Script.ttf",
+      "source_sha256": "7a4c3534a512da4734cec20e0672e3b5cdcc23ab79869de2516ac8694c96e186",
+      "source_bytes": 47700,
+      "tables": [
+        "OS/2",
+        "PCLT",
+        "cmap",
+        "cvt ",
+        "fpgm",
+        "glyf",
+        "head",
+        "hhea",
+        "hmtx",
+        "kern",
+        "loca",
+        "maxp",
+        "name",
+        "post",
+        "prep"
+      ],
+      "reason": "monster / hover text - not used by this tooltip reskin"
+    },
+    {
+      "source": "Axe Bad Data.ttf",
+      "source_sha256": "d91516aa3163a694cbdbd875aa3fab57340b3a8eecf2a124cad9157f5a0bbcd5",
+      "source_bytes": 7216892,
+      "tables": [
+        "OS/2",
+        "cmap",
+        "gasp",
+        "glyf",
+        "head",
+        "hhea",
+        "hmtx",
+        "loca",
+        "maxp",
+        "name",
+        "post",
+        "prep"
+      ],
+      "reason": "D3's debug font - not used by this tooltip reskin"
+    }
+  ]
+}

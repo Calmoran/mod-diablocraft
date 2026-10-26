@@ -1,0 +1,5 @@
+name,map_id,area_id,x,y,z,o,source
+spawn,750,4273,1907.5111,-24.066214,330.72403,6.270593,"the designer's .gps reading, card q-1003-39 item 1 (FloorZ 330.72397): where you arrive and log in; applied by diablocraft-ftoz. Sanctum of Torment, map 750 area 4273 (diablocraft-976b)"
+town_portal,750,4273,1960.4799,-4.998772,325.86954,3.3371348,"the designer's .gps reading, card q-1003-39 item 2 (FloorZ 325.86948): the town portal; applied by diablocraft-ftoz. Sanctum of Torment, map 750 area 4273 (diablocraft-976b)"
+rift_exit,750,4273,1960.4799,-4.998772,325.86954,3.3371348,"the designer's .gps reading, card q-1003-39 item 3 (FloorZ 325.86948): the rift exit, the same spot as the town portal (item 2); applied by diablocraft-ftoz. Sanctum of Torment, map 750 area 4273 (diablocraft-976b)"
+graveyard,750,4273,1907.5111,-24.066214,330.72403,6.270593,"the designer, card q-1003-39 item 14: 'same exact as spawn', so the spawn's reading (item 1); FloorZ 330.72397; applied by diablocraft-ftoz. Sanctum of Torment, map 750 area 4273 (diablocraft-976b)"

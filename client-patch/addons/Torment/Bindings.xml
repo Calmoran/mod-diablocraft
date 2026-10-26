@@ -1,0 +1,8 @@
+<Bindings>
+    <!-- Toggle Paragon (Key Bindings > Torment). Inventory.lua's DC.BindParagonKey
+         makes N the default once, when N is free; the page itself is
+         dc_paragon.lua's. -->
+    <Binding name="TORMENT_PARAGON" header="TORMENT">
+        Diablocraft.ToggleParagon()
+    </Binding>
+</Bindings>

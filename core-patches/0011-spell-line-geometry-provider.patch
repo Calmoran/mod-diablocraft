@@ -1,0 +1,131 @@
+# Reason: Support opt-in finite victim-origin lines through the native target walk.
+# Approved: ruling 2026-09-13.
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
+@@ -185,3 +185,18 @@ bool ScriptMgr::IsSpellDiminishingExempt(Spell* cast, Unit* caster, Unit* target
+             return true;
+     return false;
+ }
++
++bool ScriptMgr::ProvideSpellLineGeometry(Spell* cast, uint8 effect, Unit* caster, Position& origin, float& direction, float& length, float& width)
++{
++    for (auto const& script : ScriptRegistry<UnitScript>::EnabledHooks[UNITHOOK_PROVIDE_SPELL_LINE_GEOMETRY])
++    {
++        Position proposedOrigin = origin;
++        float proposedDirection = direction, proposedLength = length, proposedWidth = width;
++        if (script->ProvideSpellLineGeometry(cast, effect, caster, proposedOrigin, proposedDirection, proposedLength, proposedWidth))
++        {
++            origin = proposedOrigin; direction = proposedDirection; length = proposedLength; width = proposedWidth;
++            return true;
++        }
++    }
++    return false;
++}
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.h
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.h
+@@ -19,6 +19,7 @@
+ #define SCRIPT_OBJECT_UNIT_SCRIPT_H_
+ 
+ #include "ScriptObject.h"
++#include "Position.h"
+ #include <vector>
+ 
+ enum UnitHook
+@@ -47,6 +48,7 @@ enum UnitHook
+     UNITHOOK_CAN_REWARD_RAGE,
+     UNITHOOK_PROVIDE_FINAL_SPELL_DAMAGE,
+     UNITHOOK_IS_SPELL_DIMINISHING_EXEMPT,
++    UNITHOOK_PROVIDE_SPELL_LINE_GEOMETRY,
+     UNITHOOK_END
+ };
+ 
+@@ -89,6 +91,10 @@ public:
+ 
+     virtual bool IsSpellDiminishingExempt(Spell* /*cast*/, Unit* /*caster*/, Unit* /*target*/, SpellInfo const* /*info*/) { return false; }
+ 
++    // Full width of a finite line; false leaves native cone geometry untouched.
++    virtual bool ProvideSpellLineGeometry(Spell* /*cast*/, uint8 /*effect*/, Unit* /*caster*/,
++        Position& /*origin*/, float& /*direction*/, float& /*length*/, float& /*width*/) { return false; }
++
+     // Called when Heal is Recieved
+     virtual void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*heal*/, SpellInfo const* /*spellInfo*/) { }
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -569,6 +569,7 @@ public: /* UnitScript */
+     void OnDamage(Unit* attacker, Unit* victim, uint32& damage);
+     void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage, SpellInfo const* spellInfo);
+     void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
++    bool ProvideSpellLineGeometry(Spell* cast, uint8 effect, Unit* caster, Position& origin, float& direction, float& length, float& width);
+     bool IsSpellDiminishingExempt(Spell* cast, Unit* caster, Unit* target, SpellInfo const* info);
+     bool ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim, SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical);
+     void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* spellInfo);
+--- a/src/server/game/Spells/Spell.cpp
++++ b/src/server/game/Spells/Spell.cpp
+@@ -1307,9 +1307,28 @@ void Spell::SelectImplicitConeTargets(SpellEffIndex effIndex, SpellImplicitTarge
+ 
+     if (uint32 containerTypeMask = GetSearcherTypeMask(objectType, condList))
+     {
++        Position origin = m_caster->GetPosition();
++        float direction = origin.GetOrientation(), length = 0, width = 0;
++        Unit* lineCaster = m_caster->ToUnit();
++        if (lineCaster && sScriptMgr->ProvideSpellLineGeometry(this, uint8(effIndex), lineCaster, origin, direction, length, width))
++        {
++            if (!origin.IsPositionValid() || !std::isfinite(direction) || !std::isfinite(length) ||
++                !std::isfinite(width) || length <= 0 || width <= 0)
++                return;
++            Position center = origin;
++            center.m_positionX += std::cos(direction) * length * 0.5f;
++            center.m_positionY += std::sin(direction) * length * 0.5f;
++            float const envelope = std::hypot(length, width) * 0.5f;
++            Acore::WorldObjectSpellLineTargetCheck check(origin, direction, length, width, m_caster, m_spellInfo, selectionType, condList);
++            Acore::WorldObjectListSearcher<Acore::WorldObjectSpellLineTargetCheck> searcher(m_caster, targets, check, containerTypeMask);
++            SearchTargets(searcher, containerTypeMask, m_caster, &center, envelope);
++        }
++        else
++        {
+         Acore::WorldObjectSpellConeTargetCheck check(coneAngle, radius, m_caster, m_spellInfo, selectionType, condList);
+         Acore::WorldObjectListSearcher<Acore::WorldObjectSpellConeTargetCheck> searcher(m_caster, targets, check, containerTypeMask);
+         SearchTargets<Acore::WorldObjectListSearcher<Acore::WorldObjectSpellConeTargetCheck> >(searcher, containerTypeMask, m_caster, m_caster, radius);
++        }
+ 
+         CallScriptObjectAreaTargetSelectHandlers(targets, effIndex, targetType);
+ 
+@@ -9549,6 +9568,17 @@ namespace Acore
+         return WorldObjectSpellAreaTargetCheck::operator ()(target);
+     }
+ 
++    bool WorldObjectSpellLineTargetCheck::operator()(WorldObject* target)
++    {
++        float const dx = target->GetPositionX() - _origin.GetPositionX();
++        float const dy = target->GetPositionY() - _origin.GetPositionY();
++        float const along = dx * std::cos(_direction) + dy * std::sin(_direction);
++        float const across = -dx * std::sin(_direction) + dy * std::cos(_direction);
++        if (along < 0 || along > _length || std::abs(across) > _width * 0.5f)
++            return false;
++        return _caster->IsWithinLOSInMap(target) && WorldObjectSpellTargetCheck::operator()(target);
++    }
++
+     WorldObjectSpellTrajTargetCheck::WorldObjectSpellTrajTargetCheck(float range, Position const* position, WorldObject* caster,
+             SpellInfo const* spellInfo, SpellTargetCheckTypes selectionType, ConditionList* condList)
+         : WorldObjectSpellAreaTargetCheck(range, position, caster, caster, spellInfo, selectionType, condList)
+--- a/src/server/game/Spells/Spell.h
++++ b/src/server/game/Spells/Spell.h
+@@ -854,6 +854,17 @@ namespace Acore
+         bool operator()(WorldObject* target);
+     };
+ 
++    struct WorldObjectSpellLineTargetCheck : public WorldObjectSpellTargetCheck
++    {
++        Position _origin;
++        float _direction, _length, _width;
++        WorldObjectSpellLineTargetCheck(Position const& origin, float direction, float length, float width,
++            WorldObject* caster, SpellInfo const* info, SpellTargetCheckTypes selectionType, ConditionList* conditions)
++            : WorldObjectSpellTargetCheck(caster, caster, info, selectionType, conditions),
++              _origin(origin), _direction(direction), _length(length), _width(width) { }
++        bool operator()(WorldObject* target);
++    };
++
+     struct WorldObjectSpellTrajTargetCheck : public WorldObjectSpellAreaTargetCheck
+     {
+         WorldObjectSpellTrajTargetCheck(float range, Position const* position, WorldObject* caster,

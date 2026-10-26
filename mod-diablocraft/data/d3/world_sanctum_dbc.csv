@@ -1,0 +1,115 @@
+table,id,source_id,field,value,note
+Map,750,603,Directory,UlduarRaid,"the client reads World/Maps/UlduarRaid from its own MPQs, the same directory as Ulduar"
+Map,750,603,InstanceType,0,"0 = open world map (MAP_COMMON); row 603 is 2 = raid"
+Map,750,603,MapName_Lang_enUS,Sanctum of Torment,"the designer's name for the place (hub-sanctum-move brief, 2026-10-03)"
+Map,750,603,LoadingScreenID,244,"InstanceUlduarRaid in LoadingScreens.dbc, measured: it is row 603's own value; the brief's 142 is InstanceDeadmines"
+WorldMapArea,750,529,MapID,750,"clone of the Ulduar world map row; its internal name stays row 529's, which is how the client finds the map art"
+Light,2750,1862,ContinentID,750,"clone of Ulduar's default light row; Light id 750 is already a stock row, so the new row takes 2750"
+AreaTable,4273,4273,AreaName_Lang_enUS,Sanctum of Torment,"rename in place; WMOAreaTable has no map column, so the arena resolves to area 4273 on any map (the real Ulduar shows the new name too)"
+DungeonMap,1069,69,MapID,750,clone of Ulduar's floor 1 (stock DungeonMap 69): the world map's floors on map 750 are Ulduar's own art
+DungeonMap,1070,70,MapID,750,clone of Ulduar's floor 2 (stock DungeonMap 70): the world map's floors on map 750 are Ulduar's own art
+DungeonMap,1071,71,MapID,750,clone of Ulduar's floor 3 (stock DungeonMap 71): the world map's floors on map 750 are Ulduar's own art
+DungeonMap,1072,72,MapID,750,clone of Ulduar's floor 4 (stock DungeonMap 72): the world map's floors on map 750 are Ulduar's own art
+DungeonMap,1098,98,MapID,750,clone of Ulduar's floor 5 (stock DungeonMap 98): the world map's floors on map 750 are Ulduar's own art
+DungeonMapChunk,11641,1641,MapID,750,clone of stock DungeonMapChunk 1641 (WMO group 24082 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11641,1641,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11642,1642,MapID,750,clone of stock DungeonMapChunk 1642 (WMO group 25929 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11642,1642,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11643,1643,MapID,750,clone of stock DungeonMapChunk 1643 (WMO group 25906 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11643,1643,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11644,1644,MapID,750,clone of stock DungeonMapChunk 1644 (WMO group 24083 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11644,1644,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11645,1645,MapID,750,clone of stock DungeonMapChunk 1645 (WMO group 24080 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11645,1645,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11646,1646,MapID,750,clone of stock DungeonMapChunk 1646 (WMO group 24460 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11646,1646,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11647,1647,MapID,750,clone of stock DungeonMapChunk 1647 (WMO group 24076 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11647,1647,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11648,1648,MapID,750,clone of stock DungeonMapChunk 1648 (WMO group 24075 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11648,1648,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11649,1649,MapID,750,clone of stock DungeonMapChunk 1649 (WMO group 24077 -> Ulduar floor row 69): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11649,1649,DungeonMapID,1069,"the cloned floor row on map 750, not Ulduar's 69"
+DungeonMapChunk,11650,1650,MapID,750,clone of stock DungeonMapChunk 1650 (WMO group 25884 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11650,1650,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11653,1653,MapID,750,clone of stock DungeonMapChunk 1653 (WMO group 24442 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11653,1653,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11654,1654,MapID,750,clone of stock DungeonMapChunk 1654 (WMO group 24443 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11654,1654,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11655,1655,MapID,750,clone of stock DungeonMapChunk 1655 (WMO group 25903 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11655,1655,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11656,1656,MapID,750,clone of stock DungeonMapChunk 1656 (WMO group 24086 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11656,1656,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11657,1657,MapID,750,clone of stock DungeonMapChunk 1657 (WMO group 24436 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11657,1657,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11658,1658,MapID,750,clone of stock DungeonMapChunk 1658 (WMO group 24437 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11658,1658,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11659,1659,MapID,750,clone of stock DungeonMapChunk 1659 (WMO group 24438 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11659,1659,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11660,1660,MapID,750,clone of stock DungeonMapChunk 1660 (WMO group 24439 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11660,1660,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11661,1661,MapID,750,clone of stock DungeonMapChunk 1661 (WMO group 24405 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11661,1661,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11662,1662,MapID,750,clone of stock DungeonMapChunk 1662 (WMO group 24458 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11662,1662,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11663,1663,MapID,750,clone of stock DungeonMapChunk 1663 (WMO group 24771 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11663,1663,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11664,1664,MapID,750,clone of stock DungeonMapChunk 1664 (WMO group 24084 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11664,1664,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11665,1665,MapID,750,clone of stock DungeonMapChunk 1665 (WMO group 24459 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11665,1665,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11667,1667,MapID,750,clone of stock DungeonMapChunk 1667 (WMO group 24457 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11667,1667,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11668,1668,MapID,750,clone of stock DungeonMapChunk 1668 (WMO group 25891 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11668,1668,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11669,1669,MapID,750,clone of stock DungeonMapChunk 1669 (WMO group 25998 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11669,1669,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11670,1670,MapID,750,clone of stock DungeonMapChunk 1670 (WMO group 24669 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11670,1670,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11671,1671,MapID,750,clone of stock DungeonMapChunk 1671 (WMO group 26048 -> Ulduar floor row 71): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11671,1671,DungeonMapID,1071,"the cloned floor row on map 750, not Ulduar's 71"
+DungeonMapChunk,11672,1672,MapID,750,clone of stock DungeonMapChunk 1672 (WMO group 25928 -> Ulduar floor row 71): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11672,1672,DungeonMapID,1071,"the cloned floor row on map 750, not Ulduar's 71"
+DungeonMapChunk,11673,1673,MapID,750,clone of stock DungeonMapChunk 1673 (WMO group 24084 -> Ulduar floor row 71): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11673,1673,DungeonMapID,1071,"the cloned floor row on map 750, not Ulduar's 71"
+DungeonMapChunk,11674,1674,MapID,750,clone of stock DungeonMapChunk 1674 (WMO group 25905 -> Ulduar floor row 71): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11674,1674,DungeonMapID,1071,"the cloned floor row on map 750, not Ulduar's 71"
+DungeonMapChunk,11676,1676,MapID,750,clone of stock DungeonMapChunk 1676 (WMO group 25973 -> Ulduar floor row 72): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11676,1676,DungeonMapID,1072,"the cloned floor row on map 750, not Ulduar's 72"
+DungeonMapChunk,11677,1677,MapID,750,clone of stock DungeonMapChunk 1677 (WMO group 25944 -> Ulduar floor row 72): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11677,1677,DungeonMapID,1072,"the cloned floor row on map 750, not Ulduar's 72"
+DungeonMapChunk,11679,1679,MapID,750,clone of stock DungeonMapChunk 1679 (WMO group 25962 -> Ulduar floor row 72): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11679,1679,DungeonMapID,1072,"the cloned floor row on map 750, not Ulduar's 72"
+DungeonMapChunk,11681,1681,MapID,750,clone of stock DungeonMapChunk 1681 (WMO group 25960 -> Ulduar floor row 72): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11681,1681,DungeonMapID,1072,"the cloned floor row on map 750, not Ulduar's 72"
+DungeonMapChunk,11683,1683,MapID,750,clone of stock DungeonMapChunk 1683 (WMO group 25963 -> Ulduar floor row 72): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11683,1683,DungeonMapID,1072,"the cloned floor row on map 750, not Ulduar's 72"
+DungeonMapChunk,11685,1685,MapID,750,clone of stock DungeonMapChunk 1685 (WMO group 25961 -> Ulduar floor row 72): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11685,1685,DungeonMapID,1072,"the cloned floor row on map 750, not Ulduar's 72"
+DungeonMapChunk,11687,1687,MapID,750,clone of stock DungeonMapChunk 1687 (WMO group 25884 -> Ulduar floor row 71): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11687,1687,DungeonMapID,1071,"the cloned floor row on map 750, not Ulduar's 71"
+DungeonMapChunk,11688,1688,MapID,750,clone of stock DungeonMapChunk 1688 (WMO group 24441 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11688,1688,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11689,1689,MapID,750,clone of stock DungeonMapChunk 1689 (WMO group 25931 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11689,1689,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11690,1690,MapID,750,clone of stock DungeonMapChunk 1690 (WMO group 25933 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11690,1690,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11691,1691,MapID,750,clone of stock DungeonMapChunk 1691 (WMO group 25932 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11691,1691,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11719,1719,MapID,750,clone of stock DungeonMapChunk 1719 (WMO group 25934 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11719,1719,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11720,1720,MapID,750,clone of stock DungeonMapChunk 1720 (WMO group 25945 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11720,1720,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11737,1737,MapID,750,clone of stock DungeonMapChunk 1737 (WMO group 26083 -> Ulduar floor row 71): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11737,1737,DungeonMapID,1071,"the cloned floor row on map 750, not Ulduar's 71"
+DungeonMapChunk,11745,1745,MapID,750,clone of stock DungeonMapChunk 1745 (WMO group 26205 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11745,1745,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11746,1746,MapID,750,clone of stock DungeonMapChunk 1746 (WMO group 26204 -> Ulduar floor row 70): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11746,1746,DungeonMapID,1070,"the cloned floor row on map 750, not Ulduar's 70"
+DungeonMapChunk,11749,1749,MapID,750,clone of stock DungeonMapChunk 1749 (WMO group 26003 -> Ulduar floor row 98): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11749,1749,DungeonMapID,1098,"the cloned floor row on map 750, not Ulduar's 98"
+DungeonMapChunk,11750,1750,MapID,750,clone of stock DungeonMapChunk 1750 (WMO group 26004 -> Ulduar floor row 98): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11750,1750,DungeonMapID,1098,"the cloned floor row on map 750, not Ulduar's 98"
+DungeonMapChunk,11751,1751,MapID,750,clone of stock DungeonMapChunk 1751 (WMO group 26006 -> Ulduar floor row 98): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11751,1751,DungeonMapID,1098,"the cloned floor row on map 750, not Ulduar's 98"
+DungeonMapChunk,11752,1752,MapID,750,clone of stock DungeonMapChunk 1752 (WMO group 26005 -> Ulduar floor row 98): the client finds the floor you stand on by WMO group and map
+DungeonMapChunk,11752,1752,DungeonMapID,1098,"the cloned floor row on map 750, not Ulduar's 98"

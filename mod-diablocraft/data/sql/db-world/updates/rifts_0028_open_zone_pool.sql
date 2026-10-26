@@ -1,0 +1,47 @@
+-- Generated from data/d3/rift_open_zones.csv and data/tunables/rifts.csv (open_rift_entry_*) by generate_rifts.py; edit the
+-- sheets and rerun. Apply to the world database.
+-- Rift floors Part F5 (docs/proposals/rift-floors.md 4.14): an open zone joins the rift pool as one more floor map. The name is the
+-- zone's, as the spawner's and the exit spots' rows name it; the arrival point is the designer's entrance. Nothing reads kills_required.
+SET NAMES utf8mb4;
+DELETE FROM `dc_rift_dungeon` WHERE `dungeon_id` >= 1000;
+INSERT INTO `dc_rift_dungeon` (`dungeon_id`, `map_id`, `name`, `entry_x`, `entry_y`, `entry_z`, `entry_o`, `kills_required`, `approximate_length`) VALUES
+(1001, 751, 'Un''Goro Crater', -7900.5913, -2135.8982, -249.10184, 0.6463665, 0, 'open'),
+(1002, 751, 'Tanaris', -7044.8345, -3669.2334, 15.165618, 3.4502392, 0, 'open'),
+(1003, 751, 'Thousand Needles', -5645.228, -3481.2668, -55.715042, 4.062083, 0, 'open'),
+(1004, 751, 'Azshara', 3543.5012, -5148.308, 82.96008, 3.094087, 0, 'open'),
+(1005, 751, 'Moonglade', 7813.6606, -2319.7993, 456.6908, 1.3355795, 0, 'open'),
+(1006, 751, 'Darkshore', 4292.032, 152.31824, 45.851177, 0.43819362, 0, 'open'),
+(1007, 751, 'Winterspring', 6545.0933, -2971.8633, 592.45483, 4.8863645, 0, 'open'),
+(1008, 751, 'Felwood', 3927.9077, -1263.2759, 226.37532, 2.7433348, 0, 'open'),
+(1009, 751, 'Ashenvale', 2315.5327, -2536.89, 100.35441, 3.3096266, 0, 'open'),
+(1010, 751, 'Durotar', 280.95566, -4762.3833, 12.637828, 0.7467557, 0, 'open'),
+(1011, 751, 'Stonetalon Mountains', 1570.92, 1031.52, 137.959, 3.33006, 0, 'open'),
+(1012, 751, 'Silithus', -7426.87, 1005.31, 1.13359, 2.96086, 0, 'open'),
+(1013, 751, 'Feralas', -4841.19, 1309.44, 81.3937, 1.48501, 0, 'open'),
+(1014, 751, 'Desolace', -606.395, 2211.75, 92.9818, 0.809746, 0, 'open'),
+(1015, 751, 'Dustwallow Marsh', -4043.65, -2991.32, 36.3984, 3.37443, 0, 'open'),
+(1016, 751, 'The Barrens', 884.54, -3548.45, 91.8532, 2.95957, 0, 'open'),
+(1017, 752, 'Western Plaguelands', 1728.65, -1602.25, 63.429, 1.6558, 0, 'open'),
+(1018, 752, 'Eastern Plaguelands', 2300.97, -4613.36, 73.6231, 0.367722, 0, 'open'),
+(1019, 752, 'Tirisfal Glades', 2036.02, 161.331, 33.8674, 0.143896, 0, 'open'),
+(1020, 752, 'Silverpine Forest', 878.74, 1359.33, 50.355, 5.89929, 0, 'open'),
+(1021, 752, 'Alterac Mountains', 370.763, -491.355, 175.361, 5.37858, 0, 'open'),
+(1022, 752, 'Hillsbrad Foothills', -436.657, -581.254, 53.5944, 1.25917, 0, 'open'),
+(1023, 752, 'The Hinterlands', 119.387, -3190.37, 117.331, 2.34064, 0, 'open'),
+(1024, 752, 'Wetlands', -3242.81, -2469.04, 15.9226, 6.03924, 0, 'open'),
+(1025, 752, 'Loch Modan', -5202.94, -2855.18, 336.822, 0.37651, 0, 'open'),
+(1026, 752, 'Dun Morogh', -5451.55, -656.992, 392.675, 0.66789, 0, 'open'),
+(1027, 752, 'Badlands', -6779.2, -3423.64, 241.667, 0.647481, 0, 'open'),
+(1028, 752, 'Burning Steppes', -8118.54, -1633.83, 132.996, 0.089067, 0, 'open'),
+(1029, 752, 'Redridge Mountains', -9551.81, -2204.73, 93.473, 5.47141, 0, 'open'),
+(1030, 752, 'Elwynn Forest', -9617.06, -288.949, 57.3053, 4.72687, 0, 'open'),
+(1031, 752, 'Swamp of Sorrows', -10345.4, -2773.42, 21.99, 5.08426, 0, 'open'),
+(1032, 752, 'Westfall', -10235.2, 1222.47, 43.6252, 6.2427, 0, 'open'),
+(1033, 752, 'Stranglethorn Vale', -12644.3, -377.411, 10.1021, 6.09978, 0, 'open'),
+(1034, 753, 'Hellfire Peninsula', -211.237, 4278.54, 86.5678, 4.59776, 0, 'open'),
+(1035, 753, 'Zangarmarsh', -54.8621, 5813.44, 20.9764, 0.081722, 0, 'open'),
+(1036, 753, 'Nagrand', -1145.95, 8182.35, 3.60249, 6.13478, 0, 'open'),
+(1037, 753, 'Terokkar Forest', -2000.47, 4451.54, 8.37917, 4.40447, 0, 'open'),
+(1038, 753, 'Shadowmoon Valley', -3053.96, 828.896, -10.4689, 5.53466, 0, 'open'),
+(1039, 753, 'Netherstorm', 3830.23, 3426.5, 88.6145, 5.16677, 0, 'open'),
+(1040, 753, 'Blade''s Edge Mountains', 3037.67, 5962.86, 130.774, 1.27253, 0, 'open');

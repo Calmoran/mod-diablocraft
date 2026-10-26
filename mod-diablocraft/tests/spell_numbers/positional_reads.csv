@@ -1,0 +1,201 @@
+# Every positional n[k] read the module made at 7702de8, with the number the
+# tables gave it there. Produced by scanning that commit's own sources with
+# skill_tokens_report.positional_reads(); step 4 migrates these reads away
+# and deletes the tables, so this file is what test_spell_numbers.py keeps
+# comparing against. Regenerate only with the PM's agreement:
+#   python mod-diablocraft/scripts/freeze_positional_reads.py 7702de8
+file,line,expr,variable,index,skill,rune,passive,anchor,frozen_value,code
+src/combat/dc_abilities.cpp,305,r->n[0],r,0,Sprint,Marathon,,Rune name,40,"Add(p, AuraId(r->id), Stat::MovementSpeed, Rune(*r, ""Marathon"") ? r->n[0] : b->n[1], Bucket::Uncapped);"
+src/combat/dc_abilities.cpp,305,b->n[1],b,1,Sprint,,,Rune name,30,"Add(p, AuraId(r->id), Stat::MovementSpeed, Rune(*r, ""Marathon"") ? r->n[0] : b->n[1], Bucket::Uncapped);"
+src/combat/dc_abilities.cpp,312,r->n[1],r,1,Ignore Pain,Mob Rule,,Rune name,25,"Rune(*r, ""Mob Rule"") && p->GetAura(AuraId(r->id))->GetCasterGUID() != p->GetGUID() ? r->n[1]"
+src/combat/dc_abilities.cpp,313,b->n[1],b,1,Ignore Pain,,,Rune name,50,: b->n[1]);
+src/combat/dc_abilities.cpp,315,r->n[0],r,0,Ignore Pain,Bravado,,Rune name,40,"Add(p, AuraId(r->id), Stat::MovementSpeed, r->n[0], Bucket::Uncapped);"
+src/combat/dc_abilities.cpp,320,b->n[3],b,3,War Cry,,,skill name,20,double armor = b->n[3];
+src/combat/dc_abilities.cpp,322,r->n[0],r,0,War Cry,Hardened Wrath,,Rune name,5,"if (Rune(*r, ""Hardened Wrath"") && aura->GetMaxDuration() - aura->GetDuration() < r->n[0] * 1000)"
+src/combat/dc_abilities.cpp,323,r->n[1],r,1,War Cry,Hardened Wrath,,Rune name,60,armor += r->n[1];
+src/combat/dc_abilities.cpp,329,r->n[0],r,0,War Cry,Impunity,,Rune name,20,"baseline->resistance[e] * r->n[0] / 100,"
+src/combat/dc_abilities.cpp,333,r->n[0],r,0,War Cry,Invigorate,,Rune name,10,"Add(p, AuraId(r->id), Stat::LifePercent, r->n[0]);"
+src/combat/dc_abilities.cpp,334,r->n[1],r,1,War Cry,Invigorate,,Rune name,13411,"Add(p, AuraId(r->id), Stat::LifeRegen, r->n[1]);"
+src/combat/dc_abilities.cpp,339,"Base(""Battle Rage"")->n[2]","Base(""Battle Rage"")",2,Battle Rage,,,skill name,3,"Add(p, AuraId(r->id), Stat::CritChance, Base(""Battle Rage"")->n[2]);"
+src/combat/dc_abilities.cpp,341,r->n[0],r,0,Battle Rage,Ferocity,,Rune name,15,"Add(p, AuraId(r->id), Stat::MovementSpeed, r->n[0], Bucket::Uncapped);"
+src/combat/dc_abilities.cpp,344,"Base(""Battle Rage"")->n[2]","Base(""Battle Rage"")",2,Battle Rage,,,skill name,3,"Base(""Battle Rage"")->n[2] + r->n[0] * Nearby(p, p, r->n[1]).size());"
+src/combat/dc_abilities.cpp,344,r->n[0],r,0,Battle Rage,Into the Fray,,skill name,1,"Base(""Battle Rage"")->n[2] + r->n[0] * Nearby(p, p, r->n[1]).size());"
+src/combat/dc_abilities.cpp,344,r->n[1],r,1,Battle Rage,Into the Fray,,skill name,10,"Base(""Battle Rage"")->n[2] + r->n[0] * Nearby(p, p, r->n[1]).size());"
+src/combat/dc_abilities.cpp,349,b->n[2],b,2,Wrath of the Berserker,,,skill name,10,"Add(p, AuraId(r->id), Stat::CritChance, b->n[2]);"
+src/combat/dc_abilities.cpp,350,b->n[3],b,3,Wrath of the Berserker,,,skill name,25,"Add(p, AuraId(r->id), Stat::AttackSpeed, b->n[3]);"
+src/combat/dc_abilities.cpp,351,b->n[5],b,5,Wrath of the Berserker,,,skill name,20,"Add(p, AuraId(r->id), Stat::MovementSpeed, b->n[5], Bucket::Uncapped);"
+src/combat/dc_abilities.cpp,353,r->n[0],r,0,Wrath of the Berserker,Striding Giant,,Rune name,50,"Add(p, AuraId(r->id), Stat::SpecificReduction, r->n[0]);"
+src/combat/dc_abilities.cpp,356,r->n[0],r,0,Leap,Iron Impact,,Rune name,150,"Add(p, AuraId(r->id), Stat::Armor, r->n[0], Bucket::Percent);"
+src/combat/dc_abilities.cpp,358,r->n[0],r,0,Overpower,Killing Spree,,Rune name,8,"Add(p, AuraId(r->id), Stat::CritChance, r->n[0]);"
+src/combat/dc_abilities.cpp,360,r->n[0],r,0,Revenge,Best Served Cold,,Rune name,8,"Add(p, AuraId(r->id), Stat::CritChance, r->n[0]);"
+src/combat/dc_abilities.cpp,363,r->n[1],r,1,Sprint,Forced March,,Rune name,20,"Add(p, AuraId(r->id), Stat::MovementSpeed, r->n[1], Bucket::Uncapped);"
+src/combat/dc_abilities.cpp,395,r->n[0],r,0,Battle Rage,Marauder's Rage,,Rune name,15,"result += Rune(*r, ""Marauder's Rage"") ? r->n[0] : Base(""Battle Rage"")->n[1];"
+src/combat/dc_abilities.cpp,395,"Base(""Battle Rage"")->n[1]","Base(""Battle Rage"")",1,Battle Rage,,,skill name,10,"result += Rune(*r, ""Marauder's Rage"") ? r->n[0] : Base(""Battle Rage"")->n[1];"
+src/combat/dc_abilities.cpp,397,r->n[0],r,0,Wrath of the Berserker,Insanity,,Rune name,50,result += r->n[0];
+src/combat/dc_abilities.cpp,403,r->n[0],r,0,Threatening Shout,Falter,,Rune name,25,"double bonus = r && Rune(*r, ""Falter"") ? r->n[0] : 0;"
+src/combat/dc_abilities.cpp,405,rend->n[0],rend,0,Rend,Mutilate,,Rune name,10,bonus += rend->n[0];
+src/combat/dc_abilities.cpp,412,r->n[0],r,0,Sprint,Rush,,Rune name,12,chance += r->n[0];
+src/combat/dc_abilities.cpp,414,r->n[0],r,0,War Cry,Veteran's Warning,,Rune name,30,chance += r->n[0];
+src/combat/dc_abilities.cpp,416,"Base(""Wrath of the Berserker"")->n[4]","Base(""Wrath of the Berserker"")",4,Wrath of the Berserker,,,skill name,20,"chance += Base(""Wrath of the Berserker"")->n[4];"
+src/combat/dc_abilities.cpp,426,r->n[0],r,0,Overpower,Crushing Advance,,Rune name,35,reflected.total = damage * r->n[0] / 100;
+src/combat/dc_abilities.cpp,435,"Base(""Threatening Shout"")->n[3]","Base(""Threatening Shout"")",3,Threatening Shout,,,skill name,20,"return r && !Rune(*r, ""Falter"") ? 1 - Base(""Threatening Shout"")->n[3] / 100 : 1;"
+src/combat/dc_abilities.cpp,446,r->n[0],r,0,Avalanche,Tectonic Rift,,Rune name,3,s.avalanche.count = unsigned(r->n[0]);
+src/combat/dc_abilities.cpp,493,r->n[1],r,1,Sprint,Marathon,,Rune name,4,"duration = Rune(*r, ""Marathon"") ? r->n[1] : b->n[2];"
+src/combat/dc_abilities.cpp,493,b->n[2],b,2,Sprint,,,Rune name,3,"duration = Rune(*r, ""Marathon"") ? r->n[1] : b->n[2];"
+src/combat/dc_abilities.cpp,496,r->n[0],r,0,Sprint,Forced March,,Rune name,50,"for (auto u : Nearby(p, p, r->n[0], true))"
+src/combat/dc_abilities.cpp,499,r->n[2],r,2,Sprint,Forced March,,Rune name,3,"Mark(p, u, *r, r->n[2]);"
+src/combat/dc_abilities.cpp,506,r->n[0],r,0,Ignore Pain,Iron Hide,,Rune name,7,"duration = Rune(*r, ""Iron Hide"") ? r->n[0] : b->n[2];"
+src/combat/dc_abilities.cpp,506,b->n[2],b,2,Ignore Pain,,,Rune name,5,"duration = Rune(*r, ""Iron Hide"") ? r->n[0] : b->n[2];"
+src/combat/dc_abilities.cpp,515,r->n[0],r,0,Ignore Pain,Contempt for Weakness,,Rune name,35,"Heal(p, p, id, p->GetMaxHealth() * r->n[0] / 100);"
+src/combat/dc_abilities.cpp,517,r->n[0],r,0,Ignore Pain,Mob Rule,,Rune name,50,"for (auto u : Nearby(p, p, r->n[0], true))"
+src/combat/dc_abilities.cpp,520,r->n[2],r,2,Ignore Pain,Mob Rule,,Rune name,5,"Mark(p, u, *r, r->n[2]);"
+src/combat/dc_abilities.cpp,527,b->n[4],b,4,War Cry,,,skill name,120,duration = b->n[4];
+src/combat/dc_abilities.cpp,537,r->n[0],r,0,War Cry,Charge!,,Rune name,50,"Fury(p, r->n[0] - b->n[0]);"
+src/combat/dc_abilities.cpp,537,b->n[0],b,0,War Cry,,,Rune name,20,"Fury(p, r->n[0] - b->n[0]);"
+src/combat/dc_abilities.cpp,541,b->n[3],b,3,Battle Rage,,,skill name,120,duration = b->n[3];
+src/combat/dc_abilities.cpp,548,r->n[1],r,1,Threatening Shout,Falter,,Rune name,6,"duration = Rune(*r, ""Falter"") ? r->n[1] : b->n[4];"
+src/combat/dc_abilities.cpp,548,b->n[4],b,4,Threatening Shout,,,Rune name,15,"duration = Rune(*r, ""Falter"") ? r->n[1] : b->n[4];"
+src/combat/dc_abilities.cpp,555,r->n[0],r,0,Threatening Shout,Demoralize,,Rune name,4,"Control(p, u, *r, r->n[0]);"
+src/combat/dc_abilities.cpp,557,r->n[1],r,1,Threatening Shout,Terrify,,Rune name,3,"Control(p, u, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,564,b->n[1],b,1,Wrath of the Berserker,,,skill name,20,"Mark(p, p, *r, b->n[1]);"
+src/combat/dc_abilities.cpp,566,r->n[0],r,0,Wrath of the Berserker,Arreat's Wail,,Rune name,3400,"Eruption(p, p, id, r->n[0], r->n[1]);"
+src/combat/dc_abilities.cpp,566,r->n[1],r,1,Wrath of the Berserker,Arreat's Wail,,Rune name,15,"Eruption(p, p, id, r->n[0], r->n[1]);"
+src/combat/dc_abilities.cpp,571,r->n[1],r,1,Overpower,Killing Spree,,Rune name,5,"Mark(p, p, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,573,r->n[0],r,0,Overpower,Momentum,,Rune name,5,"Fury(p, r->n[0] * targets.size());"
+src/combat/dc_abilities.cpp,580,r->n[0],r,0,Overpower,Storm of Steel,,Rune name,3,if (count++ >= unsigned(r->n[0]))
+src/combat/dc_abilities.cpp,590,r->n[0],r,0,Revenge,Blood Law,,Rune name,6,"double healing = Rune(*r, ""Blood Law"") ? r->n[0] : b->n[2];"
+src/combat/dc_abilities.cpp,590,b->n[2],b,2,Revenge,,,Rune name,4,"double healing = Rune(*r, ""Blood Law"") ? r->n[0] : b->n[2];"
+src/combat/dc_abilities.cpp,593,r->n[1],r,1,Revenge,Best Served Cold,,Rune name,6,"Mark(p, p, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,596,r->n[0],r,0,Revenge,Grudge,,Rune name,24,"Knock(p, u, r->n[0]);"
+src/combat/dc_abilities.cpp,603,b->n[3],b,3,Furious Charge,,,skill name,10,s.charge.left = s.charge.period = b->n[3] * 1000 * CooldownFactor(p);
+src/combat/dc_abilities.cpp,605,r->n[0],r,0,Furious Charge,Stamina,,Rune name,10,"Fury(p, r->n[0] * targets.size());"
+src/combat/dc_abilities.cpp,608,r->n[0],r,0,Furious Charge,Cold Rush,,Rune name,2.5,"Control(p, u, *r, r->n[0]);"
+src/combat/dc_abilities.cpp,612,r->n[1],r,1,Furious Charge,Merciless Assault,,Rune name,10,"s.charge.left = std::max(0.0, s.charge.left - std::min(r->n[1], r->n[0] * targets.size()) * 1000);"
+src/combat/dc_abilities.cpp,612,r->n[0],r,0,Furious Charge,Merciless Assault,,Rune name,2,"s.charge.left = std::max(0.0, s.charge.left - std::min(r->n[1], r->n[0] * targets.size()) * 1000);"
+src/combat/dc_abilities.cpp,622,b->n[0],b,0,Avalanche,,,Rune name,30,s.avalanche.left = s.avalanche.period = b->n[0] * 1000 * CooldownFactor(p);
+src/combat/dc_abilities.cpp,629,r->n[1],r,1,Avalanche,Volcano,,Rune name,5,"ZoneStart(p, *r, *center, r->n[1], r->radius);"
+src/combat/dc_abilities.cpp,633,r->n[2],r,2,Avalanche,Snow-Capped Mountain,,Rune name,3,"Mark(p, u, *r, r->n[2]);"
+src/combat/dc_abilities.cpp,641,r->n[0],r,0,Earthquake,Cave-In,,Rune name,24,"for (auto target : Nearby(p, p, r->n[0]))"
+src/combat/dc_abilities.cpp,643,b->n[3],b,3,Earthquake,,,Rune name,8,"ZoneStart(p, *r, *center, b->n[3], b->n[4]);"
+src/combat/dc_abilities.cpp,643,b->n[4],b,4,Earthquake,,,Rune name,18,"ZoneStart(p, *r, *center, b->n[3], b->n[4]);"
+src/combat/dc_abilities.cpp,648,r->n[0],r,0,Ground Stomp,Foot of the Mountain,,Rune name,30,"Fury(p, r->n[0] - b->n[0]);"
+src/combat/dc_abilities.cpp,648,b->n[0],b,0,Ground Stomp,,,Rune name,15,"Fury(p, r->n[0] - b->n[0]);"
+src/combat/dc_abilities.cpp,653,b->n[3],b,3,Ground Stomp,,,Rune name,4,"Control(p, u, *r, b->n[3]);"
+src/combat/dc_abilities.cpp,659,r->n[1],r,1,Leap,Iron Impact,,Rune name,4,"Mark(p, p, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,670,r->n[0],r,0,Seismic Slam,Strength from Earth,,Rune name,1,"Heal(p, p, id, p->GetMaxHealth() * r->n[0] / 100 * targets.size());"
+src/combat/dc_abilities.cpp,673,r->n[1],r,1,Seismic Slam,Rumble,,Rune name,2,"ZoneStart(p, *r, *center, r->n[1], r->radius, extraDamage);"
+src/combat/dc_abilities.cpp,689,b->n[5],b,5,Leap,,,skill name,3,"Control(p, target, *r, b->n[5]);"
+src/combat/dc_abilities.cpp,695,r->n[1],r,1,Ancient Spear,Harpoon,,Rune name,1,"Control(p, target, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,708,r->n[1],r,1,Ancient Spear,Rage Flip,,Rune name,1,"Control(p, target, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,711,r->n[0],r,0,Ancient Spear,Ranseur,,Rune name,5,"Knock(p, target, r->n[0]);"
+src/combat/dc_abilities.cpp,714,r->n[2],r,2,Seismic Slam,Permafrost,,Rune name,1,"Control(p, target, *r, r->n[2]);"
+src/combat/dc_abilities.cpp,716,r->n[0],r,0,Hammer of the Ancients,The Devil's Anvil,,Rune name,2,"ZoneStart(p, *r, target->GetPosition(), r->n[0], Tune(""devils_anvil_radius_yards""), 0, true);"
+src/combat/dc_abilities.cpp,718,r->n[0],r,0,Hammer of the Ancients,Thunderstrike,,Rune name,10,"for (auto u : Nearby(p, target, r->n[0]))"
+src/combat/dc_abilities.cpp,719,r->n[1],r,1,Hammer of the Ancients,Thunderstrike,,Rune name,2,"Control(p, u, *r, r->n[1]);"
+src/combat/dc_abilities.cpp,721,b->n[3],b,3,Rend,,,Rune name,5,"Mark(p, target, *r, b->n[3]);"
+src/combat/dc_abilities.cpp,728,r->n[0],r,0,Leap,Launch,,Rune name,10,"for (auto u : Nearby(p, p, r->n[0]))"
+src/combat/dc_abilities.cpp,735,r->n[3],r,3,Leap,Launch,,Rune name,3,"Control(p, u, *r, r->n[3]);"
+src/combat/dc_abilities.cpp,743,r->n[0],r,0,Rend,Blood Lust,,Rune name,0.5,"Heal(p, p, id, p->GetMaxHealth() * r->n[0] / 100);"
+src/combat/dc_abilities.cpp,755,r->n[1],r,1,Avalanche,Lahar,,Rune name,15,"double per = r && Rune(*r, ""Lahar"") ? r->n[1] : b->n[3];"
+src/combat/dc_abilities.cpp,755,b->n[3],b,3,Avalanche,,,Rune name,25,"double per = r && Rune(*r, ""Lahar"") ? r->n[1] : b->n[3];"
+src/combat/dc_abilities.cpp,756,r->n[0],r,0,Avalanche,Lahar,,Rune name,1,"double reduction = r && Rune(*r, ""Lahar"") ? r->n[0] : b->n[2];"
+src/combat/dc_abilities.cpp,756,b->n[2],b,2,Avalanche,,,Rune name,1,"double reduction = r && Rune(*r, ""Lahar"") ? r->n[0] : b->n[2];"
+src/combat/dc_abilities.cpp,763,buff->n[0],buff,0,Ignore Pain,Ignorance is Bliss,,Rune name,5364,"Heal(p, p, buff->id, fury * buff->n[0] * Passives::FuryHealFactor(p));"
+src/combat/dc_abilities.cpp,765,buff->n[0],buff,0,Wrath of the Berserker,Thrive on Chaos,,Rune name,5364,"Heal(p, p, buff->id, fury * buff->n[0] * Passives::FuryHealFactor(p));"
+src/combat/dc_abilities.cpp,771,"Base(""Overpower"")->n[3]","Base(""Overpower"")",3,Overpower,,,skill name,1,"Reduce(p, ""Overpower"", Base(""Overpower"")->n[3] * 1000);"
+src/combat/dc_abilities.cpp,774,r->n[0],r,0,Hammer of the Ancients,Birthright,,Rune name,3,"Heal(p, p, spellId, p->GetMaxHealth() * r->n[0] / 100);"
+src/combat/dc_abilities.cpp,779,r->n[0],r,0,Battle Rage,Swords to Ploughshares,,Rune name,21457,"Heal(p, p, r->id, r->n[0]);"
+src/combat/dc_abilities.cpp,780,r->n[0],r,0,Battle Rage,Swords to Ploughshares,,Rune name,21457,"Classes::Ancients::HealAll(p, r->id, r->n[0]);"
+src/combat/dc_abilities.cpp,782,r->n[0],r,0,Battle Rage,Swords to Ploughshares,,Rune name,21457,"Heal(p, pet, r->id, r->n[0]);"
+src/combat/dc_abilities.cpp,789,r->n[0],r,0,Wrath of the Berserker,Slaughter,,Rune name,300,"Eruption(p, target, r->id, r->n[0], r->n[1]);"
+src/combat/dc_abilities.cpp,789,r->n[1],r,1,Wrath of the Berserker,Slaughter,,Rune name,15,"Eruption(p, target, r->id, r->n[0], r->n[1]);"
+src/combat/dc_abilities.cpp,799,r->n[0],r,0,Revenge,Provocation,,Rune name,3,"unsigned cap = r && Rune(*r, ""Provocation"") ? unsigned(r->n[0]) : unsigned(b->n[4]);"
+src/combat/dc_abilities.cpp,799,b->n[4],b,4,Revenge,,,Rune name,2,"unsigned cap = r && Rune(*r, ""Provocation"") ? unsigned(r->n[0]) : unsigned(b->n[4]);"
+src/combat/dc_abilities.cpp,800,b->n[3],b,3,Revenge,,,Rune name,15,if (roll_chance_f(float(b->n[3])))
+src/combat/dc_abilities.cpp,915,r->n[0],r,0,Furious Charge,Dreadnought,,Rune name,3,"r && Rune(*r, ""Dreadnought"") ? unsigned(r->n[0]) : unsigned(Base(""Furious Charge"")->n[4]));"
+src/combat/dc_abilities.cpp,915,"Base(""Furious Charge"")->n[4]","Base(""Furious Charge"")",4,Furious Charge,,,skill name,1,"r && Rune(*r, ""Dreadnought"") ? unsigned(r->n[0]) : unsigned(Base(""Furious Charge"")->n[4]));"
+src/combat/dc_abilities.cpp,923,avalanche->n[0],avalanche,0,Avalanche,Tectonic Rift,,Rune name,3,s.avalanche.count = unsigned(avalanche->n[0]);
+src/combat/dc_abilities.cpp,927,avalanche->n[0],avalanche,0,Avalanche,Tectonic Rift,,Rune name,3,"recharge(s.avalanche, unsigned(avalanche->n[0]));"
+src/combat/dc_abilities.cpp,934,buff->n[2],buff,2,Battle Rage,Bloodshed,,Rune name,1,if (s.bloodshedClock >= buff->n[2] * 1000)
+src/combat/dc_abilities.cpp,936,buff->n[2],buff,2,Battle Rage,Bloodshed,,Rune name,1,"s.bloodshedClock = std::fmod(s.bloodshedClock, buff->n[2] * 1000);"
+src/combat/dc_abilities.cpp,943,buff->n[0],buff,0,Battle Rage,Bloodshed,,Rune name,20,h.total += hit.second * buff->n[0] / 100;
+src/combat/dc_abilities.cpp,944,buff->n[1],buff,1,Battle Rage,Bloodshed,,Rune name,20,"for (auto u : Nearby(p, p, buff->n[1]))"
+src/combat/dc_abilities.cpp,978,row->n[0],row,0,Whirlwind,Hurricane,,Rune name,35,"for(auto target:Nearby(p,p,row->n[0])) Pull(target,p->GetPosition());"
+src/combat/dc_abilities.cpp,990,row->n[0],row,0,Whirlwind,Wind Shear,,Rune name,1,"if(Rune(*row,""Wind Shear"")) Fury(p,row->n[0]);"
+src/combat/dc_abilities.cpp,994,row->n[0],row,0,Whirlwind,Blood Funnel,,Rune name,1,"if(Rune(*row,""Blood Funnel"")) Heal(p,p,row->id,p->GetMaxHealth()*row->n[0]/100);"
+src/combat/dc_abilities.cpp,1013,row->n[0],row,0,Whirlwind,Dust Devils,,Rune name,180,hit.total*=row->n[0]/(hit.skill*100);hit.skill=row->n[0]/100;
+src/combat/dc_abilities.cpp,1013,row->n[0],row,0,Whirlwind,Dust Devils,,Rune name,180,hit.total*=row->n[0]/(hit.skill*100);hit.skill=row->n[0]/100;
+src/combat/dc_abilities.cpp,1062,sprint->n[1],sprint,1,Sprint,Run Like the Wind,,Rune name,3,"ZoneStart(p, *sprint, p->GetPosition(), sprint->n[1], Tune(""sprint_tornado_radius_yards""));"
+src/combat/dc_abilities.cpp,1111,row->n[0],row,0,Earthquake,Giant's Stride,,Rune name,20,"for (unsigned due = TremorsDue(previous, zone.elapsed, zone.duration, unsigned(row->n[0]));"
+src/combat/dc_abilities.cpp,1113,row->n[1],row,1,Earthquake,Giant's Stride,,Rune name,300,"Eruption(p, p, row->id, row->n[1], Tune(""earthquake_tremor_radius_yards""));"
+src/combat/dc_abilities.cpp,1151,hardened->n[0],hardened,0,War Cry,Hardened Wrath,,Rune name,5,hardened->n[0] * 1000);
+src/combat/dc_abilities.cpp,1154,fray->n[1],fray,1,Battle Rage,Into the Fray,,Rune name,10,"signature = signature * 131 + Nearby(p, p, fray->n[1]).size();"
+src/combat/dc_passives.cpp,64,r->n[0],r,0,,,Relentless,RowFor,35,"return p && r && Has(p, r->name) && p->GetHealthPct() < r->n[0];"
+src/combat/dc_passives.cpp,172,r->n[1],r,1,,,Relentless,RowFor,50,"add(r, Stat::ResourceCostReduction, r->n[1]);"
+src/combat/dc_passives.cpp,173,r->n[2],r,2,,,Relentless,RowFor,50,"add(r, Stat::SpecificReduction, r->n[2]);"
+src/combat/dc_passives.cpp,174,r->n[1],r,1,,,Relentless,RowFor,50,state.rcrApplied *= 1 - r->n[1] / 100;
+src/combat/dc_passives.cpp,175,r->n[2],r,2,,,Relentless,RowFor,50,state.drApplied *= 1 - r->n[2] / 100;
+src/combat/dc_passives.cpp,180,r->n[1],r,1,,,Sword and Board,RowFor,20,"add(r, Stat::ResourceCostReduction, r->n[1]);"
+src/combat/dc_passives.cpp,181,r->n[0],r,0,,,Sword and Board,RowFor,30,"add(r, Stat::SpecificReduction, r->n[0]);"
+src/combat/dc_passives.cpp,182,r->n[1],r,1,,,Sword and Board,RowFor,20,state.rcrApplied *= 1 - r->n[1] / 100;
+src/combat/dc_passives.cpp,183,r->n[0],r,0,,,Sword and Board,RowFor,30,state.drApplied *= 1 - r->n[0] / 100;
+src/combat/dc_passives.cpp,188,r->n[2],r,2,,,Nerves of Steel,RowFor,95,"add(r, Stat::SpecificReduction, r->n[2]);"
+src/combat/dc_passives.cpp,189,r->n[2],r,2,,,Nerves of Steel,RowFor,95,state.drApplied *= 1 - r->n[2] / 100;
+src/combat/dc_passives.cpp,194,r->n[1],r,1,,,Animosity,RowFor,20,"add(r, Stat::MaxFury, r->n[1]);"
+src/combat/dc_passives.cpp,199,r->n[0],r,0,,,Tough as Nails,RowFor,25,"add(r, Stat::Armor, r->n[0], Bucket::Percent);"
+src/combat/dc_passives.cpp,200,r->n[1],r,1,,,Tough as Nails,RowFor,100,"add(r, Stat::Thorns, r->n[1], Bucket::Percent);"
+src/combat/dc_passives.cpp,209,r->n[1],r,1,,,Weapons Master,RowFor,5,"add(r, Stat::CritChance, r->n[1]);"
+src/combat/dc_passives.cpp,211,r->n[2],r,2,,,Weapons Master,RowFor,8,"add(r, Stat::AttackSpeed, r->n[2]);"
+src/combat/dc_passives.cpp,216,"RowFor(""Rampage"")->n[0]","RowFor(""Rampage"")",0,,,Rampage,RowFor,1,"add(RowFor(""Rampage""), Stat::Strength, RowFor(""Rampage"")->n[0] * a->GetStackAmount(),"
+src/combat/dc_passives.cpp,220,"RowFor(""Inspiring Presence"")->n[1]","RowFor(""Inspiring Presence"")",1,,,Inspiring Presence,RowFor,3,"p->GetMaxHealth() * RowFor(""Inspiring Presence"")->n[1] / 100});"
+src/combat/dc_passives.cpp,226,r->n[0],r,0,,,Pound of Flesh,RowFor,2,p->GetMaxHealth() * r->n[0] / 100 * a->GetStackAmount()});
+src/combat/dc_passives.cpp,228,r->n[1],r,1,,,Pound of Flesh,RowFor,4,"r->n[1] * a->GetStackAmount(), Bucket::Uncapped});"
+src/combat/dc_passives.cpp,245,r->n[1],r,1,,,Rampage,RowFor,8,"Marker(p, p, 82303, r->n[1]);"
+src/combat/dc_passives.cpp,361,r->n[1],r,1,,,Juggernaut,RowFor,20,"Heal(p, r->id, p->GetMaxHealth() * r->n[1] / 100);"
+src/combat/dc_passives.cpp,391,"RowFor(""Inspiring Presence"")->n[1]","RowFor(""Inspiring Presence"")",1,,,Inspiring Presence,RowFor,3,"HealInfo h(p, u, uint32(u->GetMaxHealth() * RowFor(""Inspiring Presence"")->n[1] / 100 * ticks),"
+src/combat/dc_passives.cpp,422,"RowFor(""Juggernaut"")->n[0]","RowFor(""Juggernaut"")",0,,,Juggernaut,RowFor,50,"double factor = 1 - RowFor(""Juggernaut"")->n[0] / 100;"
+src/combat/dc_passives.cpp,448,r->n[1],r,1,,,Unforgiving,RowFor,1,uint32 period = uint32(r->n[1] * 1000);
+src/combat/dc_passives.cpp,453,r->n[0],r,0,,,Unforgiving,RowFor,2,"Gain(p, r->n[0] * ticks);"
+src/combat/dc_passives.cpp,504,"RowFor(""Weapons Master"")->n[0]","RowFor(""Weapons Master"")",0,,,Weapons Master,RowFor,8,"bonus += RowFor(""Weapons Master"")->n[0];"
+src/combat/dc_passives.cpp,510,"RowFor(""Berserker Rage"")->n[0]","RowFor(""Berserker Rage"")",0,,,Berserker Rage,RowFor,25,"bonus += RowFor(""Berserker Rage"")->n[0];"
+src/combat/dc_passives.cpp,515,r->n[1],r,1,,,Brawler,RowFor,12,"if (Nearby(p, r->n[1]).size() >= r->n[0])"
+src/combat/dc_passives.cpp,515,r->n[0],r,0,,,Brawler,RowFor,3,"if (Nearby(p, r->n[1]).size() >= r->n[0])"
+src/combat/dc_passives.cpp,516,r->n[2],r,2,,,Brawler,RowFor,20,bonus += r->n[2];
+src/combat/dc_passives.cpp,521,r->n[1],r,1,,,Ruthless,RowFor,30,if (target->GetHealthPct() < r->n[1])
+src/combat/dc_passives.cpp,522,r->n[0],r,0,,,Ruthless,RowFor,40,bonus += r->n[0];
+src/combat/dc_passives.cpp,528,r->n[1],r,1,,,No Escape,RowFor,15,if (p->GetExactDist(target) > r->n[1])
+src/combat/dc_passives.cpp,529,r->n[0],r,0,,,No Escape,RowFor,30,bonus += r->n[0];
+src/combat/dc_passives.cpp,535,"RowFor(""Animosity"")->n[0]","RowFor(""Animosity"")",0,,,Animosity,RowFor,10,"return Has(p, ""Animosity"") ? 1 + RowFor(""Animosity"")->n[0] / 100 : 1;"
+src/combat/dc_passives.cpp,540,"RowFor(""Relentless"")->n[1]","RowFor(""Relentless"")",1,,,Relentless,RowFor,50,"double factor = Low(p) ? 1 - RowFor(""Relentless"")->n[1] / 100 : 1;"
+src/combat/dc_passives.cpp,542,"RowFor(""Sword and Board"")->n[1]","RowFor(""Sword and Board"")",1,,,Sword and Board,RowFor,20,"factor *= 1 - RowFor(""Sword and Board"")->n[1] / 100;"
+src/combat/dc_passives.cpp,556,"RowFor(""Superstition"")->n[0]","RowFor(""Superstition"")",0,,,Superstition,RowFor,20,"factor *= 1 - RowFor(""Superstition"")->n[0] / 100;"
+src/combat/dc_passives.cpp,558,"RowFor(""Relentless"")->n[2]","RowFor(""Relentless"")",2,,,Relentless,RowFor,50,"factor *= 1 - RowFor(""Relentless"")->n[2] / 100;"
+src/combat/dc_passives.cpp,560,"RowFor(""Sword and Board"")->n[0]","RowFor(""Sword and Board"")",0,,,Sword and Board,RowFor,30,"factor *= 1 - RowFor(""Sword and Board"")->n[0] / 100;"
+src/combat/dc_passives.cpp,562,"RowFor(""Nerves of Steel"")->n[2]","RowFor(""Nerves of Steel"")",2,,,Nerves of Steel,RowFor,95,"factor *= 1 - RowFor(""Nerves of Steel"")->n[2] / 100;"
+src/combat/dc_passives.cpp,568,"RowFor(""Bloodthirst"")->n[0]","RowFor(""Bloodthirst"")",0,,,Bloodthirst,RowFor,966,"Heal(p, RowFor(""Bloodthirst"")->id, fury * RowFor(""Bloodthirst"")->n[0] * FuryHealFactor(p));"
+src/combat/dc_passives.cpp,577,"RowFor(""Earthen Might"")->n[0]","RowFor(""Earthen Might"")",0,,,Earthen Might,RowFor,30,"Gain(p, RowFor(""Earthen Might"")->n[0]);"
+src/combat/dc_passives.cpp,588,r->n[0],r,0,,,Boon of Bul-Kathos,RowFor,15,? r->n[0]
+src/combat/dc_passives.cpp,590,r->n[1],r,1,,,Boon of Bul-Kathos,RowFor,30,? r->n[1]
+src/combat/dc_passives.cpp,591,r->n[2],r,2,,,Boon of Bul-Kathos,RowFor,30,": (std::string(row->skill) == ""Wrath of the Berserker"" ? r->n[2] : 0));"
+src/combat/dc_passives.cpp,602,r->n[0],r,0,,,Inspiring Presence,RowFor,100,"for (auto u : Nearby(p, r->n[0], true))"
+src/combat/dc_passives.cpp,603,r->n[2],r,2,,,Inspiring Presence,RowFor,120,"Marker(p, u, 82300, r->n[2]);"
+src/combat/dc_passives.cpp,609,"RowFor(""Weapons Master"")->n[3]","RowFor(""Weapons Master"")",3,,,Weapons Master,RowFor,2,"Gain(p, RowFor(""Weapons Master"")->n[3]);"
+src/combat/dc_passives.cpp,615,"RowFor(""Superstition"")->n[1]","RowFor(""Superstition"")",1,,,Superstition,RowFor,2,"Gain(p, RowFor(""Superstition"")->n[1]);"
+src/combat/dc_passives.cpp,625,r->n[3],r,3,,,Nerves of Steel,RowFor,60,"p->AddSpellCooldown(r->id, 0, uint32(time(nullptr) + r->n[3]), true);"
+src/combat/dc_passives.cpp,626,r->n[0],r,0,,,Nerves of Steel,RowFor,15,p->SetHealth(uint32(p->GetMaxHealth() * r->n[0] / 100));
+src/combat/dc_passives.cpp,628,r->n[1],r,1,,,Nerves of Steel,RowFor,3,"Marker(p, p, 82301, r->n[1]);"
+src/combat/dc_passives.cpp,642,"RowFor(""Pound of Flesh"")->n[2]","RowFor(""Pound of Flesh"")",2,,,Pound of Flesh,RowFor,15,"Marker(p, p, 82304, RowFor(""Pound of Flesh"")->n[2]);"
+src/classes/dc_ancients.cpp,119,r->n[0],r,0,Call of the Ancients,The Council Rises,,Rune name,540,"double pct = Rune(r, ""The Council Rises"") ? r->n[0] : b->n[2];"
+src/classes/dc_ancients.cpp,119,b->n[2],b,2,Call of the Ancients,,,Rune name,270,"double pct = Rune(r, ""The Council Rises"") ? r->n[0] : b->n[2];"
+src/classes/dc_ancients.cpp,146,r->n[0],r,0,Call of the Ancients,Ancients' Fury,,Rune name,4,"p->ModifyPower(POWER_RAGE, int32(std::llround(r->n[0] * Combat::Passives::GenerationFactor(p) * 10)));"
+src/classes/dc_ancients.cpp,153,r->n[0],r,0,Call of the Ancients,Duty to the Clan,,Rune name,2,aura->SetMaxDuration(int32(r->n[0] * 1000));
+src/classes/dc_ancients.cpp,154,r->n[0],r,0,Call of the Ancients,Duty to the Clan,,Rune name,2,aura->SetDuration(int32(r->n[0] * 1000));
+src/classes/dc_ancients.cpp,309,b->n[1],b,1,Call of the Ancients,,,,20,"p->SummonCreature(900100 + i, p->GetPosition(), TEMPSUMMON_TIMED_DESPAWN, uint32(b->n[1] * 1000)))"
+src/classes/dc_ancients.cpp,325,r->n[0],r,0,Call of the Ancients,Ancients' Blessing,,Rune name,966,"Heal(p, p, r->id, fury * r->n[0] * Combat::Passives::FuryHealFactor(p));"
+src/classes/dc_ancients.cpp,327,r->n[0],r,0,Call of the Ancients,Ancients' Blessing,,Rune name,966,"Heal(p, c, r->id, fury * r->n[0] * Combat::Passives::FuryHealFactor(p));"
+src/classes/dc_ancients.cpp,340,r->n[0],r,0,Call of the Ancients,Together as One,,Rune name,50,uint32 split = uint32(damage * r->n[0] / 100);
+src/combat/dc_combat.cpp,475,mechanics->n[3],mechanics,3,Hammer of the Ancients,,,Find(id),5,"if(shell.skill==""Hammer of the Ancients"") {auto mechanics=AbilityData::Find(81007);if(mechanics)skillCrit=CurrentFury(player)/mechanics->n[3]*mechanics->n[2];}"
+src/combat/dc_combat.cpp,475,mechanics->n[2],mechanics,2,Hammer of the Ancients,,,Find(id),1,"if(shell.skill==""Hammer of the Ancients"") {auto mechanics=AbilityData::Find(81007);if(mechanics)skillCrit=CurrentFury(player)/mechanics->n[3]*mechanics->n[2];}"
+src/combat/dc_combat.cpp,813,base.n[3],base,3,Rend,,,skill name,5,shell.dotSeconds = base.n[3];
+src/combat/dc_combat.cpp,1325,metadata->n[0],metadata,0,Ancient Spear,Boulder Toss,,skill name,20,"if(shell.skill==""Ancient Spear""&&shell.rune==""Boulder Toss"")shell.damagePct=CurrentFury(player)*metadata->n[0];"
+src/combat/dc_combat.cpp,1326,metadata->n[0],metadata,0,Seismic Slam,Rumble,,skill name,15,"if(shell.skill==""Seismic Slam""&&shell.rune==""Rumble"")if(auto sheet=Stats::Get(player->GetGUID().GetRawValue()))shell.extraDamage=std::max(0.0,CurrentFury(player)-CostAfterReduction(shell.furyCost,*sheet)*Passives::CostFactor(player))*metadata->n[0];"

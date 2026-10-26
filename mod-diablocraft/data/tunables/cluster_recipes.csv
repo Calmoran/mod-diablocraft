@@ -1,0 +1,9 @@
+size,family,bodies_min,bodies_max,melee_min,melee_max,ranged_min,ranged_max,caster_min,caster_max,big_min,big_max,notes
+small,,3,5,2,4,0,1,0,1,0,0,"monster-spawning.md 3.3 table and 4.4 (a), ruled by ruling 2026-10-08; starting values, one row to change"
+medium,,6,10,4,7,1,2,0,1,0,1,"monster-spawning.md 3.3 table and 4.4 (a), ruled by ruling 2026-10-08; starting values, one row to change"
+large,,12,20,7,12,2,4,1,2,1,2,"monster-spawning.md 3.3 table and 4.4 (a), ruled by ruling 2026-10-08; starting values, one row to change"
+patrol,,3,6,2,4,0,1,0,1,0,1,"monster-spawning.md 3.3 table and 4.4 (a), ruled by ruling 2026-10-08; starting values, one row to change (patrol: a small cluster that walks a route)"
+small,Swarm,3,3,2,2,1,1,0,0,0,0,"the designer, card q-1008-15 (docs/decisions.md 2026-10-09): a flat 2 Swarmlings + 1 Wasp at every size. Swarmling = role melee (Stinging Swarm, Vile Swarm), Wasp = role ranged (Sand Wasp); caster and big are 0 so Sand Dweller (big) never fills a swarm cluster"
+medium,Swarm,3,3,2,2,1,1,0,0,0,0,"the designer, card q-1008-15 (docs/decisions.md 2026-10-09): a flat 2 Swarmlings + 1 Wasp at every size. Swarmling = role melee (Stinging Swarm, Vile Swarm), Wasp = role ranged (Sand Wasp); caster and big are 0 so Sand Dweller (big) never fills a swarm cluster"
+large,Swarm,3,3,2,2,1,1,0,0,0,0,"the designer, card q-1008-15 (docs/decisions.md 2026-10-09): a flat 2 Swarmlings + 1 Wasp at every size. Swarmling = role melee (Stinging Swarm, Vile Swarm), Wasp = role ranged (Sand Wasp); caster and big are 0 so Sand Dweller (big) never fills a swarm cluster"
+patrol,Swarm,3,3,2,2,1,1,0,0,0,0,"the designer, card q-1008-15 (docs/decisions.md 2026-10-09): a flat 2 Swarmlings + 1 Wasp at every size. Swarmling = role melee (Stinging Swarm, Vile Swarm), Wasp = role ranged (Sand Wasp); caster and big are 0 so Sand Dweller (big) never fills a swarm cluster"

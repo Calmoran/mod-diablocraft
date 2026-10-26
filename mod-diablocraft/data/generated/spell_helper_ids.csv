@@ -1,0 +1,224 @@
+identity,spell_id,class
+Weapons Master - token storage,82400,barbarian
+Relentless - cost modifier,82401,barbarian
+Sword and Board - cost modifier,82402,barbarian
+Resource cost reduction - gear and paragon - cost modifier,82403,barbarian
+Boon of Bul-Kathos - cooldown modifier 15s,82404,barbarian
+Boon of Bul-Kathos - cooldown modifier 30s,82405,barbarian
+Cooldown reduction - gear and paragon - cooldown modifier,82406,barbarian
+Inspiring Presence - duration modifier,82407,barbarian
+"Movement speed - gear, paragon and skills - movement modifier",82408,barbarian
+Movement speed - elite affix slow - movement modifier,82409,barbarian
+Frozen Pulse - affix slow,82410,barbarian
+Knockback - affix slow,82411,barbarian
+Punish,82412,barbarian
+Relentless - buff,82413,barbarian
+Berserker Rage - buff,82414,barbarian
+Brawler - buff,82415,barbarian
+War Cry - Hardened Wrath - buff,82416,barbarian
+Battle Rage - Into the Fray - buff,82417,barbarian
+Fire skills cost reduction - Barbarian,82418,barbarian
+Barbarian - resource pulse - core regeneration mask,82419,barbarian
+Seismic Slam cost reduction,82420,barbarian
+Ray of Frost - token storage,83300,wizard
+Ray of Frost - Snow Blast - token storage,83301,wizard
+Ray of Frost - Sleet Storm - token storage,83302,wizard
+Ray of Frost - Numb - token storage,83303,wizard
+Ray of Frost - Cold Blood - token storage,83304,wizard
+Ray of Frost - Black Ice - token storage,83305,wizard
+Arcane Torrent - Flame Ward - token storage,83306,wizard
+Arcane Torrent - Cascade - token storage,83307,wizard
+Arcane Torrent - Arcane Mines - token storage,83308,wizard
+Arcane Torrent - Static Discharge - token storage,83309,wizard
+Disintegrate - Intensify - token storage,83310,wizard
+Disintegrate - Chaos Nexus - token storage,83311,wizard
+Disintegrate - Volatility - token storage,83312,wizard
+Slow Time - Time Warp - token storage,83313,wizard
+Slow Time - Time Shell - token storage,83314,wizard
+Slow Time - Exhaustion - token storage,83315,wizard
+Archon - Improved Archon - token storage,83316,wizard
+Archon - Combustion - token storage,83317,wizard
+Energy Armor - Force Armor - token storage,83318,wizard
+Wizard - resource regeneration,83319,wizard
+Meteor - Comet - token storage,83320,wizard
+Meteor - Star Pact - token storage,83321,wizard
+Black Hole - Blazar - token storage,83322,wizard
+Black Hole - Spellsteal - token storage,83323,wizard
+Slow Time - bubble,83324,wizard
+Slow Time - Time Warp - bubble,83325,wizard
+Slow Time - Point of No Return - bubble,83326,wizard
+Slow Time - Time Shell - bubble,83327,wizard
+Slow Time - Exhaustion - bubble,83328,wizard
+Slow Time - Stretch Time - bubble,83329,wizard
+Meteor - molten ground,83330,wizard
+Meteor - Molten Impact - molten ground,83331,wizard
+Meteor - Meteor Shower - molten ground,83332,wizard
+Meteor - Comet - molten ground,83333,wizard
+Meteor - Star Pact - molten ground,83334,wizard
+Meteor - Thunder Crash - molten ground,83335,wizard
+Wizard - Frozen,83336,wizard
+Wizard - Stunned,83337,wizard
+Wizard - Slowed,83338,wizard
+Wizard - Taunted,83339,wizard
+Galvanizing Ward - shield,83340,wizard
+Dominance - shield,83341,wizard
+Unstable Anomaly - shield,83342,wizard
+Magic Weapon - Deflection - shield,83343,wizard
+Spectral Blade - Barrier Blades - shield,83344,wizard
+Wizard - Slowed attacks,83345,wizard
+Magic Missile - Conflagrate - burn,83346,wizard
+Arcane Orb - Scorch - wall,83347,wizard
+Resource cost reduction - gear and paragon - Wizard - cost modifier,83348,wizard
+Cooldown reduction - gear and paragon - Wizard - cooldown modifier,83349,wizard
+Flame Blades,83350,wizard
+Illusionist - buff,83351,wizard
+Unwavering Will - buff,83352,wizard
+Arcane Dynamo - flashes - buff,83353,wizard
+Arcane Dynamo - empowered - buff,83354,wizard
+Storm Armor - Scramble - buff,83355,wizard
+Frost Nova - Deep Freeze - buff,83356,wizard
+Teleport - Safe Passage - buff,83357,wizard
+Energy Twister - Storm Chaser - buff,83358,wizard
+Wave of Force - Arcane Attunement - buff,83359,wizard
+Arcane Orb - Spark - buff,83360,wizard
+Flame Ward - buff,83361,wizard
+Archon - kills - buff,83362,wizard
+Ice Armor - Crystallize - buff,83363,wizard
+Fire skills cost reduction - Wizard,83364,wizard
+Slow Time - follow,83365,wizard
+Slow Time - Time Warp - follow,83366,wizard
+Slow Time - Point of No Return - follow,83367,wizard
+Slow Time - Time Shell - follow,83368,wizard
+Slow Time - Exhaustion - follow,83369,wizard
+Slow Time - Stretch Time - follow,83370,wizard
+Wizard - resource pulse - core regeneration mask,83371,wizard
+Teleport cost addition,83372,wizard
+Arcane Torrent cost reduction,83373,wizard
+Disintegrate cost reduction,83374,wizard
+Meteor cost reduction,83375,wizard
+Ray of Frost cost reduction,83376,wizard
+Crippling Wave - token storage,83850,monk
+Fists of Thunder - Thunderclap - token storage,83851,monk
+Fists of Thunder - Bounding Light - token storage,83852,monk
+Fists of Thunder - Static Charge - token storage,83853,monk
+Crippling Wave - Mangle - token storage,83854,monk
+Crippling Wave - Tsunami - token storage,83855,monk
+Crippling Wave - Concussion - token storage,83856,monk
+Crippling Wave - Breaking Wave - token storage,83857,monk
+Mystic Ally - Air Ally - token storage,83858,monk
+Mystic Ally - Enduring Ally - token storage,83859,monk
+Mantra of Salvation - Divine Protection - token storage,83860,monk
+Mantra of Healing - Time of Need - token storage,83861,monk
+Resource cost reduction - gear and paragon - Monk - cost modifier,83862,monk
+Cooldown reduction - gear and paragon - Monk - cooldown modifier,83863,monk
+Fire skills cost reduction - Monk,83864,monk
+Epiphany - reach,83865,monk
+Monk - resource pulse - core regeneration mask,83866,monk
+Wave of Light cost reduction,83867,monk
+Siphon Blood - Suppress - token storage,85300,necromancer
+Siphon Blood - Purity of Essence - token storage,85301,necromancer
+Siphon Blood - Power Shift - token storage,85302,necromancer
+Decrepify - Opportunist - token storage,85303,necromancer
+Decrepify - Borrowed Time - token storage,85304,necromancer
+Necromancer - resource pulse - core regeneration mask,85305,necromancer
+Resource cost reduction - gear and paragon - Necromancer - cost modifier,85306,necromancer
+Cooldown reduction - gear and paragon - Necromancer - cooldown modifier,85307,necromancer
+Fire skills cost reduction - Necromancer,85308,necromancer
+Command Skeletons cost reduction,85309,necromancer
+Decrepify cost reduction,85310,necromancer
+Frailty cost reduction,85311,necromancer
+Leech cost reduction,85312,necromancer
+Crusader - energy rate,85600,crusader
+Crusader - resource pulse - core regeneration mask,85601,crusader
+Punish - Celerity - token storage,85602,crusader
+Punish - Rebirth - token storage,85603,crusader
+Punish - Fury - token storage,85604,crusader
+Smite - Shatter - token storage,85605,crusader
+Smite - Reaping - token storage,85606,crusader
+Fist of the Heavens - Fissure - token storage,85607,crusader
+Provoke - Too Scared to Run - token storage,85608,crusader
+Laws of Justice - Decaying Strength - token storage,85609,crusader
+Resource cost reduction - gear and paragon - Crusader - cost modifier,85610,crusader
+Cooldown reduction - gear and paragon - Crusader - cooldown modifier,85611,crusader
+Fire skills cost reduction - Crusader,85612,crusader
+Demon Hunter - energy rate,85900,demon_hunter
+Demon Hunter - resource pulse - core regeneration mask,85901,demon_hunter
+Bolas - Freezing Strike - token storage,85902,demon_hunter
+Bolas - Bitter Pill - token storage,85903,demon_hunter
+Evasive Fire - Hardened - token storage,85904,demon_hunter
+Evasive Fire - Covering Fire - token storage,85905,demon_hunter
+Evasive Fire - Parting Gift - token storage,85906,demon_hunter
+Grenade - Cold Grenade - token storage,85907,demon_hunter
+Companion - Spider Companion - token storage,85908,demon_hunter
+Companion - Boar Companion - token storage,85909,demon_hunter
+Companion - Bat Companion - token storage,85910,demon_hunter
+Vengeance - From the Shadows - token storage,85911,demon_hunter
+Vengeance - Dark Heart - token storage,85912,demon_hunter
+Vengeance - Personal Mortar - token storage,85913,demon_hunter
+Vengeance - Side Cannons - token storage,85914,demon_hunter
+Vengeance - Seethe - token storage,85915,demon_hunter
+Cluster Arrow - Maelstrom - token storage,85916,demon_hunter
+Archery - token storage,85917,demon_hunter
+Resource cost reduction - gear and paragon - Demon Hunter - cost modifier,85918,demon_hunter
+Cooldown reduction - gear and paragon - Demon Hunter - cooldown modifier,85919,demon_hunter
+Fire skills cost reduction - Demon Hunter,85920,demon_hunter
+Grenadier - giant grenade,85921,demon_hunter
+Vault cost reduction,85922,demon_hunter
+Caltrops cost reduction,85923,demon_hunter
+Marked for Death cost reduction,85924,demon_hunter
+Shadow Power cost reduction,85925,demon_hunter
+Smoke Screen cost reduction,85926,demon_hunter
+Gargantuan - Restless Giant - token storage,86200,witch_doctor
+Witch Doctor - resource regeneration,86201,witch_doctor
+Witch Doctor - resource pulse - core regeneration mask,86202,witch_doctor
+Resource cost reduction - gear and paragon - Witch Doctor - cost modifier,86203,witch_doctor
+Cooldown reduction - gear and paragon - Witch Doctor - cooldown modifier,86204,witch_doctor
+Fire skills cost reduction - Witch Doctor,86205,witch_doctor
+Lightning Bolt - Hailstone - token storage,86500,shaman
+Lightning Bolt - Stormcaller - token storage,86501,shaman
+Flame Shock - Lava Shock - token storage,86502,shaman
+Flame Shock - Frost Shock - token storage,86503,shaman
+Flame Shock - Earth Shock - token storage,86504,shaman
+Flame Shock - Static Shock - token storage,86505,shaman
+Flame Shock - Primal Shock - token storage,86506,shaman
+Elemental Lash - Searing Lash - token storage,86507,shaman
+Elemental Lash - Stonewhip - token storage,86508,shaman
+Frost Lance - Icefury - token storage,86509,shaman
+Elemental Blast - Elemental Echo - token storage,86510,shaman
+Elemental Shield - Stoneskin - token storage,86511,shaman
+Elemental Shield - Water Shield - token storage,86512,shaman
+Elemental Shield - Flame Shield - token storage,86513,shaman
+Elemental Weapon - Flametongue - token storage,86514,shaman
+Elemental Weapon - Frostbrand - token storage,86515,shaman
+Elemental Weapon - Windfury - token storage,86516,shaman
+Elemental Weapon - Rockbiter - token storage,86517,shaman
+Spirit Link - Thunder Link - token storage,86518,shaman
+Fire Elemental - Storm Elemental - token storage,86519,shaman
+Fire Elemental - Water Elemental - token storage,86520,shaman
+Earth Elemental - Bedrock - token storage,86521,shaman
+Shaman - resource pulse - core regeneration mask,86522,shaman
+Resource cost reduction - gear and paragon - Shaman - cost modifier,86523,shaman
+Cooldown reduction - gear and paragon - Shaman - cooldown modifier,86524,shaman
+Fire skills cost reduction - Shaman,86525,shaman
+Overcharge - buff,86526,shaman
+Attunement - Fire - buff,86527,shaman
+Attunement - Cold - buff,86528,shaman
+Attunement - Physical - buff,86529,shaman
+Attunement - Lightning - buff,86530,shaman
+Elemental Shield - buff,86531,shaman
+Elemental Shield - Lightning Shield - buff,86532,shaman
+Elemental Shield - Stoneskin - buff,86533,shaman
+Elemental Shield - Stoneskin - shield,86534,shaman
+Elemental Shield - Water Shield - buff,86535,shaman
+Elemental Shield - Flame Shield - buff,86536,shaman
+Lava Burst cost reduction,86537,shaman
+Elemental Weapon - buff,86538,shaman
+Elemental Weapon - Flametongue - buff,86539,shaman
+Elemental Weapon - Frostbrand - buff,86540,shaman
+Elemental Weapon - Windfury - buff,86541,shaman
+Elemental Weapon - Rockbiter - buff,86542,shaman
+Elemental Weapon - Maelstrom Weapon - buff,86543,shaman
+Elemental Weapon - Maelstrom Weapon - free,86544,shaman
+Chain Lightning cost reduction,86545,shaman
+Earthquake (Shaman) cost reduction,86546,shaman
+Elemental Blast cost reduction,86547,shaman

@@ -1,0 +1,12 @@
+* text=auto
+# This one migration was applied with mixed EOL, and the core's `updates` row
+# and applied_migrations.csv both record its exact bytes. `-text` stops
+# `* text=auto` from normalising the committed blob to LF, so a fresh checkout
+# reproduces the applied SHA1. Path-specific on purpose: no other SQL file needs
+# it (GitHub #65/#70, ruling 2026-09-23).
+mod-diablocraft/data/sql/db-world/updates/crafting_0003_crafting_tunables.sql -text
+*.ps1 text eol=crlf
+*.sh text eol=lf
+*.py text eol=lf
+client-patch/*.MPQ filter=lfs diff=lfs merge=lfs -text
+*.cmd text eol=crlf

@@ -1,0 +1,5 @@
+mod-autobalance 73d4ad3c379fbfc35c63b5b9b44fba1f7d9e213d 2026-01-16
+mod-transmog 0d85cbc53d63ce2df8527169ce6ae47f5f6f6ba8 2026-07-26
+mod-ale bd74eae623ca63154d3eb49e1d187e872ef13370 2026-09-09
+AIO 087e279cdf90ff5d4343dc1569e9d3c3c5cc8548 2025-07-15
+mod-heimdall f6e1342251e1657ea8004c020061063727fcee8b 2026-09-04 (github.com/Calmoran/mod-heimdall; Linux server only, ruling 2026-09-16)

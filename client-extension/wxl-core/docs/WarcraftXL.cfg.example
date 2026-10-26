@@ -1,0 +1,47 @@
+# WarcraftXL.cfg — WarcraftXL user configuration.
+#
+# Location: next to Wow.exe (client root). WarcraftXL.dll, d3d9.dll, wxl-patcher.exe, and every
+# extension read it.
+#
+# Format: KEY=value, one per line. '#' or ';' starts a comment. Spaces are tolerated.
+# Priority: environment variable > this file > sentinel file (.disable) > default.
+# Booleans: 0/n/f = no, anything else = yes.
+#
+# Every key below is shown COMMENTED with its default value:
+# uncomment a line to take control of that knob.
+
+# ----------------------------------------------------------------------------- Logging
+# Verbosity (trace|debug|info|warn|error|off). `debug` re-enables the per-event
+# diagnostics (model loads, served opens, ...) without recompiling.
+#WXL_LOG_LEVEL=info
+# Flush the buffer after every line (crash diagnostics; costly).
+#WXL_LOG_FLUSH=0
+# Mirror every line to OutputDebugString (default: on when a debugger is attached).
+#WXL_LOG_DEBUGSTRING=0
+
+# ----------------------------------------------------------------------------- Rendering (d3d9.dll)
+# Disable the D3D9On12 redirection entirely (pure native pass-through).
+#WXL_NO_ON12=0
+# Allow true exclusive fullscreen instead of the enforced borderless (unstable On12 resets).
+#WXL_EXCLUSIVE_FULLSCREEN=0
+# Skip device Resets that change nothing (set 0 to restore the native behavior).
+#WXL_NOOP_RESET=1
+
+# ----------------------------------------------------------------------------- M2 memory (client)
+# Dedicated allocator for large model buffers (VirtualAlloc arena).
+#WXL_M2_ARENA=1
+#WXL_M2_ARENA_MB=128
+# Route M2 allocations above the threshold to VirtualAlloc (MB takes priority over KB).
+#WXL_M2_VIRTUAL_ALLOC=1
+#WXL_M2_VIRTUAL_ALLOC_THRESHOLD_MB=1
+#WXL_M2_VIRTUAL_ALLOC_THRESHOLD_KB=1024
+
+# ----------------------------------------------------------------------------- Storage (client)
+# Log every client-provider claim / client-transform reshape (storage debug mode).
+#WXL_VERBOSE_ASSET_LOGS=0
+
+# ----------------------------------------------------------------------------- Profilers
+# Client: asset phases + frame-hitch histogram (h25/h50/h100).
+#WXL_CLIENT_ASSET_PROFILE=1
+#WXL_CLIENT_ASSET_PROFILE_INTERVAL_SEC=30
+#WXL_CLIENT_ASSET_SLOW_MS=25

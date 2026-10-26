@@ -1,0 +1,8 @@
+key,name,item_entry,spell_id,visual_id,kit_id,effect_id,attach_id,display_id,recolor_mode,source,notes
+original,Angelic Wings - Original,190000,84000,100000,100000,8000,10000,90000,original,the designer-supplied patch-f .mpq 2026-09-08,tunables: allocated IDs and variant parameters; original asset colors and scale preserved
+red,Angelic Wings - Red,190001,84001,100001,100001,8001,10001,90000,hue,the designer requested scripted recoloring 2026-09-08,tunables: proposed red shade and IDs; source transparency and detail preserved
+gold,Angelic Wings - Gold,190002,84002,100002,100002,8002,10002,90000,hue,the designer requested scripted recoloring 2026-09-08,tunables: proposed gold shade and IDs; source transparency and detail preserved
+green,Angelic Wings - Green,190003,84003,100003,100003,8003,10003,90000,hue,the designer requested scripted recoloring 2026-09-08,tunables: proposed green shade and IDs; source transparency and detail preserved
+purple,Angelic Wings - Purple,190004,84004,100004,100004,8004,10004,90000,hue,the designer requested scripted recoloring 2026-09-08,tunables: proposed purple shade and IDs; source transparency and detail preserved
+pink,Angelic Wings - Pink,190005,84005,100005,100005,8005,10005,90000,hue,the designer requested scripted recoloring 2026-09-08,tunables: proposed pink shade and IDs; source transparency and detail preserved
+white,Angelic Wings - White,190006,84006,100006,100006,8006,10006,90000,hue,the designer requested scripted recoloring 2026-09-08,tunables: proposed white shade and IDs; source transparency and detail preserved

@@ -1,0 +1,6 @@
+additional_tab_number,reference_price_gold,reference_date,source,source_status,usage,slots_per_tab,slots_per_tab_source
+1,100000,2020-05-05,https://us.forums.blizzard.com/en/d3/t/quick-stash-tabs-question/16192/4,community firsthand report on Blizzard forum,reference only; DC price is tunable and unset,70,"Diablo Wiki https://diablo.fandom.com/wiki/Stash - ""each tab capable of holding up to 70 slots... purchased in increments of 14 until a tab is full"" (5 x 14 = 70), a 7x10 grid. Sourced by Gemini, docs/research/literal-audit-sources-2.md row 29. Audit row 29"
+2,200000,2020-05-05,https://us.forums.blizzard.com/en/d3/t/quick-stash-tabs-question/16192/4,community firsthand report on Blizzard forum,reference only; DC price is tunable and unset,,
+3,300000,2020-05-05,https://us.forums.blizzard.com/en/d3/t/quick-stash-tabs-question/16192/4,community firsthand report on Blizzard forum,reference only; DC price is tunable and unset,,
+4,400000,2020-05-05,https://us.forums.blizzard.com/en/d3/t/quick-stash-tabs-question/16192/4,community firsthand report on Blizzard forum,reference only; DC price is tunable and unset,,
+5,500000,2020-05-05,https://us.forums.blizzard.com/en/d3/t/quick-stash-tabs-question/16192/4,community firsthand report on Blizzard forum,reference only; DC price is tunable and unset,,

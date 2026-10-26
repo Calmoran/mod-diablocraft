@@ -1,0 +1,139 @@
+d3_skill,d3_rune,wow_spell_name,wow_spell_id,icon_name,match_quality,notes,source_url
+Poison Dart,,Serpent Sting,1978,ability_hunter_quickshot,good,a poison dart at one enemy; Serpent Sting is the stock poison shot,client-patch/dbc/Spell.dbc id 1978 ; icon from SpellIcon.dbc
+Poison Dart,Flaming Dart,Fire Blast,2136,spell_fire_fireball,fair,Fire rune: Fire Blast is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 2136 ; icon from SpellIcon.dbc
+Poison Dart,Splinters,Serpent Sting,1978,ability_hunter_quickshot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1978 ; icon from SpellIcon.dbc
+Poison Dart,Numbing Dart,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Poison Dart,Spined Dart,Death Coil,6789,spell_shadow_deathcoil,fair,Physical rune: Death Coil is the closest stock Physical short bolt,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Poison Dart,Snake to the Face,Serpent Sting,1978,ability_hunter_quickshot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1978 ; icon from SpellIcon.dbc
+Corpse Spiders,,Venom Web Spray,54706,spell_nature_web,fair,"a jar of spiders thrown at the target area; Venom Web Spray is the stock spider spray (the spiders are creatures, a summon sheet)",client-patch/dbc/Spell.dbc id 54706 ; icon from SpellIcon.dbc
+Corpse Spiders,Blazing Spiders,Venom Web Spray,54706,spell_nature_web,fair,"Fire rune: no stock Fire version of this shape, so it keeps Venom Web Spray",client-patch/dbc/Spell.dbc id 54706 ; icon from SpellIcon.dbc
+Corpse Spiders,Spider Queen,Venom Web Spray,54706,spell_nature_web,fair,"Poison rune: no stock Poison version of this shape, so it keeps Venom Web Spray",client-patch/dbc/Spell.dbc id 54706 ; icon from SpellIcon.dbc
+Corpse Spiders,Leaping Spiders,Venom Web Spray,54706,spell_nature_web,fair,"Poison rune: no stock Poison version of this shape, so it keeps Venom Web Spray",client-patch/dbc/Spell.dbc id 54706 ; icon from SpellIcon.dbc
+Corpse Spiders,Widowmakers,Venom Web Spray,54706,spell_nature_web,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 54706 ; icon from SpellIcon.dbc
+Corpse Spiders,Medusa Spiders,Venom Web Spray,54706,spell_nature_web,fair,"Cold rune: no stock Cold version of this shape, so it keeps Venom Web Spray",client-patch/dbc/Spell.dbc id 54706 ; icon from SpellIcon.dbc
+Plague of Toads,,Poison Bolt,21067,spell_nature_corrosivebreath,fair,a stream of toads along a line; Poison Bolt is the stock poison projectile (the toads are the module's),client-patch/dbc/Spell.dbc id 21067 ; icon from SpellIcon.dbc
+Plague of Toads,Explosive Toads,Fire Blast,2136,spell_fire_fireball,fair,Fire rune: Fire Blast is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 2136 ; icon from SpellIcon.dbc
+Plague of Toads,Rain of Toads,Poison Bolt,21067,spell_nature_corrosivebreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 21067 ; icon from SpellIcon.dbc
+Plague of Toads,Piercing Toads,Death Coil,6789,spell_shadow_deathcoil,fair,Physical rune: Death Coil is the closest stock Physical short bolt,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Plague of Toads,Toad Affinity,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Plague of Toads,Addling Toads,Poison Bolt,21067,spell_nature_corrosivebreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 21067 ; icon from SpellIcon.dbc
+Firebomb,,Fireball,133,spell_fire_flamebolt,good,a lobbed explosive skull; Fireball is the stock lobbed fire projectile,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Firebomb,Ghost Bomb,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Firebomb,Roll the Bones,Fireball,133,spell_fire_flamebolt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Firebomb,Fire Pit,Fireball,133,spell_fire_flamebolt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Firebomb,Pyrogeist,Fireball,133,spell_fire_flamebolt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Firebomb,Flash Fire,Fireball,133,spell_fire_flamebolt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Grasp of the Dead,,Entangling Roots,339,spell_nature_stranglevines,fair,hands reach out of the ground and slow enemies; Entangling Roots is the stock ground grab,client-patch/dbc/Spell.dbc id 339 ; icon from SpellIcon.dbc
+Grasp of the Dead,Groping Eels,Entangling Roots,339,spell_nature_stranglevines,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 339 ; icon from SpellIcon.dbc
+Grasp of the Dead,Rain of Corpses,Entangling Roots,339,spell_nature_stranglevines,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 339 ; icon from SpellIcon.dbc
+Grasp of the Dead,Unbreakable Grasp,Entangling Roots,339,spell_nature_stranglevines,fair,"Cold rune: no stock Cold version of this shape, so it keeps Entangling Roots",client-patch/dbc/Spell.dbc id 339 ; icon from SpellIcon.dbc
+Grasp of the Dead,Desperate Grasp,Entangling Roots,339,spell_nature_stranglevines,fair,"Poison rune: no stock Poison version of this shape, so it keeps Entangling Roots",client-patch/dbc/Spell.dbc id 339 ; icon from SpellIcon.dbc
+Grasp of the Dead,Death Is Life,Entangling Roots,339,spell_nature_stranglevines,fair,"Poison rune: no stock Poison version of this shape, so it keeps Entangling Roots",client-patch/dbc/Spell.dbc id 339 ; icon from SpellIcon.dbc
+Firebats,,Dragon's Breath,31661,inv_misc_head_dragon_01,fair,a swarm of fiery bats in a cone in front of the caster; Dragon's Breath is the stock fire cone (no stock bat swarm),client-patch/dbc/Spell.dbc id 31661 ; icon from SpellIcon.dbc
+Firebats,Dire Bats,Dragon's Breath,31661,inv_misc_head_dragon_01,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 31661 ; icon from SpellIcon.dbc
+Firebats,Hungry Bats,Dragon's Breath,31661,inv_misc_head_dragon_01,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 31661 ; icon from SpellIcon.dbc
+Firebats,Plague Bats,Dragon's Breath,31661,inv_misc_head_dragon_01,fair,"Poison rune: no stock Poison version of this shape, so it keeps Dragon's Breath",client-patch/dbc/Spell.dbc id 31661 ; icon from SpellIcon.dbc
+Firebats,Vampire Bats,Dragon's Breath,31661,inv_misc_head_dragon_01,fair,"Physical rune: no stock Physical version of this shape, so it keeps Dragon's Breath",client-patch/dbc/Spell.dbc id 31661 ; icon from SpellIcon.dbc
+Firebats,Cloud of Bats,Dragon's Breath,31661,inv_misc_head_dragon_01,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 31661 ; icon from SpellIcon.dbc
+Haunt,,Haunt,48181,ability_warlock_haunt,good,a spirit that haunts an enemy and moves on when it dies; Haunt is the same spell,client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Haunt,Consuming Spirit,Haunt,48181,ability_warlock_haunt,fair,"Fire rune: no stock Fire version of this shape, so it keeps Haunt",client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Haunt,Lingering Spirit,Haunt,48181,ability_warlock_haunt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Haunt,Poisoned Spirit,Haunt,48181,ability_warlock_haunt,fair,"Poison rune: no stock Poison version of this shape, so it keeps Haunt",client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Haunt,Draining Spirit,Haunt,48181,ability_warlock_haunt,fair,"Physical rune: no stock Physical version of this shape, so it keeps Haunt",client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Haunt,Resentful Spirits,Haunt,48181,ability_warlock_haunt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Locust Swarm,,Insect Swarm,5570,spell_nature_insectswarm,good,a plague of insects on one enemy over time; Insect Swarm is the stock swarm,client-patch/dbc/Spell.dbc id 5570 ; icon from SpellIcon.dbc
+Locust Swarm,Searing Locusts,Insect Swarm,5570,spell_nature_insectswarm,fair,"Fire rune: no stock Fire version of this shape, so it keeps Insect Swarm",client-patch/dbc/Spell.dbc id 5570 ; icon from SpellIcon.dbc
+Locust Swarm,Pestilence,Insect Swarm,5570,spell_nature_insectswarm,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5570 ; icon from SpellIcon.dbc
+Locust Swarm,Cloud of Insects,Insect Swarm,5570,spell_nature_insectswarm,fair,"Physical rune: no stock Physical version of this shape, so it keeps Insect Swarm",client-patch/dbc/Spell.dbc id 5570 ; icon from SpellIcon.dbc
+Locust Swarm,Devouring Swarm,Insect Swarm,5570,spell_nature_insectswarm,fair,"Cold rune: no stock Cold version of this shape, so it keeps Insect Swarm",client-patch/dbc/Spell.dbc id 5570 ; icon from SpellIcon.dbc
+Locust Swarm,Diseased Swarm,Insect Swarm,5570,spell_nature_insectswarm,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5570 ; icon from SpellIcon.dbc
+Summon Zombie Dogs,,Call Pet,883,ability_hunter_beastcall,fair,"dogs called to fight at the caster's side; Call Pet is the stock call-your-beasts cast (the dogs are creatures, a summon sheet)",client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Summon Zombie Dogs,Burning Dogs,Call Pet,883,ability_hunter_beastcall,fair,"Fire rune: no stock Fire version of this shape, so it keeps Call Pet",client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Summon Zombie Dogs,Life Link,Call Pet,883,ability_hunter_beastcall,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Summon Zombie Dogs,Rabid Dogs,Call Pet,883,ability_hunter_beastcall,fair,"Poison rune: no stock Poison version of this shape, so it keeps Call Pet",client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Summon Zombie Dogs,Chilled to the Bone,Call Pet,883,ability_hunter_beastcall,fair,"Cold rune: no stock Cold version of this shape, so it keeps Call Pet",client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Summon Zombie Dogs,Leeching Beasts,Call Pet,883,ability_hunter_beastcall,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Horrify,,Howl of Terror,5484,spell_shadow_deathscream,good,a fear burst around the caster; Howl of Terror is the same shape,client-patch/dbc/Spell.dbc id 5484 ; icon from SpellIcon.dbc
+Horrify,Frightening Aspect,Howl of Terror,5484,spell_shadow_deathscream,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5484 ; icon from SpellIcon.dbc
+Horrify,Face of Death,Howl of Terror,5484,spell_shadow_deathscream,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5484 ; icon from SpellIcon.dbc
+Horrify,Phobia,Howl of Terror,5484,spell_shadow_deathscream,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5484 ; icon from SpellIcon.dbc
+Horrify,Ruthless Terror,Howl of Terror,5484,spell_shadow_deathscream,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5484 ; icon from SpellIcon.dbc
+Horrify,Stalker,Howl of Terror,5484,spell_shadow_deathscream,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5484 ; icon from SpellIcon.dbc
+Spirit Walk,,Spirit of Redemption,27827,spell_holy_greaterheal,fair,the caster becomes a ghost for a few seconds; Spirit of Redemption is the stock ghost form,client-patch/dbc/Spell.dbc id 27827 ; icon from SpellIcon.dbc
+Spirit Walk,Severance,Spirit of Redemption,27827,spell_holy_greaterheal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 27827 ; icon from SpellIcon.dbc
+Spirit Walk,Jaunt,Spirit of Redemption,27827,spell_holy_greaterheal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 27827 ; icon from SpellIcon.dbc
+Spirit Walk,Umbral Shock,Spirit of Redemption,27827,spell_holy_greaterheal,fair,"Fire rune: no stock Fire version of this shape, so it keeps Spirit of Redemption",client-patch/dbc/Spell.dbc id 27827 ; icon from SpellIcon.dbc
+Spirit Walk,Honored Guest,Spirit of Redemption,27827,spell_holy_greaterheal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 27827 ; icon from SpellIcon.dbc
+Spirit Walk,Healing Journey,Spirit of Redemption,27827,spell_holy_greaterheal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 27827 ; icon from SpellIcon.dbc
+Hex,,Hex,51514,spell_shaman_hex,good,"an enemy is hexed into a harmless animal; Hex is the same spell (the Fetish Shaman is a creature, a summon sheet)",client-patch/dbc/Spell.dbc id 51514 ; icon from SpellIcon.dbc
+Hex,Toad of Hugeness,Hex,51514,spell_shaman_hex,fair,"Poison rune: no stock Poison version of this shape, so it keeps Hex",client-patch/dbc/Spell.dbc id 51514 ; icon from SpellIcon.dbc
+Hex,Angry Chicken,Hex,51514,spell_shaman_hex,fair,"Poison rune: no stock Poison version of this shape, so it keeps Hex",client-patch/dbc/Spell.dbc id 51514 ; icon from SpellIcon.dbc
+Hex,Unstable Form,Hex,51514,spell_shaman_hex,fair,"Fire rune: no stock Fire version of this shape, so it keeps Hex",client-patch/dbc/Spell.dbc id 51514 ; icon from SpellIcon.dbc
+Hex,Hedge Magic,Hex,51514,spell_shaman_hex,fair,"Cold rune: no stock Cold version of this shape, so it keeps Hex",client-patch/dbc/Spell.dbc id 51514 ; icon from SpellIcon.dbc
+Hex,Jinx,Hex,51514,spell_shaman_hex,fair,"Poison rune: no stock Poison version of this shape, so it keeps Hex",client-patch/dbc/Spell.dbc id 51514 ; icon from SpellIcon.dbc
+Soul Harvest,,Drain Soul,1120,spell_shadow_haunting,fair,feeds on the life force of nearby enemies; Drain Soul is the stock soul-draining cast,client-patch/dbc/Spell.dbc id 1120 ; icon from SpellIcon.dbc
+Soul Harvest,Siphon,Drain Soul,1120,spell_shadow_haunting,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1120 ; icon from SpellIcon.dbc
+Soul Harvest,Soul to Waste,Drain Soul,1120,spell_shadow_haunting,fair,"Fire rune: no stock Fire version of this shape, so it keeps Drain Soul",client-patch/dbc/Spell.dbc id 1120 ; icon from SpellIcon.dbc
+Soul Harvest,Languish,Drain Soul,1120,spell_shadow_haunting,fair,"Cold rune: no stock Cold version of this shape, so it keeps Drain Soul",client-patch/dbc/Spell.dbc id 1120 ; icon from SpellIcon.dbc
+Soul Harvest,Swallow Your Soul,Drain Soul,1120,spell_shadow_haunting,fair,"Poison rune: no stock Poison version of this shape, so it keeps Drain Soul",client-patch/dbc/Spell.dbc id 1120 ; icon from SpellIcon.dbc
+Soul Harvest,Vengeful Spirit,Drain Soul,1120,spell_shadow_haunting,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1120 ; icon from SpellIcon.dbc
+Sacrifice,,Sacrifice,47986,spell_shadow_sacrificialshield,fair,"a minion is given up to explode; the Warlock's Sacrifice is the stock give-up-a-minion cast (Death Pact's second effect names a 100 yd area, which a ground cursor would draw)",client-patch/dbc/Spell.dbc id 47986 ; icon from SpellIcon.dbc
+Sacrifice,Provoke the Pack,Sacrifice,47986,spell_shadow_sacrificialshield,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47986 ; icon from SpellIcon.dbc
+Sacrifice,For the Master,Sacrifice,47986,spell_shadow_sacrificialshield,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47986 ; icon from SpellIcon.dbc
+Sacrifice,Black Blood,Sacrifice,47986,spell_shadow_sacrificialshield,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47986 ; icon from SpellIcon.dbc
+Sacrifice,Pride,Sacrifice,47986,spell_shadow_sacrificialshield,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47986 ; icon from SpellIcon.dbc
+Sacrifice,Next of Kin,Sacrifice,47986,spell_shadow_sacrificialshield,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47986 ; icon from SpellIcon.dbc
+Mass Confusion,,Mind Control,605,spell_shadow_shadowworddominate,fair,enemies are confused and some are charmed; Mind Control is the stock charm,client-patch/dbc/Spell.dbc id 605 ; icon from SpellIcon.dbc
+Mass Confusion,Paranoia,Mind Control,605,spell_shadow_shadowworddominate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 605 ; icon from SpellIcon.dbc
+Mass Confusion,Mass Hysteria,Mind Control,605,spell_shadow_shadowworddominate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 605 ; icon from SpellIcon.dbc
+Mass Confusion,Mass Hallucination,Mind Control,605,spell_shadow_shadowworddominate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 605 ; icon from SpellIcon.dbc
+Mass Confusion,Unstable Realm,Mind Control,605,spell_shadow_shadowworddominate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 605 ; icon from SpellIcon.dbc
+Mass Confusion,Devolution,Mind Control,605,spell_shadow_shadowworddominate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 605 ; icon from SpellIcon.dbc
+Zombie Charger,,Charge,100,ability_warrior_charge,fair,"a suicidal zombie rushes along a line; Charge is the stock rush cast (the zombie is a creature, a summon sheet)",client-patch/dbc/Spell.dbc id 100 ; icon from SpellIcon.dbc
+Zombie Charger,Zombie Bears,Charge,100,ability_warrior_charge,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 100 ; icon from SpellIcon.dbc
+Zombie Charger,Lumbering Cold,Charge,100,ability_warrior_charge,fair,"Cold rune: no stock Cold version of this shape, so it keeps Charge",client-patch/dbc/Spell.dbc id 100 ; icon from SpellIcon.dbc
+Zombie Charger,Pile On,Charge,100,ability_warrior_charge,fair,"Physical rune: no stock Physical version of this shape, so it keeps Charge",client-patch/dbc/Spell.dbc id 100 ; icon from SpellIcon.dbc
+Zombie Charger,Undeath,Charge,100,ability_warrior_charge,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 100 ; icon from SpellIcon.dbc
+Zombie Charger,Explosive Beast,Charge,100,ability_warrior_charge,fair,"Fire rune: no stock Fire version of this shape, so it keeps Charge",client-patch/dbc/Spell.dbc id 100 ; icon from SpellIcon.dbc
+Spirit Barrage,,Frostbolt,116,spell_frost_frostbolt02,fair,four cold spirit bolts at one enemy; Frostbolt is the stock cold bolt (the spirit art is the module's),client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Spirit Barrage,Phlebotomize,Frostbolt,116,spell_frost_frostbolt02,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Spirit Barrage,Well of Souls,Fire Blast,2136,spell_fire_fireball,fair,Fire rune: Fire Blast is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 2136 ; icon from SpellIcon.dbc
+Spirit Barrage,Phantasm,Frostbolt,116,spell_frost_frostbolt02,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Spirit Barrage,The Spirit Is Willing,Frostbolt,116,spell_frost_frostbolt02,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Spirit Barrage,Manitou,Frostbolt,116,spell_frost_frostbolt02,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Acid Cloud,,Poison Cloud,3815,spell_nature_regenerate,fair,acid rains on a ground area and stays as a pool; Poison Cloud is the stock poison ground cloud,client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Acid Cloud,Corpse Bomb,Poison Cloud,3815,spell_nature_regenerate,fair,"Fire rune: no stock Fire version of this shape, so it keeps Poison Cloud",client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Acid Cloud,Acid Rain,Poison Cloud,3815,spell_nature_regenerate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Acid Cloud,Lob Blob Bomb,Poison Cloud,3815,spell_nature_regenerate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Acid Cloud,Slow Burn,Poison Cloud,3815,spell_nature_regenerate,fair,"Cold rune: no stock Cold version of this shape, so it keeps Poison Cloud",client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Acid Cloud,Kiss of Death,Poison Cloud,3815,spell_nature_regenerate,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Wall of Death,,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,"a wall of zombies rises from the ground; Army of the Dead is the stock mass-raise cast (the zombies are creatures, a summon sheet)",client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Wall of Death,Surrounded by Death,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Wall of Death,Ring of Poison,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,"Poison rune: no stock Poison version of this shape, so it keeps Army of the Dead",client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Wall of Death,Communing with Spirits,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,"Cold rune: no stock Cold version of this shape, so it keeps Army of the Dead",client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Wall of Death,Wall of Zombies,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Wall of Death,Fire Wall,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,"Fire rune: no stock Fire version of this shape, so it keeps Army of the Dead",client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Piranhas,,Death and Decay,43265,spell_shadow_deathanddecay,fair,a pool of piranhas on the ground; Death and Decay is the stock ground zone,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Piranhas,Bogadile,Death and Decay,43265,spell_shadow_deathanddecay,fair,"Physical rune: no stock Physical version of this shape, so it keeps Death and Decay",client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Piranhas,Zombie Piranhas,Death and Decay,43265,spell_shadow_deathanddecay,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Piranhas,Piranhado,Death and Decay,43265,spell_shadow_deathanddecay,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Piranhas,Wave of Mutilation,Death and Decay,43265,spell_shadow_deathanddecay,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Piranhas,Frozen Piranhas,Death and Decay,43265,spell_shadow_deathanddecay,fair,"Cold rune: no stock Cold version of this shape, so it keeps Death and Decay",client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Gargantuan,,Inferno,1122,spell_shadow_summoninfernal,fair,"a huge zombie fights beside the caster; Inferno is the stock large summon (the Gargantuan is a creature, a summon sheet)",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Gargantuan,Restless Giant,Inferno,1122,spell_shadow_summoninfernal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Gargantuan,Humongoid,Inferno,1122,spell_shadow_summoninfernal,fair,"Cold rune: no stock Cold version of this shape, so it keeps Inferno",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Gargantuan,Big Stinker,Inferno,1122,spell_shadow_summoninfernal,fair,"Poison rune: no stock Poison version of this shape, so it keeps Inferno",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Gargantuan,Wrathful Protector,Inferno,1122,spell_shadow_summoninfernal,fair,"Fire rune: no stock Fire version of this shape, so it keeps Inferno",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Gargantuan,Bruiser,Inferno,1122,spell_shadow_summoninfernal,fair,"Fire rune: no stock Fire version of this shape, so it keeps Inferno",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Big Bad Voodoo,,Power Infusion,10060,spell_holy_powerinfusion,fair,"a ritual that speeds up nearby allies; Power Infusion is the stock ally haste buff (Bloodlust's effects name a 100 yd area, which a ground cursor would draw; the Fetish is a creature, a summon sheet)",client-patch/dbc/Spell.dbc id 10060 ; icon from SpellIcon.dbc
+Big Bad Voodoo,Slam Dance,Power Infusion,10060,spell_holy_powerinfusion,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 10060 ; icon from SpellIcon.dbc
+Big Bad Voodoo,Jungle Drums,Power Infusion,10060,spell_holy_powerinfusion,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 10060 ; icon from SpellIcon.dbc
+Big Bad Voodoo,Ghost Trance,Power Infusion,10060,spell_holy_powerinfusion,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 10060 ; icon from SpellIcon.dbc
+Big Bad Voodoo,Rain Dance,Power Infusion,10060,spell_holy_powerinfusion,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 10060 ; icon from SpellIcon.dbc
+Big Bad Voodoo,Boogie Man,Power Infusion,10060,spell_holy_powerinfusion,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 10060 ; icon from SpellIcon.dbc
+Fetish Army,,Feral Spirit,51533,spell_shaman_feralspirit,fair,"an army of small Fetishes fights beside the caster; Feral Spirit is the stock mass-summon of minions (the Fetishes are creatures, a summon sheet)",client-patch/dbc/Spell.dbc id 51533 ; icon from SpellIcon.dbc
+Fetish Army,Fetish Ambush,Feral Spirit,51533,spell_shaman_feralspirit,fair,"Cold rune: no stock Cold version of this shape, so it keeps Feral Spirit",client-patch/dbc/Spell.dbc id 51533 ; icon from SpellIcon.dbc
+Fetish Army,Legion of Daggers,Feral Spirit,51533,spell_shaman_feralspirit,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51533 ; icon from SpellIcon.dbc
+Fetish Army,Tiki Torchers,Feral Spirit,51533,spell_shaman_feralspirit,fair,"Fire rune: no stock Fire version of this shape, so it keeps Feral Spirit",client-patch/dbc/Spell.dbc id 51533 ; icon from SpellIcon.dbc
+Fetish Army,Devoted Following,Feral Spirit,51533,spell_shaman_feralspirit,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51533 ; icon from SpellIcon.dbc
+Fetish Army,Head Hunters,Feral Spirit,51533,spell_shaman_feralspirit,fair,"Poison rune: no stock Poison version of this shape, so it keeps Feral Spirit",client-patch/dbc/Spell.dbc id 51533 ; icon from SpellIcon.dbc

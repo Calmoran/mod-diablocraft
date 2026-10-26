@@ -1,0 +1,58 @@
+set_name,class_key,source
+Aegis of Valor,crusader,reference/d3planner/data_itemsets.js:806
+Armor of Akkhan,crusader,reference/d3planner/data_itemsets.js:533
+Asheara's Vestments,,reference/d3planner/data_itemsets.js:145
+Aughild's Authority,,reference/d3planner/data_itemsets.js:760
+Bastions of Will,,reference/d3planner/data_itemsets.js:99
+Blackthorne's Battlegear,,reference/d3planner/data_itemsets.js:27
+Bones of Rathma,necromancer,reference/d3planner/data_itemsets.js:681
+Born's Command,,reference/d3planner/data_itemsets.js:176
+Bul-Kathos's Oath,barbarian,reference/d3planner/data_itemsets.js:46
+Cain's Destiny,,reference/d3planner/data_itemsets.js:775
+Captain Crimson's Trimmings,,reference/d3planner/data_itemsets.js:789
+Chantodo's Resolve,wizard,reference/d3planner/data_itemsets.js:6
+Danetta's Hatred,demonhunter,reference/d3planner/data_itemsets.js:17
+Delsere's Magnum Opus,wizard,reference/d3planner/data_itemsets.js:567
+Demon's Hide,,reference/d3planner/data_itemsets.js:219
+Embodiment of the Marauder,demonhunter,reference/d3planner/data_itemsets.js:363
+Endless Walk,,reference/d3planner/data_itemsets.js:56
+Firebird's Finery,wizard,reference/d3planner/data_itemsets.js:312
+Gears of Dreadlands,demonhunter,reference/d3planner/data_itemsets.js:891
+Grace of Inarius,necromancer,reference/d3planner/data_itemsets.js:715
+Guardian's Jeopardy,,reference/d3planner/data_itemsets.js:236
+Hallowed Protectors,,reference/d3planner/data_itemsets.js:250
+Helltooth Harness,witchdoctor,reference/d3planner/data_itemsets.js:397
+Horde of the Ninety Savages,barbarian,reference/d3planner/data_itemsets.js:840
+Immortal King's Call,barbarian,reference/d3planner/data_itemsets.js:432
+Inna's Mantra,monk,reference/d3planner/data_itemsets.js:483
+Istvan's Paired Blades,,reference/d3planner/data_itemsets.js:109
+Jesseth Arms,necromancer,reference/d3planner/data_itemsets.js:749
+Krelm’s Buff Bulwark,,reference/d3planner/data_itemsets.js:135
+Legacy of Nightmares,,reference/d3planner/data_itemsets.js:67
+Manajuma's Way,witchdoctor,reference/d3planner/data_itemsets.js:78
+Masquerade of the Burning Carnival,necromancer,reference/d3planner/data_itemsets.js:908
+Might of the Earth,barbarian,reference/d3planner/data_itemsets.js:449
+Monkey King's Garb,monk,reference/d3planner/data_itemsets.js:500
+Mundunugu's Regalia,witchdoctor,reference/d3planner/data_itemsets.js:857
+Natalya's Vengeance,demonhunter,reference/d3planner/data_itemsets.js:329
+Norvald's Fervor,crusader,reference/d3planner/data_itemsets.js:669
+Patterns of Justice,monk,reference/d3planner/data_itemsets.js:823
+Pestilence Master's Shroud,necromancer,reference/d3planner/data_itemsets.js:732
+Raiment of a Thousand Storms,monk,reference/d3planner/data_itemsets.js:516
+Raiment of the Jade Harvester,witchdoctor,reference/d3planner/data_itemsets.js:415
+Roland's Legacy,crusader,reference/d3planner/data_itemsets.js:550
+Sage's Journey,,reference/d3planner/data_itemsets.js:261
+Seeker of the Light,crusader,reference/d3planner/data_itemsets.js:618
+Shenlong's Spirit,monk,reference/d3planner/data_itemsets.js:89
+Spirit of Arachyr,witchdoctor,reference/d3planner/data_itemsets.js:652
+Tal Rasha's Elements,wizard,reference/d3planner/data_itemsets.js:279
+The Legacy of Raekor,barbarian,reference/d3planner/data_itemsets.js:465
+The Shadow’s Mantle,demonhunter,reference/d3planner/data_itemsets.js:347
+The Typhon's Veil,wizard,reference/d3planner/data_itemsets.js:874
+Thorns of the Invoker,crusader,reference/d3planner/data_itemsets.js:119
+Trag'Oul's Avatar,necromancer,reference/d3planner/data_itemsets.js:698
+Uliana's Stratagem,monk,reference/d3planner/data_itemsets.js:635
+Unhallowed Essence,demonhunter,reference/d3planner/data_itemsets.js:584
+Vyr's Amazing Arcana,wizard,reference/d3planner/data_itemsets.js:296
+Wrath of the Wastes,barbarian,reference/d3planner/data_itemsets.js:601
+Zunimassa's Haunt,witchdoctor,reference/d3planner/data_itemsets.js:381

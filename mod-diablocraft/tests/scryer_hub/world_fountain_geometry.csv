@@ -1,0 +1,2 @@
+map_id,static_model_id,model,model_flags,internal_x,internal_y,world_x,world_y,origin_z,scale,source
+530,325211,Be_Fountain01.m2,5,19196.935546875,11547.5,-2130.26953125,5519.166015625,46.79425048828125,0.6250585913658142,Local stock 530_*.vmtile ModelSpawn record inspected 2026-09-11; VMapMgr2::convertPositionToInternalRep inverse; origin is not final picker height

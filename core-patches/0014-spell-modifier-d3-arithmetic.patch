@@ -1,0 +1,60 @@
+# Reason: Apply D3's own arithmetic to the two spell-modifier operations the
+# rewrite moves into the record: resource cost reductions multiply instead of
+# adding up, and flat cooldown reductions apply before percentage ones.
+# Approved: ruling 2026-09-20 (docs/decisions.md, "step 5 combined core
+# arithmetic patch"), superseding the earlier no-core-patch instruction.
+#
+# Cost. Player::ApplySpellMod accumulates every percentage modifier except
+# SPELLMOD_DAMAGE and SPELLMOD_DOT additively into totalmul, so a barbarian
+# with 30% gear Resource Cost Reduction, Sword and Board (20%) and Relentless
+# (50%) would pay nothing at all. D3 multiplies them: 0.7 x 0.8 x 0.5 = 0.28 of
+# the cost remains (docs/research/d3-cost-cooldown-math.md section 2.1, from
+# d3planner simulator/cast.js:136-147, where each reduction is applied to the
+# cost in turn). SPELLMOD_COST therefore joins the multiplicative branch.
+#
+# Cooldown. D3 subtracts a flat cooldown reduction before applying percentage
+# cooldown reduction (d3planner skilldata.js:636-642 and simulator/cast.js:186-188):
+# Boon of Bul-Kathos takes 30 seconds off Wrath of the Berserker's 120, and 40%
+# cooldown reduction then leaves 54 seconds, not the 42 the core's own order
+# would give. SPELLMOD_COOLDOWN therefore joins SPELLMOD_CASTING_TIME and
+# SPELLMOD_DURATION in the flat-first combine. This half is preparation for
+# step 6 of the spell rewrite; nothing writes a SPELLMOD_COOLDOWN aura yet.
+#
+# Side effects on stock classes, both accepted as irrelevant until stock
+# classes are ported after release: stock talents that reduce a spell's cost
+# by a percentage now multiply with each other rather than adding, and stock
+# talents with a flat cooldown reduction now apply before percentage ones.
+# Flat cost modifiers do exist since the Wizard: Prism (spell 83174, flat 9
+# Arcane Power) and Power of the Storm (83219, flat 3) are SPELLMOD_COST flat
+# auras. D3 takes the cost percentages off first and subtracts a flat reduction
+# after (docs/research/d3-cost-cooldown-math.md section 2.2), which is what the
+# combine's else branch does, so SPELLMOD_COST stays out of the flat-first
+# branch. Upstream 27e096204 (#27388, 2026-09) put it there; the update to
+# 95068403 (diablocraft-core-update-2026-10) keeps it out again, because 40 at
+# 30% with a flat 9 pays 19 in D3 and would pay 21.7 flat-first.
+--- a/src/server/game/Entities/Player/Player.cpp
++++ b/src/server/game/Entities/Player/Player.cpp
+@@ -10087,7 +10087,9 @@ void Player::ApplySpellMod(uint32 spellId, SpellModOp op, T& basevalue, Spell* s
+                 return;
+ 
+             // xinef: those two mods should be multiplicative (Glyph of Renew)
+-            if (mod->op == SPELLMOD_DAMAGE || mod->op == SPELLMOD_DOT)
++            // Diablocraft: and SPELLMOD_COST, so D3's resource cost reductions
++            // multiply instead of adding up (core-patches/0014).
++            if (mod->op == SPELLMOD_DAMAGE || mod->op == SPELLMOD_DOT || mod->op == SPELLMOD_COST)
+                 totalmul *= CalculatePct(1.0f, 100.0f + mod->value);
+             else
+                 totalmul += CalculatePct(1.0f, mod->value);
+@@ -10108,7 +10110,11 @@ void Player::ApplySpellMod(uint32 spellId, SpellModOp op, T& basevalue, Spell* s
+         calculateSpellMod(mod);
+     }
+ 
+-    if (op == SPELLMOD_CASTING_TIME || op == SPELLMOD_DURATION || op == SPELLMOD_COST)
++    // Diablocraft: SPELLMOD_COOLDOWN joins the flat-first combine, so D3's
++    // flat cooldown reductions apply before percentages (core-patches/0014).
++    // SPELLMOD_COST stays out of it, unlike upstream 27e096204: D3 takes the
++    // cost percentages off first and subtracts a flat reduction after.
++    if (op == SPELLMOD_CASTING_TIME || op == SPELLMOD_DURATION || op == SPELLMOD_COOLDOWN)
+         basevalue = (basevalue + totalflat) > 0 ? (basevalue + totalflat) * totalmul : 0;
+     else
+         basevalue = (basevalue * totalmul) + totalflat;

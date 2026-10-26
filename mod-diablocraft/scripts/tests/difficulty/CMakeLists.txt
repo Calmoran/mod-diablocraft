@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(dc_difficulty_tests LANGUAGES CXX)
+enable_testing()
+add_executable(dc_difficulty_tests difficulty_tests.cpp)
+target_compile_features(dc_difficulty_tests PRIVATE cxx_std_17)
+add_test(NAME dc_difficulty_rules COMMAND dc_difficulty_tests)

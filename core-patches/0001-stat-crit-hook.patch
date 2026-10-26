@@ -1,0 +1,75 @@
+Reason: Allow modules to supply final melee/ranged and spell crit without stat-derived WoW feedback.
+
+Constant (audit 232, 95.0f): Native configured critical-chance ceiling default; Unchanged upstream fallback; hook can override afterward. Keep in native config, not a second DC tunable.
+
+--- a/src/server/game/Entities/Unit/StatSystem.cpp
++++ b/src/server/game/Entities/Unit/StatSystem.cpp
+@@ -691,6 +691,7 @@ void Player::UpdateCritPercentage(WeaponAttackType attType)
+         value = value > sConfigMgr->GetOption<float>("Stats.Limits.Crit", 95.0f) ? sConfigMgr->GetOption<float>("Stats.Limits.Crit", 95.0f) : value;
+     }
+ 
++    sScriptMgr->OnPlayerUpdateCritChance(this, attType, value);
+     value = value < 0.0f ? 0.0f : value;
+     SetStatFloatValue(index, value);
+ }
+@@ -858,6 +859,8 @@ void Player::UpdateSpellCritChance(uint32 school)
+     // Increase crit from spell crit ratings
+     crit += GetRatingBonusValue(CR_CRIT_SPELL);
+ 
++    sScriptMgr->OnPlayerUpdateSpellCritChance(this, school, crit);
++
+     // Store crit value
+     SetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + school, crit);
+ }
+--- a/src/server/game/Scripting/ScriptDefines/PlayerScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/PlayerScript.cpp
+@@ -482,6 +482,16 @@ void ScriptMgr::OnPlayerAfterUpdateMaxHealth(Player* player, float& value)
+     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_AFTER_UPDATE_MAX_HEALTH, script->OnPlayerAfterUpdateMaxHealth(player, value));
+ }
+ 
++void ScriptMgr::OnPlayerUpdateCritChance(Player* player, WeaponAttackType attackType, float& value)
++{
++    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_UPDATE_CRIT_CHANCE, script->OnPlayerUpdateCritChance(player, attackType, value));
++}
++
++void ScriptMgr::OnPlayerUpdateSpellCritChance(Player* player, uint32 school, float& value)
++{
++    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_UPDATE_SPELL_CRIT_CHANCE, script->OnPlayerUpdateSpellCritChance(player, school, value));
++}
++
+ void ScriptMgr::OnPlayerBeforeUpdateAttackPowerAndDamage(Player* player, float& level, float& val2, bool ranged)
+ {
+     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_UPDATE_ATTACK_POWER_AND_DAMAGE, script->OnPlayerBeforeUpdateAttackPowerAndDamage(player, level, val2, ranged));
+--- a/src/server/game/Scripting/ScriptDefines/PlayerScript.h
++++ b/src/server/game/Scripting/ScriptDefines/PlayerScript.h
+@@ -235,6 +235,8 @@ enum PlayerHook
+     PLAYERHOOK_ON_BEFORE_RECEIVE_SPELL_LIST_FROM_TRAINER,
+     PLAYERHOOK_ON_GET_TRAINER_SPELL_STATE,
+     PLAYERHOOK_ON_AFTER_TRAIN_SPELL,
++    PLAYERHOOK_ON_UPDATE_CRIT_CHANCE,
++    PLAYERHOOK_ON_UPDATE_SPELL_CRIT_CHANCE,
+     PLAYERHOOK_END
+ };
+ 
+@@ -500,6 +502,10 @@ public:
+ 
+     virtual void OnPlayerAfterUpdateMaxHealth(Player* /*player*/, float& /*value*/) { }
+ 
++    // Final character-sheet percentages; unchanged when no module overrides them.
++    virtual void OnPlayerUpdateCritChance(Player* /*player*/, WeaponAttackType /*attackType*/, float& /*value*/) { }
++    virtual void OnPlayerUpdateSpellCritChance(Player* /*player*/, uint32 /*school*/, float& /*value*/) { }
++
+     virtual void OnPlayerBeforeUpdateAttackPowerAndDamage(Player* /*player*/, float& /*level*/, float& /*val2*/, bool /*ranged*/) { }
+     virtual void OnPlayerAfterUpdateAttackPowerAndDamage(Player* /*player*/, float& /*level*/, float& /*base_attPower*/, float& /*attPowerMod*/, float& /*attPowerMultiplier*/, bool /*ranged*/) { }
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -381,6 +381,8 @@ public: /* PlayerScript */
+     void OnPlayerAfterStoreOrEquipNewItem(Player* player, uint32 vendorslot, Item* item, uint8 count, uint8 bag, uint8 slot, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore);
+     void OnPlayerAfterUpdateMaxPower(Player* player, Powers& power, float& value);
+     void OnPlayerAfterUpdateMaxHealth(Player* player, float& value);
++    void OnPlayerUpdateCritChance(Player* player, WeaponAttackType attackType, float& value);
++    void OnPlayerUpdateSpellCritChance(Player* player, uint32 school, float& value);
+     void OnPlayerBeforeUpdateAttackPowerAndDamage(Player* player, float& level, float& val2, bool ranged);
+     void OnPlayerAfterUpdateAttackPowerAndDamage(Player* player, float& level, float& base_attPower, float& attPowerMod, float& attPowerMultiplier, bool ranged);
+     void OnPlayerBeforeInitTalentForLevel(Player* player, uint8& level, uint32& talentPointsForLevel);

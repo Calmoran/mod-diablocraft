@@ -1,0 +1,15 @@
+affix_id,treatment,source
+ms,ignored,"movement speed: also Diablo Wiki Followers, 'followers always move with the speed of the player'; Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()"
+rcr,ignored,resource cost reduction is a resource bonus: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()
+maxfury,ignored,a class resource maximum: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()
+maxap,ignored,a class resource maximum: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()
+maxmana,ignored,a class resource maximum: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()
+maxdisc,ignored,a class resource maximum: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()
+apoc,ignored,"Arcane Power per critical hit, a resource bonus: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()"
+lifefury,ignored,"Life per Fury spent, a resource bonus: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()"
+spiritregen,ignored,"Spirit regeneration, a resource bonus: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()"
+manaregen,ignored,"Mana regeneration, a resource bonus: Icy Veins follower gearing guide: 'followers do not benefit from resource- or movement speed-related bonuses' (docs/research/followers-web-sources.md R1a section 2); the affix id is the key of items_data.cpp Mappings()"
+mf,shared,"Magic Find: the follower keeps its own and shares player_share_pct of it with the player: Icy Veins follower guide, Diablo Wiki Followers (R1a section 2)"
+gf,shared,Gold Find: as Magic Find (R1a section 2)
+expmul,shared,Experience Gain: as Magic Find (R1a section 2)
+expadd,shared,"Bonus Experience per Kill, an Experience Gain stat: as Magic Find (R1a section 2)"

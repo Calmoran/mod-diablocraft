@@ -1,0 +1,24 @@
+{
+  "_comment": "Generated 2026-09-07 from the committed CSV. Columns are exact and ordered; validate_csv.py refuses a header that differs. Edit this file only when the CSV genuinely gains or loses a column, and say so in docs/decisions.md.",
+  "columns": [
+    "skill_name",
+    "rune_slot",
+    "rune_name",
+    "unlock_level",
+    "element",
+    "full_rune_text",
+    "modified_cost_cooldown_damage"
+  ],
+  "number_columns": [
+    "unlock_level"
+  ],
+  "percent_columns": [],
+  "notes_columns": [
+    "modified_cost_cooldown_damage",
+    "full_rune_text"
+  ],
+  "allow_empty": [
+    "modified_cost_cooldown_damage"
+  ],
+  "min_rows": 115
+}

@@ -1,0 +1,21 @@
+key,value,source
+frenzy_ias_pct,15,barbarian_skills.csv Frenzy tooltip
+frenzy_duration_ms,4000,barbarian_skills.csv Frenzy tooltip: 4 seconds
+frenzy_max_stacks,5,barbarian_skills.csv Frenzy tooltip
+ricochet_jump_yards,20,barbarian_runes.csv Ricochet
+rupture_radius_yards,8,barbarian_runes.csv Rupture
+rupture_damage_pct,160,barbarian_runes.csv Rupture
+aps_cap,5,stats.csv Attack Speed
+broad_sweep_radius_yards,8,ruling 2026-09-13 tunable separate from Cleave 10 yd; kept at 8 over d3planner 10 (ruling 2026-09-29)
+gathering_chill_pct,60,maxroll Crowd Control Explained: current D3 unstated slow is 60% (ruling 2026-09-29); docs/research/placeholder-tunables-values.md
+pulverize_width_yards,1,ruling 2026-09-13 full line width
+pulverize_length_yards,26,ruling 2026-09-13 behind primary victim
+sidearm_length_yards,5,ruling 2026-09-13 axe travel distance
+scattering_radius_yards,5,ruling 2026-09-13 landing explosion
+sidearm_selection_yards,15,ruling 2026-09-13 within original target
+sidearm_width_yards,1,ruling 2026-09-13 full path width
+sidearm_damage_pct,300,barbarian_runes.csv Sidearm
+sidearm_projectile_speed,50,extracted Spell.dbc Heroic Throw 57755; existing Weapon Throw visual donor in barbarian_visuals.csv
+pulverize_damage_pct,100,barbarian_runes.csv Pulverize secondary shockwave
+scattering_damage_pct,80,barbarian_runes.csv Scattering Blast landing damage
+scattering_height_yards,2,ruling 2026-09-13 small vertical knock-up peak; tunable

@@ -1,0 +1,172 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+    <!--
+        The Torment character sheet. It replaces WoW's character sheet: C and the character
+        micro-button open this, the stock sheet is unreachable.
+
+        There is NO bag grid. The player's bags are ElvUI's (B and the bag
+        buttons, as stock) and every move between them and this sheet is the
+        STOCK cursor: Inventory.lua only draws the worn items from the stock
+        inventory API and says what a drop or a click means.
+
+        Anatomy, top to bottom: the header (portrait ring, name, "Level N
+        <Class>", Paragon, close); the paperdoll - fourteen slots in D3's three
+        columns over a 3D model of the character - with the Cosmetics toggle in
+        its corner; the four primary stats in one row; Damage / Toughness /
+        Recovery; the footer with the Details and Materials buttons and the gold.
+
+        Two frames: the sheet, and ONE side panel on its left that Details and
+        Materials share (the other button swaps it, the open one's button closes
+        it). Both are sized and filled from Inventory.lua's own constants in
+        OnLoad - the sizes here only hold until then - and both are drawn like the Jeweler
+        window (the stock dialog backdrop, UIPanelCloseButton and
+        UIPanelButtonTemplate), set in Lua from the shared Diablocraft.Style. The slots
+        keep the Torment slot art, filled by Diablocraft.SetArt.
+    -->
+
+    <!-- One paperdoll or cosmetic slot. Its size is set per slot from the
+         mockup's boxes; an empty slot shows the faint slot picture. -->
+    <Button name="DiablocraftSheetSlotTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="40" y="40"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBack" setAllPoints="true"/>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture name="$parentRarity" setAllPoints="true"/>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture name="$parentEmpty" alphaMode="BLEND">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentIcon">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <HighlightTexture name="$parentHighlight" alphaMode="ADD" setAllPoints="true"/>
+        <Scripts>
+            <OnLoad>Diablocraft.SheetSlot_OnLoad(self)</OnLoad>
+            <OnClick>Diablocraft.SheetSlot_OnClick(self, button)</OnClick>
+            <OnEnter>Diablocraft.SheetSlot_OnEnter(self)</OnEnter>
+            <OnLeave>Diablocraft.SheetSlot_OnLeave(self)</OnLeave>
+            <OnDragStart>Diablocraft.SheetSlot_OnDragStart(self)</OnDragStart>
+            <OnReceiveDrag>Diablocraft.SheetSlot_OnReceiveDrag(self)</OnReceiveDrag>
+        </Scripts>
+    </Button>
+
+    <Frame name="DiablocraftInventoryFrame" parent="UIParent" toplevel="true" enableMouse="true" movable="true" hidden="true" frameStrata="HIGH">
+        <Size>
+            <AbsDimension x="420" y="660"/>
+        </Size>
+        <Anchors>
+            <!-- Against the right edge of the window. Inventory.lua re-places
+                 this from DC.PANEL_BLEED on every open. -->
+            <Anchor point="RIGHT" relativePoint="RIGHT">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentStatus" inherits="GameFontHighlightSmall" justifyH="CENTER">
+                    <Size>
+                        <AbsDimension x="372" y="14"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM">
+                            <Offset>
+                                <AbsDimension x="0" y="34"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentClose" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-6" y="-6"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>Diablocraft.Inventory_Hide()</OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>Diablocraft.Inventory_OnLoad(self)</OnLoad>
+            <OnShow>Diablocraft.Inventory_OnShow(self)</OnShow>
+            <OnHide>Diablocraft.Inventory_OnHide(self)</OnHide>
+            <OnDragStart>self:StartMoving()</OnDragStart>
+            <OnDragStop>self:StopMovingOrSizing()</OnDragStop>
+        </Scripts>
+    </Frame>
+
+    <!-- Details and Materials: ONE panel on the sheet's left (Inventory.lua
+         anchors it and fills it). -->
+    <Frame name="DiablocraftSidePanel" parent="UIParent" toplevel="true" enableMouse="true" hidden="true" frameStrata="HIGH">
+        <Size>
+            <AbsDimension x="300" y="660"/>
+        </Size>
+        <Anchors>
+            <Anchor relativeTo="DiablocraftInventoryFrame" point="TOPRIGHT" relativePoint="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentTitle" inherits="GameFontNormalLarge" text="Details">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-32"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentClose" inherits="UIPanelCloseButton">
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-6" y="-6"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>Diablocraft.Side_Close()</OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>Diablocraft.Side_OnLoad(self)</OnLoad>
+        </Scripts>
+    </Frame>
+
+    <!-- Escape's go-between. UISpecialFrames hides EVERY shown frame in it at
+         once, so putting the sheet and its panel there would close both on one
+         press. Only this proxy is listed; its OnHide decides: the panel first,
+         then the sheet (Inventory.lua Escape_OnHide). -->
+    <Frame name="DiablocraftInventoryEscape" parent="UIParent" hidden="true">
+        <Size>
+            <AbsDimension x="1" y="1"/>
+        </Size>
+        <Scripts>
+            <OnHide>Diablocraft.Escape_OnHide(self)</OnHide>
+        </Scripts>
+    </Frame>
+</Ui>

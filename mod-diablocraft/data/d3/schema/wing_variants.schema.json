@@ -1,0 +1,31 @@
+{
+  "columns": [
+    "key",
+    "name",
+    "item_entry",
+    "spell_id",
+    "visual_id",
+    "kit_id",
+    "effect_id",
+    "attach_id",
+    "display_id",
+    "recolor_mode",
+    "source",
+    "notes"
+  ],
+  "min_rows": 1,
+  "number_columns": [
+    "item_entry",
+    "spell_id",
+    "visual_id",
+    "kit_id",
+    "effect_id",
+    "attach_id",
+    "display_id"
+  ],
+  "allow_empty": [],
+  "notes_columns": [
+    "source",
+    "notes"
+  ]
+}

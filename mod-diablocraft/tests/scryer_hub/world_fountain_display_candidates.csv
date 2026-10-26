@@ -1,0 +1,3 @@
+display_id,model,stock_template_entry,status,source
+6476,World\Expansion01\Doodads\Generic\BloodElf\ScryingOrb\BE_ScryingOrb.mdx,180510,selected_by_Alex,Local stock GameObjectDisplayInfo.dbc and acore_world.gameobject_template inspected 2026-09-11; the designer selected 2026-09-11
+7150,World\Expansion01\Doodads\Generic\BloodElf\ScryingOrb\BE_ScryingOrb_Epic.mdx,,not_selected,Local stock GameObjectDisplayInfo.dbc inspected 2026-09-11; no existing template uses this display

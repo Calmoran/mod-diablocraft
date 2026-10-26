@@ -1,0 +1,19 @@
+set_id,name,members,clusterable_families,solo_families,solo_monsters,skipped
+1,"Dark Berserker, Punisher, Skeletal Beast",5,Skeletons,Cultists; Reapers,Dark Berserker; Dark Summoner; Punisher,no
+2,"Blazing Ghoul, Hulking Phasebeast, Unburied",6,Beasts; Skeletons,,,no
+3,"Bogan Trapper, Fallen Slavelord, Tusked Bogan",4,Bogans; Lacuni,,,no
+4,"Moon Clan Impaler, Moon Clan Shaman, Unburied",7,Beasts; Ghouls; Khazra,,,no
+5,"Disentombed Hulk, Dust Eater, Smoldering Construct",4,Zombies; Reapers,Ghosts; Swarm,Enraged Phantom; Sand Dweller,no
+6,"Dark Summoner, Dark Vessel, Unholy Thrall",7,Cultists; Beasts; Reapers,,,no
+7,"Grotesque, Unholy Thrall, Warping Horror",5,Zombies; Lacuni,Cultists,Unholy Thrall,no
+8,"Anarch, Fallen, Fallen Overseer",6,Reapers; Beasts; Fallen; Skeletons,,,no
+9,"Bogan Trapper, Horror, Lacuni Slasher",4,Khazra; Bogans; Lacuni,Fallen,Fallen Shaman,no
+10,"Arachnid Horror, Bile Crawler, Moon Clan Impaler",4,Spiders; Lacuni,Reapers,Exorcist,no
+11,"Bogan Trapper, Maggot Brood, Tusked Bogan",6,Bogans; Khazra,Demons,Armored Destroyer; Oppressor,no
+12,"Dune Stinger, Vile Swarm, Webspitter Spider",4,Khazra; Spiders; Swarm; Demons,,,no
+13,"Grotesque, Hungry Corpse, Punisher",5,Zombies,Cultists; Reapers,Dark Summoner; Punisher,no
+14,"Burrowing Leaper, Enraged Phantom, Hungry Corpse",8,Reapers; Zombies; Beasts; Skeletons,Ghosts,Enraged Phantom,no
+15,"Fallen Firemage, Soul Ripper, Subjugator",4,Spiders; Beasts,Fallen; Demons,Fallen Shaman; Subjugator,no
+16,"Armored Destroyer, Demonic Hellflyer, Plague Carrier",8,Reapers; Demons; Khazra; Zombies; Swarm,Ghosts,Shade Stalker,no
+17,"Blazing Ghoul, Oppressor, Vile Temptress",4,Demons,Fallen,Fallen Overseer,no
+18,"Arachnid Horror, Horned Charger, Savage Beast",10,Cultists; Beasts; Skeletons,Spiders; Ghosts; Demons,Arachnid Horror; Enraged Phantom; Oppressor; Savage,no

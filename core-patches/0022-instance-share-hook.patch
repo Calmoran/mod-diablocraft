@@ -1,0 +1,68 @@
+Reason: Let a module open a dungeon instance to players of different groups, under its own player cap (the bounty zone copy router).
+Target: AzerothCore at core-commit.txt, after patches 0001-0016 (beside 0004's GlobalScript hook). Default: stock, one group an instance.
+
+--- a/src/server/game/Maps/Map.cpp
++++ b/src/server/game/Maps/Map.cpp
+@@ -2021,6 +2021,8 @@
+ 
+     // cannot enter if the instance is full (player cap), GMs don't count
+     uint32 maxPlayers = GetMaxPlayers();
++    // a module may let strangers share this instance, under its own cap
++    bool const shared = sScriptMgr->IsInstanceShared(GetId(), GetInstanceId(), maxPlayers);
+     if (GetPlayersCountExceptGMs() >= (loginCheck ? maxPlayers + 1 : maxPlayers))
+     {
+         LOG_DEBUG("maps", "MAP: Instance '{}' of map '{}' cannot have more than '{}' players. Player '{}' rejected", GetInstanceId(), GetMapName(), maxPlayers, player->GetName());
+@@ -2047,7 +2049,7 @@
+ 
+     // cannot enter if instance is in use by another party/soloer that have a permanent save in the same instance id
+     PlayerList const& playerList = GetPlayers();
+-    if (!playerList.IsEmpty())
++    if (!shared && !playerList.IsEmpty())
+         for (PlayerList::const_iterator i = playerList.begin(); i != playerList.end(); ++i)
+             if (Player* iPlayer = i->GetSource())
+             {
+--- a/src/server/game/Scripting/ScriptDefines/GlobalScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/GlobalScript.cpp
+@@ -26,6 +26,11 @@
+     CALL_ENABLED_BOOLEAN_HOOKS(GlobalScript, GLOBALHOOK_CAN_WORLD_OBJECT_SPAWN, !script->CanWorldObjectSpawn(kind, entry, spawnId, mapId, phase, worldPosition));
+ }
+ 
++bool ScriptMgr::IsInstanceShared(uint32 mapId, uint32 instanceId, uint32& maxPlayers)
++{
++    CALL_ENABLED_BOOLEAN_HOOKS_WITH_DEFAULT_FALSE(GlobalScript, GLOBALHOOK_IS_INSTANCE_SHARED, script->IsInstanceShared(mapId, instanceId, maxPlayers));
++}
++
+ void ScriptMgr::OnGlobalItemDelFromDB(CharacterDatabaseTransaction trans, ObjectGuid::LowType itemGuid)
+ {
+     ASSERT(trans);
+--- a/src/server/game/Scripting/ScriptDefines/GlobalScript.h
++++ b/src/server/game/Scripting/ScriptDefines/GlobalScript.h
+@@ -54,6 +54,7 @@
+     GLOBALHOOK_AFTER_INSTANCE_GAME_OBJECT_CREATE,
+     GLOBALHOOK_CAN_CREATE_LFG_PROPOSAL,
+     GLOBALHOOK_CAN_WORLD_OBJECT_SPAWN,
++    GLOBALHOOK_IS_INSTANCE_SHARED,
+     GLOBALHOOK_END
+ };
+ 
+@@ -67,6 +68,10 @@
+     // Called before models/AI/accessories initialize; false vetoes this creation.
+     virtual bool CanWorldObjectSpawn(WorldSpawnKind /*kind*/, uint32 /*entry*/, uint32 /*spawnId*/, uint32 /*mapId*/, uint32 /*phase*/, Position const& /*worldPosition*/) { return true; }
+ 
++    // Called when a player tries to enter a dungeon instance; true lets players of different groups share it, with
++    // maxPlayers (the map's own cap on entry) set to the module's cap. Default: stock, one group an instance.
++    virtual bool IsInstanceShared(uint32 /*mapId*/, uint32 /*instanceId*/, uint32& /*maxPlayers*/) { return false; }
++
+     // items
+     virtual void OnItemDelFromDB(CharacterDatabaseTransaction /*trans*/, ObjectGuid::LowType /*itemGuid*/) { }
+     virtual void OnMirrorImageDisplayItem(Item const* /*item*/, uint32& /*display*/) { }
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -534,6 +534,7 @@
+ 
+ public: /* GlobalScript */
+     bool CanWorldObjectSpawn(WorldSpawnKind kind, uint32 entry, uint32 spawnId, uint32 mapId, uint32 phase, Position const& worldPosition);
++    bool IsInstanceShared(uint32 mapId, uint32 instanceId, uint32& maxPlayers);
+     void OnGlobalItemDelFromDB(CharacterDatabaseTransaction trans, ObjectGuid::LowType itemGuid);
+     void OnGlobalMirrorImageDisplayItem(Item const* item, uint32& display);
+     void OnBeforeUpdateArenaPoints(ArenaTeam* at, std::map<ObjectGuid, uint32>& ap);

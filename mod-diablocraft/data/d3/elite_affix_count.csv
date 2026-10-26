@@ -1,0 +1,5 @@
+hero_level_min,hero_level_max,affixes_per_pack,applies_to,source_url
+1,29,1,champion and rare,https://maxroll.gg/d3/resources/elite-affixes
+30,49,2,champion and rare,https://maxroll.gg/d3/resources/elite-affixes
+50,59,3,champion and rare,https://maxroll.gg/d3/resources/elite-affixes
+60,70,4,champion and rare,https://maxroll.gg/d3/resources/elite-affixes

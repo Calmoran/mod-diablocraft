@@ -1,0 +1,3 @@
+d3_id,reason,source
+Unique_Amulet_102_x1,"D3 marks the power not extractable: it destroys the worn item in the process, and a cubed copy has none (docs/research/kanais-cube.md 5.4)","reference/d3planner/item_neck.js:76 leg_ancestorsgrace cube: false; ruling 10-12 follow D3"
+Unique_Sword_2H_104_x1,"D3 marks the power not extractable: the sword transforms into Ashbringer while the effect runs, and a cubed copy has no sword to transform","reference/d3planner/item_twohand.js:769 leg_corruptedashbringer cube: false; ruling 10-12 follow D3"

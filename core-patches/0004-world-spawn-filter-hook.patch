@@ -1,0 +1,251 @@
+Reason: Allow modules to veto world-object creation before models, AI, accessories and passengers initialize.
+Target: AzerothCore at core-commit.txt, after patches 0001 and 0002. Default allows all spawns.
+
+--- a/src/server/game/Entities/Creature/Creature.cpp
++++ b/src/server/game/Entities/Creature/Creature.cpp
+@@ -1188,6 +1188,11 @@ bool Creature::Create(ObjectGuid::LowType guidlow, Map* map, uint32 phaseMask, u
+         return false;
+     }
+ 
++    Position spawnPosition = _spawnWorldPosition ? *_spawnWorldPosition : GetPosition();
++    WorldSpawnKind kind = (vehId || cinfo->VehicleId) ? WorldSpawnKind::Vehicle : WorldSpawnKind::Creature;
++    if (!sScriptMgr->CanWorldObjectSpawn(kind, Entry, GetSpawnId(), map->GetId(), GetPhaseMask(), spawnPosition))
++        return false;
++
+     // area/zone id is needed immediately for ZoneScript::GetCreatureEntry hook before it is known which creature template to load (no model/scale available yet)
+     PositionFullTerrainStatus terrainData;
+     GetMap()->GetFullTerrainStatusForPosition(GetPhaseMask(), GetPositionX(), GetPositionY(), GetPositionZ(), DEFAULT_COLLISION_HEIGHT, terrainData);
+--- a/src/server/game/Entities/Creature/Creature.h
++++ b/src/server/game/Entities/Creature/Creature.h
+@@ -205,6 +205,15 @@ public:
+     uint32 UpdateVendorItemCurrentCount(VendorItem const* vItem, uint32 used_count);
+ 
+     [[nodiscard]] CreatureTemplate const* GetCreatureTemplate() const { return m_creatureInfo; }
++    // Transport DB positions are local offsets; validate their resolved world position.
++    bool LoadCreatureFromDBAtPosition(ObjectGuid::LowType guid, Map* map, Position const& worldPosition)
++    {
++        _spawnWorldPosition = worldPosition;
++        bool result = LoadCreatureFromDB(guid, map, false);
++        _spawnWorldPosition.reset();
++        return result;
++    }
++
+     [[nodiscard]] CreatureData const* GetCreatureData() const { return m_creatureData; }
+     [[nodiscard]] uint32 GetGossipMenuId() const { return _gossipMenuId ? _gossipMenuId : GetCreatureTemplate()->GossipMenuId; }
+     void SetGossipMenuId(uint32 gossipMenuId) { _gossipMenuId = gossipMenuId; }
+@@ -517,6 +526,7 @@ protected:
+     bool DisableLootReward;
+ 
+     CreatureTemplate const* m_creatureInfo;   // in difficulty mode > 0 can different from sObjectMgr->GetCreatureTemplate(GetEntry())
++    Optional<Position> _spawnWorldPosition;
+     CreatureData const* m_creatureData;
+     mutable uint32 CachedScriptId = 0;      // GetScriptId() cache
+     mutable uint32 CachedScriptIdEntry = 0; // GetEntry() the cache was resolved for (0 = unresolved)
+--- a/src/server/game/Entities/GameObject/GameObject.cpp
++++ b/src/server/game/Entities/GameObject/GameObject.cpp
+@@ -282,6 +282,9 @@ bool GameObject::Create(ObjectGuid::LowType guidlow, uint32 name_id, Map* map, u
+     }
+ 
+     SetPhaseMask(phaseMask, false);
++    Position spawnPosition = _spawnWorldPosition ? *_spawnWorldPosition : GetPosition();
++    if (!sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::GameObject, name_id, GetSpawnId(), map->GetId(), GetPhaseMask(), spawnPosition))
++        return false;
+ 
+     UpdatePositionData();
+ 
+--- a/src/server/game/Entities/GameObject/GameObject.h
++++ b/src/server/game/Entities/GameObject/GameObject.h
+@@ -135,6 +135,15 @@ public:
+     void Update(uint32 p_time) override;
+     [[nodiscard]] GameObjectTemplate const* GetGOInfo() const { return m_goInfo; }
+     [[nodiscard]] GameObjectTemplateAddon const* GetTemplateAddon() const;
++    // Transport DB positions are local offsets; validate their resolved world position.
++    bool LoadGameObjectFromDBAtPosition(ObjectGuid::LowType guid, Map* map, Position const& worldPosition)
++    {
++        _spawnWorldPosition = worldPosition;
++        bool result = LoadGameObjectFromDB(guid, map, false);
++        _spawnWorldPosition.reset();
++        return result;
++    }
++
+     [[nodiscard]] GameObjectData const* GetGameObjectData() const { return m_goData; }
+     [[nodiscard]] GameObjectValue const* GetGOValue() const { return &m_goValue; }
+ 
+@@ -395,6 +404,7 @@ protected:
+ 
+     ObjectGuid::LowType m_spawnId;                            ///< For new or temporary gameobjects is 0 for saved it is lowguid
+     GameObjectTemplate const* m_goInfo;
++    Optional<Position> _spawnWorldPosition;
+     GameObjectData const* m_goData;
+     GameObjectValue m_goValue;
+     bool m_allowModifyDestructibleBuilding;
+--- a/src/server/game/Entities/Pet/Pet.cpp
++++ b/src/server/game/Entities/Pet/Pet.cpp
+@@ -264,6 +264,12 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petEntry, uint32 petnumber, bool c
+     }
+ 
+     Map* map = owner->GetMap();
++    if (!sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::Pet, petInfo->CreatureId, petInfo->PetNumber,
++        map->GetId(), owner->GetPhaseMask(), owner->GetPosition()))
++    {
++        m_loading = false;
++        return false;
++    }
+     ObjectGuid::LowType guid = map->GenerateLowGuid<HighGuid::Pet>();
+ 
+     if (!Create(guid, map, owner->GetPhaseMask(), petInfo->CreatureId, petInfo->PetNumber))
+@@ -963,6 +969,10 @@ void Pet::GivePetLevel(uint8 level)
+ 
+ bool Pet::CreateBaseAtCreature(Creature* creature)
+ {
++    if (!creature || !sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::Pet, creature->GetEntry(), 0,
++        creature->GetMapId(), creature->GetPhaseMask(), creature->GetPosition()))
++        return false;
++
+     ASSERT(creature);
+ 
+     if (!CreateBaseAtTamed(creature->GetCreatureTemplate(), creature->GetMap(), creature->GetPhaseMask()))
+@@ -998,6 +1008,10 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
+ 
+ bool Pet::CreateBaseAtCreatureInfo(CreatureTemplate const* cinfo, Unit* owner)
+ {
++    if (!owner || !sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::Pet, cinfo->Entry, 0,
++        owner->GetMapId(), owner->GetPhaseMask(), owner->GetPosition()))
++        return false;
++
+     if (!CreateBaseAtTamed(cinfo, owner->GetMap(), owner->GetPhaseMask()))
+         return false;
+ 
+--- a/src/server/game/Entities/Transport/Transport.cpp
++++ b/src/server/game/Entities/Transport/Transport.cpp
+@@ -408,7 +408,10 @@ Creature* MotionTransport::CreateNPCPassenger(ObjectGuid::LowType guid, Creature
+ 
+     Creature* creature = new Creature();
+ 
+-    if (!creature->LoadCreatureFromDB(guid, map, false))
++    float worldX = data->posX, worldY = data->posY, worldZ = data->posZ, worldO = data->orientation;
++    CalculatePassengerPosition(worldX, worldY, worldZ, &worldO);
++    Position worldPosition(worldX, worldY, worldZ, worldO);
++    if (!creature->LoadCreatureFromDBAtPosition(guid, map, worldPosition))
+     {
+         delete creature;
+         return nullptr;
+@@ -460,7 +463,10 @@ GameObject* MotionTransport::CreateGOPassenger(ObjectGuid::LowType guid, GameObj
+     GameObject* go = new GameObject();
+     ASSERT(!sObjectMgr->IsGameObjectStaticTransport(data->id));
+ 
+-    if (!go->LoadGameObjectFromDB(guid, map, false))
++    float worldX = data->posX, worldY = data->posY, worldZ = data->posZ, worldO = data->orientation;
++    CalculatePassengerPosition(worldX, worldY, worldZ, &worldO);
++    Position worldPosition(worldX, worldY, worldZ, worldO);
++    if (!go->LoadGameObjectFromDBAtPosition(guid, map, worldPosition))
+     {
+         delete go;
+         return nullptr;
+@@ -611,6 +617,15 @@ float MotionTransport::CalculateSegmentPos(float now)
+ 
+ bool MotionTransport::TeleportTransport(uint32 newMapid, float x, float y, float z, float o)
+ {
++    if (!sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::MotionTransport, GetEntry(), 0, newMapid, GetPhaseMask(), Position(x,y,z,o)))
++    {
++        // Freeze at the permitted side; do not load the rejected destination or passengers.
++        _isMoving = false;
++        _pendingStop = true;
++        _delayedTeleport = false;
++        return true;
++    }
++
+     Map const* oldMap = GetMap();
+ 
+     if (oldMap->GetId() != newMapid)
+@@ -844,6 +859,8 @@ bool StaticTransport::Create(ObjectGuid::LowType guidlow, uint32 name_id, Map* m
+     }
+ 
+     SetPhaseMask(phaseMask, false);
++    if (!sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::StaticTransport, name_id, GetSpawnId(), map->GetId(), GetPhaseMask(), GetPosition()))
++        return false;
+ 
+     UpdatePositionData();
+ 
+--- a/src/server/game/Maps/TransportMgr.cpp
++++ b/src/server/game/Maps/TransportMgr.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "TransportMgr.h"
++#include "ScriptMgr.h"
+ #include "InstanceScript.h"
+ #include "MapMgr.h"
+ #include "MoveSpline.h"
+@@ -380,6 +381,16 @@ MotionTransport* TransportMgr::CreateTransport(uint32 entry, ObjectGuid::LowType
+         return nullptr;
+     }
+ 
++    // Check the route before creating any model/passengers. An arrival check
++    // also handles a module changing its policy after this creation.
++    for (auto const& frame : tInfo->keyFrames)
++    {
++        auto const* node = frame.Node;
++        if (!sScriptMgr->CanWorldObjectSpawn(WorldSpawnKind::MotionTransport, entry, guid, node->mapid,
++            PHASEMASK_NORMAL, Position(node->x,node->y,node->z,frame.InitialOrientation)))
++            return nullptr;
++    }
++
+     // create transport...
+     MotionTransport* trans = new MotionTransport();
+ 
+--- a/src/server/game/Scripting/ScriptDefines/GlobalScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/GlobalScript.cpp
+@@ -21,6 +21,11 @@
+ #include "ScriptMgr.h"
+ #include "ScriptMgrMacros.h"
+ 
++bool ScriptMgr::CanWorldObjectSpawn(WorldSpawnKind kind, uint32 entry, uint32 spawnId, uint32 mapId, uint32 phase, Position const& worldPosition)
++{
++    CALL_ENABLED_BOOLEAN_HOOKS(GlobalScript, GLOBALHOOK_CAN_WORLD_OBJECT_SPAWN, !script->CanWorldObjectSpawn(kind, entry, spawnId, mapId, phase, worldPosition));
++}
++
+ void ScriptMgr::OnGlobalItemDelFromDB(CharacterDatabaseTransaction trans, ObjectGuid::LowType itemGuid)
+ {
+     ASSERT(trans);
+--- a/src/server/game/Scripting/ScriptDefines/GlobalScript.h
++++ b/src/server/game/Scripting/ScriptDefines/GlobalScript.h
+@@ -25,6 +25,10 @@
+ #include <map>
+ #include <vector>
+ 
++enum class WorldSpawnKind : uint8 { Creature, Vehicle, GameObject, StaticTransport, MotionTransport, Pet };
++
++struct Position;
++
+ enum GlobalHook
+ {
+     GLOBALHOOK_ON_ITEM_DEL_FROM_DB,
+@@ -49,6 +53,7 @@ enum GlobalHook
+     GLOBALHOOK_ON_BEFORE_SET_BOSS_STATE,
+     GLOBALHOOK_AFTER_INSTANCE_GAME_OBJECT_CREATE,
+     GLOBALHOOK_CAN_CREATE_LFG_PROPOSAL,
++    GLOBALHOOK_CAN_WORLD_OBJECT_SPAWN,
+     GLOBALHOOK_END
+ };
+ 
+@@ -59,6 +64,9 @@ protected:
+     GlobalScript(char const* name, std::vector<uint16> enabledHooks = std::vector<uint16>());
+ 
+ public:
++    // Called before models/AI/accessories initialize; false vetoes this creation.
++    virtual bool CanWorldObjectSpawn(WorldSpawnKind /*kind*/, uint32 /*entry*/, uint32 /*spawnId*/, uint32 /*mapId*/, uint32 /*phase*/, Position const& /*worldPosition*/) { return true; }
++
+     // items
+     virtual void OnItemDelFromDB(CharacterDatabaseTransaction /*trans*/, ObjectGuid::LowType /*itemGuid*/) { }
+     virtual void OnMirrorImageDisplayItem(Item const* /*item*/, uint32& /*display*/) { }
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -532,6 +532,7 @@ public: /* GroupScript */
+     void OnCreate(Group* group, Player* leader);
+ 
+ public: /* GlobalScript */
++    bool CanWorldObjectSpawn(WorldSpawnKind kind, uint32 entry, uint32 spawnId, uint32 mapId, uint32 phase, Position const& worldPosition);
+     void OnGlobalItemDelFromDB(CharacterDatabaseTransaction trans, ObjectGuid::LowType itemGuid);
+     void OnGlobalMirrorImageDisplayItem(Item const* item, uint32& display);
+     void OnBeforeUpdateArenaPoints(ArenaTeam* at, std::map<ObjectGuid, uint32>& ap);

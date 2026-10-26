@@ -1,0 +1,15 @@
+item_entry,name,kind,copper_per_item,source
+102000,Death's Breath,material,0,scripts/generate_crafting.py MATERIALS; design/11-hardcore section 4
+102001,Reusable Parts,material,0,scripts/generate_crafting.py MATERIALS; design/11-hardcore section 4
+102002,Arcane Dust,material,0,scripts/generate_crafting.py MATERIALS; design/11-hardcore section 4
+102003,Veiled Crystal,material,0,scripts/generate_crafting.py MATERIALS; design/11-hardcore section 4
+102004,Forgotten Soul,material,0,scripts/generate_crafting.py MATERIALS; design/11-hardcore section 4
+102005,Greater Rift Keystone,material,0,src/rifts/dc_rifts.cpp KEYSTONE_ITEM; design/11-hardcore section 4
+102006,Gold Bar,retired_gold,100000,design/06-loot superseded L13; src/common/dc_economy.h CopperPerBar
+102007,Blood Shard,material,0,docs/proposals/kadala.md 4.1 (ruling q-1007-08); data/d3/kadala.csv; design/11-hardcore section 4
+102008,Khanduran Rune,material,0,docs/research/bounties.md section 3 (maxroll: Act 1 reagent); data/d3/cube_costs.csv; bounties brief 2026-10-11 W3
+102009,Caldeum Nightshade,material,0,docs/research/bounties.md section 3 (maxroll: Act 2 reagent); data/d3/cube_costs.csv; bounties brief 2026-10-11 W3
+102010,Arreat War Tapestry,material,0,docs/research/bounties.md section 3 (maxroll: Act 3 reagent); data/d3/cube_costs.csv; bounties brief 2026-10-11 W3
+102011,Corrupted Angel Flesh,material,0,docs/research/bounties.md section 3 (maxroll: Act 4 reagent); data/d3/cube_costs.csv; bounties brief 2026-10-11 W3
+102012,Westmarch Holy Water,material,0,docs/research/bounties.md section 3 (maxroll: Act 5 reagent); data/d3/cube_costs.csv; bounties brief 2026-10-11 W3
+102013,Primordial Ashes,material,0,docs/research/kanais-cube.md 6.3; data/d3/cube_recipes.csv (Primal upgrade 100); data/d3/rarity_tiers.csv (Primal salvage 55); decisions 2026-10-10

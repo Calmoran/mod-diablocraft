@@ -1,0 +1,155 @@
+guardian,life_multiplier,damage_multiplier,ability_name,damage_pct,radius,cooldown,cast_time,trigger,source_url
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Mortar Affix,NOT PUBLISHED,3 yd direct / 11.5 yd collateral,4-5s,Instant,Target >25 yd away,https://maxroll.gg/d3/resources/rift-guardians-explained
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Fireball Volley,NOT PUBLISHED,Wide cone (3 fast fireballs),NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Flame Nova,NOT PUBLISHED,360 degrees (screen-wide),30s,Instant,Below 50% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Flame Breath,NOT PUBLISHED,Short range cone,6s,Instant,Target in close range; knocks back,https://maxroll.gg/d3/resources/rift-guardians-explained
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Fire Mark,NOT PUBLISHED,Ground circle (5s DoT),15s,2s delay,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Agnidox,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Plagued Affix,NOT PUBLISHED,10 yd pool,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Knockback Affix,NOT PUBLISHED,On hit (~30 yd knockback),NOT PUBLISHED,Instant,On melee hit (80% slow for 3s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Poison Bolts,NOT PUBLISHED,360 degrees nova,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Tentacle Attacks: Multiple Arms,NOT PUBLISHED,Multiple 10 yd pools,15s,5s channel,Combat default (interruptible; pools last 1.5s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Tentacle Attacks: Herding,NOT PUBLISHED,"Outer ring (12 pools), inner ring (8 pools)",15s,Instant,Combat default (interruptible; pools last 3s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Tentacle Attacks: Ranged Line,NOT PUBLISHED,Line of 5 10-yd pools,15s,Instant,Target outside melee (interruptible),https://maxroll.gg/d3/resources/rift-guardians-explained
+Blighter,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bloodmaw,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bloodmaw,NOT PUBLISHED,NOT PUBLISHED,Frenzy,NOT PUBLISHED,Self (+50% Attack Speed),Permanent buff,Instant,Below 25% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bloodmaw,NOT PUBLISHED,NOT PUBLISHED,Leap,NOT PUBLISHED,15 to 80 yd leap landing,NOT PUBLISHED,Instant (CC immune),Target >15 yd away (stuns),https://maxroll.gg/d3/resources/rift-guardians-explained
+Bloodmaw,NOT PUBLISHED,NOT PUBLISHED,Leap Rage,NOT PUBLISHED,Up to 90 yd leap (earthquake DoT),20s,Multi-leap (CC immune),Start of fight (3 leaps); Below 50% HP (5 leaps),https://maxroll.gg/d3/resources/rift-guardians-explained
+Bloodmaw,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bone Warlock,NOT PUBLISHED,NOT PUBLISHED,Teleporter Affix,NOT PUBLISHED,Nearby ground,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bone Warlock,NOT PUBLISHED,NOT PUBLISHED,Wormhole Affix,NOT PUBLISHED,Two 6 yd circles,NOT PUBLISHED,1s transfer delay,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bone Warlock,NOT PUBLISHED,NOT PUBLISHED,Summon Minions,NOT PUBLISHED,Surrounding area,NOT PUBLISHED,Instant,Below 95% HP (summons skeletons one by one),https://maxroll.gg/d3/resources/rift-guardians-explained
+Bone Warlock,NOT PUBLISHED,NOT PUBLISHED,Arcane Bolt Volley,NOT PUBLISHED,Ranged spread,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bone Warlock,NOT PUBLISHED,NOT PUBLISHED,Reflects Projectiles,NOT PUBLISHED,Self barrier,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Bone Warlock,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Frozen Pulse Affix,NOT PUBLISHED,15 yd radius tracking pulse,NOT PUBLISHED,1.5s delay,Below 75% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Slam,NOT PUBLISHED,Melee AoE,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Charge,NOT PUBLISHED,Straight line charge,NOT PUBLISHED,Instant,Target outside melee (knocks back),https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Cold Nova,NOT PUBLISHED,60 yd (360 degrees nova),NOT PUBLISHED,Instant,Combat default (freezes/chills 2s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Enhanced Frozen,NOT PUBLISHED,15 yd exploding ice crystals,NOT PUBLISHED,4s fuse,Below 50% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Cold Snap,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Frontal cleave,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,Jailer Affix,NOT PUBLISHED,60 yd radius,NOT PUBLISHED,Instant,Below 50% HP (traps for 2.5s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,Teleport Attack,NOT PUBLISHED,Target >15 yd away,NOT PUBLISHED,Instant,Player >15 yd away (teleports & cleaves),https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,Arcane Volley,NOT PUBLISHED,Target >25 yd away,NOT PUBLISHED,Instant,If minions summoned and player >25 yd away,https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,March of the Black King,NOT PUBLISHED,Frontal 3-hit AoE cleave,NOT PUBLISHED,3-swing sequence (CC immune),Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,Summon Skeletons,NOT PUBLISHED,Surrounding boss,NOT PUBLISHED,Instant,Combat default (up to 10 skeletons),https://maxroll.gg/d3/resources/rift-guardians-explained
+Crusader King,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Ember,NOT PUBLISHED,NOT PUBLISHED,Teleporter Affix,NOT PUBLISHED,Nearby ground,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Ember,NOT PUBLISHED,NOT PUBLISHED,Meteor,NOT PUBLISHED,Large ground circle,NOT PUBLISHED,2s delay,Combat default (heavy Fire damage),https://maxroll.gg/d3/resources/rift-guardians-explained
+Ember,NOT PUBLISHED,NOT PUBLISHED,Summon Lunatics,NOT PUBLISHED,Surrounding boss,NOT PUBLISHED,Instant,Below 95% HP (summons 3 exploding Fallen Lunatics),https://maxroll.gg/d3/resources/rift-guardians-explained
+Ember,NOT PUBLISHED,NOT PUBLISHED,Summon Shamans,NOT PUBLISHED,Surrounding boss,NOT PUBLISHED,Instant,Below 67% HP (summons 2 Shamans; resumes Lunatics <25% HP),https://maxroll.gg/d3/resources/rift-guardians-explained
+Ember,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Erethon,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range (can critically hit),https://maxroll.gg/d3/resources/rift-guardians-explained
+Erethon,NOT PUBLISHED,NOT PUBLISHED,Poison Volley,NOT PUBLISHED,3 Poison bolts,NOT PUBLISHED,Instant,Targets closest player,https://maxroll.gg/d3/resources/rift-guardians-explained
+Erethon,NOT PUBLISHED,NOT PUBLISHED,Poison Nova,NOT PUBLISHED,20 yd AoE,NOT PUBLISHED,1.5s delay,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Erethon,NOT PUBLISHED,NOT PUBLISHED,Dash,NOT PUBLISHED,Straight line charge,NOT PUBLISHED,Instant,Target outside melee (knocks back),https://maxroll.gg/d3/resources/rift-guardians-explained
+Erethon,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Eskandiel,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Eskandiel,NOT PUBLISHED,NOT PUBLISHED,Arcane Enchanted Affix,NOT PUBLISHED,25 yd rotating beam,NOT PUBLISHED,2s arming delay (10s duration),Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Eskandiel,NOT PUBLISHED,NOT PUBLISHED,Wave,NOT PUBLISHED,40 yd moving wave,NOT PUBLISHED,Instant,Combat default (slows and knocks back),https://maxroll.gg/d3/resources/rift-guardians-explained
+Eskandiel,NOT PUBLISHED,NOT PUBLISHED,Soul Rush,NOT PUBLISHED,Targeted Cold AoE,NOT PUBLISHED,Instant,Random player,https://maxroll.gg/d3/resources/rift-guardians-explained
+Eskandiel,NOT PUBLISHED,NOT PUBLISHED,Summon Skeletons,NOT PUBLISHED,Surrounding area,NOT PUBLISHED,Instant,Accompanies Wave attack (up to 10 skeletons),https://maxroll.gg/d3/resources/rift-guardians-explained
+Eskandiel,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Double Swing,NOT PUBLISHED,Melee range,NOT PUBLISHED,Rapid 2-hit,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Ratnado,NOT PUBLISHED,Two 10 yd radius tornadoes,NOT PUBLISHED,Instant,"Combat default (Poison DoT, explodes after 6s)",https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Shield Dome,NOT PUBLISHED,35 yd circle (impassable for 10s),NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Dig,NOT PUBLISHED,Target >15 yd away,NOT PUBLISHED,Burrow delay,Player >15 yd away,https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Ratlings,NOT PUBLISHED,Surrounding boss,NOT PUBLISHED,Instant,On taking damage (up to 20 ratlings),https://maxroll.gg/d3/resources/rift-guardians-explained
+Hamelin,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Fast & Teleport Affixes,NOT PUBLISHED,Self / nearby,NOT PUBLISHED,Instant,"Combat default (+40% move, +20% attack)",https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range (Fire & Physical),NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Slam,NOT PUBLISHED,20 yd AoE (knocks back),NOT PUBLISHED,Instant,Players within 20 yd,https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Spin,NOT PUBLISHED,11 yd AoE,NOT PUBLISHED,Instant,Players within 11 yd,https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Fire Spin,NOT PUBLISHED,11 yd spin + 10 Mortar shells,NOT PUBLISHED,Spin channel,Below 70% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Fire Nova,NOT PUBLISHED,100 yd projectile nova,NOT PUBLISHED,Jump delay,"Below 50% HP (jumps, lands, erupts nova)",https://maxroll.gg/d3/resources/rift-guardians-explained
+Infernal Maiden,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Josh Mosqueira,NOT PUBLISHED,NOT PUBLISHED,"Electrified, Orbiter, Wormhole & Vortex Affixes",NOT PUBLISHED,360 sparks; 5/3 yd orbs; 6 yd portal; 50 yd vortex,NOT PUBLISHED,Instant,Combat default / on hit,https://maxroll.gg/d3/resources/rift-guardians-explained
+Josh Mosqueira,NOT PUBLISHED,NOT PUBLISHED,Leap,NOT PUBLISHED,"Target >15 yd away (stuns, Physical)",NOT PUBLISHED,Instant (CC immune),Player >15 yd away,https://maxroll.gg/d3/resources/rift-guardians-explained
+Josh Mosqueira,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Lord of Bells,NOT PUBLISHED,NOT PUBLISHED,Electrified Affix,NOT PUBLISHED,360 degrees crawling sparks,0.1s internal,Instant,On taking damage,https://maxroll.gg/d3/resources/rift-guardians-explained
+Lord of Bells,NOT PUBLISHED,NOT PUBLISHED,Illusionist Affix,NOT PUBLISHED,Surrounding area,NOT PUBLISHED,Instant,Below 50% HP (summons bovine clones with 5% HP),https://maxroll.gg/d3/resources/rift-guardians-explained
+Lord of Bells,NOT PUBLISHED,NOT PUBLISHED,Lightning Pool,NOT PUBLISHED,10 yd pool,NOT PUBLISHED,Instant,Combat default (Lightning DoT pool),https://maxroll.gg/d3/resources/rift-guardians-explained
+Lord of Bells,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Waller Affix,NOT PUBLISHED,Surrounds target (lasts 6s),NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Melee Smash,NOT PUBLISHED,Frontal melee AoE,NOT PUBLISHED,Wind-up smash,In melee range (massive Physical damage),https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Fan of Chains,NOT PUBLISHED,Cone targeting >15 yd away,NOT PUBLISHED,Instant,Below 75% HP (player >15 yd away),https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Hook,NOT PUBLISHED,Long range straight line,NOT PUBLISHED,Instant,Below 50% HP (drags player into Melee Smash),https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Charge,NOT PUBLISHED,Straight line charge,NOT PUBLISHED,Breaks CC on cast,Target outside melee,https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Fire Mark,NOT PUBLISHED,Ground Fire AoE,NOT PUBLISHED,Instant,Combat default (Fire DoT for 15s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Man Carver,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Orlash,NOT PUBLISHED,NOT PUBLISHED,Waller Affix,NOT PUBLISHED,Surrounds target (lasts 2.5s),NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Orlash,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Orlash,NOT PUBLISHED,NOT PUBLISHED,Lightning Breath,NOT PUBLISHED,Channeled stream (20 projectiles),NOT PUBLISHED,Channeled beam,Tracks closest player,https://maxroll.gg/d3/resources/rift-guardians-explained
+Orlash,NOT PUBLISHED,NOT PUBLISHED,Illusionist,NOT PUBLISHED,Surrounding area,NOT PUBLISHED,Instant,Default (2 clones); Below 50% HP (3 clones; cast breath twice),https://maxroll.gg/d3/resources/rift-guardians-explained
+Orlash,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perdition,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Frontal cleave,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perdition,NOT PUBLISHED,NOT PUBLISHED,Blade Shurikens,NOT PUBLISHED,360 degrees fan of blades,NOT PUBLISHED,2s channel,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perdition,NOT PUBLISHED,NOT PUBLISHED,Blink Strike,NOT PUBLISHED,Long-range teleport strike,~10s,Wind-up charge,Combat default; automatically triggered at 50% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perdition,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perendi,NOT PUBLISHED,NOT PUBLISHED,Extra Fast Affix,NOT PUBLISHED,"Self (+40% move, +20% attack)",Permanent buff,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perendi,NOT PUBLISHED,NOT PUBLISHED,Melee Attack / Slam,NOT PUBLISHED,Massive Physical ground slam,NOT PUBLISHED,Heavy arm raise,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Perendi,NOT PUBLISHED,NOT PUBLISHED,Summon Armored Destroyer,NOT PUBLISHED,Surrounding area (up to 10),NOT PUBLISHED,Instant,Combat default (spawns from sky),https://maxroll.gg/d3/resources/rift-guardians-explained
+Perendi,NOT PUBLISHED,NOT PUBLISHED,Rocks,NOT PUBLISHED,20 yd AoE,NOT PUBLISHED,2s delay,Combat default (3 ticks of Physical damage),https://maxroll.gg/d3/resources/rift-guardians-explained
+Perendi,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Raiziel,NOT PUBLISHED,NOT PUBLISHED,Lightning Attack,NOT PUBLISHED,Melee range (single target),NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Raiziel,NOT PUBLISHED,NOT PUBLISHED,Holy Bomb,NOT PUBLISHED,Arc above 25% HP; 360 degrees nova below 25% HP,NOT PUBLISHED,Instant,Below 75% HP (arc); Below 25% HP (full nova),https://maxroll.gg/d3/resources/rift-guardians-explained
+Raiziel,NOT PUBLISHED,NOT PUBLISHED,Lightning Shower,NOT PUBLISHED,Orb releasing charged bolts,NOT PUBLISHED,Instant,Combat default (cast frequently below 75% HP),https://maxroll.gg/d3/resources/rift-guardians-explained
+Raiziel,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Rime,NOT PUBLISHED,NOT PUBLISHED,Teleporter Affix,NOT PUBLISHED,Nearby ground,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Rime,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Rime,NOT PUBLISHED,NOT PUBLISHED,Frost Volley,NOT PUBLISHED,3 Frostbolts targeting random player,NOT PUBLISHED,Instant,Target outside melee,https://maxroll.gg/d3/resources/rift-guardians-explained
+Rime,NOT PUBLISHED,NOT PUBLISHED,Frost Pools,NOT PUBLISHED,Multiple small circles (Cold DoT),NOT PUBLISHED,Instant,Combat default (rapid succession),https://maxroll.gg/d3/resources/rift-guardians-explained
+Rime,NOT PUBLISHED,NOT PUBLISHED,Frost Ring,NOT PUBLISHED,Large ground blue circle,NOT PUBLISHED,Instant,Combat default (heavy Cold damage),https://maxroll.gg/d3/resources/rift-guardians-explained
+Rime,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Sand Shaper,NOT PUBLISHED,NOT PUBLISHED,Teleporter Affix,NOT PUBLISHED,Nearby ground,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Sand Shaper,NOT PUBLISHED,NOT PUBLISHED,Fireball,NOT PUBLISHED,Small AoE on impact,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Sand Shaper,NOT PUBLISHED,NOT PUBLISHED,Slow Time,NOT PUBLISHED,Large time bubble,NOT PUBLISHED,Instant,"Below 75% HP (-30% Attack Speed, -80% Move Speed)",https://maxroll.gg/d3/resources/rift-guardians-explained
+Sand Shaper,NOT PUBLISHED,NOT PUBLISHED,Energy Twister,NOT PUBLISHED,Moving Arcane tornado,NOT PUBLISHED,Instant,Below 75% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+Sand Shaper,NOT PUBLISHED,NOT PUBLISHED,Rocks,NOT PUBLISHED,20 yd AoE,NOT PUBLISHED,2s delay,Between 65% and 40% HP only (3 ticks Physical),https://maxroll.gg/d3/resources/rift-guardians-explained
+Sand Shaper,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Saxtris,NOT PUBLISHED,NOT PUBLISHED,Vortex Affix,NOT PUBLISHED,50 yd pull,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Saxtris,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Saxtris,NOT PUBLISHED,NOT PUBLISHED,Energy Twister,NOT PUBLISHED,Moving Arcane tornado,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Saxtris,NOT PUBLISHED,NOT PUBLISHED,Summon,NOT PUBLISHED,Surrounding boss (13 minions),Frequent,Instant,"Below 75% HP (summons Swarms or Electric Eels, knockback immune)",https://maxroll.gg/d3/resources/rift-guardians-explained
+Saxtris,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Stonesinger,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Stonesinger,NOT PUBLISHED,NOT PUBLISHED,Fissure,NOT PUBLISHED,Turret area (fires Mortars),NOT PUBLISHED,Arm plant delay (interruptible),Combat default (turret lasts 20s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Stonesinger,NOT PUBLISHED,NOT PUBLISHED,Slam,NOT PUBLISHED,Melee AoE (uppercut),NOT PUBLISHED,Instant,In melee range (knocks back),https://maxroll.gg/d3/resources/rift-guardians-explained
+Stonesinger,NOT PUBLISHED,NOT PUBLISHED,Charge,NOT PUBLISHED,Straight line charge,NOT PUBLISHED,Instant,Target outside melee (damages all passed),https://maxroll.gg/d3/resources/rift-guardians-explained
+Stonesinger,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Teleporter & Knockback Affixes,NOT PUBLISHED,Nearby ground / on hit,NOT PUBLISHED,Instant,"Combat default (80% slow, ~30 yd knockback)",https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Blood Star,NOT PUBLISHED,Homing projectile,NOT PUBLISHED,Instant,Combat default (inflicts -35% Armor debuff),https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Fireball Volley,NOT PUBLISHED,Wide cone (3 slow fireballs),NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Backward Dash,NOT PUBLISHED,Away from players,NOT PUBLISHED,Instant,Players close (ignores map layout),https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Geysers,NOT PUBLISHED,4 ground geysers,NOT PUBLISHED,2s charge-up,Below 60% HP (deals Physical damage for 3s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Tethrys,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+The Binder,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+The Binder,NOT PUBLISHED,NOT PUBLISHED,Poison Volley,NOT PUBLISHED,2 Poison projectiles,NOT PUBLISHED,Instant,Combat default (high single target damage),https://maxroll.gg/d3/resources/rift-guardians-explained
+The Binder,NOT PUBLISHED,NOT PUBLISHED,Poison Spit,NOT PUBLISHED,30 yd range in 160 degrees frontal cone,NOT PUBLISHED,Instant,Below 65% HP (heavy Poison damage),https://maxroll.gg/d3/resources/rift-guardians-explained
+The Binder,NOT PUBLISHED,NOT PUBLISHED,Summon Spiderlings,NOT PUBLISHED,Surrounding boss (max 10 minions),NOT PUBLISHED,Instant,Below 85% HP (summons 5 Poison spiderlings),https://maxroll.gg/d3/resources/rift-guardians-explained
+The Binder,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Poison Enchanted Affix,NOT PUBLISHED,3 yd wide cross trails (lasts 6s),NOT PUBLISHED,2s trigger delay,Below 25% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Summon Slimes,NOT PUBLISHED,Surrounding area (up to 10 slimes),NOT PUBLISHED,Instant,Combat default (ranged Poison slimes),https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Backward Dash,NOT PUBLISHED,Away from players,NOT PUBLISHED,Instant,Players close (ignores layout),https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Poison Attack,NOT PUBLISHED,3 wandering bolts,NOT PUBLISHED,Instant,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Poison Circle,NOT PUBLISHED,20 yd circle around boss,NOT PUBLISHED,Detonation delay,Below 75% HP,https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Poison Pools,NOT PUBLISHED,Large AoE pools,NOT PUBLISHED,Instant,Below 75% HP (heavy Poison DoT),https://maxroll.gg/d3/resources/rift-guardians-explained
+The Choker,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained
+Vesalius,NOT PUBLISHED,NOT PUBLISHED,Wormhole & Frozen Pulse Affixes,NOT PUBLISHED,Two 6 yd portals; 15 yd tracking pulse,NOT PUBLISHED,1s transfer; 1.5s pulse delay,Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Vesalius,NOT PUBLISHED,NOT PUBLISHED,Blind Immunity,NOT PUBLISHED,Self,Permanent passive,Instant,Always active,https://maxroll.gg/d3/resources/rift-guardians-explained
+Vesalius,NOT PUBLISHED,NOT PUBLISHED,Gateway,NOT PUBLISHED,Relocates anywhere on floor,NOT PUBLISHED,Sinks into ground (interruptible),Combat default,https://maxroll.gg/d3/resources/rift-guardians-explained
+Vesalius,NOT PUBLISHED,NOT PUBLISHED,Arcane Volley,NOT PUBLISHED,4 rapid bolts in small AoE,NOT PUBLISHED,Arm stretch (interruptible),All players >10 yd away,https://maxroll.gg/d3/resources/rift-guardians-explained
+Vesalius,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT APPLICABLE,NOT APPLICABLE,NOT APPLICABLE,NOT APPLICABLE,None (Vesalius uniquely lacks Force Teleport),https://maxroll.gg/d3/resources/rift-guardians-explained
+Voracity,NOT PUBLISHED,NOT PUBLISHED,Melee Attack,NOT PUBLISHED,Melee range,NOT PUBLISHED,Instant,In melee range,https://maxroll.gg/d3/resources/rift-guardians-explained
+Voracity,NOT PUBLISHED,NOT PUBLISHED,Gas Clouds,NOT PUBLISHED,Two 20 yd gas clouds (up to 12 total),10s,Instant,Combat default (stacking Poison DoT for 75s),https://maxroll.gg/d3/resources/rift-guardians-explained
+Voracity,NOT PUBLISHED,NOT PUBLISHED,Bile Spew,NOT PUBLISHED,Small AoE cone,NOT PUBLISHED,2s spray duration,Mid-range target,https://maxroll.gg/d3/resources/rift-guardians-explained
+Voracity,NOT PUBLISHED,NOT PUBLISHED,Summon Slimes,NOT PUBLISHED,Spawns 2 spitting slimes (max 4),NOT PUBLISHED,Instant,Below 65% HP (player >10 yd away),https://maxroll.gg/d3/resources/rift-guardians-explained
+Voracity,NOT PUBLISHED,NOT PUBLISHED,Force Teleport,NOT PUBLISHED,100 yd search range,30s,Instant,No target within 100 yd or line of sight lost,https://maxroll.gg/d3/resources/rift-guardians-explained

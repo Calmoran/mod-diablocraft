@@ -1,0 +1,106 @@
+# 0020 aio-server-security
+#
+# Applies to the Rochet2/AIO checkout at the pin in modules-commit.txt
+# (087e279cdf90ff5d4343dc1569e9d3c3c5cc8548), NOT to the core tree. Paths are
+# relative to the AIO repo root, so apply it with:
+#     git -C <aio-checkout> apply <this file>
+# In this repo run mod-diablocraft/scripts/build_live_aio.sh, which exports the
+# pinned AIO_Server and applies every core-patches/*-aio-*.patch in order.
+#
+# One purpose: gate the .aio admin switches (G2) and bound incoming AIO block
+# work (G1). No behaviour change beyond those two rules. This is a patch against
+# a pinned third-party module, not a fork (docs/design/00-architecture.md 8).
+--- a/AIO_Server/AIO.lua
++++ b/AIO_Server/AIO.lua
+@@ -196,6 +196,15 @@ local AIO_MSG_CACHE_SPACE = 5e5 -- bytes -- default 5e5
+ -- Attempts to avoid consuming ram and storing incomplete messages
+ local AIO_MSG_CACHE_TIME = 15*1000 -- ms -- default 15*1000
+ 
++-- Torment security G1: bound what one message and one player can ask the world
++-- thread to do. A normal AIO message (our screens send one block per AIO.Handle)
++-- is far below these; a modified client flooding blocks is dropped whole, never
++-- queued. The block cap is per message; the bucket is per player per second.
++-- Server side only.
++local AIO_MAX_BLOCKS_PER_MSG = 100
++local AIO_MSG_BUDGET_BURST = 200
++local AIO_MSG_BUDGET_RATE = 100 -- blocks per second, per player
++
+ -- Delay between checking for outdated messages
+ local AIO_MSG_CACHE_DELAY = 5*1000 -- ms -- default 5*1000
+ 
+@@ -673,6 +682,36 @@ local curmsg = ''
+ local function AIO_Timeout()
+     error(string.format("AIO Timeout. Your code ran over %s instructions with message:\n%s", ''..AIO_TIMEOUT_INSTRUCTIONCOUNT, (curmsg or 'nil')))
+ end
++
++-- Torment security G1: per-player token bucket over incoming blocks. Server
++-- only. AIO_GetTime is os.time on the server, so the rate is blocks per second.
++-- A player over budget is dropped, never queued.
++local AIO_msgBudget = {}
++local function AIO_MsgBudgetAllow(player, blocks)
++    if not AIO_SERVER or not player then return true end
++    local guid = player:GetGUIDLow()
++    if not guid then return true end
++    local now = AIO_GetTime()
++    local b = AIO_msgBudget[guid]
++    if not b then
++        b = {tokens = AIO_MSG_BUDGET_BURST, last = now}
++        AIO_msgBudget[guid] = b
++    end
++    local elapsed = now - b.last
++    if elapsed > 0 then
++        b.tokens = math.min(AIO_MSG_BUDGET_BURST, b.tokens + elapsed * AIO_MSG_BUDGET_RATE)
++        b.last = now
++    end
++    if b.tokens < blocks then return false end
++    b.tokens = b.tokens - blocks
++    return true
++end
++if AIO_SERVER and AIO_MAIN_LUA_STATE then
++    RegisterPlayerEvent(4, function(_, player)
++        if player then AIO_msgBudget[player:GetGUIDLow()] = nil end
++    end)
++end
++
+ local function _AIO_ParseBlocks(msg, player)
+     if AIO_SERVER and AIO_TIMEOUT_INSTRUCTIONCOUNT > 0 then
+         curmsg = msg
+@@ -691,6 +730,26 @@ local function _AIO_ParseBlocks(msg, player)
+         return
+     end
+ 
++    -- Torment security G1: cap blocks per message and the per-player rate. Both
++    -- drop the whole message rather than queueing it. The parse hook set above
++    -- is cleared first: an early return that skipped it would leave the timeout
++    -- hook installed over unrelated code.
++    local function dropAndClear()
++        if AIO_SERVER and AIO_TIMEOUT_INSTRUCTIONCOUNT > 0 then
++            debug.sethook()
++        end
++    end
++    if AIO_SERVER and #data > AIO_MAX_BLOCKS_PER_MSG then
++        AIO_debug("Received message over the block cap", #data)
++        dropAndClear()
++        return
++    end
++    if AIO_SERVER and not AIO_MsgBudgetAllow(player, #data) then
++        AIO_debug("AI message budget exceeded", #data)
++        dropAndClear()
++        return
++    end
++
+     -- Handle parsing of all blocks
+     for i = 1, #data do
+         -- Using pcall here so errors wont stop handling other blocks in the msg
+@@ -1237,6 +1296,11 @@ if AIO_MAIN_LUA_STATE then
+ 
+     if AIO_SERVER then
+         local function OnCommand(event, player, msg)
++            -- Torment security G2: the .aio switches are admin-only (GM level 3).
++            -- Everyone else falls through to the core's normal "no such command".
++            if not player or not player.GetGMRank or player:GetGMRank() < 3 then
++                return true
++            end
+             msg = msg:lower()
+             if ssub(msg, 1, 3) ~= 'aio' then
+                 return

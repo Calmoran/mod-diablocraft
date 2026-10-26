@@ -1,0 +1,24 @@
+d3_skill,wow_spell_name,wow_spell_id,icon_name,match_quality,notes,source_url
+Frenzy,Bloodthirst,23881,spell_nature_bloodlust,good,Fury warrior signature attack; rapid ferocious bloody strike animation and blood-crazed roaring face icon closely match Frenzy's building attack-speed rampage.,https://wotlkdb.com/?spell=23881
+Weapon Throw,Heroic Throw,57755,ability_warrior_heroicthrow,good,Exact 1:1 match for a thrown spinning weapon projectile animation and thrown axe icon.,https://wotlkdb.com/?spell=57755
+Bash,Slam,1464,ability_warrior_decisivestrike,good,Heavy overhead two-handed crushing smash downward; icon shows a brutal overhead weapon strike.,https://wotlkdb.com/?spell=1464
+Cleave,Cleave,845,ability_warrior_cleave,good,"Exact 1:1 match in name, wide sweeping frontal weapon arc animation, and cleaving axe icon.",https://wotlkdb.com/?spell=845
+Whirlwind,Whirlwind,1680,ability_whirlwind,good,"Exact 1:1 match in name, 360-degree spinning weapon cyclone animation, and spinning blade icon.",https://wotlkdb.com/?spell=1680
+Ancient Spear,Shattering Throw,64382,ability_warrior_shatteringthrow,good,Warrior's dedicated thrown spear/polearm missile visual; icon depicts a hurled piercing spear.,https://wotlkdb.com/?spell=64382
+Seismic Slam,Shockwave,46968,ability_warrior_shockwave,good,Exact visual match for slamming weapon into the ground to send a frontal cone of ruptured earth and debris forward; icon depicts ruptured ground shockwave.,https://wotlkdb.com/?spell=46968
+Hammer of the Ancients,Hammer of the Righteous,53595,ability_paladin_hammeroftherighteous,good,Calls down a giant glowing mystical golden warhammer with ground-shattering impact; icon shows a massive golden warhammer bathed in divine light.,https://wotlkdb.com/?spell=53595
+Rend,Rend,772,ability_gouge,good,"Exact 1:1 match in name, weapon bleed theme, laceration visual, and bleeding slash icon.",https://wotlkdb.com/?spell=772
+Sprint,Sprint,2983,ability_rogue_sprint,good,"Exact 1:1 match in name, wind-trail burst of speed animation, and running boot icon. No native 3.3.5a Warrior spell provides a non-targeted sprint visual.",https://wotlkdb.com/?spell=2983
+Ignore Pain,Shield Wall,871,ability_warrior_shieldwall,good,Glowing protective fortress barrier surrounding the warrior matches Ignore Pain's impenetrable damage-mitigation visual and defensive role.,https://wotlkdb.com/?spell=871
+Ground Stomp,War Stomp,20549,ability_warstomp,good,"Exact 1:1 match for foot stomping the earth, producing a radial dust shockwave that stuns surrounding foes with overhead swirlies; icon depicts a stomping foot causing ground ripples.",https://wotlkdb.com/?spell=20549
+Leap,Heroic Leap,6544,ability_heroicleap,good,"Exact 1:1 match in name, leap-through-the-air jump and ground impact visual, and leaping warrior icon.",https://wotlkdb.com/?spell=6544
+Furious Charge,Charge,100,ability_warrior_charge,good,High-speed charging bull-rush into target with impact trail; icon shows an armored warrior charging head-on.,https://wotlkdb.com/?spell=100
+Avalanche,Avalanche,55216,spell_frost_arcticwinds,rough,"Matches name and falling cascade area-of-effect visual, though visual and icon have a frost/snow theme rather than physical boulders.",https://wotlkdb.com/?spell=55216
+Overpower,Overpower,7384,ability_meleedamage,good,Exact name match; ferocious melee strike with crossed glowing weapon impact icon.,https://wotlkdb.com/?spell=7384
+Revenge,Revenge,6572,ability_warrior_revenge,good,"Exact 1:1 match in name, reactive counter-attack concept, parry-and-strike icon, and spinning multi-target animation.",https://wotlkdb.com/?spell=6572
+War Cry,Commanding Shout,469,ability_warrior_rallyingcry,good,Roaring shout animation with an expanding golden/white sonic ring; icon depicts a warrior shouting to the heavens (Ability_Warrior_RallyingCry).,https://wotlkdb.com/?spell=469
+Battle Rage,Battle Shout,6673,ability_warrior_battleshout,good,Roaring shout animation with crimson battle fury burst; icon depicts a roaring warrior face.,https://wotlkdb.com/?spell=6673
+Threatening Shout,Demoralizing Shout,1160,ability_warrior_warcry,good,Fierce intimidating roar sending debuff waves to surrounding enemies; icon shows an intimidating shouting warrior face (Ability_Warrior_WarCry).,https://wotlkdb.com/?spell=1160
+Wrath of the Berserker,Avatar,19135,ability_racial_avatar,good,"Transforms the character into a towering, glowing stone/titan giant with increased size, matching Wrath of the Berserker's giant form.",https://wotlkdb.com/?spell=19135
+Call of the Ancients,none,,none,none,"No 3.3.5a spell summons three ancient Barbarian spirits (Talic, Korlic, Madawc) or provides a matching spectral ancestor warrior visual and icon.",
+Earthquake,Earthquake,19798,spell_nature_earthquake,good,"Exact name match, earth-shattering tremor and ground upheaval animation, and fissuring earth icon (Spell_Nature_Earthquake).",https://wotlkdb.com/?spell=19798

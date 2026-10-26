@@ -1,0 +1,2 @@
+map_id,area_id,x,y,z,o,placement_source,source_guid,guid_source
+530,3703,-2084.4683,5504.3228,50.597404,5.964404,the designer .gps 2026-09-26 Shattrath City phase 1,8000112,PM live acore_world collision audit 2026-09-26; 8000112-8000121 free in creature and dc_area_source and dc_area_spawn

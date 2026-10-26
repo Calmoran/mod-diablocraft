@@ -1,0 +1,15 @@
+-- D3 spell tooltips are the stock record's now.
+--
+-- This file used to ship the tokenised sentences to every client and redraw the
+-- stock tooltip on SetAction/SetHyperlink: it cleared the native lines, added the
+-- D3 description and a custom "Rune: <name>" line, and coloured the title by
+-- element. The record writer now puts the numbers in the spell fields, the D3
+-- sentence in Description_Lang_enUS, the rune name in Rank_Lang_enUS
+-- ("Rune: <name>") and the element inside the sentence, so the stock client
+-- already draws the whole tooltip: native text, the variant at the top right,
+-- and the native layout and spacing.
+--
+-- There is deliberately no server query, no catalogue push, no element table, no
+-- custom Rune line and no title colour here. Touching the tooltip would take the
+-- native rank and text away. The optional metadata-driven title colour is a
+-- separate Future task.

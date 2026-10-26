@@ -1,0 +1,145 @@
+d3_skill,d3_rune,wow_spell_name,wow_spell_id,icon_name,match_quality,notes,source_url
+Hungering Arrow,,Arcane Shot,3044,ability_impalingbolt,good,a single seeking arrow shot at one enemy; Arcane Shot is the stock arrow shot,client-patch/dbc/Spell.dbc id 3044 ; icon from SpellIcon.dbc
+Hungering Arrow,Serrated Arrow,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Hungering Arrow,Shatter Shot,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Hungering Arrow,Devouring Arrow,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Hungering Arrow,Puncturing Arrow,Arcane Shot,3044,ability_impalingbolt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3044 ; icon from SpellIcon.dbc
+Hungering Arrow,Spray of Teeth,Arcane Shot,3044,ability_impalingbolt,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3044 ; icon from SpellIcon.dbc
+Entangling Shot,,Concussive Shot,5116,spell_frost_stun,good,a shot that slows its target; Concussive Shot is the stock slowing shot (the entangling rope is the module's),client-patch/dbc/Spell.dbc id 5116 ; icon from SpellIcon.dbc
+Entangling Shot,Heavy Burden,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Entangling Shot,Chain Gang,Concussive Shot,5116,spell_frost_stun,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5116 ; icon from SpellIcon.dbc
+Entangling Shot,Shock Collar,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Entangling Shot,Justice is Served,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Entangling Shot,Bounty Hunter,Concussive Shot,5116,spell_frost_stun,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 5116 ; icon from SpellIcon.dbc
+Bolas,,Explosive Shot,60053,ability_hunter_explosiveshot,good,a shot that explodes after a short delay for Fire damage; Explosive Shot is the same read,client-patch/dbc/Spell.dbc id 60053 ; icon from SpellIcon.dbc
+Bolas,Volatile Explosives,Explosive Shot,60053,ability_hunter_explosiveshot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 60053 ; icon from SpellIcon.dbc
+Bolas,Freezing Strike,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Bolas,Thunder Ball,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Bolas,Bitter Pill,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Bolas,Imminent Doom,Explosive Shot,60053,ability_hunter_explosiveshot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 60053 ; icon from SpellIcon.dbc
+Evasive Fire,,Multi-Shot,2643,ability_upgrademoonglaive,good,a spread of bolts at the primary enemy and two more; Multi-Shot fans the same way (the backflip is the module's),client-patch/dbc/Spell.dbc id 2643 ; icon from SpellIcon.dbc
+Evasive Fire,Hardened,Multi-Shot,2643,ability_upgrademoonglaive,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 2643 ; icon from SpellIcon.dbc
+Evasive Fire,Covering Fire,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Evasive Fire,Parting Gift,Multi-Shot,2643,ability_upgrademoonglaive,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 2643 ; icon from SpellIcon.dbc
+Evasive Fire,Surge,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Evasive Fire,Focus,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Grenade,,Explosive Trap,13813,spell_fire_selfdestruct,fair,a thrown explosive that bounces and bursts for Fire damage; Explosive Trap carries the stock grenade-bomb icon and burst,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Grenade,Cold Grenade,Frost Trap,13809,spell_frost_freezingbreath,fair,Cold rune: Frost Trap is the closest stock Cold explosive device,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Grenade,Cluster Grenades,Explosive Trap,13813,spell_fire_selfdestruct,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Grenade,Grenade Cache,Explosive Trap,13813,spell_fire_selfdestruct,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Grenade,Tinkerer,Explosive Trap,13813,spell_fire_selfdestruct,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Grenade,Stun Grenade,Chain Lightning,421,spell_nature_chainlightning,fair,Lightning rune: Chain Lightning is the closest stock Lightning explosive device,client-patch/dbc/Spell.dbc id 421 ; icon from SpellIcon.dbc
+Impale,,Deadly Throw,26679,inv_throwingknife_06,good,a thrown knife at one enemy; Deadly Throw is the stock thrown knife,client-patch/dbc/Spell.dbc id 26679 ; icon from SpellIcon.dbc
+Impale,Overpenetration,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Impale,Impact,Deadly Throw,26679,inv_throwingknife_06,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 26679 ; icon from SpellIcon.dbc
+Impale,Chemical Burn,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Impale,Ricochet,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Impale,Grievous Wounds,Deadly Throw,26679,inv_throwingknife_06,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 26679 ; icon from SpellIcon.dbc
+Rapid Fire,,Rapid Fire,3045,ability_hunter_runningshot,fair,"a sustained burst of arrows; Rapid Fire is the stock buff look, the channelled fire itself is the module's",client-patch/dbc/Spell.dbc id 3045 ; icon from SpellIcon.dbc
+Rapid Fire,Bombardment,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Rapid Fire,High Velocity,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Rapid Fire,Fire Support,Rapid Fire,3045,ability_hunter_runningshot,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3045 ; icon from SpellIcon.dbc
+Rapid Fire,Withering Fire,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Rapid Fire,Frost Shots,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Chakram,,Heroic Throw,57755,inv_axe_66,fair,a swirling thrown disc along a path; Heroic Throw is the closest stock thrown weapon,client-patch/dbc/Spell.dbc id 57755 ; icon from SpellIcon.dbc
+Chakram,Twin Chakrams,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Chakram,Boomerang,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Chakram,Serpentine,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Chakram,Razor Disk,Heroic Throw,57755,inv_axe_66,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 57755 ; icon from SpellIcon.dbc
+Chakram,Shuriken Cloud,Heroic Throw,57755,inv_axe_66,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 57755 ; icon from SpellIcon.dbc
+Elemental Arrow,,Fireball,133,spell_fire_flamebolt,fair,"an arrow of an element (Fire at base); Fireball is the stock fire bolt, the arrow flight is the module's",client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Elemental Arrow,Frost Arrow,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Elemental Arrow,Ball Lightning,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Elemental Arrow,Immolation Arrow,Fireball,133,spell_fire_flamebolt,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Elemental Arrow,Nether Tentacles,Arcane Shot,3044,ability_impalingbolt,fair,Physical rune: Arcane Shot is the closest stock Physical short bolt,client-patch/dbc/Spell.dbc id 3044 ; icon from SpellIcon.dbc
+Elemental Arrow,Lightning Bolts,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Caltrops,,Frost Trap,13809,spell_frost_freezingbreath,fair,a trap field that slows enemies near it; Frost Trap is the stock slowing ground trap,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Caltrops,Jagged Spikes,Frost Trap,13809,spell_frost_freezingbreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Caltrops,Hooked Spines,Frost Trap,13809,spell_frost_freezingbreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Caltrops,Torturous Ground,Frost Trap,13809,spell_frost_freezingbreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Caltrops,Carved Stakes,Frost Trap,13809,spell_frost_freezingbreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Caltrops,Bait the Trap,Frost Trap,13809,spell_frost_freezingbreath,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Smoke Screen,,Smoke Bomb,7964,ability_hibernation,good,the caster vanishes in a cloud of smoke; Smoke Bomb is the same,client-patch/dbc/Spell.dbc id 7964 ; icon from SpellIcon.dbc
+Smoke Screen,Vanishing Powder,Smoke Bomb,7964,ability_hibernation,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 7964 ; icon from SpellIcon.dbc
+Smoke Screen,Lingering Fog,Smoke Bomb,7964,ability_hibernation,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 7964 ; icon from SpellIcon.dbc
+Smoke Screen,Healing Vapors,Smoke Bomb,7964,ability_hibernation,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 7964 ; icon from SpellIcon.dbc
+Smoke Screen,Special Recipe,Smoke Bomb,7964,ability_hibernation,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 7964 ; icon from SpellIcon.dbc
+Smoke Screen,Displacement,Smoke Bomb,7964,ability_hibernation,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 7964 ; icon from SpellIcon.dbc
+Shadow Power,,Shadow Dance,51713,ability_rogue_shadowdance,fair,the caster is wrapped in shadow for a short buff; Shadow Dance is the closest stock shadow state,client-patch/dbc/Spell.dbc id 51713 ; icon from SpellIcon.dbc
+Shadow Power,Night Bane,Shadow Dance,51713,ability_rogue_shadowdance,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51713 ; icon from SpellIcon.dbc
+Shadow Power,Shadow Glide,Shadow Dance,51713,ability_rogue_shadowdance,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51713 ; icon from SpellIcon.dbc
+Shadow Power,Gloom,Shadow Dance,51713,ability_rogue_shadowdance,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51713 ; icon from SpellIcon.dbc
+Shadow Power,Well of Darkness,Shadow Dance,51713,ability_rogue_shadowdance,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51713 ; icon from SpellIcon.dbc
+Shadow Power,Blood Moon,Shadow Dance,51713,ability_rogue_shadowdance,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51713 ; icon from SpellIcon.dbc
+Vault,,Disengage,781,ability_rogue_feint,fair,an acrobatic leap away; Disengage is the stock hunter back-leap (Vault goes in any direction),client-patch/dbc/Spell.dbc id 781 ; icon from SpellIcon.dbc
+Vault,Trail of Cinders,Disengage,781,ability_rogue_feint,fair,"Fire rune: no stock Fire version of this shape, so it keeps Disengage",client-patch/dbc/Spell.dbc id 781 ; icon from SpellIcon.dbc
+Vault,Acrobatics,Disengage,781,ability_rogue_feint,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 781 ; icon from SpellIcon.dbc
+Vault,Action Shot,Disengage,781,ability_rogue_feint,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 781 ; icon from SpellIcon.dbc
+Vault,Tumble,Disengage,781,ability_rogue_feint,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 781 ; icon from SpellIcon.dbc
+Vault,Rattling Roll,Disengage,781,ability_rogue_feint,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 781 ; icon from SpellIcon.dbc
+Preparation,,Preparation,14185,spell_shadow_antishadow,good,restores spent resources and resets skills; Preparation is the same spell,client-patch/dbc/Spell.dbc id 14185 ; icon from SpellIcon.dbc
+Preparation,Punishment,Preparation,14185,spell_shadow_antishadow,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 14185 ; icon from SpellIcon.dbc
+Preparation,Invigoration,Preparation,14185,spell_shadow_antishadow,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 14185 ; icon from SpellIcon.dbc
+Preparation,Focused Mind,Preparation,14185,spell_shadow_antishadow,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 14185 ; icon from SpellIcon.dbc
+Preparation,Battle Scars,Preparation,14185,spell_shadow_antishadow,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 14185 ; icon from SpellIcon.dbc
+Preparation,Backup Plan,Preparation,14185,spell_shadow_antishadow,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 14185 ; icon from SpellIcon.dbc
+Companion,,Call Pet,883,ability_hunter_beastcall,good,"calls a companion that fights beside the caster; Call Pet is the same read (the five companions are creatures, a summon sheet)",client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Companion,Spider Companion,Call Pet,883,ability_hunter_beastcall,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Companion,Boar Companion,Call Pet,883,ability_hunter_beastcall,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Companion,Wolf Companion,Call Pet,883,ability_hunter_beastcall,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Companion,Bat Companion,Call Pet,883,ability_hunter_beastcall,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Companion,Ferret Companion,Call Pet,883,ability_hunter_beastcall,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 883 ; icon from SpellIcon.dbc
+Marked for Death,,Hunter's Mark,1130,ability_hunter_snipershot,good,marks one enemy; Hunter's Mark is the same,client-patch/dbc/Spell.dbc id 1130 ; icon from SpellIcon.dbc
+Marked for Death,Grim Reaper,Hunter's Mark,1130,ability_hunter_snipershot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1130 ; icon from SpellIcon.dbc
+Marked for Death,Contagion,Hunter's Mark,1130,ability_hunter_snipershot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1130 ; icon from SpellIcon.dbc
+Marked for Death,Valley of Death,Hunter's Mark,1130,ability_hunter_snipershot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1130 ; icon from SpellIcon.dbc
+Marked for Death,Mortal Enemy,Hunter's Mark,1130,ability_hunter_snipershot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1130 ; icon from SpellIcon.dbc
+Marked for Death,Death Toll,Hunter's Mark,1130,ability_hunter_snipershot,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1130 ; icon from SpellIcon.dbc
+Fan of Knives,,Fan of Knives,51723,ability_rogue_fanofknives,good,knives thrown out in a spiral around the caster; Fan of Knives is the same,client-patch/dbc/Spell.dbc id 51723 ; icon from SpellIcon.dbc
+Fan of Knives,Knives Expert,Fire Nova,1535,spell_fire_sealoffire,fair,Fire rune: Fire Nova is the closest stock Fire burst around the caster,client-patch/dbc/Spell.dbc id 1535 ; icon from SpellIcon.dbc
+Fan of Knives,Assassin's Knives,Fan of Knives,51723,ability_rogue_fanofknives,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 51723 ; icon from SpellIcon.dbc
+Fan of Knives,Fan of Daggers,Fire Nova,1535,spell_fire_sealoffire,fair,Fire rune: Fire Nova is the closest stock Fire burst around the caster,client-patch/dbc/Spell.dbc id 1535 ; icon from SpellIcon.dbc
+Fan of Knives,Pinpoint Accuracy,Thunderstorm,51490,spell_shaman_thunderstorm,fair,Lightning rune: Thunderstorm is the closest stock Lightning burst around the caster,client-patch/dbc/Spell.dbc id 51490 ; icon from SpellIcon.dbc
+Fan of Knives,Bladed Armor,Frost Nova,122,spell_frost_frostnova,fair,Cold rune: Frost Nova is the closest stock Cold burst around the caster,client-patch/dbc/Spell.dbc id 122 ; icon from SpellIcon.dbc
+Spike Trap,,Explosive Trap,13813,spell_fire_selfdestruct,good,a trap that lies dormant then explodes in a chain; Explosive Trap is the same read,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Spike Trap,Impaling Spines,Volley,1510,ability_marksmanship,fair,Physical rune: Volley is the closest stock Physical explosive device,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Spike Trap,Echoing Blast,Frost Trap,13809,spell_frost_freezingbreath,fair,Cold rune: Frost Trap is the closest stock Cold explosive device,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Spike Trap,Custom Trigger,Explosive Trap,13813,spell_fire_selfdestruct,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Spike Trap,Scatter,Explosive Trap,13813,spell_fire_selfdestruct,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 13813 ; icon from SpellIcon.dbc
+Spike Trap,Lightning Rod,Chain Lightning,421,spell_nature_chainlightning,fair,Lightning rune: Chain Lightning is the closest stock Lightning explosive device,client-patch/dbc/Spell.dbc id 421 ; icon from SpellIcon.dbc
+Sentry,,Searing Totem,3599,spell_fire_searingtotem,good,a turret that fires at nearby enemies; Searing Totem is the stock firing totem (the turret model is the module's),client-patch/dbc/Spell.dbc id 3599 ; icon from SpellIcon.dbc
+Sentry,Chain of Torment,Searing Totem,3599,spell_fire_searingtotem,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3599 ; icon from SpellIcon.dbc
+Sentry,Impaling Bolt,Searing Totem,3599,spell_fire_searingtotem,fair,"Lightning rune: no stock Lightning version of this shape, so it keeps Searing Totem",client-patch/dbc/Spell.dbc id 3599 ; icon from SpellIcon.dbc
+Sentry,Spitfire Turret,Searing Totem,3599,spell_fire_searingtotem,fair,"Fire rune: no stock Fire version of this shape, so it keeps Searing Totem",client-patch/dbc/Spell.dbc id 3599 ; icon from SpellIcon.dbc
+Sentry,Polar Station,Searing Totem,3599,spell_fire_searingtotem,fair,"Cold rune: no stock Cold version of this shape, so it keeps Searing Totem",client-patch/dbc/Spell.dbc id 3599 ; icon from SpellIcon.dbc
+Sentry,Guardian Turret,Searing Totem,3599,spell_fire_searingtotem,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 3599 ; icon from SpellIcon.dbc
+Vengeance,,Metamorphosis,47241,spell_shadow_demonform,fair,the caster turns into a heavily armed form; Metamorphosis is the stock transform,client-patch/dbc/Spell.dbc id 47241 ; icon from SpellIcon.dbc
+Vengeance,From the Shadows,Metamorphosis,47241,spell_shadow_demonform,fair,"Cold rune: no stock Cold version of this shape, so it keeps Metamorphosis",client-patch/dbc/Spell.dbc id 47241 ; icon from SpellIcon.dbc
+Vengeance,Dark Heart,Metamorphosis,47241,spell_shadow_demonform,fair,"Lightning rune: no stock Lightning version of this shape, so it keeps Metamorphosis",client-patch/dbc/Spell.dbc id 47241 ; icon from SpellIcon.dbc
+Vengeance,Personal Mortar,Metamorphosis,47241,spell_shadow_demonform,fair,"Fire rune: no stock Fire version of this shape, so it keeps Metamorphosis",client-patch/dbc/Spell.dbc id 47241 ; icon from SpellIcon.dbc
+Vengeance,Side Cannons,Metamorphosis,47241,spell_shadow_demonform,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47241 ; icon from SpellIcon.dbc
+Vengeance,Seethe,Metamorphosis,47241,spell_shadow_demonform,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 47241 ; icon from SpellIcon.dbc
+Strafe,,Volley,1510,ability_marksmanship,fair,shots at random nearby enemies while moving; Volley is the stock sustained multi-target shot,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Strafe,Demolition,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Strafe,Icy Trail,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Strafe,Rocket Storm,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Strafe,Drifting Shadow,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Strafe,Stinging Steel,Volley,1510,ability_marksmanship,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Multishot,,Multi-Shot,2643,ability_upgrademoonglaive,good,a volley of arrows at all enemies in the area; Multi-Shot is the same,client-patch/dbc/Spell.dbc id 2643 ; icon from SpellIcon.dbc
+Multishot,Full Broadside,Multi-Shot,2643,ability_upgrademoonglaive,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 2643 ; icon from SpellIcon.dbc
+Multishot,Wind Chill,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Multishot,Arsenal,Fireball,133,spell_fire_flamebolt,fair,Fire rune: Fireball is the closest stock Fire short bolt,client-patch/dbc/Spell.dbc id 133 ; icon from SpellIcon.dbc
+Multishot,Fire at Will,Lightning Bolt,403,spell_nature_lightning,fair,Lightning rune: Lightning Bolt is the closest stock Lightning short bolt,client-patch/dbc/Spell.dbc id 403 ; icon from SpellIcon.dbc
+Multishot,Suppression Fire,Multi-Shot,2643,ability_upgrademoonglaive,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 2643 ; icon from SpellIcon.dbc
+Cluster Arrow,,Aimed Shot,19434,inv_spear_07,fair,"a heavy arrow that bursts into grenades; Aimed Shot is the stock heavy arrow, the cluster burst is the module's",client-patch/dbc/Spell.dbc id 19434 ; icon from SpellIcon.dbc
+Cluster Arrow,Loaded for Bear,Aimed Shot,19434,inv_spear_07,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 19434 ; icon from SpellIcon.dbc
+Cluster Arrow,Shooting Stars,Volley,1510,ability_marksmanship,fair,Physical rune: Volley is the closest stock Physical explosive device,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Cluster Arrow,Cluster Bombs,Aimed Shot,19434,inv_spear_07,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 19434 ; icon from SpellIcon.dbc
+Cluster Arrow,Maelstrom,Frost Trap,13809,spell_frost_freezingbreath,fair,Cold rune: Frost Trap is the closest stock Cold explosive device,client-patch/dbc/Spell.dbc id 13809 ; icon from SpellIcon.dbc
+Cluster Arrow,Dazzling Arrow,Chain Lightning,421,spell_nature_chainlightning,fair,Lightning rune: Chain Lightning is the closest stock Lightning explosive device,client-patch/dbc/Spell.dbc id 421 ; icon from SpellIcon.dbc
+Rain of Vengeance,,Volley,1510,ability_marksmanship,good,arrows fall from the sky on an area; Volley is the stock arrow barrage (Rain of Fire is the Fire read),client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Rain of Vengeance,Shade,Thunderstorm,51490,spell_shaman_thunderstorm,fair,Lightning rune: Thunderstorm is the closest stock Lightning ground area,client-patch/dbc/Spell.dbc id 51490 ; icon from SpellIcon.dbc
+Rain of Vengeance,Dark Cloud,Volley,1510,ability_marksmanship,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Rain of Vengeance,Anathema,Rain of Fire,5740,spell_shadow_rainoffire,fair,Fire rune: Rain of Fire is the closest stock Fire ground area,client-patch/dbc/Spell.dbc id 5740 ; icon from SpellIcon.dbc
+Rain of Vengeance,Flying Strike,Blizzard,10,spell_frost_icestorm,fair,Cold rune: Blizzard is the closest stock Cold ground area,client-patch/dbc/Spell.dbc id 10 ; icon from SpellIcon.dbc
+Rain of Vengeance,Stampede,Rain of Fire,5740,spell_shadow_rainoffire,fair,Fire rune: Rain of Fire is the closest stock Fire ground area,client-patch/dbc/Spell.dbc id 5740 ; icon from SpellIcon.dbc

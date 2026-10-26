@@ -1,0 +1,10 @@
+entry,summon,item,donor_creature,script,why
+900120,Cow,Bovine Bardiche,2442,dc_legendary_ally,"the stock Cow (display 1060): D3's herd is cows, and WoW has the one cow"
+900121,Charging Wolf,Defender of Westmarch,358,dc_legendary_pawn,"the stock Timber Wolf (display 247): D3's charging wolf; it runs a line Combat drives, so it takes the pawn script"
+900122,Ghostly Fallen Champion,Genzaniku,17429,dc_legendary_ally,"the Fallen Overseer's donor in monster_family_models.csv (Fel Orc Neophyte, display 16332): the big Fallen; the ghostly look is a visual pass, not built"
+900123,Shadow Clone,Haunt of Vaxo,31216,dc_legendary_ally,"the stock Mage Mirror Image, as the Wizard's images use it (wizard_summons.csv 900110): the owner's Clone Me! (45204) draws the owner's model on it, as D3's clones copy the player; the cast is Combat's"
+900124,Demonic Slave,Maximus,11859,dc_legendary_ally,"the Doomguard (display 1912), the first demon candidate of monster_family_models.csv: placeholder look for the designer, one cell to change here"
+900125,Fallen Lunatic,Nagelring,17267,dc_legendary_ally,"the Fallen Lunatic's donor in monster_family_models.csv (Fiendish Imp, display 16944)"
+900126,Angelic Helper,Skycutter,29259,dc_legendary_ally,"the Spirit Healer (display 9800), a winged spirit: WoW has no angel creature; placeholder look for the designer, one cell to change here"
+900127,Skeleton,Corrupted Ashbringer,7786,dc_legendary_ally,"the Skeletal Warrior's donor in monster_family_models.csv (Skeleton of Zum'rah, display 200)"
+900128,Monkey King Decoy,Monkey King's Garb,31216,dc_legendary_pawn,"the stock Mage Mirror Image, as the Shadow Clone uses it: D3's decoy is a copy of the Monk, and WoW has the mirror image; placeholder look for the designer, one cell to change here. It stands where the 4-piece puts it, holds the taunt and is Combat's to drive, so it takes the pawn script"

@@ -1,0 +1,81 @@
+follower_id,key,skill_id,token,value,value_max,unit,source
+0,,,main_stat_cap,25000,,points,"docs/research/followers-web-sources.md section 2 (Fandom Followers: some follower skills scale with the main stat, reaching the maximum at 25,000)"
+0,,,cast_tick_ms,250,,ms,"placeholder, not D3: how often the follower looks at its skills (the companion rules' own step is 250 ms, followers_0001_roster.sql)"
+1,templar,heal,heal_table_share,0.36,,multiplier,"decode_pow.py power Templar_Heal_110 SF_0 (0.36) * Table(Healing, Level); the planner's 193017 is 0.36 of the table at 70"
+1,templar,heal,life_below_pct,50,,percent,"placeholder, not D3 (no source says when the Templar casts it): it heals when the player or the Templar is below this share of their Life"
+1,templar,intervene,taunt_seconds,3,6,seconds,"decode_pow.py power Templar_Intervene SF_3 (3); the 2.7.0 notes, ""3 to 6 seconds based on the Templar's Strength"" (docs/research/followers-web-sources.md section 5)"
+1,templar,intervene,radius_yards,10,,yards,decode_pow.py power Templar_Intervene SF_4
+1,templar,loyalty,aura_radius_yards,40,,yards,decode_pow.py power Templar_Loyalty SF_0
+1,templar,loyalty,heal_table_share_per_second,0.012,,multiplier,"decode_pow.py power Templar_Loyalty SF_1 (0.012) * Table(Healing, Level); the planner's 6432 a second is 0.012 of the table at 70"
+1,templar,intimidate,slow_pct,80,,percent,decode_pow.py power Templar_Intimidate SF_0 (0.8)
+1,templar,intimidate,slow_seconds,3,6,seconds,"decode_pow.py power Templar_Intimidate SF_1 (3); the 2.7.0 notes, 3 to 6 seconds"
+1,templar,charge,damage_pct,280,,percent of weapon damage,decode_pow.py power Templar_ShieldCharge SF_0 (2.8)
+1,templar,charge,stun_seconds,3,6,seconds,"decode_pow.py power Templar_ShieldCharge SF_4 (3); the 2.7.0 notes, 3 to 6 seconds"
+1,templar,charge,stun_radius_yards,8,,yards,decode_pow.py power Templar_ShieldCharge SF_5
+1,templar,charge,cast_range_yards,25,,yards,"placeholder, not D3 (no source gives the Templar's reach): how far from its target it charges"
+1,templar,onslaught,damage_pct,800,,percent of weapon damage,decode_pow.py power Templar_Onslaught SF_0 (8.0)
+1,templar,onslaught,vulnerability_pct,10,,percent,"reference/d3planner/data.json followerSkills.Templar_Onslaught_V2 (""take 10% increased damage"")"
+1,templar,onslaught,vulnerability_seconds,3,6,seconds,"reference/d3planner/data.json (3.00); the 2.7.0 notes, 3 to 6 seconds"
+1,templar,onslaught,radius_yards,8,,yards,"placeholder, not D3 (the text says ""nearby enemies"" and the archive has no 2.7 file): the Charge's 8 yards"
+1,templar,onslaught,cast_range_yards,8,,yards,"placeholder, not D3: it strikes an enemy in melee reach"
+1,templar,inspire,mana_per_second,7,,points a second,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Mana: 7 per second"")"
+1,templar,inspire,hatred_per_second,1,,points a second,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Hatred: 1 per second"")"
+1,templar,inspire,wrath_per_second,1.1,,points a second,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Wrath: 1.1 per second"")"
+1,templar,inspire,arcane_power_per_second,1.4,,points a second,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Arcane Power: 1.4 per second"")"
+1,templar,inspire,fury_generated_pct,10,,percent,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Fury: 10% generated""); built: Resources::Generated scales the points the player's skills generate while the Templar's Inspire stands"
+1,templar,inspire,spirit_generated_pct,10,,percent,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Spirit: 10% generated""); built: Resources::Generated scales the points the player's skills generate while the Templar's Inspire stands"
+1,templar,inspire,essence_generated_pct,10,,percent,"reference/d3planner/data.json followerSkills.Templar_Inspire (""Essence: 10% generated""); built: Resources::Generated scales the points the player's skills generate while the Templar's Inspire stands"
+1,templar,guardian,knockback_yards,15,,yards,decode_pow.py power Templar_Guardian SF_5; reference/d3planner/data.json (15 yards)
+1,templar,guardian,knockback_push_yards,10,,yards,"placeholder, not D3 (the text says enemies within 15 yards are knocked back and gives no distance): how far each is pushed"
+1,templar,guardian,heal_life_pct,15,25,percent of maximum Life,"reference/d3planner/data.json (15.00%); the 2.7.0 notes, 15 to 25% (docs/research/followers-web-sources.md section 5)"
+1,templar,guardian,shield_seconds,5,,seconds,"reference/d3planner/data.json (""shielding you from all damage for 5 seconds"")"
+2,scoundrel,crippling-shot,damage_pct,140,,percent of weapon damage,decode_pow.py power Scoundrel_CripplingShot SF_3 (1.4); reference/d3planner/data.json followerSkills.Scoundrel_CripplingShot (140%)
+2,scoundrel,crippling-shot,slow_pct,80,,percent,decode_pow.py power Scoundrel_CripplingShot SF_0 (0.8)
+2,scoundrel,crippling-shot,slow_seconds,3,6,seconds,"reference/d3planner/data.json followerSkills.Scoundrel_CripplingShot (3.00); the 2.7.0 notes, 3 to 6 seconds (docs/research/followers-web-sources.md section 5) (the archive's file is pre-2.7: it holds 4)"
+2,scoundrel,crippling-shot,cast_range_yards,40,,yards,"placeholder, not D3 (no source gives the Scoundrel's reach): how far from its target it shoots"
+2,scoundrel,powered-shot,damage_pct,120,,"percent of weapon damage, Arcane",reference/d3planner/data.json followerSkills.Scoundrel_PowerShot (120%) (the archive's file is pre-2.7: it holds 310%)
+2,scoundrel,powered-shot,radius_yards,10,,yards,decode_pow.py power Scoundrel_PowerShot SF_8
+2,scoundrel,powered-shot,stun_chance_pct,100,,percent,"reference/d3planner/data.json followerSkills.Scoundrel_PowerShot (""a 100% chance to Stun""); decode_pow.py power Scoundrel_PowerShot SF_1 (1)"
+2,scoundrel,powered-shot,stun_seconds,3,6,seconds,"reference/d3planner/data.json followerSkills.Scoundrel_PowerShot (3.00); the 2.7.0 notes, 3 to 6 seconds (the archive's file is pre-2.7: it holds 2)"
+2,scoundrel,powered-shot,cast_range_yards,40,,yards,"placeholder, not D3: as Crippling Shot's"
+2,scoundrel,hysteria,damage_bonus_pct,3,,percent,decode_pow.py power Scoundrel_Hysteria SF_0 (0.03)
+2,scoundrel,hysteria,bonus_seconds,3,6,seconds,"decode_pow.py power Scoundrel_Hysteria SF_1 (3); the 2.7.0 notes, 3 to 6 seconds"
+2,scoundrel,anatomy,crit_chance_pct,1.8,4,percent,"decode_pow.py power Scoundrel_Anatomy SF_1 (0.018); the 2.7.0 notes, 1.8 to 4%"
+2,scoundrel,anatomy,aura_radius_yards,60,,yards,decode_pow.py power Scoundrel_Anatomy SF_0
+2,scoundrel,piercing-shot,damage_pct,500,,percent of weapon damage,reference/d3planner/data.json followerSkills.Scoundrel_PiercingShot (500%)
+2,scoundrel,piercing-shot,vulnerability_pct,10,,percent,"reference/d3planner/data.json followerSkills.Scoundrel_PiercingShot (""increases damage done to enemies by 10%"")"
+2,scoundrel,piercing-shot,vulnerability_seconds,3,6,seconds,"reference/d3planner/data.json followerSkills.Scoundrel_PiercingShot (3.00); the 2.7.0 notes, 3 to 6 seconds"
+2,scoundrel,piercing-shot,line_width_yards,3,,yards,"the designer's standing default for a line attack with no source, 3 yd wide (AGENTS.md Numbers, decisions 2026-10-22; card q-1021-149..153): the text says the shot pierces and gives no width"
+2,scoundrel,piercing-shot,cast_range_yards,40,,yards,"placeholder, not D3: as Crippling Shot's, and the length of the line"
+2,scoundrel,multishot,damage_pct,110,,percent of weapon damage,decode_pow.py power X1_Scoundrel_Multishot SF_1 (1.1)
+2,scoundrel,multishot,extra_bolts,2,,count,decode_pow.py power X1_Scoundrel_Multishot SF_2 (2) and X1_Scoundrel_Multishot_Passive SF_2: three bolts in all
+2,scoundrel,multishot,passive_chance_pct,50,70,percent,"decode_pow.py power X1_Scoundrel_Multishot SF_4 (0.5); the 2.7.0 notes, 50 to 70%"
+2,scoundrel,multishot,cast_range_yards,40,,yards,"placeholder, not D3: as Crippling Shot's"
+2,scoundrel,vanish,conceal_seconds,3,7,seconds,"reference/d3planner/data.json followerSkills.Scoundrel_CheatDeath_Passive (3.00); the 2.7.0 notes, 3 to 7 seconds"
+2,scoundrel,nights-veil,radius_yards,20,,yards,"reference/d3planner/data.json followerSkills.Scoundrel_DebuffCloud (""a 20 yard area"")"
+2,scoundrel,nights-veil,seconds,2,4,seconds,"reference/d3planner/data.json followerSkills.Scoundrel_DebuffCloud (2.00); the 2.7.0 notes' edited line, 2 to 4 seconds (Fandom prints 5 to 10)"
+2,scoundrel,nights-veil,cast_range_yards,40,,yards,"placeholder, not D3: as Crippling Shot's"
+3,enchantress,charm,duration_seconds,8,,seconds,"reference/d3planner/data.json followerSkills.Enchantress_Charm (""fight for you for 8 seconds"")"
+3,enchantress,charm,cast_range_yards,40,,yards,"placeholder, not D3 (no source gives the Enchantress' reach): as the Scoundrel's shots, 40 yd (the designer's card q-1021-149..153, recommendation taken)"
+3,enchantress,temporal-pulse,damage_pct,150,,"percent of weapon damage, Arcane",reference/d3planner/data.json followerSkills.Enchantress_ArcaneOrb (150%)
+3,enchantress,temporal-pulse,radius_yards,15,,yards,"reference/d3planner/data.json followerSkills.Enchantress_ArcaneOrb (""enemies within 15 yards"")"
+3,enchantress,temporal-pulse,slow_pct,80,,percent,"reference/d3planner/data.json followerSkills.Enchantress_ArcaneOrb (""slows them by 80%"")"
+3,enchantress,temporal-pulse,slow_seconds,3,6,seconds,"reference/d3planner/data.json followerSkills.Enchantress_ArcaneOrb (3.00); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 3 to 6 seconds"
+3,enchantress,temporal-pulse,cast_range_yards,40,,yards,"placeholder, not D3 (no source gives the Enchantress' reach): as the Scoundrel's shots, 40 yd (the designer's card q-1021-149..153, recommendation taken)"
+3,enchantress,amplification,bonus_pct,5,10,percent,"reference/d3planner/data.json followerSkills.Enchantress_AmplifyElemental (5.00%); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 5 to 10% of her player's highest static elemental damage bonus"
+3,enchantress,prophetic-harmony,cooldown_reduction_pct,5,10,percent,"reference/d3planner/data.json followerSkills.Enchantress_CooldownReduction (5.00%); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 5 to 10%"
+3,enchantress,powered-shield,ranged_reduction_pct,6,,percent,"decode_pow.py power Enchantress_MissileWard SF_0 (0.06); reference/d3planner/data.json followerSkills.Enchantress_CombinedShield (""reduces damage by 6% from ranged attacks"")"
+3,enchantress,powered-shield,armor_pct,3,,percent,"decode_pow.py power Enchantress_PoweredArmor SF_0 (0.03); reference/d3planner/data.json followerSkills.Enchantress_CombinedShield (""increases Armor by 3%"")"
+3,enchantress,powered-shield,slow_pct,60,,percent,decode_pow.py power Enchantress_PoweredArmor SF_1 (0.6)
+3,enchantress,powered-shield,slow_seconds,3,6,seconds,"reference/d3planner/data.json followerSkills.Enchantress_CombinedShield (3.00); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 3 to 6 seconds (the archive's pre-2.7 file holds 1)"
+3,enchantress,erosion,damage_pct,330,,"percent of weapon damage, Arcane, over the pool's seconds","reference/d3planner/data.json followerSkills.Enchantress_ScorchedEarth (""330% weapon damage as Arcane over 5.00 seconds"")"
+3,enchantress,erosion,seconds,5,7,seconds,"decode_pow.py power Enchantress_ScorchedEarth SF_1 and SF_4 (5); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 5 to 7 seconds"
+3,enchantress,erosion,vulnerability_pct,10,,percent,"reference/d3planner/data.json followerSkills.Enchantress_ScorchedEarth (""take 10% increased damage"")"
+3,enchantress,erosion,radius_yards,15,,yards,decode_pow.py power Enchantress_ScorchedEarth SF_2 (15; the archive's pre-2.7 file of the same pool)
+3,enchantress,erosion,tick_seconds,0.5,,seconds,"the designer's standing default for a burn or bleed that ticks (AGENTS.md Numbers, decisions 2026-10-22)"
+3,enchantress,erosion,cast_range_yards,40,,yards,"placeholder, not D3 (no source gives the Enchantress' reach): as the Scoundrel's shots, 40 yd (the designer's card q-1021-149..153, recommendation taken)"
+3,enchantress,focused-mind,attack_speed_pct,3,6,percent,"decode_pow.py power Enchantress_FocusedMind SF_1 (0.03); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 3 to 6%"
+3,enchantress,focused-mind,aura_radius_yards,40,,yards,decode_pow.py power Enchantress_FocusedMind SF_0
+3,enchantress,fates-lapse,slow_pct,80,,percent,"reference/d3planner/data.json followerSkills.Enchantress_CheatDeath_Passive (""slowing enemies' movement, attack speed, and projectiles by 80%"")"
+3,enchantress,fates-lapse,slow_seconds,3,7,seconds,"reference/d3planner/data.json followerSkills.Enchantress_CheatDeath_Passive (3.00); the 2.7.0 notes (docs/research/followers-web-sources.md section 5), 3 to 7 seconds"
+3,enchantress,fates-lapse,radius_yards,40,,yards,"placeholder, not D3 (the text says ""enemies"" and gives no reach): the screen, 40 yd"

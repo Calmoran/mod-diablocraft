@@ -1,0 +1,17 @@
+# Migration checking. Dialect is MySQL.
+#
+# Every .sql here is generated, so layout, quoting and aliasing are the
+# generator's business, not review findings: exclude_rules = all silences the
+# style rules while still surfacing PRS, which is not a rule but sqlfluff's
+# "I could not parse this" report.
+#
+# PRS is advisory here, not a gate. sqlfluff's mysql dialect does not know
+# every statement MySQL accepts - `DO 0;` in rifts_0005_elite_promotion.sql is
+# valid MySQL and unparsable to sqlfluff - so verify.sh reports this stage and
+# never fails on it. Read its output, do not obey it blindly.
+[sqlfluff]
+dialect = mysql
+templater = raw
+exclude_rules = all
+large_file_skip_byte_limit = 0
+max_line_length = 0

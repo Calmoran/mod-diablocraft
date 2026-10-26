@@ -1,0 +1,21 @@
+"ability","token","qualifier","value","unit","source"
+"Arcane Strike","damage_pct","","790","pct","d3planner simulator/wizard.js:1052 (pinned 898918b): coeff 7.9, front area"
+"Arcane Strike","radius_yards","","9","yards","d3planner simulator/wizard.js:1052 (pinned 898918b): front area range 9"
+"Arcane Blast","damage_pct","","604","pct","d3planner simulator/wizard.js:1071 (pinned 898918b): coeff 6.04"
+"Arcane Blast","radius_yards","","15","yards","d3planner simulator/wizard.js:1071 (pinned 898918b): area range 15"
+"Arcane Blast","cooldown_seconds","","2","seconds","d3planner simulator/wizard.js:1067 (pinned 898918b): cooldown 2"
+"Disintegration Wave","damage_pct","","779","pct","d3planner simulator/wizard.js:1093 (pinned 898918b): coeff 7.79 x aps x tick frames / 60 per tick (:1083)"
+"Disintegration Wave","cost_resource","","0","resource","d3planner simulator/wizard.js:1086-1100 (pinned 898918b): no cost field"
+"Disintegration Wave","channel_tick_frames_count","","20","count","d3planner simulator/wizard.js:1088 (pinned 898918b): channeling 20"
+"Disintegration Wave","channel_frames_per_second_count","","60","count","d3planner simulator/wizard.js:1083 (pinned 898918b): tickrate / 60"
+"Slow Time","duration_seconds","","15","seconds","d3planner simulator/wizard.js:1112 (pinned 898918b): duration 900 frames"
+"Slow Time","radius_yards","","21","yards","d3planner simulator/wizard.js:1110 (pinned 898918b): getTargets(21)"
+"Slow Time","attack_speed_pct","","20","pct","d3planner simulator/wizard.js:1109-1115 (pinned 898918b) applies base Slow Time; the number is wizard_skill_values.csv Slow Time attack_speed_pct"
+"Slow Time","slow_pct","enemy","60","pct","d3planner simulator/wizard.js:1109-1115 (pinned 898918b) applies base Slow Time; the number is wizard_skill_values.csv Slow Time slow_pct:enemy"
+"Teleport","cooldown_seconds","","2","seconds","d3planner simulator/wizard.js:1141 (pinned 898918b): cooldown 2"
+Arcane Strike,proc_coefficient,,0.5,coefficient,d3planner simulator/wizard.js:1061 (pinned 898918b): archon arcanestrike proctable: 0.5
+Arcane Blast,proc_coefficient,,0.25,coefficient,d3planner simulator/wizard.js:1080 (pinned 898918b): archon arcaneblast proctable: 0.25
+Disintegration Wave,proc_coefficient,,0.1,coefficient,d3planner simulator/wizard.js:1099 (pinned 898918b): archon disintegrationwave proctable: 0.1
+"Archon","display_id","","29553","id","ruling 2026-10-11 (diablocraft-ie3xd: the player becomes Algalon the Observer for Archon). Client CreatureDisplayInfo.dbc 29553 -> CreatureModelData 3064 CREATURE\AlglontheObserver\AlgalontheObserver.mdx, scale 3.5 (the core's Memory of Algalon, entries 35052/35519); Algalon the Observer (32871) itself wears 28641, the same model at scale 3.0. A Torment look, not a D3 number"
+"Archon","scale","","0.2","factor","ruling 2026-10-12 (diablocraft-ie3xd: his number, the morph at about a player's height; for reference 29553 stands 8.423 geo box x 1.0 model scale x 3.5 display scale = 29.48 yd, a human male 2.13 yd). Baked into the form's own display row (form_display_id: display scale 3.5 x 0.2 = 0.7), never sent as an object scale, so the client has nothing to shrink"
+"Archon","form_display_id","","33000","id","diablocraft-ie3xd: the display the player wears in Archon form, a Torment row of the client CreatureDisplayInfo.dbc (client-patch/dbc/build_creaturedisplayinfo.py): display_id's row (model, textures, sounds) with its display scale times scale. The first Torment id above the stock table (stock ends at 32754)"

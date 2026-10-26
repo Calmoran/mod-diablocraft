@@ -1,0 +1,279 @@
+diff --git a/WoW/Source/Magic/MagicClient/Spell_C.cpp b/WoW/Source/Magic/MagicClient/Spell_C.cpp
+index fab515d..752f993 100644
+--- a/WoW/Source/Magic/MagicClient/Spell_C.cpp
++++ b/WoW/Source/Magic/MagicClient/Spell_C.cpp
+@@ -1,4 +1,5 @@
+ #include "Spell_C.h"
++#include "Torment/class_power_tokens.h"
+ #include "WoW/Source/Magic/Types.h"
+ #include "Engine/Source/Base/CDataStore.h"
+ #include "Engine/Source/ConsoleBase/ConsoleVar.h"
+@@ -2501,6 +2502,36 @@ const char* GetPowerString(uint32_t powerType) {
+     return "";
+ }
+ 
++// Torment: the class's own token for one of a unit's power slots, or nullptr. The rows come from
++// class_power_tokens.h, generated from class_resources.csv and copied into the tree by the build. Only a
++// player carries a class power: a creature with the same class id, and every slot without a row, keeps the
++// stock token.
++const char* GetClassPowerString(const CGUnit_C* unit, uint32_t powerType) {
++    if (!unit || !(unit->m_obj->m_type & TYPEMASK_PLAYER)) {
++        return nullptr;
++    }
++
++    return TormentPowers::TokenFor(unit->m_unit->m_unitFieldBytes0[1], powerType);
++}
++
++// Torment: the token a unit's slot reports: the class's own where it has one, else the stock one.
++const char* GetUnitPowerString(const CGUnit_C* unit, uint32_t powerType) {
++    const char* token = GetClassPowerString(unit, powerType);
++    return token ? token : GetPowerString(powerType);
++}
++
++// Torment: what a unit's slot is divided by for display: for a class power, its row's storage scale (slot units per
++// point), so the bar shows true points whether the server stores it x10 or 1:1; else the stock divide (Rage and Runic
++// Power show a tenth).
++uint32_t Spell_C_GetUnitPowerDisplayMod(const CGUnit_C* unit, uint32_t powerType) {
++    if (GetClassPowerString(unit, powerType)) {
++        uint32_t scale = TormentPowers::UnitsPerPointFor(unit->m_unit->m_unitFieldBytes0[1], powerType);
++        return scale ? scale : 1;
++    }
++
++    return Spell_C_GetPowerDisplayMod(powerType);
++}
++
+ // VERIFY: a2eb54f0 auto
+ // OFFSET: 0x007FA290
+ const SpellVisualRec* GetSpellVisual(const SpellRec* spell) {
+@@ -6520,7 +6551,12 @@ void Spell_C_SpellFailed(PendingSpellCast* cast, const SpellRec* spell, int32_t
+                 return;
+             }
+ 
+-            const char* power = FrameScript_GetText(GetPowerString(powerType), -1, GENDER_NOT_APPLICABLE);
++            // Torment: the class's power name, while the UI defines it; else the stock name.
++            const char* power = FrameScript_GetText(GetUnitPowerString(player, powerType), -1, GENDER_NOT_APPLICABLE);
++
++            if (!power || !*power) {
++                power = FrameScript_GetText(GetPowerString(powerType), -1, GENDER_NOT_APPLICABLE);
++            }
+ 
+             if (!power || !*power) {
+                 Spell_C_FailPendingCast(cast, spell, 27);
+diff --git a/WoW/Source/Magic/MagicClient/Spell_C.h b/WoW/Source/Magic/MagicClient/Spell_C.h
+index 770bc47..07271ac 100644
+--- a/WoW/Source/Magic/MagicClient/Spell_C.h
++++ b/WoW/Source/Magic/MagicClient/Spell_C.h
+@@ -349,5 +349,8 @@ bool Spell_C_GetSpellCooldown(int32_t spellId, int32_t petSpell, uint32_t* durat
+ bool Spell_C_IsActiveSpell(const SpellRec* spell, const CGUnit_C* unit);
+ uint32_t Spell_C_GetPowerDisplayMod(uint32_t powerType);
+ const char* GetPowerString(uint32_t powerType);
++const char* GetClassPowerString(const CGUnit_C* unit, uint32_t powerType);
++const char* GetUnitPowerString(const CGUnit_C* unit, uint32_t powerType);
++uint32_t Spell_C_GetUnitPowerDisplayMod(const CGUnit_C* unit, uint32_t powerType);
+ 
+ #endif
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.cpp b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+index bfef9b6..fa28f27 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.cpp
++++ b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+@@ -1,4 +1,5 @@
+ #include "Unit_C.h"
++#include "Torment/class_power_tokens.h"
+ #include <cmath>
+ #include <new>
+ #include <typeinfo>
+@@ -19072,6 +19073,12 @@ int32_t Packet_SMSG_PET_ACTION_SOUND(void* param, NETMESSAGE msgId, uint32_t tim
+ // VERIFY: 4b8cff5c manual
+ // OFFSET: 0x00722D80
+ void CGUnit_C::DoPowerRegen(int32_t powerType, uint32_t elapsed) {
++    this->DoPowerRegen(powerType, elapsed, this->m_powerRegenRemainder);
++}
++
++// Torment: the stock body, with the fraction of a point carried in remainder, so a slot regenerating beside
++// the drawn one keeps its own.
++void CGUnit_C::DoPowerRegen(int32_t powerType, uint32_t elapsed, uint32_t& remainder) {
+     if (this->m_obj->m_guid == ClntObjMgrGetActivePlayer() && (reinterpret_cast<const uint8_t*>(&static_cast<CGPlayer_C*>(this)->m_player->m_playerFieldBytes2)[2] & (1 << powerType))) {
+         return;
+     }
+@@ -19100,8 +19107,14 @@ void CGUnit_C::DoPowerRegen(int32_t powerType, uint32_t elapsed) {
+         interrupted = (this->m_unit->m_unitFieldFlags & 0x80000) || (this->m_auraEffectMask[11] & 0x40);
+     }
+ 
++    // Torment: a class power's rate is the slot's own field alone, negative for decay; the stock base (Energy's
++    // 10 a second, Rage's and Runic Power's decay out of combat) belongs to the stock power, not the class's.
+     float regen = this->GetPowerRegen(powerType, interrupted);
+ 
++    if (GetClassPowerString(this, powerType)) {
++        regen = interrupted ? this->m_unit->m_unitFieldPowerRegenInterruptedFlatModifier[powerType] : this->m_unit->m_unitFieldPowerRegenFlatModifier[powerType];
++    }
++
+     if (fabs(regen) < 0.00000023841858f) {
+         return;
+     }
+@@ -19113,16 +19126,16 @@ void CGUnit_C::DoPowerRegen(int32_t powerType, uint32_t elapsed) {
+ 
+         if (this->GetPredictedPower(powerType) < maxPower) {
+             int32_t predicted = this->GetPredictedPower(powerType);
+-            this->m_powerRegenRemainder += static_cast<int32_t>(delta * 1000.0f);
+-            this->SetPredictedPower(powerType, predicted + this->m_powerRegenRemainder / 1000);
+-            this->m_powerRegenRemainder %= 1000;
++            remainder += static_cast<int32_t>(delta * 1000.0f);
++            this->SetPredictedPower(powerType, predicted + remainder / 1000);
++            remainder %= 1000;
+             return;
+         }
+     }
+ 
+     if (delta < 0.0f && this->GetPredictedPower(powerType) > 0 && !(this->m_unit->m_unitFieldFlags2 & 0x100)) {
+         int32_t predicted = this->GetPredictedPower(powerType);
+-        float value = delta + (static_cast<float>(this->m_powerRegenRemainder) * 0.001f + static_cast<float>(predicted));
++        float value = delta + (static_cast<float>(remainder) * 0.001f + static_cast<float>(predicted));
+ 
+         if (value < 0.0f) {
+             value = 0.0f;
+@@ -19130,8 +19143,8 @@ void CGUnit_C::DoPowerRegen(int32_t powerType, uint32_t elapsed) {
+ 
+         int32_t power = CMath::ftrunc(value);
+         this->SetPredictedPower(powerType, power);
+-        float remainder = value * 1000.0f - static_cast<float>(static_cast<uint32_t>(power * 1000));
+-        this->m_powerRegenRemainder = CMath::fint_(remainder - 0.5f);
++        float fraction = value * 1000.0f - static_cast<float>(static_cast<uint32_t>(power * 1000));
++        remainder = CMath::fint_(fraction - 0.5f);
+     }
+ }
+ 
+@@ -19155,6 +19168,18 @@ void CGUnit_C::DoPowerRegen(uint32_t elapsed) {
+         }
+     }
+ 
++    // Torment: a player's class power on a slot other than the drawn bar (a second power) moves on the client
++    // as the drawn one does. Only the active player regenerates here, so one fraction per slot is enough.
++    if (this->m_obj->m_type & TYPEMASK_PLAYER) {
++        static uint32_t s_slotRemainder[7];
++
++        for (const TormentPowers::ClassPowerToken& row : TormentPowers::ClassPowerTokens) {
++            if (row.classId == this->m_unit->m_unitFieldBytes0[1] && row.power != powerType && row.power < 7) {
++                this->DoPowerRegen(row.power, elapsed, s_slotRemainder[row.power]);
++            }
++        }
++    }
++
+     if (this->m_obj->m_guid == ClntObjMgrGetActivePlayer() && powerType == 6) {
+         uint32_t runes = CGRuneInfo::m_predictedRunes;
+         uint32_t previous = CGRuneInfo::m_predictedRunes;
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.h b/WoW/Source/Object/ObjectClient/Unit_C.h
+index 99ad63b..1410b49 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.h
++++ b/WoW/Source/Object/ObjectClient/Unit_C.h
+@@ -780,6 +780,7 @@ class CGUnit_C : public CGObject_C, public CGUnit {
+     void AddWorldThreatUpdateText(int32_t oldStatus, int32_t newStatus);
+     void OnAiReaction(int32_t reaction);
+     void DoPowerRegen(int32_t powerType, uint32_t elapsed);
++    void DoPowerRegen(int32_t powerType, uint32_t elapsed, uint32_t& remainder);
+     void DoPowerRegen(uint32_t elapsed);
+     char* GetUnitChosenTitle(char* buffer, uint32_t size, int32_t showTitle, int32_t* lines);
+     void RequestTalkEmote(int32_t index);
+diff --git a/WoW/Source/UIUtil/Tooltip.cpp b/WoW/Source/UIUtil/Tooltip.cpp
+index 9e0f927..f97dbe9 100644
+--- a/WoW/Source/UIUtil/Tooltip.cpp
++++ b/WoW/Source/UIUtil/Tooltip.cpp
+@@ -2597,9 +2597,13 @@ void CGTooltip::AddTalentLearnText(const TalentRec* talent, CGTalentGroup_C* gro
+ static int32_t SetSpellPowerCost(char* cost, const SpellRec* spell, const CGUnit_C* caster, int32_t powerCost, const PowerDisplayRec* display) {
+     char format[128];
+     int32_t costPerSecond = Spell_C_GetPowerCostPerSecond(spell, caster);
+-    powerCost = static_cast<uint32_t>(powerCost) / Spell_C_GetPowerDisplayMod(spell->m_powerType);
+-    costPerSecond = static_cast<uint32_t>(costPerSecond) / Spell_C_GetPowerDisplayMod(spell->m_powerType);
++    powerCost = static_cast<uint32_t>(powerCost) / Spell_C_GetUnitPowerDisplayMod(caster, spell->m_powerType);
++    costPerSecond = static_cast<uint32_t>(costPerSecond) / Spell_C_GetUnitPowerDisplayMod(caster, spell->m_powerType);
+     const char* token = static_cast<uint32_t>(spell->m_powerType) > 6 ? "HEALTH_COST" : s_powerCostTokens[spell->m_powerType];
++    // Torment: the caster's class power names the cost (<TOKEN>_COST, <TOKEN>_COST_PER_TIME), each while the UI
++    // defines that string; else the stock line.
++    const char* classPower = static_cast<uint32_t>(spell->m_powerType) > 6 ? nullptr : GetClassPowerString(caster, spell->m_powerType);
++    char classToken[64];
+ 
+     if (spell->m_powerType == 5) {
+         SpellRuneCostRec* runes = g_spellRuneCostDB.GetRecord(spell->m_runeCostID);
+@@ -2639,7 +2643,14 @@ static int32_t SetSpellPowerCost(char* cost, const SpellRec* spell, const CGUnit
+             SStrCopy(format, FrameScript_GetText(display->m_globalStringBaseTag, -1, GENDER_NOT_APPLICABLE), sizeof(format));
+             SStrPrintf(cost, 128, FrameScript_GetText("POWER_DISPLAY_COST", -1, GENDER_NOT_APPLICABLE), powerCost, format);
+         } else {
+-            SStrCopy(format, FrameScript_GetText(token, -1, GENDER_NOT_APPLICABLE), sizeof(format));
++            const char* text = "";
++
++            if (classPower) {
++                SStrPrintf(classToken, sizeof(classToken), "%s_COST", classPower);
++                text = FrameScript_GetText(classToken, -1, GENDER_NOT_APPLICABLE);
++            }
++
++            SStrCopy(format, *text ? text : FrameScript_GetText(token, -1, GENDER_NOT_APPLICABLE), sizeof(format));
+             SStrPrintf(cost, 128, format, powerCost);
+         }
+     } else if (costPerSecond > 0) {
+@@ -2647,8 +2658,19 @@ static int32_t SetSpellPowerCost(char* cost, const SpellRec* spell, const CGUnit
+             SStrCopy(format, FrameScript_GetText(display->m_globalStringBaseTag, -1, GENDER_NOT_APPLICABLE), sizeof(format));
+             SStrPrintf(cost, 128, FrameScript_GetText("POWER_DISPLAY_COST_PER_TIME", -1, GENDER_NOT_APPLICABLE), powerCost, format, costPerSecond);
+         } else {
+-            SStrPrintf(format, sizeof(format), "%s_PER_TIME", token);
+-            SStrPrintf(cost, 128, FrameScript_GetText(format, -1, GENDER_NOT_APPLICABLE), powerCost, costPerSecond);
++            const char* text = "";
++
++            if (classPower) {
++                SStrPrintf(classToken, sizeof(classToken), "%s_COST_PER_TIME", classPower);
++                text = FrameScript_GetText(classToken, -1, GENDER_NOT_APPLICABLE);
++            }
++
++            if (!*text) {
++                SStrPrintf(format, sizeof(format), "%s_PER_TIME", token);
++                text = FrameScript_GetText(format, -1, GENDER_NOT_APPLICABLE);
++            }
++
++            SStrPrintf(cost, 128, text, powerCost, costPerSecond);
+         }
+     }
+ 
+diff --git a/WoW/Source/Ui/ScriptEvents_Scripts.cpp b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+index 3f3b460..4e8d29c 100644
+--- a/WoW/Source/Ui/ScriptEvents_Scripts.cpp
++++ b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+@@ -909,7 +909,7 @@ static int32_t Script_UnitPower(lua_State* L) {
+         }
+ 
+         if ((!(unit->m_unit->m_unitDynamicFlags & 0x20) || CGGameUI::IsRaidMemberOrPet(unit->m_obj->m_guid)) && (powerType == unit->m_unit->m_unitFieldBytes0[3] || unit->IsActivePlayer())) {
+-            power = static_cast<uint32_t>(unit->GetPredictedPower(powerType)) / Spell_C_GetPowerDisplayMod(powerType);
++            power = static_cast<uint32_t>(unit->GetPredictedPower(powerType)) / Spell_C_GetUnitPowerDisplayMod(unit, powerType);
+         }
+     } else if (CGPartyMemberState* state = CGPartyMemberStateRepository::GetState(unitGuid)) {
+         if (powerType == 7 || powerType == state->m_powerType) {
+@@ -955,7 +955,7 @@ static int32_t Script_UnitPowerMax(lua_State* L) {
+             powerType = unit->m_unit->m_unitFieldBytes0[3];
+         }
+ 
+-        power = unit->m_unit->m_unitFieldMaxpower[powerType] / Spell_C_GetPowerDisplayMod(powerType);
++        power = unit->m_unit->m_unitFieldMaxpower[powerType] / Spell_C_GetUnitPowerDisplayMod(unit, powerType);
+     } else if (CGPartyMemberState* state = CGPartyMemberStateRepository::GetState(unitGuid)) {
+         if (powerType == 7 || powerType == state->m_powerType) {
+             power = state->m_maxPower / Spell_C_GetPowerDisplayMod(state->m_powerType);
+@@ -1005,7 +1005,7 @@ static int32_t Script_UnitPowerType(lua_State* L) {
+     if (!index) {
+         if (unit) {
+             lua_pushnumber(L, unit->m_unit->m_unitFieldBytes0[3]);
+-            lua_pushstring(L, GetPowerString(unit->m_unit->m_unitFieldBytes0[3]));
++            lua_pushstring(L, GetUnitPowerString(unit, unit->m_unit->m_unitFieldBytes0[3]));
+             return 2;
+         }
+ 
+diff --git a/WoW/Source/Ui/SpellBookFrame_Scripts.cpp b/WoW/Source/Ui/SpellBookFrame_Scripts.cpp
+index 58b0ef7..2ed3557 100644
+--- a/WoW/Source/Ui/SpellBookFrame_Scripts.cpp
++++ b/WoW/Source/Ui/SpellBookFrame_Scripts.cpp
+@@ -1232,8 +1232,8 @@ static int32_t Script_GetSpellInfo(lua_State* L) {
+ 
+     uint32_t powerCost = Spell_C_GetPowerCost(&spell, caster);
+     uint32_t powerCostPerSecond = Spell_C_GetPowerCostPerSecond(&spell, caster);
+-    uint32_t cost = powerCost / Spell_C_GetPowerDisplayMod(spell.m_powerType);
+-    int32_t costPerSecond = powerCostPerSecond / Spell_C_GetPowerDisplayMod(spell.m_powerType);
++    uint32_t cost = powerCost / Spell_C_GetUnitPowerDisplayMod(caster, spell.m_powerType);
++    int32_t costPerSecond = powerCostPerSecond / Spell_C_GetUnitPowerDisplayMod(caster, spell.m_powerType);
+ 
+     if (costPerSecond <= 0) {
+         lua_pushnumber(L, cost);

@@ -1,0 +1,13 @@
+{
+  "note": "The bounty map panel's zone waypoint compass (diablocraft-dm9vg.6). The designer's own icon, not Blizzard art and not D3 art, so it ships. He ruled the look (bounty-map-icon.md): a black compass rose, white needle, on white, cut to about 30x30 with a transparent field, dropping the two corner marks (a logo and a '98' badge).",
+  "source": {
+    "path": "azerothcore-wotlk/build/_agent-scratch/bounties-plan-2026-10-10/bounty-map-icon-source.png",
+    "note": "the designer's pick for the marker (his earlier ruling #7: a small circle icon). Copied to source/bounty-map-icon-source.png so the kit is reproducible."
+  },
+  "texture": "client-patch/art/ui/bounties/bounty_waypoint.png",
+  "cut_by": "client-patch/art/ui/bounties/cut_bounty_waypoint.py",
+  "canvas": [32, 32],
+  "marker": [30, 30],
+  "blp": "client-patch/addons/Torment/art/bounty_waypoint.blp",
+  "built_by": "client-patch/build_ui_art.py (DXT5, power-of-two, no scaling)"
+}

@@ -1,0 +1,9 @@
+monster,ability,kind,summon_monster,count,held,source
+Tomb Guardian,Summon Skeletons,,Skeletal Warrior,,,roster ability text: spawns skeletal minions; the minion is the family's Skeletal Warrior
+Dark Summoner,Summon Accursed / Hellion,,,,no roster monster is an Accursed or a Hellion: the summon waits until the designer adds one,roster ability text names two monsters the roster does not have
+Walking Corpse,Crawling Torso,,,,no roster monster is a Crawling Torso (monster-abilities.md 2.1 lists it as a roster gap),the summoned monster does not exist yet
+Hungry Corpse,Crawling Torso,,,,no roster monster is a Crawling Torso (monster-abilities.md 2.1 lists it as a roster gap),the summoned monster does not exist yet
+Retching Cadaver,Spawn Crawling Torso,,,,no roster monster is a Crawling Torso (monster-abilities.md 2.1 lists it as a roster gap),the summoned monster does not exist yet
+Fallen Shaman,Resurrect Fallen,,,,Part 8: corpse revive (monster-families.md 3.10),"needs corpse tracking, built in Part 8"
+Toxic Lurker,Spawns Spiderlings on Death,summon_minions,Spiderling,,,"the roster lists it as a summon on death; the table's kind (suicide_bomb) is Part 1's reading, a bomb with no damage"
+Lacuni Huntress,Leaping Evasion,,,,leaps AWAY when enemies close in; the evasive leap is not built in Part 3,Part 3 builds the leap at a target only

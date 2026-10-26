@@ -1,0 +1,22 @@
+# Static analysis for mod-diablocraft. Checks are deliberately narrow: this
+# code sits next to AzerothCore's, so anything that would demand a different
+# house style than the core's is off. cppcheck is the approved fallback when
+# clang-tidy is impractical on Windows (00b-tooling section 3).
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  performance-*,
+  -performance-avoid-endl,
+  readability-braces-around-statements,
+  readability-misleading-indentation,
+  readability-redundant-control-flow,
+  readability-simplify-boolean-expr,
+  misc-unused-parameters,
+  misc-unused-using-decls,
+  clang-analyzer-core.*,
+  clang-analyzer-cplusplus.*
+WarningsAsErrors: 'bugprone-use-after-move,clang-analyzer-core.NullDereference,clang-analyzer-cplusplus.NewDelete'
+HeaderFilterRegex: 'mod-diablocraft/src/.*'
+FormatStyle: file

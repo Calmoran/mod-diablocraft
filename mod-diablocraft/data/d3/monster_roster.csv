@@ -1,0 +1,66 @@
+family,name,role,life_multiplier,damage_multiplier,movement_speed,attack_speed,abilities,source_url,warpath_name
+Zombies,Walking Corpse,melee,1.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Melee Attack; Crawling Torso (bisects into crawler on fatal hit),https://diablo.fandom.com/wiki/Walking_Corpse; http://warpath.eu/mp.html,Hungry Corpse
+Zombies,Decaying Cryptstalker,melee,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Melee Attack; Poison Cloud on death,https://diablo.fandom.com/wiki/Zombies_(Diablo_III),none
+Zombies,Hungry Corpse,melee,1.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Melee Attack; Crawling Torso (crawls when legs severed),http://warpath.eu/mp.html,Hungry Corpse
+Zombies,Retching Cadaver,ranged/summoner,1.25,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Vomit Bile (ranged Physical); Spawn Crawling Torso,http://warpath.eu/mp.html,Retching Cadaver
+Zombies,Plague Carrier,melee,0.6,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Melee Attack; Poison Explosion on death,http://warpath.eu/mp.html,Plague Carrier
+Khazra,Moon Clan Warrior,melee,1.75,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Melee Slash,http://warpath.eu/mp.html,Moon Clan Warrior
+Khazra,Blood Clan Impaler,ranged,0.63,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Spear Throw (ranged Physical),http://warpath.eu/mp.html,Blood Clan Impaler
+Khazra,Moon Clan Shaman,caster/summoner,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Lightning Bolt (ranged); Protect Ward / Rallying Buff,https://diablo.fandom.com/wiki/Khazra,Moon Clan Shaman
+Khazra,Ice Clan Warrior,big/melee,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Heavy Melee Slam; Chilling Strike,https://diablo.fandom.com/wiki/Khazra,Ice Clan Warrior
+Khazra,Blood Clan Warrior,melee,1.75,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Melee Cleave,http://warpath.eu/mp.html,Blood Clan Warrior
+Fallen,Fallen Grunt,melee,0.52,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Melee Slash; Flee on ally death,http://warpath.eu/mp.html,Fallen Grunt
+Fallen,Fallen Shaman,caster/summoner,1.5,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Fireball (ranged Fire); Resurrect Fallen (revives fallen imps),http://warpath.eu/mp.html,Fallen Shaman
+Fallen,Fallen Lunatic,melee,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (very fast),NOT PUBLISHED,"Suicide Bomb (stabs self and explodes after 1.5s fuse, massive damage)",https://diablo.fandom.com/wiki/Fallen_Lunatic_(Diablo_III),none
+Fallen,Fallen Hound,melee,2.5,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Bite; Dash Bite,http://warpath.eu/mp.html,Fallen Hound
+Fallen,Fallen Overseer,big/melee,3.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Overhead Heavy Slam (massive Physical); Rallying Roar,http://warpath.eu/mp.html,Fallen Overseer
+Skeletons,Skeletal Warrior,melee,0.85,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Melee Sword Strike,http://warpath.eu/mp.html,Skeleton
+Skeletons,Skeletal Archer,ranged,0.8,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Shoot Arrow (ranged Physical),http://warpath.eu/mp.html,Skeletal Archer
+Skeletons,Skeletal Executioner,big/melee,1.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Overhead Axe Cleave (heavy telegraphed Physical smash),http://warpath.eu/mp.html,Skeletal Executioner
+Skeletons,Skeletal Shieldbearer,melee,0.85,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Shield Block (blocks frontal damage); Melee Strike,http://warpath.eu/mp.html,Skeletal Shieldbearer
+Skeletons,Tomb Guardian,caster/summoner,1.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Arcane Bolt (ranged Arcane); Summon Skeletons (spawns skeletal minions),http://warpath.eu/mp.html,Tomb Guardian
+Ghouls,Hungry Ghoul,melee,0.92,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Melee Claw Strike; Leaping Ambush,http://warpath.eu/mp.html,Ghoul
+Ghouls,Scavenging Ghoul,melee,0.92,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Melee Claw Strike; Wall Scaling Ambush,http://warpath.eu/mp.html,Ghoul
+Ghouls,Tormented Ghoul,melee,0.92,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Melee Claw Strike; Frenzied Bites,http://warpath.eu/mp.html,Ghoul
+Ghouls,Feasting Ghoul,melee,0.92,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Melee Claw Strike; Cannibalize (feeds on corpses to regenerate Life),http://warpath.eu/mp.html,Ghoul
+Cultists,Dark Cultist,melee/caster,0.75,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Melee Dagger Strike; Dark Invocation ritual,http://warpath.eu/mp.html,Dark Cultist
+Cultists,Dark Summoner,summoner/caster,1.13,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Shadow Bolt; Summon Accursed / Hellion,http://warpath.eu/mp.html,Dark Summoner
+Cultists,Dark Berserker,big/melee,2.25,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,"Overhead Mace Smash (heavy wind-up Physical slam, high damage)",http://warpath.eu/mp.html,Dark Berserker
+Cultists,Dark Zealot,melee,0.75,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Fanatical Rush; Rapid Dagger Slashes,http://warpath.eu/mp.html,Dark Zealot
+Cultists,Unholy Thrall,big/melee,3.0,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Mutated Fist Slam (heavy Physical melee); Knockback,http://warpath.eu/mp.html,Unholy Thrall
+Spiders,Spiderling,melee,0.2,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Poison Bite (fast melee),http://warpath.eu/mp.html,Spiderling
+Spiders,Toxic Lurker,big/melee,3.0,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Poison Spray; Mandible Cleave; Spawns Spiderlings on death,http://warpath.eu/mp.html,Toxic Lurker
+Spiders,Brood Hatchling,melee,0.2,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Swarm Bite; Hatches from egg sacs,http://warpath.eu/mp.html,Brood Hatchling
+Spiders,Arachnid Horror,big/melee,2.0,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Web Trap (slows/roots); Poison Acid Spit (ranged Poison),http://warpath.eu/mp.html,Arachnid Horror
+Beasts,Scavenger,melee,0.65,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Burrow Ambush (leaps from subterranean tunnel); Claw Strike,http://warpath.eu/mp.html,Scavenger
+Beasts,Quill Fiend,ranged,0.8,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Quill Volley (shoots barrage of physical spines),http://warpath.eu/mp.html,Quill Fiend
+Beasts,Carrion Bat,melee,0.82,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Swoop Bite; Lightning Spark (short-range Lightning breath),http://warpath.eu/mp.html,Carrion Bat
+Beasts,Dune Thresher,big/melee,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (fast when burrowed),NOT PUBLISHED,Sand Submerge; Breach Slam (erupts from sand dealing heavy Physical damage),https://diablo.fandom.com/wiki/Dune_Thresher,none
+Beasts,Savage,big/melee,5.0,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,"Furious Horn Charge (charges target, knocks back and stuns); Gore",http://warpath.eu/mp.html,Savage Beast
+Swarm,Stinging Swarm,melee,1.05,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Poison Swarm Bite; Airborne evasion,http://warpath.eu/mp.html,Stinging Swarm
+Swarm,Vile Swarm,melee,1.05,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Swarm Bite; Airborne flight,http://warpath.eu/mp.html,Vile Swarm
+Swarm,Sand Wasp,ranged,0.6,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Mini-Wasp Barrage (fires 4 slow-moving stingers dealing heavy Poison damage),http://warpath.eu/mp.html,Sand Wasp
+Swarm,Sand Dweller,big/melee,3.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Sandstorm Shield (spinning deflection); Double-Arm Ground Slam; Burrow,http://warpath.eu/mp.html,Sand Dweller
+Lacuni,Lacuni Huntress,ranged,1.35,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Firebomb Throw (ranged Fire AoE); Leaping Evasion,http://warpath.eu/mp.html,Lacuni Huntress
+Lacuni,Lacuni Warrior,melee,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Pounce Leap (leaps from range); Dual-Blade Slash,https://diablo.fandom.com/wiki/Lacuni,none
+Lacuni,Lacuni Slasher,melee,2.5,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Whirlwind Slash (spinning melee AoE); Pounce Leap,http://warpath.eu/mp.html,Lacuni Slasher
+Bogans,Bogan Trapper,ranged,2.5,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Snare Trap (immobilizing ground trap); Poison Dart,http://warpath.eu/mp.html,Bogan Trapper
+Bogans,Tusked Bogan,big/melee,4.0,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Tusk Charge (head-on charge knocking back); Ground Stomp,http://warpath.eu/mp.html,Tusked Bogan
+Bogans,Bogan Darter,ranged,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Rapid Blowdart (ranged Poison projectile); Retreating Scamper,https://diablo.fandom.com/wiki/Bogan_Trapper,none
+Bogans,Boggit,melee,0.42,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Swarm Dagger Melee; fast swarming rush,http://warpath.eu/mp.html,Boggit
+Reapers,Executioner,big/melee,5.5,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Decapitating Overhead Axe Slam (telegraphed massive Physical smash),http://warpath.eu/mp.html,Executioner
+Reapers,Exorcist,caster,2.5,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Lightning Life Drain (channeled lethal Lightning beam draining hero life),http://warpath.eu/mp.html,Exorcist
+Reapers,Punisher,big/melee,5.5,NOT PUBLISHED,NOT PUBLISHED (fast leap),NOT PUBLISHED,"Leaping Body Slam (long-distance leap, stuns and deals massive Physical AoE); Heavy Fists",http://warpath.eu/mp.html,Punisher
+Reapers,Anarch,melee,2.0,NOT PUBLISHED,NOT PUBLISHED (fast charge),NOT PUBLISHED,Dash Charge (rushes through enemies leaving Fire trail); Flame Breath,http://warpath.eu/mp.html,Anarch
+Reapers,Revenant Archer,ranged,1.05,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,"Frost Arrow (ranged Cold shot, chills target)",http://warpath.eu/mp.html,Revenant Archer
+Reapers,Revenant Shield Guard,melee,1.63,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Shield Wall (impenetrable frontal defense); Shield Bash (knocks back),http://warpath.eu/mp.html,Revenant Shield Guard
+Demons,Morlu Caster,caster,1.75,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Meteor (delayed falling Fire meteor); Rebirth (turns to stone and heals to full if not killed); Fire Blast,http://warpath.eu/mp.html,Morlu Incinerator
+Demons,Subjugator,big/melee,0.92,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Arcane Wave (slow-moving Arcane wall); Teleport Slam; Heavy Melee,http://warpath.eu/mp.html,Subjugator
+Demons,Terror Demon,melee,1.75,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Shadow Ambush (phases behind target); Fear Roar; Melee Claws,http://warpath.eu/mp.html,Terror Demon
+Demons,Armored Destroyer,big/melee,0.88,NOT PUBLISHED,NOT PUBLISHED (slow),NOT PUBLISHED,Sky Drop (crashes from above dealing heavy AoE impact damage); Heavy Fist Slam,http://warpath.eu/mp.html,Armored Destroyer
+Demons,Succubus,ranged/caster,1.5,NOT PUBLISHED,NOT PUBLISHED (fast backward glide),NOT PUBLISHED,Blood Star (homing red orb inflicting -35% Armor debuff); Backward Glide,http://warpath.eu/mp.html,Vile Temptress
+Demons,Oppressor,big/melee,1.75,NOT PUBLISHED,NOT PUBLISHED (fast charge),NOT PUBLISHED,Fire Breath (channeled flame cone); Trample Charge; Melee Cleave,http://warpath.eu/mp.html,Oppressor
+Ghosts,Enraged Phantom,caster/melee,1.13,NOT PUBLISHED,NOT PUBLISHED (flying/phase),NOT PUBLISHED,Soul Siphon (channeled Cold/Physical life drain); Phase through obstacles,http://warpath.eu/mp.html,Enraged Phantom
+Ghosts,Shadow Vermin,melee,0.22,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Shadow Nibble; fast swarming melee,http://warpath.eu/mp.html,Shadow Vermin
+Ghosts,Shade Stalker,caster/melee,0.22,NOT PUBLISHED,NOT PUBLISHED (fast),NOT PUBLISHED,Cold Touch; Shadow Invisibility; Phase Strike,http://warpath.eu/mp.html,Shade Stalker
+Ghosts,Spectral Warrior,melee,NOT PUBLISHED,NOT PUBLISHED,NOT PUBLISHED (average),NOT PUBLISHED,Spectral Blade Strike; Phase through terrain,https://diablo.fandom.com/wiki/Ghost_(Diablo_III),none

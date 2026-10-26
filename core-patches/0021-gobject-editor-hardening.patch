@@ -1,0 +1,208 @@
+# 0021 gobject-editor-hardening
+#
+# Applies to the vendored mod-gobject-editor, NOT to the core tree: paths start at
+# modules/mod-gobject-editor/, so the target is azerothcore-wotlk/modules/. The base is the
+# verbatim mirror reference/mod-gobject-editor/ (upstream
+# https://github.com/norrathreborn/GObject-Editor-Tool, folder mod-gobject-editor/, commit
+# 86f64cbcd63aba0005fc2c7da6a63bef9ea504ed, 2026-06-24). Apply with
+# mod-diablocraft/scripts/vendor_gobject_editor.sh, or by hand:
+#     git -C azerothcore-wotlk apply ../core-patches/0021-gobject-editor-hardening.patch
+#
+# One purpose: make the third-party editor safe to build into every worldserver, and off
+# unless dev's conf turns it on (diablocraft-p06y). Each change is a hunk below:
+#   1. GObjectEditor.Enable defaults to off when the key is missing (upstream: on). conf.dist says 0.
+#   2. RequiredSecurity can raise the gate and never lower it: the value is clamped up to 3.
+#   3. With the module off, the chat hook returns before it reads, logs or answers anything.
+#   4. CLEAR was the one opcode without the HasAccess gate; it has one now.
+#   5. Logout cleanup no longer sends an addon packet to the player who is leaving.
+#   6. The object nudge refuses a position outside the map (the creature nudge already did), and
+#      a refused nudge of either kind no longer leaves an entry in the undo history.
+# Not changed, and why: placing is unbounded (each place writes a row at once) but needs GM 3 and
+# is what `.npc add` and `.gobject add` already allow; the search LIKE does not escape % and _
+# (wildcards only; the text itself is escaped); every std::stof and std::stoul runs inside
+# DispatchPayload's try/catch, so bad input answers ERROR:EXCEPTION and never throws out of the hook.
+
+diff --git a/modules/mod-gobject-editor/conf/mod_gobject_editor.conf.dist b/modules/mod-gobject-editor/conf/mod_gobject_editor.conf.dist
+index 5997035..1936981 100644
+--- a/modules/mod-gobject-editor/conf/mod_gobject_editor.conf.dist
++++ b/modules/mod-gobject-editor/conf/mod_gobject_editor.conf.dist
+@@ -8,10 +8,12 @@
+ ###################################################################################################
+ 
+ # Enable or disable the GObject Editor module.
+-GObjectEditor.Enable = 1
++# Torment: 0 here, and 0 when this file is absent. Only Torment Development's own
++# mod_gobject_editor.conf sets 1; live never does (it writes the world database directly).
++GObjectEditor.Enable = 0
+ 
+ # Required account security level.
+-# 3 is administrator/GM-level on most AzerothCore setups.
++# Torment: 3 is the lowest the module accepts; a smaller number here is read as 3.
+ GObjectEditor.RequiredSecurity = 3
+ 
+ # Maximum scan distance accepted from addon.
+diff --git a/modules/mod-gobject-editor/src/GObjectEditor.cpp b/modules/mod-gobject-editor/src/GObjectEditor.cpp
+index 7524822..edb2034 100644
+--- a/modules/mod-gobject-editor/src/GObjectEditor.cpp
++++ b/modules/mod-gobject-editor/src/GObjectEditor.cpp
+@@ -123,7 +123,8 @@ std::unordered_map<uint64, std::unordered_map<uint32, CreatureEditState>> Creatu
+ 
+ static bool IsModuleEnabled()
+ {
+-    return sConfigMgr->GetOption<bool>("GObjectEditor.Enable", true);
++    // Torment: a missing key means off (upstream's default was on). Dev's conf sets 1, live has none or 0.
++    return sConfigMgr->GetOption<bool>("GObjectEditor.Enable", false);
+ }
+ 
+ static bool IsDebugEnabled()
+@@ -133,7 +134,8 @@ static bool IsDebugEnabled()
+ 
+ static uint32 RequiredSecurity()
+ {
+-    return sConfigMgr->GetOption<uint32>("GObjectEditor.RequiredSecurity", 3);
++    // Torment: the option can raise the gate, never lower it; 0 would let every player edit the world.
++    return std::max<uint32>(sConfigMgr->GetOption<uint32>("GObjectEditor.RequiredSecurity", SEC_ADMINISTRATOR), SEC_ADMINISTRATOR);
+ }
+ 
+ static float MaxScanDistance()
+@@ -1056,7 +1058,6 @@ static void HandleNudgeCreature(Player* player, std::vector<std::string> const&
+         return;
+ 
+     CreatureEditState& editState = GetCreatureEditState(player, guid, data);
+-    editState.undoHistory.push_back(MakeCreatureTransform(data));
+ 
+     float x = data->posX;
+     float y = data->posY;
+@@ -1106,6 +1107,8 @@ static void HandleNudgeCreature(Player* player, std::vector<std::string> const&
+         return;
+     }
+ 
++    // Torment: the undo entry is taken only once the nudge is accepted (a refused one used to leave a stray entry).
++    editState.undoHistory.push_back(MakeCreatureTransform(data));
+     ApplyCreaturePosition(creature, data, guid, x, y, z, o);
+     SendCreatureUpdated(player, guid);
+     SendCreatureUndoRestoreStatus(player, guid, editState);
+@@ -1302,7 +1305,8 @@ static void HandleResetCreatureToOriginal(Player* player, std::vector<std::strin
+     SendAddonPayload(player, "CREATURE_RESET_ORIGINAL:" + std::to_string(guid));
+ }
+ 
+-static void ClearEditorSession(Player* player)
++// Torment: `notify` is false on logout, so a player leaving never gets an addon packet from this module.
++static void ClearEditorSession(Player* player, bool notify)
+ {
+     if (!player)
+         return;
+@@ -1317,7 +1321,20 @@ static void ClearEditorSession(Player* player)
+     LastScanCreatureGuidsByPlayer.erase(guid);
+     LastPlacedCreatureGuidByPlayer.erase(guid);
+     CreatureEditStateByPlayer.erase(guid);
+-    SendAddonPayload(player, "CLEARED");
++    if (notify)
++        SendAddonPayload(player, "CLEARED");
++}
++
++// Torment: CLEAR was the one opcode with no access gate.
++static void HandleClear(Player* player)
++{
++    if (!HasAccess(player))
++    {
++        SendAddonPayload(player, GE_ACCESS_DENIED);
++        return;
++    }
++
++    ClearEditorSession(player, true);
+ }
+ 
+ static void HandleHello(Player* player)
+@@ -1955,7 +1972,9 @@ static void HandleNudge(Player* player, std::vector<std::string> const& parts)
+     float step = std::stof(parts[2]);
+     step = std::max(0.0f, std::min(step, MaxNudgeDistance()));
+ 
+-    SnapshotUndo(*selected);
++    // Torment: work on a copy; a refused nudge leaves the selection and its undo history alone, and the
++    // creature nudge's map-coordinate check now applies to objects too (a saved bad position never loads).
++    ObjectTransform next = selected->current;
+ 
+     std::string moveMode = parts.size() >= 4 ? Trim(parts[3]) : "PLAYER";
+     float const moveOrientation = (moveMode == "OBJECT") ? selected->current.o : player->GetOrientation();
+@@ -1966,34 +1985,42 @@ static void HandleNudge(Player* player, std::vector<std::string> const& parts)
+ 
+     if (dir == "FORWARD")
+     {
+-        selected->current.x += forwardX * step;
+-        selected->current.y += forwardY * step;
++        next.x += forwardX * step;
++        next.y += forwardY * step;
+     }
+     else if (dir == "BACK")
+     {
+-        selected->current.x -= forwardX * step;
+-        selected->current.y -= forwardY * step;
++        next.x -= forwardX * step;
++        next.y -= forwardY * step;
+     }
+     else if (dir == "LEFT")
+     {
+-        selected->current.x += leftX * step;
+-        selected->current.y += leftY * step;
++        next.x += leftX * step;
++        next.y += leftY * step;
+     }
+     else if (dir == "RIGHT")
+     {
+-        selected->current.x -= leftX * step;
+-        selected->current.y -= leftY * step;
++        next.x -= leftX * step;
++        next.y -= leftY * step;
+     }
+     else if (dir == "UP")
+-        selected->current.z += step;
++        next.z += step;
+     else if (dir == "DOWN")
+-        selected->current.z -= step;
++        next.z -= step;
+     else
+     {
+         SendAddonPayload(player, "ERROR:UNKNOWN_NUDGE_DIRECTION");
+         return;
+     }
+ 
++    if (!MapMgr::IsValidMapCoord(selected->map, next.x, next.y, next.z))
++    {
++        SendAddonPayload(player, "ERROR:INVALID_MAP_COORDINATES");
++        return;
++    }
++
++    SnapshotUndo(*selected);
++    selected->current = next;
+     selected->dirty = true;
+     SendAddonPayload(player, BuildSelectedPayload("UPDATED", *selected));
+     SendUndoStatus(player, *selected);
+@@ -2274,7 +2301,7 @@ static void DispatchPayload(Player* player, std::string const& payload)
+         else if (parts[0] == "REFRESH_PREVIEW" || parts[0] == "FLASH")
+             HandleRefreshPreview(player);
+         else if (parts[0] == "CLEAR")
+-            ClearEditorSession(player);
++            HandleClear(player);
+         else
+             SendAddonPayload(player, "ERROR:UNKNOWN_OPCODE:" + parts[0]);
+     }
+@@ -2291,7 +2318,8 @@ public:
+ 
+     void OnPlayerBeforeSendChatMessage(Player* player, uint32& /*type*/, uint32& lang, std::string& msg) override
+     {
+-        if (lang != LANG_ADDON)
++        // Torment: with the module off it reads, logs and answers nothing.
++        if (lang != LANG_ADDON || !IsModuleEnabled())
+             return;
+ 
+         std::string payload;
+@@ -2309,7 +2337,7 @@ public:
+         if (!player)
+             return;
+ 
+-        ClearEditorSession(player);
++        ClearEditorSession(player, false);
+     }
+ };
+ } // namespace

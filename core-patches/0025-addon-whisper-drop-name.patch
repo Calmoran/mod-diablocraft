@@ -1,0 +1,61 @@
+Reason: Let a module take an addon whisper addressed to a name nobody plays (the Lua error drop's Torment): no delivery and no "player not found" notice, which BugSack's split send would get once per chunk.
+Target: AzerothCore at core-commit.txt, after patches 0001-0024 (beside 0022's GlobalScript hook). Default: stock, every whisper is looked up.
+
+--- a/src/server/game/Handlers/ChatHandler.cpp
++++ b/src/server/game/Handlers/ChatHandler.cpp
+@@ -395,6 +395,10 @@
+                     break;
+                 }
+ 
++                // a module's drop name (the Lua error drop's) takes addon whispers: no delivery, no notice per chunk
++                if (lang == LANG_ADDON && sScriptMgr->IsAddonWhisperDrop(to))
++                    return;
++
+                 Player* receiver = ObjectAccessor::FindPlayerByName(to, false);
+                 bool senderIsPlayer = !HasPermission(rbac::RBAC_PERM_TWO_SIDE_INTERACTION_CHAT);
+                 bool receiverIsPlayer = receiver ? !receiver->GetSession()->HasPermission(rbac::RBAC_PERM_TWO_SIDE_INTERACTION_CHAT) : true;
+--- a/src/server/game/Scripting/ScriptDefines/GlobalScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/GlobalScript.cpp
+@@ -31,6 +31,11 @@
+     CALL_ENABLED_BOOLEAN_HOOKS_WITH_DEFAULT_FALSE(GlobalScript, GLOBALHOOK_IS_INSTANCE_SHARED, script->IsInstanceShared(mapId, instanceId, maxPlayers));
+ }
+ 
++bool ScriptMgr::IsAddonWhisperDrop(std::string const& to)
++{
++    CALL_ENABLED_BOOLEAN_HOOKS_WITH_DEFAULT_FALSE(GlobalScript, GLOBALHOOK_IS_ADDON_WHISPER_DROP, script->IsAddonWhisperDrop(to));
++}
++
+ void ScriptMgr::OnGlobalItemDelFromDB(CharacterDatabaseTransaction trans, ObjectGuid::LowType itemGuid)
+ {
+     ASSERT(trans);
+--- a/src/server/game/Scripting/ScriptDefines/GlobalScript.h
++++ b/src/server/game/Scripting/ScriptDefines/GlobalScript.h
+@@ -55,6 +55,7 @@
+     GLOBALHOOK_CAN_CREATE_LFG_PROPOSAL,
+     GLOBALHOOK_CAN_WORLD_OBJECT_SPAWN,
+     GLOBALHOOK_IS_INSTANCE_SHARED,
++    GLOBALHOOK_IS_ADDON_WHISPER_DROP,
+     GLOBALHOOK_END
+ };
+ 
+@@ -72,6 +73,10 @@
+     // maxPlayers (the map's own cap on entry) set to the module's cap. Default: stock, one group an instance.
+     virtual bool IsInstanceShared(uint32 /*mapId*/, uint32 /*instanceId*/, uint32& /*maxPlayers*/) { return false; }
+ 
++    // Called for an addon whisper (LANG_ADDON) before its target is looked up, with the target's normalized name; true
++    // means a module took it (the Lua error drop's name): no delivery and no "player not found" notice. Default: stock.
++    virtual bool IsAddonWhisperDrop(std::string const& /*to*/) { return false; }
++
+     // items
+     virtual void OnItemDelFromDB(CharacterDatabaseTransaction /*trans*/, ObjectGuid::LowType /*itemGuid*/) { }
+     virtual void OnMirrorImageDisplayItem(Item const* /*item*/, uint32& /*display*/) { }
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -535,6 +535,7 @@
+ public: /* GlobalScript */
+     bool CanWorldObjectSpawn(WorldSpawnKind kind, uint32 entry, uint32 spawnId, uint32 mapId, uint32 phase, Position const& worldPosition);
+     bool IsInstanceShared(uint32 mapId, uint32 instanceId, uint32& maxPlayers);
++    bool IsAddonWhisperDrop(std::string const& to);
+     void OnGlobalItemDelFromDB(CharacterDatabaseTransaction trans, ObjectGuid::LowType itemGuid);
+     void OnGlobalMirrorImageDisplayItem(Item const* item, uint32& display);
+     void OnBeforeUpdateArenaPoints(ArenaTeam* at, std::map<ObjectGuid, uint32>& ap);

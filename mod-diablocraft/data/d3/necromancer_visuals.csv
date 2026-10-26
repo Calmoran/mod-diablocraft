@@ -1,0 +1,127 @@
+d3_skill,d3_rune,wow_spell_name,wow_spell_id,icon_name,match_quality,notes,source_url
+Bone Spikes,,Volley,1510,ability_marksmanship,fair,spikes erupt from the ground at the target area; Volley is the stock ground-area attack (the erupting bone is the module's),client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Bone Spikes,Sudden Impact,Volley,1510,ability_marksmanship,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Bone Spikes,Path of Bones,Volley,1510,ability_marksmanship,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Bone Spikes,Bone Pillars,Poison Cloud,3815,spell_nature_regenerate,fair,Poison rune: Poison Cloud is the closest stock Poison ground area,client-patch/dbc/Spell.dbc id 3815 ; icon from SpellIcon.dbc
+Bone Spikes,Frost Spikes,Blizzard,10,spell_frost_icestorm,fair,Cold rune: Blizzard is the closest stock Cold ground area,client-patch/dbc/Spell.dbc id 10 ; icon from SpellIcon.dbc
+Bone Spikes,Blood Spikes,Volley,1510,ability_marksmanship,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1510 ; icon from SpellIcon.dbc
+Grim Scythe,,Cleave,845,ability_warrior_cleave,fair,a wide slash in front of the caster; Cleave is the stock frontal sweep (the summoned scythe is the module's),client-patch/dbc/Spell.dbc id 845 ; icon from SpellIcon.dbc
+Grim Scythe,Blood Scythe,Cleave,845,ability_warrior_cleave,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 845 ; icon from SpellIcon.dbc
+Grim Scythe,Execution,Cleave,845,ability_warrior_cleave,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 845 ; icon from SpellIcon.dbc
+Grim Scythe,Frost Scythe,Frost Strike,49143,spell_deathknight_empowerruneblade2,fair,Cold rune: Frost Strike is the closest stock Cold melee sweep,client-patch/dbc/Spell.dbc id 49143 ; icon from SpellIcon.dbc
+Grim Scythe,Dual Scythes,Cleave,845,ability_warrior_cleave,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 845 ; icon from SpellIcon.dbc
+Grim Scythe,Cursed Scythe,Plague Strike,45462,spell_deathknight_empowerruneblade,fair,Poison rune: Plague Strike is the closest stock Poison melee sweep,client-patch/dbc/Spell.dbc id 45462 ; icon from SpellIcon.dbc
+Siphon Blood,,Drain Life,689,spell_shadow_lifedrain02,good,a channelled drain that heals the caster; Drain Life is the same read,client-patch/dbc/Spell.dbc id 689 ; icon from SpellIcon.dbc
+Siphon Blood,Suppress,Drain Life,689,spell_shadow_lifedrain02,fair,"Cold rune: no stock Cold version of this shape, so it keeps Drain Life",client-patch/dbc/Spell.dbc id 689 ; icon from SpellIcon.dbc
+Siphon Blood,Purity of Essence,Drain Life,689,spell_shadow_lifedrain02,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 689 ; icon from SpellIcon.dbc
+Siphon Blood,Drain Life,Drain Life,689,spell_shadow_lifedrain02,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 689 ; icon from SpellIcon.dbc
+Siphon Blood,Power Shift,Drain Life,689,spell_shadow_lifedrain02,fair,"Poison rune: no stock Poison version of this shape, so it keeps Drain Life",client-patch/dbc/Spell.dbc id 689 ; icon from SpellIcon.dbc
+Siphon Blood,Blood Sucker,Drain Life,689,spell_shadow_lifedrain02,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 689 ; icon from SpellIcon.dbc
+Bone Spear,,Death Coil,6789,spell_shadow_deathcoil,fair,a bone projectile along a line; Death Coil is the stock undead bolt (the piercing is the module's),client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Bone Spear,Crystallization,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Bone Spear,Shatter,Death Coil,6789,spell_shadow_deathcoil,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Bone Spear,Blighted Marrow,Poison Bolt,21067,spell_nature_corrosivebreath,fair,Poison rune: Poison Bolt is the closest stock Poison short bolt,client-patch/dbc/Spell.dbc id 21067 ; icon from SpellIcon.dbc
+Bone Spear,Blood Spear,Death Coil,6789,spell_shadow_deathcoil,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Bone Spear,Teeth,Death Coil,6789,spell_shadow_deathcoil,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Skeletal Mage,,Raise Dead,46584,spell_shadow_animatedead,fair,raises a skeleton from the ground for a few seconds; Raise Dead is the stock raise-a-skeleton cast,client-patch/dbc/Spell.dbc id 46584 ; icon from SpellIcon.dbc
+Skeletal Mage,Gift of Death,Raise Dead,46584,spell_shadow_animatedead,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 46584 ; icon from SpellIcon.dbc
+Skeletal Mage,Singularity,Raise Dead,46584,spell_shadow_animatedead,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 46584 ; icon from SpellIcon.dbc
+Skeletal Mage,Life Support,Raise Dead,46584,spell_shadow_animatedead,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 46584 ; icon from SpellIcon.dbc
+Skeletal Mage,Contamination,Raise Dead,46584,spell_shadow_animatedead,fair,"Poison rune: no stock Poison version of this shape, so it keeps Raise Dead",client-patch/dbc/Spell.dbc id 46584 ; icon from SpellIcon.dbc
+Skeletal Mage,Skeleton Archer,Raise Dead,46584,spell_shadow_animatedead,fair,"Cold rune: no stock Cold version of this shape, so it keeps Raise Dead",client-patch/dbc/Spell.dbc id 46584 ; icon from SpellIcon.dbc
+Death Nova,,Pestilence,50842,spell_shadow_plaguecloud,good,a poison nova around the caster; Pestilence is the stock plague burst,client-patch/dbc/Spell.dbc id 50842 ; icon from SpellIcon.dbc
+Death Nova,Tendril Nova,Whirlwind,1680,ability_whirlwind,fair,Physical rune: Whirlwind is the closest stock Physical burst around the caster,client-patch/dbc/Spell.dbc id 1680 ; icon from SpellIcon.dbc
+Death Nova,Bone Nova,Whirlwind,1680,ability_whirlwind,fair,Physical rune: Whirlwind is the closest stock Physical burst around the caster,client-patch/dbc/Spell.dbc id 1680 ; icon from SpellIcon.dbc
+Death Nova,Blood Nova,Whirlwind,1680,ability_whirlwind,fair,Physical rune: Whirlwind is the closest stock Physical burst around the caster,client-patch/dbc/Spell.dbc id 1680 ; icon from SpellIcon.dbc
+Death Nova,Blight,Pestilence,50842,spell_shadow_plaguecloud,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 50842 ; icon from SpellIcon.dbc
+Death Nova,Unstable Compound,Pestilence,50842,spell_shadow_plaguecloud,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 50842 ; icon from SpellIcon.dbc
+Corpse Explosion,,Corpse Explosion,49158,ability_creature_disease_02,good,explodes nearby corpses; Corpse Explosion is the same spell,client-patch/dbc/Spell.dbc id 49158 ; icon from SpellIcon.dbc
+Corpse Explosion,Shrapnel,Corpse Explosion,49158,ability_creature_disease_02,fair,"Poison rune: no stock Poison version of this shape, so it keeps Corpse Explosion",client-patch/dbc/Spell.dbc id 49158 ; icon from SpellIcon.dbc
+Corpse Explosion,Final Embrace,Corpse Explosion,49158,ability_creature_disease_02,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 49158 ; icon from SpellIcon.dbc
+Corpse Explosion,Close Quarters,Corpse Explosion,49158,ability_creature_disease_02,fair,"Poison rune: no stock Poison version of this shape, so it keeps Corpse Explosion",client-patch/dbc/Spell.dbc id 49158 ; icon from SpellIcon.dbc
+Corpse Explosion,Bloody Mess,Corpse Explosion,49158,ability_creature_disease_02,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 49158 ; icon from SpellIcon.dbc
+Corpse Explosion,Dead Cold,Corpse Explosion,49158,ability_creature_disease_02,fair,"Cold rune: no stock Cold version of this shape, so it keeps Corpse Explosion",client-patch/dbc/Spell.dbc id 49158 ; icon from SpellIcon.dbc
+Corpse Lance,,Death Coil,6789,spell_shadow_deathcoil,fair,projectiles from nearby corpses at one enemy; Death Coil is the closest stock undead bolt (the corpse lances are the module's),client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Corpse Lance,Ricochet,Poison Bolt,21067,spell_nature_corrosivebreath,fair,Poison rune: Poison Bolt is the closest stock Poison short bolt,client-patch/dbc/Spell.dbc id 21067 ; icon from SpellIcon.dbc
+Corpse Lance,Brittle Touch,Frostbolt,116,spell_frost_frostbolt02,fair,Cold rune: Frostbolt is the closest stock Cold short bolt,client-patch/dbc/Spell.dbc id 116 ; icon from SpellIcon.dbc
+Corpse Lance,Blood Lance,Death Coil,6789,spell_shadow_deathcoil,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Corpse Lance,Visceral Impact,Death Coil,6789,spell_shadow_deathcoil,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 6789 ; icon from SpellIcon.dbc
+Corpse Lance,Shredding Splinters,Poison Bolt,21067,spell_nature_corrosivebreath,fair,Poison rune: Poison Bolt is the closest stock Poison short bolt,client-patch/dbc/Spell.dbc id 21067 ; icon from SpellIcon.dbc
+Devour,,Death Pact,48743,spell_shadow_deathpact,fair,consumes corpses and minions for resource; Death Pact is the stock consume-a-minion cast,client-patch/dbc/Spell.dbc id 48743 ; icon from SpellIcon.dbc
+Devour,Cannibalize,Death Pact,48743,spell_shadow_deathpact,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48743 ; icon from SpellIcon.dbc
+Devour,Ruthless,Death Pact,48743,spell_shadow_deathpact,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48743 ; icon from SpellIcon.dbc
+Devour,Voracious,Death Pact,48743,spell_shadow_deathpact,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48743 ; icon from SpellIcon.dbc
+Devour,Devouring Aura,Death Pact,48743,spell_shadow_deathpact,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48743 ; icon from SpellIcon.dbc
+Devour,Satiated,Death Pact,48743,spell_shadow_deathpact,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48743 ; icon from SpellIcon.dbc
+Revive,,Raise Ally,46619,spell_shadow_deadofnight,good,raises dead creatures as minions; Raise Ally is the stock raise-a-corpse cast,client-patch/dbc/Spell.dbc id 46619 ; icon from SpellIcon.dbc
+Revive,Purgatory,Raise Ally,46619,spell_shadow_deadofnight,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 46619 ; icon from SpellIcon.dbc
+Revive,Oblation,Raise Ally,46619,spell_shadow_deadofnight,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 46619 ; icon from SpellIcon.dbc
+Revive,Personal Army,Raise Ally,46619,spell_shadow_deadofnight,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 46619 ; icon from SpellIcon.dbc
+Revive,Recklessness,Raise Ally,46619,spell_shadow_deadofnight,fair,"Cold rune: no stock Cold version of this shape, so it keeps Raise Ally",client-patch/dbc/Spell.dbc id 46619 ; icon from SpellIcon.dbc
+Revive,Horrific Return,Raise Ally,46619,spell_shadow_deadofnight,fair,"Poison rune: no stock Poison version of this shape, so it keeps Raise Ally",client-patch/dbc/Spell.dbc id 46619 ; icon from SpellIcon.dbc
+Command Skeletons,,Dark Command,56222,spell_nature_shamanrage,fair,"orders the skeleton minions onto a target; no stock minion-command spell, Dark Command is the stock command-an-enemy cast",client-patch/dbc/Spell.dbc id 56222 ; icon from SpellIcon.dbc
+Command Skeletons,Enforcer,Dark Command,56222,spell_nature_shamanrage,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 56222 ; icon from SpellIcon.dbc
+Command Skeletons,Dark Mending,Dark Command,56222,spell_nature_shamanrage,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 56222 ; icon from SpellIcon.dbc
+Command Skeletons,Freezing Grasp,Dark Command,56222,spell_nature_shamanrage,fair,"Cold rune: no stock Cold version of this shape, so it keeps Dark Command",client-patch/dbc/Spell.dbc id 56222 ; icon from SpellIcon.dbc
+Command Skeletons,Kill Command,Dark Command,56222,spell_nature_shamanrage,fair,"Poison rune: no stock Poison version of this shape, so it keeps Dark Command",client-patch/dbc/Spell.dbc id 56222 ; icon from SpellIcon.dbc
+Command Skeletons,Frenzy,Dark Command,56222,spell_nature_shamanrage,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 56222 ; icon from SpellIcon.dbc
+Command Golem,,Inferno,1122,spell_shadow_summoninfernal,fair,"a large summoned golem; Inferno is the stock large summon (the golem is a creature, a summon sheet)",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Command Golem,Bone Golem,Inferno,1122,spell_shadow_summoninfernal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Command Golem,Blood Golem,Inferno,1122,spell_shadow_summoninfernal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Command Golem,Decay Golem,Inferno,1122,spell_shadow_summoninfernal,fair,"Poison rune: no stock Poison version of this shape, so it keeps Inferno",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Command Golem,Flesh Golem,Inferno,1122,spell_shadow_summoninfernal,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Command Golem,Ice Golem,Inferno,1122,spell_shadow_summoninfernal,fair,"Cold rune: no stock Cold version of this shape, so it keeps Inferno",client-patch/dbc/Spell.dbc id 1122 ; icon from SpellIcon.dbc
+Army of the Dead,,Army of the Dead,42650,spell_deathknight_armyofthedead,good,a skeletal army rises at the target; Army of the Dead is the same spell,client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Army of the Dead,Blighted Grasp,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,"Poison rune: no stock Poison version of this shape, so it keeps Army of the Dead",client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Army of the Dead,Frozen Army,Army of the Dead,42650,spell_deathknight_armyofthedead,fair,"Cold rune: no stock Cold version of this shape, so it keeps Army of the Dead",client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Army of the Dead,Unconventional Warfare,Army of the Dead,42650,spell_deathknight_armyofthedead,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Army of the Dead,Death Valley,Army of the Dead,42650,spell_deathknight_armyofthedead,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Army of the Dead,Dead Storm,Army of the Dead,42650,spell_deathknight_armyofthedead,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 42650 ; icon from SpellIcon.dbc
+Land of the Dead,,Death and Decay,43265,spell_shadow_deathanddecay,fair,a zone of death around the caster; Death and Decay is the stock ground zone,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Land of the Dead,Invigoration,Death and Decay,43265,spell_shadow_deathanddecay,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Land of the Dead,Frozen Lands,Death and Decay,43265,spell_shadow_deathanddecay,fair,"Cold rune: no stock Cold version of this shape, so it keeps Death and Decay",client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Land of the Dead,Plaguelands,Death and Decay,43265,spell_shadow_deathanddecay,fair,"Poison rune: no stock Poison version of this shape, so it keeps Death and Decay",client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Land of the Dead,Land of Plenty,Death and Decay,43265,spell_shadow_deathanddecay,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Land of the Dead,Shallow Graves,Death and Decay,43265,spell_shadow_deathanddecay,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 43265 ; icon from SpellIcon.dbc
+Decrepify,,Curse of Weakness,702,spell_shadow_curseofmannoroth,fair,"a curse that cuts the enemies' damage and movement speed; Curse of Weakness is the stock damage curse (Curse of Exhaustion, 18223, is the stock slow curse)",client-patch/dbc/Spell.dbc id 702 ; icon from SpellIcon.dbc
+Decrepify,Enfeeblement,Curse of Weakness,702,spell_shadow_curseofmannoroth,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 702 ; icon from SpellIcon.dbc
+Decrepify,Opportunist,Curse of Weakness,702,spell_shadow_curseofmannoroth,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 702 ; icon from SpellIcon.dbc
+Decrepify,Borrowed Time,Curse of Weakness,702,spell_shadow_curseofmannoroth,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 702 ; icon from SpellIcon.dbc
+Decrepify,Wither,Curse of Weakness,702,spell_shadow_curseofmannoroth,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 702 ; icon from SpellIcon.dbc
+Decrepify,Dizzying Curse,Curse of Weakness,702,spell_shadow_curseofmannoroth,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 702 ; icon from SpellIcon.dbc
+Leech,,Siphon Life,63106,spell_shadow_requiem,fair,a curse whose victims heal the attacker; Siphon Life is the stock damage-for-healing cast,client-patch/dbc/Spell.dbc id 63106 ; icon from SpellIcon.dbc
+Leech,Osmosis,Siphon Life,63106,spell_shadow_requiem,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 63106 ; icon from SpellIcon.dbc
+Leech,Transmittable,Siphon Life,63106,spell_shadow_requiem,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 63106 ; icon from SpellIcon.dbc
+Leech,Sanguine End,Siphon Life,63106,spell_shadow_requiem,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 63106 ; icon from SpellIcon.dbc
+Leech,Cursed Ground,Siphon Life,63106,spell_shadow_requiem,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 63106 ; icon from SpellIcon.dbc
+Leech,Blood Flask,Siphon Life,63106,spell_shadow_requiem,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 63106 ; icon from SpellIcon.dbc
+Frailty,,Curse of Doom,603,spell_shadow_auraofdarkness,good,a curse that kills weakened enemies; Curse of Doom is the stock death curse,client-patch/dbc/Spell.dbc id 603 ; icon from SpellIcon.dbc
+Frailty,Early Grave,Curse of Doom,603,spell_shadow_auraofdarkness,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 603 ; icon from SpellIcon.dbc
+Frailty,Harvest Essence,Curse of Doom,603,spell_shadow_auraofdarkness,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 603 ; icon from SpellIcon.dbc
+Frailty,Volatile Death,Curse of Doom,603,spell_shadow_auraofdarkness,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 603 ; icon from SpellIcon.dbc
+Frailty,Scent of Blood,Curse of Doom,603,spell_shadow_auraofdarkness,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 603 ; icon from SpellIcon.dbc
+Frailty,Aura of Frailty,Curse of Doom,603,spell_shadow_auraofdarkness,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 603 ; icon from SpellIcon.dbc
+Bone Armor,,Bone Shield,49222,inv_chest_leather_13,good,bones torn from enemies form an armor; Bone Shield is the same spell,client-patch/dbc/Spell.dbc id 49222 ; icon from SpellIcon.dbc
+Bone Armor,Vengeful Armaments,Bone Shield,49222,inv_chest_leather_13,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 49222 ; icon from SpellIcon.dbc
+Bone Armor,Limited Immunity,Bone Shield,49222,inv_chest_leather_13,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 49222 ; icon from SpellIcon.dbc
+Bone Armor,Dislocation,Bone Shield,49222,inv_chest_leather_13,fair,"Poison rune: no stock Poison version of this shape, so it keeps Bone Shield",client-patch/dbc/Spell.dbc id 49222 ; icon from SpellIcon.dbc
+Bone Armor,Thy Flesh Sustained,Bone Shield,49222,inv_chest_leather_13,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 49222 ; icon from SpellIcon.dbc
+Bone Armor,Harvest of Anguish,Bone Shield,49222,inv_chest_leather_13,fair,"Cold rune: no stock Cold version of this shape, so it keeps Bone Shield",client-patch/dbc/Spell.dbc id 49222 ; icon from SpellIcon.dbc
+Bone Spirit,,Haunt,48181,ability_warlock_haunt,fair,a spirit that seeks enemies and detonates; Haunt is the stock seeking spirit,client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Bone Spirit,Possession,Haunt,48181,ability_warlock_haunt,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Bone Spirit,Panic Attack,Haunt,48181,ability_warlock_haunt,fair,"Poison rune: no stock Poison version of this shape, so it keeps Haunt",client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Bone Spirit,Poltergeist,Haunt,48181,ability_warlock_haunt,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Bone Spirit,Unfinished Business,Haunt,48181,ability_warlock_haunt,fair,"Cold rune: no stock Cold version of this shape, so it keeps Haunt",client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Bone Spirit,Astral Projection,Haunt,48181,ability_warlock_haunt,fair,"Cold rune: no stock Cold version of this shape, so it keeps Haunt",client-patch/dbc/Spell.dbc id 48181 ; icon from SpellIcon.dbc
+Blood Rush,,Blink,1953,spell_arcane_blink,good,the caster reappears up to 50 yards away; Blink is the stock short teleport,client-patch/dbc/Spell.dbc id 1953 ; icon from SpellIcon.dbc
+Blood Rush,Transfusion,Blink,1953,spell_arcane_blink,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1953 ; icon from SpellIcon.dbc
+Blood Rush,Hemostasis,Blink,1953,spell_arcane_blink,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1953 ; icon from SpellIcon.dbc
+Blood Rush,Metabolism,Blink,1953,spell_arcane_blink,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1953 ; icon from SpellIcon.dbc
+Blood Rush,Potency,Blink,1953,spell_arcane_blink,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1953 ; icon from SpellIcon.dbc
+Blood Rush,Molting,Blink,1953,spell_arcane_blink,good,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 1953 ; icon from SpellIcon.dbc
+Simulacrum,,Mirror Image,55342,spell_magic_lesserinvisibilty,fair,a copy of the caster that duplicates its skills; Mirror Image is the stock copy of the caster,client-patch/dbc/Spell.dbc id 55342 ; icon from SpellIcon.dbc
+Simulacrum,Reservoir,Mirror Image,55342,spell_magic_lesserinvisibilty,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 55342 ; icon from SpellIcon.dbc
+Simulacrum,Cursed Form,Mirror Image,55342,spell_magic_lesserinvisibilty,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 55342 ; icon from SpellIcon.dbc
+Simulacrum,Blood Debt,Mirror Image,55342,spell_magic_lesserinvisibilty,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 55342 ; icon from SpellIcon.dbc
+Simulacrum,Blood and Bone,Mirror Image,55342,spell_magic_lesserinvisibilty,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 55342 ; icon from SpellIcon.dbc
+Simulacrum,Self Sacrifice,Mirror Image,55342,spell_magic_lesserinvisibilty,fair,same element as the skill: keeps the skill's donor,client-patch/dbc/Spell.dbc id 55342 ; icon from SpellIcon.dbc

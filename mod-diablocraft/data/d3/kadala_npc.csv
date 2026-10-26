@@ -1,0 +1,2 @@
+entry,clone_entry,name,subname,level,npcflag,source
+910005,910000,Kadala,,70,128,"docs/proposals/kadala.md 3.1 (ruling q-1007-08): the stock vendor flag only (128), no gossip bit, so a right-click opens the merchant window; the Blacksmith's model is the placeholder until the designer picks hers on dev with .modify morph; no subname text is sourced, so none. The designer places her in the Sanctum."

@@ -1,0 +1,10 @@
+rarity,slot,payment_kind,material_1_entry,material_2_entry,material_count,gem_tier,gem_count_rule,source
+rare,*,gold,102002,102003,3,,,"mystic-enchant.md 10.2: every level 61-70 weapon and armor definition's EnchantAffixIngredientsX1 is 3 Arcane Dust + 3 Veiled Crystal; ruling 2026-10-04 follow the data (diablocraft-xw2m)"
+rare,neck,gold,102002,102003,2,,,"mystic-enchant.md 10.2: the level 61-70 jewelry definitions' recipe is 2 Arcane Dust + 2 Veiled Crystal; ruling 2026-10-04 follow the data (diablocraft-xw2m)"
+rare,finger,gold,102002,102003,2,,,"mystic-enchant.md 10.2: the level 61-70 jewelry definitions' recipe is 2 Arcane Dust + 2 Veiled Crystal; ruling 2026-10-04 follow the data (diablocraft-xw2m)"
+legendary,*,gold,102002,102003,3,,,"mystic-enchant.md 4.2 and 10.2: the designer's capture charged 3 Arcane Dust + 3 Veiled Crystal on a legendary staff; no Death's Breath, no Forgotten Soul (diablocraft-xw2m)"
+legendary,neck,gem,,,,Imperial,mystic_jewelry_gem_count,"mystic.csv enchant_cost_legendary_set_jewelry: no gold and 1 Imperial gem, nothing else (diablocraft-xw2m)"
+legendary,finger,gem,,,,Imperial,mystic_jewelry_gem_count,"mystic.csv enchant_cost_legendary_set_jewelry: no gold and 1 Imperial gem, nothing else (diablocraft-xw2m)"
+set,*,gold,102002,102003,3,,,"mystic-enchant.md 4.2 and 10.2: set items are charged as legendary: 3 Arcane Dust + 3 Veiled Crystal (diablocraft-xw2m)"
+set,neck,gem,,,,Imperial,mystic_jewelry_gem_count,"mystic.csv enchant_cost_legendary_set_jewelry: no gold and 1 Imperial gem, nothing else (diablocraft-xw2m)"
+set,finger,gem,,,,Imperial,mystic_jewelry_gem_count,"mystic.csv enchant_cost_legendary_set_jewelry: no gold and 1 Imperial gem, nothing else (diablocraft-xw2m)"

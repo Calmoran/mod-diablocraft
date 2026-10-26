@@ -1,0 +1,7 @@
+rarity,plate_level,beam_spell,source
+normal,1,0,no beam (the designer decisions.md 2026-09-28; was stock Spotlight 25824); rarity level channel 1-5
+magic,2,62893,ground-loot-verdict.md stock Blue Skybeam
+rare,3,62897,ground-loot-verdict.md stock Lightning Skybeam
+legendary,4,62894,ground-loot-verdict.md stock Red Skybeam; the designer verified 2026-09-13
+set,5,62895,ground-loot-verdict.md stock Green Skybeam
+primal,6,63772,"Primal Ancient look (diablocraft-t3t8; ruling 2026-10-10 wants a red beam). Stock Red Skybeam 63772 (a second Red Skybeam row in Spell.dbc beside 62894, the legendary beam): UNVERIFIED that it differs on screen from the legendary beam - the designer checks on dev; other red candidates in the stock Spell.dbc: 30944 Red Beam (Drops), 62296 Spotlight (Red), 72594 Red Beam, 40228 Red Beam"

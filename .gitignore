@@ -1,0 +1,22 @@
+build/
+*.log
+.vs/
+__pycache__/
+*.pyc
+
+# The AzerothCore checkout lives here, pinned by core-commit.txt
+azerothcore-wotlk/
+
+# Local game clients and tools
+WoW Client/
+Diablo III/
+/tools/
+client-patch/tools/
+
+# Generated: the full Spell.dbc is built from the CSVs
+client-patch/dbc/Spell.dbc
+
+build.lock
+build-dev.lock
+build-release.lock
+mod-diablocraft/data/d3/.unlocked

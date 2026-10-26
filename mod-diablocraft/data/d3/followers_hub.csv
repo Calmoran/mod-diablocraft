@@ -1,0 +1,4 @@
+follower_id,key,guid,map_id,area_id,x,y,z,o,source
+1,templar,8001500,750,4273,1926.9308,12.6221,330.02805,5.3434134,"the designer's .gps reading, card q-1016-23: map 750 area 4273 phase 1, X 1924.5085 Y 10.852184 Z 330.02805 O 5.3434134, read as the three standing together a few yards apart around that point, all facing that way (the Architect's reading, decisions.md 2026-10-16). Placed 3 yards to the left of the point as seen facing O; the Scoundrel stands on the point, the Enchantress 3 yards to the right. Guids 8001500 to 8001502: the module's spawn space (8000000 and up), in no sheet or migration, reserved from the dev export by scripts/export_dev_edits.py"
+2,scoundrel,8001501,750,4273,1924.5085,10.852184,330.02805,5.3434134,"The reading itself (card q-1016-23); guid as the Templar's row"
+3,enchantress,8001502,750,4273,1922.0862,9.0823,330.02805,5.3434134,"3 yards to the right of the reading as seen facing O (card q-1016-23); guid as the Templar's row"

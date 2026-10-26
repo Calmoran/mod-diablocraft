@@ -1,0 +1,9 @@
+d3_class,wow_class,wow_power_type,primary_stat,class_id,wow_class_id
+Barbarian,Warrior,Rage,Strength,1,1
+Wizard,Mage,Energy,Intelligence,2,8
+Monk,Monk,Runic Power,Dexterity,3,12
+Crusader,Paladin,Energy,Strength,4,2
+Necromancer,Necromancer,Runic Power,Intelligence,5,13
+Demon Hunter,Hunter,Energy,Dexterity,6,3
+Witch Doctor,Witch Doctor,Mana,Intelligence,7,14
+Shaman,Shaman,Rage,Intelligence,8,7

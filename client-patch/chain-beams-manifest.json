@@ -1,0 +1,38 @@
+{
+  "chain_ids": [
+    1179,
+    1180
+  ],
+  "kit_ids": [
+    30000,
+    30001
+  ],
+  "visual_ids": [
+    30000,
+    30001
+  ],
+  "spell_ids": [
+    83000,
+    83001
+  ],
+  "rows": [
+    {
+      "key": "fire_chains",
+      "spell_id": "83000",
+      "visual_id": "30000",
+      "kit_id": "30000",
+      "chain_id": "1179",
+      "chain_template": "12",
+      "chain_texture": "Textures\\SpellChainEffects\\Beam_Red.blp"
+    },
+    {
+      "key": "health_link",
+      "spell_id": "83001",
+      "visual_id": "30001",
+      "kit_id": "30001",
+      "chain_id": "1180",
+      "chain_template": "8",
+      "chain_texture": "Textures\\SpellChainEffects\\SoulBeam.blp"
+    }
+  ]
+}

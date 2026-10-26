@@ -1,0 +1,35 @@
+## Interface: 30300
+## Title: |cfff0c96aDiablocraft|r ElvUI
+## Notes: Diablocraft's D3 interface companion for ElvUI.
+## Author: Calmoran
+## Version: 0.4
+## Dependencies: ElvUI
+## OptionalDeps: Torment
+## SavedVariablesPerCharacter: ElvUI_TormentDB
+## X-Torment-Client-Patch: 86
+
+barart.lua
+buttonart.lua
+orbs.lua
+# bags.lua re-writes ElvUI's bag gold line as the Torment account balance (the
+# character sheet's coin and the shared Econ.Gold formatter, never GetMoney);
+# it needs only ElvUI, which loads first.
+bags.lua
+# castbar.lua hides every part of ElvUI's player frame except the castbar; it
+# reads the module table barart.lua creates, so it loads after it.
+castbar.lua
+# profile.lua ships the exported ElvUI layout; install.lua applies it as the
+# profile "Torment" and owns the first-login installer. Both read the module
+# table barart.lua creates, so they load after it.
+profile.lua
+install.lua
+core.lua
+# lifetext.lua writes the tooltip's health line from UnitHealth.
+lifetext.lua
+# classicons.lua gives the Witch Doctor and the Necromancer their own icon where ElvUI's /who list and guild roster show a
+# class icon; it reads only the stock list functions and CLASS_ICON_TCOORDS.
+classicons.lua
+# damagetext.lua draws the damage numbers the Torment client module hands over
+# (docs/contracts/damage-text.md); options.lua, after it, reads its element list.
+damagetext.lua
+options.lua

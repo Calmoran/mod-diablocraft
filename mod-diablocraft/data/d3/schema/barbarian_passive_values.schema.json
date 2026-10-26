@@ -1,0 +1,24 @@
+{
+  "_comment": "Generated 2026-09-20 from the committed CSV (spell-rewrite step 0). Columns are exact and ordered; validate_csv.py refuses a header that differs. Edit this file only when the CSV genuinely gains or loses a column, and say so in docs/decisions.md.",
+  "columns": [
+    "skill",
+    "rune",
+    "token",
+    "qualifier",
+    "value",
+    "unit",
+    "source"
+  ],
+  "number_columns": [
+    "value"
+  ],
+  "percent_columns": [],
+  "notes_columns": [
+    "source"
+  ],
+  "allow_empty": [
+    "rune",
+    "qualifier"
+  ],
+  "min_rows": 47
+}

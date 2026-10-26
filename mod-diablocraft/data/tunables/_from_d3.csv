@@ -1,0 +1,22 @@
+source_file,row_key,column,category,name,unit
+character_rules.csv,name=active_skill_slots,value,combat,active_skill_slots,count
+character_rules.csv,name=passive_skill_slots,value,combat,passive_skill_slots,count
+character_rules.csv,name=passive_slot_1_unlock_level,value,combat,passive_slot_1_unlock_level,level
+character_rules.csv,name=passive_slot_2_unlock_level,value,combat,passive_slot_2_unlock_level,level
+character_rules.csv,name=passive_slot_3_unlock_level,value,combat,passive_slot_3_unlock_level,level
+character_rules.csv,name=passive_slot_4_unlock_level,value,combat,passive_slot_4_unlock_level,level
+character_rules.csv,name=paragon_core_only_after_level,value,paragon,core_only_after_level,level
+damage_formula.csv,step=11. Area Damage Proc (Secondary),area_damage_chance,combat,area_damage_chance,multiplier
+damage_formula.csv,step=11. Area Damage Proc (Secondary),area_damage_radius_yards,combat,area_damage_radius_yards,yards
+drop_rates.csv,section=smart_loot|topic=off-class drop chance,off_class_pct,loot,smart_loot_off_class_pct,percent
+drop_rates.csv,section=base_drop_by_source|topic=rift guardian (Nephalem Rift),rift_legendary_bonus_base_pct,loot,rift_legendary_bonus_base_pct,percent
+drop_rates.csv,section=base_drop_by_source|topic=rift guardian (Nephalem Rift),rift_legendary_bonus_torment_one_pct,loot,rift_legendary_bonus_torment_one_pct,percent
+"drop_rates.csv","section=magic_find|topic=item-based Magic Find (Cain's Fate set, Nagelring only in 2.7.x)",magic_find_rare_efficiency_pct,loot,magic_find_rare_efficiency_pct,percent
+"drop_rates.csv","section=magic_find|topic=item-based Magic Find (Cain's Fate set, Nagelring only in 2.7.x)",magic_find_legendary_efficiency_pct,loot,magic_find_legendary_efficiency_pct,percent
+"drop_rates.csv","section=magic_find|topic=item-based Magic Find (Cain's Fate set, Nagelring only in 2.7.x)",magic_find_magic_efficiency_pct,loot,magic_find_magic_efficiency_pct,percent
+greater_rifts.csv,item=rift_guardian_spawn_rule,guardian_clear_range_yards,rifts,guardian_clear_range_yards,yards
+legendary_potions.csv,d3_id=HealthPotionLegendary_01,cooldown_s,barbarian,health_potion_cooldown_seconds,seconds
+legendary_potions.csv,d3_id=HealthPotionLegendary_01,base_heal_pct,barbarian,health_potion_heal_pct,percent
+stats.csv,stat=Attack Speed,dual_wield_ias_pct,combat,dual_wield_ias_pct,percent
+rarity_tiers.csv,rarity=Rare,primary_affix_max,loot,full_roll_primary_affixes,count
+rarity_tiers.csv,rarity=Rare,secondary_affix_max,loot,full_roll_secondary_affixes,count

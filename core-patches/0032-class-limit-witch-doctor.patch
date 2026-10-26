@@ -1,0 +1,67 @@
+Reason: Give class id 14 (the Witch Doctor) its entry in the six per-class dodge/miss/parry tables patches 0024 and 0030 stopped at the Necromancer on: the Warlock's values, its parent, so slot 14 is not 0/0. Patch 0024 raised MAX_CLASSES to 15 and put bits 11-13 in the playable mask, which already carries id 14 (bit 13); the six tables are zero-initialised past their last entry, and the diminishing formulas divide `0 * cap / (0 + cap * k)`, which is 0/0 = NaN when the defense-rating term is 0 (a Witch Doctor's miss chance, parry and dodge). The mask and MAX_CLASSES are untouched.
+Target: AzerothCore at core-commit.txt, after patches 0024 and 0030 (it edits the lines 0030 added; it applies with or without 0025-0029 and 0031, which sit in other lines).
+
+--- a/src/server/game/Entities/Player/Player.cpp
++++ b/src/server/game/Entities/Player/Player.cpp
+@@ -5306,7 +5306,8 @@
+         0.0f,      // ??
+         0.056097f, // Druid
+         0.036640f, // Monk (Torment, id 12: the Warrior's, its parent; core patch 0024)
+-        0.024211f  // Necromancer (Torment, id 13: the Warlock's, its parent; core patch 0030)
++        0.024211f, // Necromancer (Torment, id 13: the Warlock's, its parent; core patch 0030)
++        0.024211f  // Witch Doctor (Torment, id 14: the Warlock's, its parent; core patch 0032)
+     };
+     // Crit/agility to dodge/agility coefficient multipliers; 3.2.0 increased required agility by 15%
+     const float crit_to_dodge[MAX_CLASSES] =
+@@ -5323,7 +5324,8 @@
+         0.0f,           // ??
+         2.00f / 1.15f,  // Druid
+         0.85f / 1.15f,  // Monk (Warrior's)
+-        0.97f / 1.15f   // Necromancer (Warlock's)
++        0.97f / 1.15f,  // Necromancer (Warlock's)
++        0.97f / 1.15f   // Witch Doctor (Warlock's)
+     };
+ 
+     uint8 level = GetLevel();
+--- a/src/server/game/Entities/Unit/StatSystem.cpp
++++ b/src/server/game/Entities/Unit/StatSystem.cpp
+@@ -723,7 +723,8 @@
+     0.0f,     // ??
+     0.9720f,  // Druid
+     0.9560f,  // Monk (Torment, id 12: the Warrior's, its parent; core patch 0024)
+-    0.9830f   // Necromancer (Torment, id 13: the Warlock's, its parent; core patch 0030)
++    0.9830f,  // Necromancer (Torment, id 13: the Warlock's, its parent; core patch 0030)
++    0.9830f   // Witch Doctor (Torment, id 14: the Warlock's, its parent; core patch 0032)
+ };
+ 
+ float Player::GetMissPercentageFromDefence() const
+@@ -742,7 +743,8 @@
+         0.0f,       // ??
+         16.00f,     // Druid   //?
+         16.00f,     // Monk (Warrior's)
+-        16.00f      // Necromancer (Warlock's)
++        16.00f,     // Necromancer (Warlock's)
++        16.00f      // Witch Doctor (Warlock's)
+     };
+ 
+     float diminishing = 0.0f, nondiminishing = 0.0f;
+@@ -771,7 +773,8 @@
+         0.0f,           // ??
+         0.0f,           // Druid
+         47.003525f,     // Monk (Warrior's)
+-        0.0f            // Necromancer (Warlock's: no parry)
++        0.0f,           // Necromancer (Warlock's: no parry)
++        0.0f            // Witch Doctor (Warlock's: no parry)
+     };
+ 
+     // No parry
+@@ -819,7 +822,8 @@
+         0.0f,           // ??
+         116.890707f,    // Druid
+         88.129021f,     // Monk (Warrior's)
+-        150.375940f     // Necromancer (Warlock's)
++        150.375940f,    // Necromancer (Warlock's)
++        150.375940f     // Witch Doctor (Warlock's)
+     };
+ 
+     float diminishing = 0.0f, nondiminishing = 0.0f;

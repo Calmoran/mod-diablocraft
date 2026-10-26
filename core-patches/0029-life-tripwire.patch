@@ -1,0 +1,91 @@
+Reason: warn when a creature's Life after a hit or a heal is not the Life before moved by it, which means a 64-bit number was cut to 32 bits on the way (the designer's Life tripwire, card q-1008-14). A log line only: nothing is sent to the client and nothing is changed.
+
+--- a/src/server/game/Entities/Unit/Unit.cpp
++++ b/src/server/game/Entities/Unit/Unit.cpp
+@@ -74,6 +74,7 @@
+ #include "World.h"
+ #include "WorldPacket.h"
+ #include <algorithm>
++#include <atomic>
+ #include <cmath>
+ #include <limits>
+ 
+@@ -1268,7 +1269,9 @@ uint64 Unit::DealDamage(Unit* attacker, Unit* victim, uint64 damage, CleanDamage
+         //if (victim->IsPlayer())
+         //    victim->ToPlayer()->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_TOTAL_DAMAGE_RECEIVED, damage); // pussywizard: optimization
+ 
+-        victim->ModifyHealth(-static_cast<int64>(std::min<uint64>(damage, std::numeric_limits<int64>::max())));
++        int64 const lifeChange = -static_cast<int64>(std::min<uint64>(damage, std::numeric_limits<int64>::max()));
++        victim->ModifyHealth(lifeChange);
++        victim->CheckLifeAfter(attacker, spellProto, health, lifeChange);
+ 
+         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
+             victim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
+@@ -7862,7 +7865,12 @@ int64 Unit::DealHeal(Unit* healer, Unit* victim, uint64 addhealth)
+     }
+ 
+     if (addhealth)
+-        gain = victim->ModifyHealth(static_cast<int64>(std::min<uint64>(addhealth, std::numeric_limits<int64>::max())));
++    {
++        uint64 const lifeBefore = victim->GetHealth();
++        int64 const lifeChange = static_cast<int64>(std::min<uint64>(addhealth, std::numeric_limits<int64>::max()));
++        gain = victim->ModifyHealth(lifeChange);
++        victim->CheckLifeAfter(healer, nullptr, lifeBefore, lifeChange);
++    }
+ 
+     // Hook for OnHeal Event
+     {
+@@ -10773,6 +10781,38 @@ int64 Unit::ModifyHealth(int64 dVal)
+     return gain;
+ }
+ 
++uint64 Unit::ExpectedLife(uint64 before, uint64 maximum, int64 change)
++{
++    if (change < 0)
++    {
++        uint64 const loss = static_cast<uint64>(-(change + 1)) + 1;
++        return loss >= before ? 0 : before - loss;
++    }
++
++    uint64 const room = maximum > before ? maximum - before : 0;
++    return static_cast<uint64>(change) < room ? before + static_cast<uint64>(change) : maximum;
++}
++
++void Unit::CheckLifeAfter(Unit const* source, SpellInfo const* spell, uint64 before, int64 change)
++{
++    if (!IsCreature() || !IsAlive())
++        return;
++
++    uint64 const expected = ExpectedLife(before, GetMaxHealth(), change);
++    if (GetHealth() == expected)
++        return;
++
++    static std::atomic<uint32> seen{0};
++    uint32 const times = ++seen;
++    // a narrowing that is hit again and again would fill the log: the first hundred are written, then one in a thousand
++    if (times > 100 && times % 1000 != 0)
++        return;
++
++    LOG_WARN("entities.unit", "[DC life] creature {} {}: Life after is {}, expected {} (before {}, change {}, max {}); source {} spell {}; seen {} times",
++        GetEntry(), GetGUID().ToString(), GetHealth(), expected, before, change, GetMaxHealth(),
++        source ? source->GetGUID().ToString() : std::string("none"), spell ? spell->Id : 0, times);
++}
++
+ int64 Unit::GetHealthGain(int64 dVal)
+ {
+     int64 gain = 0;
+--- a/src/server/game/Entities/Unit/Unit.h
++++ b/src/server/game/Entities/Unit/Unit.h
+@@ -1181,6 +1181,12 @@ public:
+     void SetMaxHealth(uint64 val);
+     inline void SetFullHealth() { SetHealth(GetMaxHealth()); }
+     int64 ModifyHealth(int64 val);
++
++    // The Life tripwire (core patch 0029): a creature's Life after a hit or a heal must be the Life before, moved by the
++    // change and held to [0, max]. CheckLifeAfter logs a warning when it is anywhere else, which means a 64-bit number
++    // was cut to 32 bits somewhere on the way.
++    [[nodiscard]] static uint64 ExpectedLife(uint64 before, uint64 maximum, int64 change);
++    void CheckLifeAfter(Unit const* source, SpellInfo const* spell, uint64 before, int64 change);
+     void SetCreateHealth(uint32 val) { SetUInt32Value(UNIT_FIELD_BASE_HEALTH, val); }
+ 
+     // Power methods

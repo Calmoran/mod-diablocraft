@@ -1,0 +1,1210 @@
+// Harness for the account stash moves (diablocraft-stash-audit, 1b). Not built by the server.
+//
+// test_stash_moves_runtime.py slices the PRODUCTION text of dc_stash.cpp (from MaxTabs() to the
+// diagnostics marker) into the harness and compiles it against the doubles below:
+//   * a bag model with the core's own store/merge/remove semantics (PlayerStorage.cpp: _StoreItem
+//     merge marks the incoming item ITEM_REMOVED, SaveInventoryAndGoldToDB deletes it and frees it);
+//   * a durable "database" that applies a transaction atomically or not at all, refuses a second
+//     link for one item guid (the UNIQUE key) and can be told to fail a commit;
+//   * a logout/login that discards memory and rebuilds it from the durable rows only.
+// Every freed Item is poisoned: touching one aborts the run (use-after-free), and a leak check runs
+// after every scenario. Scenarios are selected by argv[1]; each prints PASS or exits non-zero.
+#include <algorithm>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <functional>
+#include <future>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <set>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <vector>
+
+#define CHECK(cond)                                                                               \
+    do                                                                                            \
+    {                                                                                             \
+        if (!(cond))                                                                              \
+        {                                                                                         \
+            std::fprintf(stderr, "FAIL line %d: %s\n", __LINE__, #cond);                          \
+            std::exit(3);                                                                         \
+        }                                                                                         \
+    } while (0)
+
+using uint8 = std::uint8_t;
+using uint16 = std::uint16_t;
+using uint32 = std::uint32_t;
+using uint64 = std::uint64_t;
+using int32 = std::int32_t;
+
+static int logErrors = 0;
+#define LOG_ERROR(...) (++logErrors)
+#define LOG_INFO(...) ((void)0)
+
+constexpr float INTERACTION_DISTANCE = 5.5f;
+constexpr uint8 INVENTORY_SLOT_BAG_0 = 255, INVENTORY_SLOT_ITEM_START = 23, INVENTORY_SLOT_ITEM_END = 39,
+                INVENTORY_SLOT_BAG_START = 19, INVENTORY_SLOT_BAG_END = 23, NULL_BAG = 0, NULL_SLOT = 255,
+                EQUIPMENT_SLOT_END = 19;
+enum InventoryResult { EQUIP_ERR_OK, EQUIP_ERR_INVENTORY_FULL, EQUIP_ERR_CANT_STORE };
+enum ItemUpdateState { ITEM_UNCHANGED, ITEM_CHANGED, ITEM_NEW, ITEM_REMOVED };
+enum { ITEM_FIELD_CONTAINED, ITEM_FIELD_OWNER, ITEM_FIELD_DURATION };
+constexpr uint32 ITEM_FLAG_IS_BOUND_TO_ACCOUNT = @BOUND_FLAG@; // the core's value, read out of ItemTemplate.h
+
+class Player;
+class Item;
+class WorldSession;
+
+struct ObjectGuid
+{
+    uint64 value = 0;
+    static const ObjectGuid Empty;
+    uint64 GetCounter() const { return value; }
+    bool operator==(ObjectGuid const& other) const { return value == other.value; }
+};
+inline const ObjectGuid ObjectGuid::Empty{};
+
+struct ItemPosCount
+{
+    uint16 pos;
+    uint32 count;
+};
+using ItemPosCountVec = std::vector<ItemPosCount>;
+
+template <class T> std::string Text(T const& value)
+{
+    std::ostringstream out;
+    out << value;
+    return out.str();
+}
+inline std::string Text(uint8 value) { return std::to_string(int(value)); }
+inline std::string Text(char const* value) { return value; }
+
+inline std::string Format(std::string text) { return text; }
+template <class First, class... Rest> std::string Format(std::string text, First const& first, Rest const&... rest)
+{
+    auto at = text.find("{}");
+    if (at == std::string::npos)
+        return text;
+    return Format(text.substr(0, at) + Text(first) + text.substr(at + 2), rest...);
+}
+
+// ------------------------------------------------------------------ the durable rows
+
+struct ItemRow
+{
+    uint64 owner = 0;
+    uint32 entry = 0, count = 0;
+};
+using LinkKey = std::tuple<uint32, std::string, int, int>;
+
+struct Db
+{
+    std::map<uint32, ItemRow> items;                  // item_instance
+    std::map<uint32, std::pair<int, int>> inventory;  // character_inventory: guid -> bag, slot
+    std::map<LinkKey, uint32> links;                  // dc_account_stash_item
+    std::map<std::pair<uint32, std::string>, std::pair<int, uint64>> stash; // tabs, revision
+    int failCommits = 0;   // the next N commits answer false and change nothing
+    int commits = 0, committed = 0;
+    std::vector<std::string> other; // committed statements the model does not interpret (the sweep)
+    uint64 price = 0;      // dc_stash_tuning for the next tab; 0 = not set
+};
+static Db db;
+
+struct Tx
+{
+    std::vector<std::function<bool(Db&)>> ops;
+    std::vector<std::string> unknown; // statements the model does not interpret (the sweep)
+    std::size_t GetSize() const { return unknown.size() + ops.size(); }
+    template <class... A> void Append(std::string const& text, A const&... args)
+    {
+        std::string const statement = Format(text, args...);
+        if (statement.rfind("DELETE FROM dc_account_stash_item WHERE account_id=", 0) == 0 &&
+            statement.find(" AND tab_id=") != std::string::npos)
+        {
+            uint32 account = 0;
+            char mode[16] = {};
+            int tab = 0, slot = 0;
+            std::sscanf(statement.c_str(),
+                        "DELETE FROM dc_account_stash_item WHERE account_id=%u AND mode='%15[a-z]' AND tab_id=%d AND slot_id=%d",
+                        &account, mode, &tab, &slot);
+            std::string const m = mode;
+            ops.push_back([=](Db& d) { d.links.erase({account, m, tab, slot}); return true; });
+        }
+        else if (statement.rfind("INSERT INTO dc_account_stash_item(", 0) == 0)
+        {
+            uint32 account = 0, guid = 0;
+            char mode[16] = {};
+            int tab = 0, slot = 0;
+            std::sscanf(statement.c_str() + statement.find("VALUES("), "VALUES(%u,'%15[a-z]',%d,%d,%u)", &account, mode,
+                        &tab, &slot, &guid);
+            std::string const m = mode;
+            ops.push_back([=](Db& d)
+                          {
+                              if (d.links.count({account, m, tab, slot}))
+                                  return false; // PRIMARY KEY
+                              for (auto const& link : d.links)
+                                  if (link.second == guid)
+                                      return false; // UNIQUE dc_account_stash_item_guid
+                              d.links[{account, m, tab, slot}] = guid;
+                              return true;
+                          });
+        }
+        else if (statement.rfind("UPDATE dc_account_stash SET tabs_granted=", 0) == 0)
+        {
+            int tabs = 0;
+            uint32 account = 0;
+            char mode[16] = {};
+            std::sscanf(statement.c_str(),
+                        "UPDATE dc_account_stash SET tabs_granted=%d,revision=revision+1 WHERE account_id=%u AND mode='%15[a-z]'",
+                        &tabs, &account, mode);
+            std::string const m = mode;
+            ops.push_back([=](Db& d) { d.stash[{account, m}].first = tabs; d.stash[{account, m}].second += 1; return true; });
+        }
+        else if (statement.rfind("UPDATE dc_account_stash SET revision=", 0) == 0)
+        {
+            uint64 revision = 0;
+            uint32 account = 0;
+            char mode[16] = {};
+            std::sscanf(statement.c_str(), "UPDATE dc_account_stash SET revision=%lu WHERE account_id=%u AND mode='%15[a-z]'",
+                        &revision, &account, mode);
+            std::string const m = mode;
+            ops.push_back([=](Db& d) { d.stash[{account, m}].second = revision; return true; });
+        }
+        else
+            unknown.push_back(statement);
+    }
+    void Op(std::function<bool(Db&)> op) { ops.push_back(std::move(op)); }
+};
+using CharacterDatabaseTransaction = std::shared_ptr<Tx>;
+
+static bool Apply(Tx const& tx)
+{
+    ++db.commits;
+    if (db.failCommits > 0)
+    {
+        --db.failCommits;
+        return false;
+    }
+    Db copy = db;
+    for (auto const& op : tx.ops)
+        if (!op(copy))
+            return false;
+    for (auto const& statement : tx.unknown)
+        copy.other.push_back(statement);
+    db = copy;
+    ++db.committed;
+    return true;
+}
+
+struct Future
+{
+    std::future<bool> m_future;
+};
+
+struct Field
+{
+    uint64 value;
+    template <class T> T Get() const { return T(value); }
+};
+struct Row
+{
+    std::vector<Field> fields;
+    Field const& operator[](std::size_t i) const { return fields[i]; }
+};
+
+// ------------------------------------------------------------------ items and the player
+
+static std::set<Item*> allItems;
+
+class Item
+{
+public:
+    uint32 guid = 0, entry = 0, count = 1, maxStack = 1;
+    uint64 owner = 0;
+    ItemUpdateState state = ITEM_UNCHANGED;
+    bool inWorld = true, tradeable = true, wrapped = false, nonEmptyBag = false, inTrade = false;
+    uint32 duration = 0, templateFlags = 0; // item_template.Flags
+    Player* player = nullptr; // whose queue it is in
+    int bag = -1, slot = -1;
+
+    Item() { allItems.insert(this); }
+    ~Item() { allItems.erase(this); }
+    void Live() const {} // a freed item is caught by AddressSanitizer, not by a flag
+    uint32 GetEntry() const { Live(); return entry; }
+    uint32 GetCount() const { Live(); return count; }
+    void SetCount(uint32 value) { Live(); count = value; }
+    ObjectGuid GetGUID() const { Live(); return ObjectGuid{guid}; }
+    bool IsInWorld() const { Live(); return inWorld; }
+    void RemoveFromWorld() { Live(); inWorld = false; }
+    void AddToWorld() { Live(); inWorld = true; }
+    void DestroyForPlayer(Player*) const { Live(); }
+    void SetNotRefundable(Player*, bool) { Live(); }
+    bool IsNotEmptyBag() const { Live(); return nonEmptyBag; }
+    bool IsInTrade() const { Live(); return inTrade; }
+    bool IsWrapped() const { Live(); return wrapped; }
+    bool CanBeTraded() const { Live(); return tradeable; }
+    bool IsBoundAccountWide() const { Live(); return (templateFlags & ITEM_FLAG_IS_BOUND_TO_ACCOUNT) != 0; } // Item.h:237
+    uint32 GetUInt32Value(int field) const { Live(); return field == ITEM_FIELD_DURATION ? duration : 0; }
+    void SetGuidValue(int field, ObjectGuid const& value) { Live(); if (field == ITEM_FIELD_OWNER) owner = value.value; }
+    void FSetState(ItemUpdateState value) { Live(); state = value; }
+    void SetState(ItemUpdateState value, Player* actor);
+    void RemoveFromUpdateQueueOf(Player* actor);
+    void SaveToDB(CharacterDatabaseTransaction const& tx);
+    void DeleteFromInventoryDB(CharacterDatabaseTransaction const& tx);
+    uint16 GetPos() const { return uint16(uint16(bag) << 8 | uint8(slot)); }
+};
+
+class Session
+{
+public:
+    uint32 account = 7;
+    bool aborted = false;
+    Player* player = nullptr;
+    uint32 GetAccountId() const { return account; }
+    bool EconomyAborted() const { return aborted; }
+    void AbortEconomy() { aborted = true; }
+};
+
+enum class HardcoreMode { Unchosen, Normal, Hardcore };
+
+static int announced = 0, economyFails = 0;
+static int canStoreCalls = 0, failCanStoreOnCall = 0;
+
+class Player
+{
+public:
+    Session* session = nullptr;
+    uint64 guid = 55;
+    bool alive = true, combat = false, atNpc = true, fallen = false;
+    HardcoreMode mode = HardcoreMode::Normal;
+    uint64 gold = 0;
+    std::map<uint16, Item*> bags;
+    std::vector<Item*> queue; // the item update queue
+
+    Session* GetSession() const { return session; }
+    bool IsAlive() const { return alive; }
+    bool IsInCombat() const { return combat; }
+    ObjectGuid GetGUID() const { return ObjectGuid{guid}; }
+    void* FindNearestCreature(uint32, float) const { return atNpc ? const_cast<Player*>(this) : nullptr; }
+    Item* GetItemByPos(uint16 pos) const
+    {
+        auto found = bags.find(pos);
+        return found == bags.end() ? nullptr : found->second;
+    }
+    Item* GetItemByPos(uint8 bag, uint8 slot) const { return GetItemByPos(uint16(uint16(bag) << 8 | slot)); }
+    void ItemRemovedQuestCheck(uint32, uint32) {}
+    void UpdateTitansGrip() {}
+    void RemoveItem(uint8 bag, uint8 slot, bool)
+    {
+        auto found = bags.find(uint16(uint16(bag) << 8 | slot));
+        CHECK(found != bags.end());
+        found->second->Live();
+        found->second->bag = found->second->slot = -1;
+        bags.erase(found);
+    }
+
+    InventoryResult CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item* item, bool swap) const
+    {
+        ++canStoreCalls;
+        if (failCanStoreOnCall && canStoreCalls == failCanStoreOnCall)
+            return EQUIP_ERR_CANT_STORE;
+        dest.clear();
+        uint32 left = item->GetCount();
+        if (bag == NULL_BAG && slot == NULL_SLOT)
+        {
+            if (item->maxStack > 1)
+                for (uint8 s = INVENTORY_SLOT_ITEM_START; s < INVENTORY_SLOT_ITEM_END && left; ++s)
+                {
+                    Item* there = GetItemByPos(INVENTORY_SLOT_BAG_0, s);
+                    if (there && there->entry == item->entry && there->count < there->maxStack)
+                    {
+                        uint32 const take = std::min(left, there->maxStack - there->count);
+                        dest.push_back({uint16(uint16(INVENTORY_SLOT_BAG_0) << 8 | s), take});
+                        left -= take;
+                    }
+                }
+            for (uint8 s = INVENTORY_SLOT_ITEM_START; s < INVENTORY_SLOT_ITEM_END && left; ++s)
+                if (!GetItemByPos(INVENTORY_SLOT_BAG_0, s))
+                {
+                    uint32 const take = std::min(left, item->maxStack);
+                    dest.push_back({uint16(uint16(INVENTORY_SLOT_BAG_0) << 8 | s), take});
+                    left -= take;
+                }
+            return left ? EQUIP_ERR_INVENTORY_FULL : EQUIP_ERR_OK;
+        }
+        Item* there = GetItemByPos(bag, slot);
+        uint16 const pos = uint16(uint16(bag) << 8 | slot);
+        if (!there || swap)
+        {
+            dest.push_back({pos, left});
+            return EQUIP_ERR_OK;
+        }
+        if (there->entry == item->entry && item->maxStack > 1 && there->count + left <= there->maxStack)
+        {
+            dest.push_back({pos, left});
+            return EQUIP_ERR_OK;
+        }
+        return EQUIP_ERR_CANT_STORE;
+    }
+
+    // Player::_StoreItem, the cases the stash reaches (PlayerStorage.cpp:2689-2778).
+    void MoveItemToInventory(ItemPosCountVec const& dest, Item* item, bool)
+    {
+        CHECK(dest.size() == 1);
+        uint16 const pos = dest[0].pos;
+        Item* there = GetItemByPos(pos);
+        if (!there)
+        {
+            bags[pos] = item;
+            item->bag = pos >> 8;
+            item->slot = pos & 255;
+            item->owner = guid;
+            item->SetState(ITEM_CHANGED, this);
+        }
+        else
+        {
+            CHECK(there->entry == item->entry);
+            there->SetCount(there->GetCount() + dest[0].count);
+            there->SetState(ITEM_CHANGED, this);
+            item->SetState(ITEM_REMOVED, this); // merged: the save deletes it
+        }
+    }
+
+    // Player::SaveInventoryAndGoldToDB -> _SaveInventory -> Item::SaveToDB (Item.cpp:391-408).
+    void SaveInventoryAndGoldToDB(CharacterDatabaseTransaction const& tx)
+    {
+        if (session->EconomyAborted())
+            return;
+        std::vector<Item*> pending = queue;
+        for (Item* item : pending)
+        {
+            item->Live();
+            uint32 const g = item->guid;
+            if (item->state == ITEM_NEW || item->state == ITEM_CHANGED)
+            {
+                ItemRow const row{item->owner, item->entry, item->count};
+                int const b = item->bag, s = item->slot;
+                tx->Op([=](Db& d) { d.items[g] = row; d.inventory[g] = {b, s}; return true; });
+                item->state = ITEM_UNCHANGED; // marked saved before the commit answers
+            }
+            else if (item->state == ITEM_REMOVED)
+            {
+                tx->Op([=](Db& d) { d.inventory.erase(g); d.items.erase(g); return true; });
+                queue.erase(std::remove(queue.begin(), queue.end(), item), queue.end());
+                delete item; // Item::SaveToDB's `delete this`
+                continue;
+            }
+        }
+        queue.erase(std::remove_if(queue.begin(), queue.end(), [](Item* i) { return i->state == ITEM_UNCHANGED; }),
+                    queue.end());
+    }
+
+    // Rebag's SwapItem: empty cell moves, occupied cells swap. Merging is the core's and not exercised.
+    void SwapItem(uint16 from, uint16 to)
+    {
+        Item* a = GetItemByPos(from);
+        Item* b = GetItemByPos(to);
+        bags.erase(from);
+        bags.erase(to);
+        if (a) { bags[to] = a; a->bag = to >> 8; a->slot = to & 255; a->SetState(ITEM_CHANGED, this); }
+        if (b) { bags[from] = b; b->bag = from >> 8; b->slot = from & 255; b->SetState(ITEM_CHANGED, this); }
+    }
+};
+
+void Item::SetState(ItemUpdateState value, Player* actor)
+{
+    Live();
+    if (!(state == ITEM_NEW && value == ITEM_CHANGED))
+        state = value;
+    if (actor && std::find(actor->queue.begin(), actor->queue.end(), this) == actor->queue.end())
+        actor->queue.push_back(this);
+}
+void Item::RemoveFromUpdateQueueOf(Player* actor)
+{
+    Live();
+    actor->queue.erase(std::remove(actor->queue.begin(), actor->queue.end(), this), actor->queue.end());
+}
+void Item::SaveToDB(CharacterDatabaseTransaction const& tx)
+{
+    Live();
+    if (state == ITEM_NEW || state == ITEM_CHANGED)
+    {
+        uint32 const g = guid;
+        ItemRow const row{owner, entry, count};
+        tx->Op([=](Db& d) { d.items[g] = row; return true; });
+        state = ITEM_UNCHANGED;
+    }
+}
+void Item::DeleteFromInventoryDB(CharacterDatabaseTransaction const& tx)
+{
+    Live();
+    uint32 const g = guid;
+    tx->Op([=](Db& d) { d.inventory.erase(g); return true; });
+}
+
+// ------------------------------------------------------------------ the module's neighbours
+
+namespace DC
+{
+namespace Tunables
+{
+    inline double Get(char const*, char const* name)
+    {
+        std::string const n = name;
+        if (n == "stash_max_tabs") return 5;
+        if (n == "stash_launch_tabs") return 1;
+        if (n == "stash_action_range_yards") return 6.5;
+        return 0;
+    }
+} // namespace Tunables
+namespace Hardcore
+{
+    using Mode = HardcoreMode;
+    inline Mode ModeOf(Player const* player) { return player->mode; }
+    inline bool IsLocked(uint64) { return false; }
+    inline bool DeathPending(Player const* player) { return player->fallen; }
+} // namespace Hardcore
+namespace Economy
+{
+    constexpr uint32 GoldBarEntry = 909999;
+    inline uint64 GoldCost(uint64 gold) { return gold * 10000; }
+    inline bool CanAfford(Player* player, uint64 cost) { return player->gold >= cost; }
+    inline bool Charge(Player* player, uint64 cost) { player->gold -= cost; return true; }
+} // namespace Economy
+namespace Items
+{
+    struct Rolled
+    {
+        uint32 boundAccount = 0;
+    };
+    static std::map<uint64, Rolled> rolledRows;
+    inline std::shared_ptr<Rolled> Get(uint64 guid)
+    {
+        auto found = rolledRows.find(guid);
+        return found == rolledRows.end() ? nullptr : std::make_shared<Rolled>(found->second);
+    }
+} // namespace Items
+} // namespace DC
+
+namespace PlayerEconomy
+{
+struct Context
+{
+    CharacterDatabaseTransaction transaction = std::make_shared<Tx>();
+    bool Dirty() const { return false; }
+};
+static Context* current = nullptr;
+inline Context* Current() { return current; }
+inline void Fail() { ++economyFails; }
+inline CharacterDatabaseTransaction BeginTransaction() { return current ? current->transaction : std::make_shared<Tx>(); }
+struct Scope
+{
+    Context context;
+    bool mine = false;
+    explicit Scope(Player*)
+    {
+        if (!current)
+        {
+            current = &context;
+            mine = true;
+        }
+    }
+    ~Scope()
+    {
+        if (mine)
+            current = nullptr;
+    }
+};
+} // namespace PlayerEconomy
+
+namespace DC::AccountEconomy
+{
+inline bool IsMaterial(uint32 entry) { return entry == 7777; }
+inline bool Commit(Player* player, CharacterDatabaseTransaction const& tx)
+{
+    bool const ok = Apply(*tx);
+    if (!ok)
+        player->GetSession()->AbortEconomy(); // PlayerEconomy::Flush on a failed commit
+    return ok;
+}
+} // namespace DC::AccountEconomy
+
+struct DatabaseDouble
+{
+    CharacterDatabaseTransaction BeginTransaction() { return std::make_shared<Tx>(); }
+    Future AsyncCommitTransaction(CharacterDatabaseTransaction const& tx)
+    {
+        std::promise<bool> promise;
+        promise.set_value(Apply(*tx));
+        return Future{promise.get_future()};
+    }
+    template <class... A> void DirectExecute(std::string const& text, A const&... args)
+    {
+        std::string const statement = Format(text, args...);
+        uint32 account = 0;
+        char mode[16] = {};
+        int tabs = 0;
+        if (std::sscanf(statement.c_str(), "INSERT IGNORE INTO dc_account_stash(account_id,mode,tabs_granted,revision) VALUES(%u,'%15[a-z]',%d,0)",
+                        &account, mode, &tabs) == 3)
+            db.stash.emplace(std::make_pair(account, std::string(mode)), std::make_pair(tabs, uint64(0)));
+    }
+    template <class... A> std::shared_ptr<Row> Query(std::string const& text, A const&... args)
+    {
+        std::string const statement = Format(text, args...);
+        if (statement.find("FROM dc_account_stash WHERE") != std::string::npos)
+        {
+            uint32 account = 0;
+            char mode[16] = {};
+            std::sscanf(statement.c_str() + statement.find("account_id="), "account_id=%u AND mode='%15[a-z]'", &account, mode);
+            auto found = db.stash.find({account, mode});
+            if (found == db.stash.end())
+                return nullptr;
+            return std::make_shared<Row>(Row{{Field{uint64(found->second.first)}, Field{found->second.second}}});
+        }
+        if (statement.find("FROM dc_stash_tuning") != std::string::npos)
+            return db.price ? std::make_shared<Row>(Row{{Field{db.price}}}) : nullptr;
+        return nullptr;
+    }
+} CharacterDatabase, WorldDatabase;
+
+struct ScriptMgrDouble
+{
+    void OnPlayerAfterMoveItemFromInventory(Player*, Item*, uint8, uint8, bool) { ++announced; }
+} scriptMgr;
+auto* sScriptMgr = &scriptMgr;
+
+struct ChatHandler
+{
+    explicit ChatHandler(Session*) {}
+    template <class... A> void PSendSysMessage(char const*, A const&...) {}
+};
+namespace Acore::ChatCommands
+{
+struct ChatCommandTable
+{
+};
+} // namespace Acore::ChatCommands
+struct AccountScript
+{
+    AccountScript(char const*, std::vector<int> const&) {}
+    virtual ~AccountScript() = default;
+    virtual void OnBeforeAccountDelete(uint32) {}
+};
+constexpr int ACCOUNTHOOK_ON_BEFORE_ACCOUNT_DELETE = 1;
+
+static Item* MakeItem(uint32 guid, uint32 entry, uint32 count, uint32 maxStack)
+{
+    Item* item = new Item();
+    item->guid = guid;
+    item->entry = entry;
+    item->count = count;
+    item->maxStack = maxStack;
+    return item;
+}
+static std::map<uint32, uint32> stackSizes;
+
+#include "@HEADER@"
+
+namespace DC::Stash
+{
+@PRODUCTION@
+} // the production code's own anonymous namespace
+
+// ------------------------------------------------------------------ the world the scenarios run in
+
+namespace DC::Stash
+{
+constexpr uint32 Account = 7;
+static Session session;
+static Player player;
+constexpr uint32 Potion = 2000, Sword = 3000, Helm = 3001;
+// A Horadric Cache as the world migrations leave it: its entry and Flags (bounties_0003, then bounties_0004).
+constexpr uint32 Cache = @CACHE_ENTRY@, CacheFlags = @CACHE_FLAGS@;
+
+static uint16 Cell(int slot) { return uint16(uint16(INVENTORY_SLOT_BAG_0) << 8 | uint8(slot)); }
+static int BagIndex(int slot) { return 25500 + slot; }
+
+// A durable item in a bag, and the live copy of it.
+static void InBag(uint32 guid, uint32 entry, uint32 count, int slot, uint32 maxStack = 1)
+{
+    db.items[guid] = ItemRow{player.guid, entry, count};
+    db.inventory[guid] = {INVENTORY_SLOT_BAG_0, slot};
+    Item* item = MakeItem(guid, entry, count, maxStack);
+    item->owner = player.guid;
+    item->bag = INVENTORY_SLOT_BAG_0;
+    item->slot = slot;
+    player.bags[Cell(slot)] = item;
+}
+
+// A durable item parked in the stash. The cache loads it on first use.
+static void InStash(uint32 guid, uint32 entry, uint32 count, int tab, int slot, uint32 maxStack = 1)
+{
+    (void)maxStack;
+    db.items[guid] = ItemRow{0, entry, count};
+    db.links[{Account, "normal", tab, slot}] = guid;
+    db.stash.emplace(std::make_pair(Account, std::string("normal")), std::make_pair(1, uint64(0)));
+}
+
+static void Reset()
+{
+    for (Item* item : std::vector<Item*>(allItems.begin(), allItems.end()))
+        delete item;
+    db = Db{};
+    stackSizes = {{Potion, 20}};
+    player = Player{};
+    session = Session{};
+    session.player = &player;
+    player.session = &session;
+    announced = economyFails = logErrors = 0;
+    canStoreCalls = failCanStoreOnCall = 0;
+    DC::Items::rolledRows.clear();
+    containers.clear();
+    operations.clear();
+}
+
+// Logout and login: everything in memory is discarded, the bags are read back from the rows.
+static void Relog()
+{
+    Release(Key{Account, false});
+    Release(Key{Account, true});
+    // Memory is discarded: whatever the session still holds is freed, as a logout does.
+    for (Item* item : std::vector<Item*>(allItems.begin(), allItems.end()))
+        delete item;
+    player.bags.clear();
+    player.queue.clear();
+    session.aborted = false;
+    for (auto const& row : db.inventory)
+    {
+        ItemRow const& info = db.items.at(row.first);
+        uint32 const max = stackSizes.count(info.entry) ? stackSizes[info.entry] : 1;
+        Item* item = MakeItem(row.first, info.entry, info.count, max);
+        item->owner = player.guid;
+        item->bag = row.second.first;
+        item->slot = row.second.second;
+        player.bags[Cell(item->slot)] = item;
+    }
+}
+
+static std::string Snapshot()
+{
+    std::ostringstream out;
+    for (auto const& row : db.inventory)
+        out << "inv " << row.first << "@" << row.second.second << "x" << db.items.at(row.first).count << ";";
+    for (auto const& link : db.links)
+        out << "link " << std::get<2>(link.first) << "/" << std::get<3>(link.first) << "=" << link.second << "x"
+            << db.items.at(link.second).count << ";";
+    return out.str();
+}
+
+static uint64 Units(uint32 entry)
+{
+    uint64 total = 0;
+    for (auto const& row : db.inventory)
+        if (db.items.at(row.first).entry == entry)
+            total += db.items.at(row.first).count;
+    for (auto const& link : db.links)
+        if (db.items.at(link.second).entry == entry)
+            total += db.items.at(link.second).count;
+    return total;
+}
+
+// The durable truth: one place per item, owners say which, no row without a place.
+static void DurableIsSound()
+{
+    std::set<uint32> places;
+    for (auto const& row : db.inventory)
+    {
+        CHECK(places.insert(row.first).second);
+        CHECK(db.items.count(row.first));
+        CHECK(db.items.at(row.first).owner == player.guid);
+    }
+    for (auto const& link : db.links)
+    {
+        CHECK(places.insert(link.second).second); // in a bag AND in the stash would be a duplicate
+        CHECK(db.items.count(link.second));
+        CHECK(db.items.at(link.second).owner == 0); // parked: owner cleared
+    }
+    for (auto const& item : db.items)
+        CHECK(places.count(item.first)); // a row with no place is a lost item (or an orphan)
+}
+
+// Memory agrees with the rows after a move that was answered "ok".
+static void MemoryMatchesDurable()
+{
+    std::map<uint32, std::pair<int, int>> bagged;
+    for (auto const& entry : player.bags)
+    {
+        bagged[entry.second->guid] = {INVENTORY_SLOT_BAG_0, entry.second->slot};
+        CHECK(db.items.at(entry.second->guid).count == entry.second->count);
+    }
+    CHECK(bagged == db.inventory);
+    auto found = containers.find(Key{Account, false});
+    if (found != containers.end())
+    {
+        std::map<LinkKey, uint32> cached;
+        for (auto const& entry : found->second.items)
+            cached[{Account, "normal", entry.first / SlotsPerTab, entry.first % SlotsPerTab}] = entry.second->guid;
+        CHECK(cached == db.links);
+    }
+}
+
+// Items alive that nothing owns: not in the bags, not in the container, not queued.
+static void NothingLeaks()
+{
+    std::set<Item*> owned;
+    for (auto const& entry : player.bags)
+        owned.insert(entry.second);
+    for (auto const& cache : containers)
+        for (auto const& entry : cache.second.items)
+            owned.insert(entry.second);
+    for (Item* item : player.queue)
+        owned.insert(item);
+    for (Item* item : allItems)
+        CHECK(owned.count(item));
+}
+
+static bool Try(std::function<void()> action, std::string* message = nullptr)
+{
+    try
+    {
+        action();
+        return true;
+    }
+    catch (std::exception const& error)
+    {
+        if (message)
+            *message = error.what();
+        return false;
+    }
+}
+
+static bool MoveTo(char const* from, int fromIndex, char const* to, int toIndex, std::string* message = nullptr)
+{
+    return Try([&] { Move(&player, from, fromIndex, to, toIndex); }, message);
+}
+
+// What every failed bag-changing move owes: the session is aborted, the cache is gone, and the
+// next login finds exactly what was committed before.
+static void AbortedAndReloaded(std::string const& before)
+{
+    CHECK(session.aborted);
+    CHECK(economyFails >= 1);
+    CHECK(containers.empty());
+    DurableIsSound();
+    CHECK(Snapshot() == before);
+    NothingLeaks();
+    Relog();
+    CHECK(Snapshot() == before);
+    NothingLeaks();
+}
+
+// ------------------------------------------------------------------ the scenarios
+
+using Scenario = std::function<void()>;
+static std::map<std::string, Scenario> scenarios;
+
+static void Define()
+{
+    scenarios["deposit_into_empty_slot"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        CHECK(MoveTo("bag", BagIndex(23), "stash", 3));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        NothingLeaks();
+        CHECK(db.links.at({Account, "normal", 0, 3}) == 101);
+        CHECK(db.items.at(101).owner == 0 && db.inventory.empty());
+        CHECK(announced == 1 && !session.aborted);
+        CHECK(db.stash.at({Account, "normal"}).second == 1); // revision bumped in the same commit
+    };
+    scenarios["deposit_auto_takes_first_free_slot"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        InStash(201, Helm, 1, 0, 0);
+        CHECK(MoveTo("bag", BagIndex(23), "stash", -1));
+        CHECK(db.links.at({Account, "normal", 0, 1}) == 101);
+        DurableIsSound();
+        MemoryMatchesDurable();
+    };
+    scenarios["deposit_swap_exchanges_both_items"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        InStash(201, Helm, 1, 0, 4);
+        CHECK(MoveTo("bag", BagIndex(23), "stash", 4));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        NothingLeaks();
+        CHECK(db.links.at({Account, "normal", 0, 4}) == 101);
+        CHECK(db.inventory.at(201).second == 23);
+        CHECK(announced == 1 && !session.aborted);
+    };
+    scenarios["withdraw_to_empty_cell_and_auto"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        InStash(202, Sword, 1, 0, 1);
+        CHECK(MoveTo("stash", 0, "bag", BagIndex(30)));
+        CHECK(MoveTo("stash", 1, "bag", -1));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        NothingLeaks();
+        CHECK(db.inventory.at(201).second == 30);
+        CHECK(db.inventory.at(202).second == 23);
+        CHECK(db.links.empty());
+    };
+    scenarios["withdraw_swap_exchanges_both_items"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 25);
+        InStash(201, Helm, 1, 0, 2);
+        CHECK(MoveTo("stash", 2, "bag", BagIndex(25)));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        NothingLeaks();
+        CHECK(db.inventory.at(201).second == 25);
+        CHECK(db.links.at({Account, "normal", 0, 2}) == 101);
+        CHECK(announced == 1);
+    };
+    scenarios["rearrange_move_and_swap"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        InStash(202, Sword, 1, 0, 1);
+        CHECK(MoveTo("stash", 0, "stash", 9));
+        CHECK(MoveTo("stash", 9, "stash", 1)); // a swap collides on both guids unless every slot clears first
+        DurableIsSound();
+        CHECK(db.links.at({Account, "normal", 0, 1}) == 201 && db.links.at({Account, "normal", 0, 9}) == 202);
+        MemoryMatchesDurable();
+        CHECK(!session.aborted);
+    };
+    scenarios["rebag_moves_inside_the_bags"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        CHECK(MoveTo("bag", BagIndex(23), "bag", BagIndex(31)));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        CHECK(db.inventory.at(101).second == 31 && containers.empty());
+    };
+
+    // ---- a stackable that merges on withdraw
+    scenarios["withdraw_stack_merges_into_bag_stack"] = [] {
+        Reset();
+        InBag(300, Potion, 10, 23, 20);
+        InStash(301, Potion, 5, 0, 0, 20);
+        uint64 const before = Units(Potion);
+        CHECK(MoveTo("stash", 0, "bag", -1));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        NothingLeaks();
+        CHECK(Units(Potion) == before && db.items.at(300).count == 15 && !db.items.count(301));
+        CHECK(!session.aborted);
+    };
+    scenarios["withdraw_stack_merge_commit_fails"] = [] {
+        Reset();
+        InBag(300, Potion, 10, 23, 20);
+        InStash(301, Potion, 5, 0, 0, 20);
+        std::string const before = Snapshot();
+        db.failCommits = 1;
+        std::string message;
+        CHECK(!MoveTo("stash", 0, "bag", -1, &message)); // the merged item was freed inside the save
+        CHECK(message.find("disconnected") != std::string::npos);
+        AbortedAndReloaded(before);
+        CHECK(Units(Potion) == 15);
+        // and the stash still holds its five
+        CHECK(MoveTo("stash", 0, "bag", -1));
+        CHECK(Units(Potion) == 15 && db.items.at(300).count == 15);
+        DurableIsSound();
+    };
+
+    // ---- a failed commit, at every move
+    scenarios["deposit_commit_fails"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        std::string const before = Snapshot();
+        db.failCommits = 1;
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 3));
+        AbortedAndReloaded(before);
+        CHECK(db.links.empty() && db.inventory.count(101));
+    };
+    scenarios["deposit_swap_commit_fails"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        InStash(201, Helm, 1, 0, 4);
+        std::string const before = Snapshot();
+        db.failCommits = 1;
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 4));
+        AbortedAndReloaded(before);
+    };
+    scenarios["withdraw_commit_fails"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        std::string const before = Snapshot();
+        db.failCommits = 1;
+        CHECK(!MoveTo("stash", 0, "bag", BagIndex(23)));
+        AbortedAndReloaded(before);
+        CHECK(db.links.size() == 1 && db.inventory.empty());
+    };
+    scenarios["withdraw_swap_commit_fails"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 25);
+        InStash(201, Helm, 1, 0, 2);
+        std::string const before = Snapshot();
+        db.failCommits = 1;
+        CHECK(!MoveTo("stash", 2, "bag", BagIndex(25)));
+        AbortedAndReloaded(before);
+    };
+    scenarios["rearrange_commit_fails_leaves_the_session_alone"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        InStash(202, Sword, 1, 0, 1);
+        std::string const before = Snapshot();
+        db.failCommits = 1;
+        CHECK(!MoveTo("stash", 0, "stash", 1));
+        CHECK(!session.aborted && containers.empty()); // nothing in the bags changed; only the cache goes
+        DurableIsSound();
+        CHECK(Snapshot() == before);
+        CHECK(MoveTo("stash", 0, "stash", 1)); // and the next open reads the committed rows
+        CHECK(db.links.at({Account, "normal", 0, 1}) == 201);
+    };
+
+    // ---- a failure between the removal and the commit
+    scenarios["deposit_swap_remeasure_fails"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        InStash(201, Helm, 1, 0, 4);
+        std::string const before = Snapshot();
+        canStoreCalls = 0;
+        failCanStoreOnCall = 2; // the first answer passes, the answer after the removal does not
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 4));
+        AbortedAndReloaded(before);
+        CHECK(db.commits == 0);
+    };
+    scenarios["withdraw_swap_remeasure_fails"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 25);
+        InStash(201, Helm, 1, 0, 2);
+        std::string const before = Snapshot();
+        canStoreCalls = 0;
+        failCanStoreOnCall = 2;
+        CHECK(!MoveTo("stash", 2, "bag", BagIndex(25)));
+        AbortedAndReloaded(before);
+        CHECK(db.commits == 0);
+    };
+
+    // ---- refusals before anything moved: no abort, no commit, no change
+    scenarios["full_bags_refuse_withdraw_cleanly"] = [] {
+        Reset();
+        for (int slot = 23; slot < 39; ++slot)
+            InBag(100 + slot, Sword, 1, slot);
+        InStash(201, Helm, 1, 0, 0);
+        std::string const before = Snapshot();
+        std::string message;
+        CHECK(!MoveTo("stash", 0, "bag", -1, &message));
+        CHECK(message == "Your bags are full.");
+        CHECK(!session.aborted && db.commits == 0 && Snapshot() == before);
+        MemoryMatchesDurable();
+        NothingLeaks();
+    };
+    scenarios["full_bags_allow_a_swap_deposit"] = [] {
+        Reset();
+        for (int slot = 23; slot < 39; ++slot)
+            InBag(100 + slot, Sword, 1, slot);
+        InStash(201, Helm, 1, 0, 0);
+        CHECK(MoveTo("bag", BagIndex(23), "stash", 0));
+        DurableIsSound();
+        MemoryMatchesDurable();
+        NothingLeaks();
+        CHECK(db.inventory.at(201).second == 23 && db.links.at({Account, "normal", 0, 0}) == 123);
+    };
+    scenarios["full_stash_refuses_deposit"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        for (int slot = 0; slot < 70; ++slot)
+            InStash(400 + slot, Helm, 1, 0, slot);
+        std::string message;
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", -1, &message));
+        CHECK(message == "The Stash is full.");
+        CHECK(!session.aborted && db.commits == 0);
+        MemoryMatchesDurable();
+    };
+    scenarios["refused_items_stay_where_they_are"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        player.bags[Cell(23)]->tradeable = false; // soulbound
+        InBag(102, Sword, 1, 24);
+        player.bags[Cell(24)]->wrapped = true;
+        InBag(103, Sword, 1, 25);
+        player.bags[Cell(25)]->duration = 3600;
+        InBag(104, Sword, 1, 26);
+        player.bags[Cell(26)]->nonEmptyBag = true;
+        InBag(105, Sword, 1, 27);
+        player.bags[Cell(27)]->inTrade = true;
+        InBag(106, 7777, 1, 28); // an account material
+        InBag(107, Economy::GoldBarEntry, 1, 29);
+        InBag(108, Sword, 1, 30); // bound to another account
+        DC::Items::rolledRows[108].boundAccount = 99;
+        std::string const before = Snapshot();
+        for (int slot = 23; slot <= 30; ++slot)
+            CHECK(!MoveTo("bag", BagIndex(slot), "stash", -1));
+        CHECK(Snapshot() == before && db.commits == 0 && !session.aborted);
+        // our own account-bound item is allowed even when the stock flag says untradeable
+        InBag(109, Sword, 1, 31);
+        player.bags[Cell(31)]->tradeable = false;
+        DC::Items::rolledRows[109].boundAccount = Account;
+        CHECK(MoveTo("bag", BagIndex(31), "stash", -1));
+        DurableIsSound();
+    };
+    scenarios["account_bound_template_goes_in_from_bags"] = [] {
+        // diablocraft-rxvzd: a cache bound to the account binds in bags (CanBeTraded false); the account's stash takes it.
+        Reset();
+        InBag(101, Cache, 1, 23);
+        player.bags[Cell(23)]->tradeable = false;
+        player.bags[Cell(23)]->templateFlags = CacheFlags;
+        CHECK(MoveTo("bag", BagIndex(23), "stash", -1));
+        DurableIsSound();
+        // a rolled item bound to another account stays out, account flag or not
+        InBag(102, Cache, 1, 24);
+        player.bags[Cell(24)]->tradeable = false;
+        player.bags[Cell(24)]->templateFlags = CacheFlags;
+        DC::Items::rolledRows[102].boundAccount = 99;
+        std::string const before = Snapshot();
+        std::string message;
+        CHECK(!MoveTo("bag", BagIndex(24), "stash", -1, &message));
+        CHECK(message == "That item is bound to another account.");
+        CHECK(Snapshot() == before);
+    };
+    scenarios["only_the_backpack_is_addressable"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        for (int bad : {0, 18, 22, 39, 70})
+            CHECK(!MoveTo("bag", 25500 + bad, "stash", 0));
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 70)); // tab 2 is not bought
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 25600));
+        CHECK(!MoveTo("bag", -4, "stash", 0));
+        CHECK(db.commits == 0 && !session.aborted);
+    };
+    scenarios["the_stash_object_and_the_player_gate_every_move"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        player.atNpc = false;
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 0));
+        CHECK(MoveTo("bag", BagIndex(23), "bag", BagIndex(24))); // rearranging your own bags needs no Stash
+        player.atNpc = true;
+        player.alive = false;
+        CHECK(!MoveTo("bag", BagIndex(24), "stash", 0));
+        player.alive = true;
+        player.combat = true;
+        CHECK(!MoveTo("bag", BagIndex(24), "stash", 0));
+        player.combat = false;
+        player.mode = HardcoreMode::Unchosen;
+        CHECK(!MoveTo("bag", BagIndex(24), "stash", 0));
+        player.mode = HardcoreMode::Normal;
+        player.fallen = true;
+        CHECK(!MoveTo("bag", BagIndex(24), "stash", 0));
+        player.fallen = false;
+        CHECK(db.links.empty());
+        CHECK(MoveTo("bag", BagIndex(24), "stash", 0));
+    };
+    scenarios["an_aborted_session_moves_nothing"] = [] {
+        Reset();
+        InBag(101, Sword, 1, 23);
+        session.aborted = true;
+        std::string const before = Snapshot();
+        CHECK(!MoveTo("bag", BagIndex(23), "stash", 0));
+        CHECK(!MoveTo("bag", BagIndex(23), "bag", BagIndex(24)));
+        CHECK(db.commits == 0 && Snapshot() == before);
+    };
+    scenarios["hardcore_and_normal_are_separate_containers"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        player.mode = HardcoreMode::Hardcore;
+        CHECK(!MoveTo("stash", 0, "bag", -1)); // the normal stash is not this account-and-mode
+        InBag(101, Sword, 1, 23);
+        CHECK(MoveTo("bag", BagIndex(23), "stash", 0));
+        CHECK(db.links.at({Account, "hardcore", 0, 0}) == 101);
+        CHECK(db.links.at({Account, "normal", 0, 0}) == 201);
+        DurableIsSound();
+    };
+
+    // ---- the tab purchase
+    scenarios["buytab_commit_fails_buys_nothing"] = [] {
+        Reset();
+        db.price = 100;
+        player.gold = 5000000;
+        InStash(201, Helm, 1, 0, 0);
+        db.failCommits = 1;
+        CHECK(Try([] { BuyTab(&player); }) == false);
+        CHECK(session.aborted && economyFails >= 1);
+        CHECK(db.stash.at({Account, "normal"}).first == 1); // still one tab granted
+    };
+    scenarios["buytab_grants_the_next_tab"] = [] {
+        Reset();
+        db.price = 100;
+        player.gold = 5000000;
+        InStash(201, Helm, 1, 0, 0);
+        CHECK(Try([] { BuyTab(&player); }));
+        CHECK(containers.at(Key{Account, false}).tabs == 2);
+        CHECK(!session.aborted && player.gold == 4000000);
+        CHECK(MoveTo("stash", 0, "stash", 70)); // tab 2 now exists
+    };
+    scenarios["buytab_without_a_price_or_gold_refuses"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        player.gold = 5000000;
+        CHECK(!Try([] { BuyTab(&player); })); // price not set
+        db.price = 100;
+        player.gold = 1;
+        CHECK(!Try([] { BuyTab(&player); }));
+        CHECK(db.stash.at({Account, "normal"}).first == 1);
+    };
+
+    // ---- account deletion (q-1001-40)
+    scenarios["account_sweep_drops_the_caches_and_prints_its_sql"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        CHECK(MoveTo("stash", 0, "stash", 1)); // loads the cache
+        CHECK(containers.count(Key{Account, false}));
+        AccountSweep(Account);
+        CHECK(containers.empty());
+        NothingLeaks();
+    };
+    scenarios["character_hooks_never_delete_stash_rows"] = [] {
+        Reset();
+        InStash(201, Helm, 1, 0, 0);
+        CHECK(MoveTo("stash", 0, "stash", 1));
+        Release(Key{Account, false}); // what a logout does
+        DurableIsSound();
+        CHECK(db.links.size() == 1);
+    };
+}
+
+int Run(char const* name)
+{
+    Define();
+    if (std::string(name) == "list")
+    {
+        for (auto const& entry : scenarios)
+            std::printf("%s\n", entry.first.c_str());
+        return 0;
+    }
+    auto found = scenarios.find(name);
+    if (found == scenarios.end())
+    {
+        std::fprintf(stderr, "no scenario %s\n", name);
+        return 2;
+    }
+    found->second();
+    // the SQL the sweep sent, for the real-MySQL half of the test
+    for (auto const& statement : db.other)
+        std::printf("SQL %s\n", statement.c_str());
+    std::printf("PASS %s\n", name);
+    return 0;
+}
+} // namespace DC::Stash
+
+int main(int argc, char** argv)
+{
+    return DC::Stash::Run(argc > 1 ? argv[1] : "list");
+}

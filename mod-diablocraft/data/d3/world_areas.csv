@@ -1,0 +1,5 @@
+map_id,area_id,phase_scope,status,note
+1,876,all,closed,Former GM Island hub
+530,3703,all,closed,Former Shattrath hub at Scryer's Tier; closed when the hub moved to the Sanctum of Torment (diablocraft-976b)
+530,3898,all,closed,Former Scryer's Tier hub subarea; closed with it (diablocraft-976b)
+750,4273,all,open,"The hub: the Sanctum of Torment, Yogg-Saron's arena as map 750, a clone of map 603 (diablocraft-976b)"

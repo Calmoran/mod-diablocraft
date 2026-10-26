@@ -1,0 +1,26 @@
+entity,category,life_multiplier,damage_multiplier,source_url,notes
+Normal,difficulty_tier,100%,100%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,Baseline difficulty (100% / 1.0x). Absolute level 70 raw base Life and damage are NOT PUBLISHED by Blizzard (internal engine values).
+Hard,difficulty_tier,200%,130%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+100% Life, +30% Damage relative to Normal."
+Expert,difficulty_tier,320%,189%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+220% Life, +89% Damage relative to Normal (official guide / d3resource lists 320%; 312% in early 2.0.1 tables)."
+Master,difficulty_tier,512%,273%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+412% Life, +173% Damage relative to Normal."
+Torment I,difficulty_tier,819%,396%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+719% Life, +296% Damage relative to Normal. Equivalent to Greater Rift 10."
+Torment II,difficulty_tier,1311%,575%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+1211% Life, +475% Damage relative to Normal. Equivalent to Greater Rift 13."
+Torment III,difficulty_tier,2097%,833%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+1997% Life, +733% Damage relative to Normal. Equivalent to Greater Rift 16."
+Torment IV,difficulty_tier,3355%,1208%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+3255% Life, +1108% Damage relative to Normal. Equivalent to Greater Rift 19."
+Torment V,difficulty_tier,5369%,1752%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+5269% Life, +1652% Damage relative to Normal. Equivalent to Greater Rift 22."
+Torment VI,difficulty_tier,8590%,2540%,https://us.battle.net/d3/en/game/guide/gameplay/game-difficulty,"+8490% Life, +2440% Damage relative to Normal. Equivalent to Greater Rift 25."
+Torment VII,difficulty_tier,18985%,3604%,https://d3resource.com/difficulties/,Patch 2.3.0 addition. Equivalent to Greater Rift 30.
+Torment VIII,difficulty_tier,41625%,5097%,https://d3resource.com/difficulties/,Patch 2.3.0 addition. Equivalent to Greater Rift 35.
+Torment IX,difficulty_tier,91260%,7208%,https://d3resource.com/difficulties/,Patch 2.3.0 addition. Equivalent to Greater Rift 40.
+Torment X,difficulty_tier,200082%,10194%,https://d3resource.com/difficulties/,Patch 2.3.0 addition. Equivalent to Greater Rift 45.
+Torment XI,difficulty_tier,438669%,14416%,https://d3resource.com/difficulties/,Patch 2.4.2 addition. Equivalent to Greater Rift 50.
+Torment XII,difficulty_tier,961759%,20387%,https://d3resource.com/difficulties/,Patch 2.4.2 addition. Equivalent to Greater Rift 55.
+Torment XIII,difficulty_tier,2108607%,28832%,https://d3resource.com/difficulties/,Patch 2.4.2 addition. Equivalent to Greater Rift 60.
+Torment XIV,difficulty_tier,2889383%,40775%,https://d3resource.com/difficulties/,Patch 2.6.5 addition. Equivalent to Greater Rift 65.
+Torment XV,difficulty_tier,6334823%,57664%,https://d3resource.com/difficulties/,Patch 2.6.5 addition. Equivalent to Greater Rift 70.
+Torment XVI,difficulty_tier,13888770%,64725%,https://d3resource.com/difficulties/,Patch 2.6.5 addition. Equivalent to Greater Rift 75.
+Champion,creature_rank,NOT PUBLISHED,NOT PUBLISHED,https://diablo.fandom.com/wiki/Champion_monsters,Qualitative only ('more health and hit harder than normal monsters'); numeric multiplier relative to normal monster is NOT PUBLISHED.
+Rare,creature_rank,NOT PUBLISHED,NOT PUBLISHED,https://diablo.fandom.com/wiki/Rare_Monsters,Qualitative only ('more health and hit harder than normal monsters'); numeric multiplier relative to normal monster is NOT PUBLISHED.
+Minion,creature_rank,NOT PUBLISHED,NOT PUBLISHED,https://diablo.fandom.com/wiki/Minion,"Qualitative only ('not as strong as the rare monster, but much stronger than their normal counterparts'); numeric multiplier relative to normal monster is NOT PUBLISHED."
+Boss,creature_rank,NOT PUBLISHED,NOT PUBLISHED,https://diablo.fandom.com/wiki/Bosses,Qualitative only ('massive amounts of Life as well as increased damage'); numeric multiplier relative to normal monster is NOT PUBLISHED.
+Rift Guardian,creature_rank,NOT PUBLISHED,NOT PUBLISHED,https://maxroll.gg/d3/resources/rift-guardians-explained,Normalized to identical HP pool across all 27 guardians in Patch 2.3.0 (+17% HP per GR tier); numeric baseline multiplier relative to normal monster is NOT PUBLISHED.

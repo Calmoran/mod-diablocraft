@@ -1,0 +1,7 @@
+{
+  "columns": ["kind", "entry", "name", "related_entry", "copper", "source"],
+  "min_rows": 1,
+  "number_columns": ["entry", "related_entry", "copper"],
+  "allow_empty": [],
+  "notes_columns": ["source"]
+}

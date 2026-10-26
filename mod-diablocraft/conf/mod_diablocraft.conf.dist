@@ -1,0 +1,66 @@
+[worldserver]
+
+###################################################################################################
+#    Diablocraft
+###################################################################################################
+#
+#    Diablocraft.Enable
+#        Description: Enables/disables all Diablocraft systems.
+#        Default:     1 - (Enabled)
+#                     0 - (Disabled)
+
+Diablocraft.Enable = 1
+
+###################################################################################################
+# Enable only after the offline migration fixtures and Claude's loot/rift/AIO
+# integration gates pass. Startup refuses cutover on ambiguous legacy holdings.
+# Once migration has run, disabling authority refuses startup; rollback needs a full DB restore.
+Diablocraft.AccountEconomy.Enable = 0
+# Disposable acceptance testing only; enables the GM .dc account failnext command.
+Diablocraft.AccountEconomy.TestFaults = 0
+
+# Test-realm hub NPC that tops up a tester's account and character.
+# Disabled by default. Requires Diablocraft.AccountEconomy.Enable = 1.
+Diablocraft.TesterCoffer.Enable = 0
+
+###################################################################################################
+# 11-hardcore H4 (ruling 2026-09-21). Normal and Hardcore are separate realms, not
+# a choice a character makes. This says which one this realm is: every character
+# created here is written into dc_character_mode on its first login with this
+# value, and that row is permanent - changing this setting later does not move a
+# character that already has one, it only decides what the next new character is.
+#    Diablocraft.Hardcore.Enable
+#        Description: The whole realm is Hardcore.
+#        Default:     0 - (Normal realm)
+#                     1 - (Hardcore realm)
+
+Diablocraft.Hardcore.Enable = 0
+
+# Version enforcement paths (relative to build/server). VersionFile is the copy
+# deploy_worldserver.sh writes beside the binary at every deploy, so the server
+# enforces the version it was deployed with, not the working tree's VERSION.
+Diablocraft.VersionFile = VERSION.deployed
+Diablocraft.SchemaFile = ../../../mod-diablocraft/data/sql/schema.csv
+
+# Editable text row; {client} and {current} are substituted by the AIO version bridge.
+Diablocraft.ClientMismatchMessage = Your game files are out of date (patch {client}, current {current}). Run the launcher again, or download the current files from Discord or the website.
+
+###################################################################################################
+# Lua error drop (diablocraft-g74u4, ruling 2026-10-14). BugSack's "send to player" whisper is written,
+# one stamped line per chunk, to <Dir>/<YYYY-MM-DD>/<Character>.txt; scripts/lua_errors.py turns a
+# file into <Character>.readable.txt. Blank Dir: off (the live realm). The PM sets the dev realm's
+# Dir to the scratch folder (azerothcore-wotlk/build/_agent-scratch/lua-errors) at deploy.
+#    Diablocraft.LuaErrorDrop.Dir
+#        Description: Folder the drop writes under. Blank = off.
+#        Default:     "" - (Off)
+#    Diablocraft.LuaErrorDrop.Name
+#        Description: An addon whisper to this name is not delivered and gets no "player not found"
+#                     notice (core patch 0025); the name is reserved on every realm. Blank = none.
+#        Default:     Torment
+#    Diablocraft.LuaErrorDrop.CapBytes
+#        Description: Per character per day; past it, one log line and nothing more until the next day.
+#        Default:     2097152 - (2 MB)
+
+Diablocraft.LuaErrorDrop.Dir = ""
+Diablocraft.LuaErrorDrop.Name = Torment
+Diablocraft.LuaErrorDrop.CapBytes = 2097152

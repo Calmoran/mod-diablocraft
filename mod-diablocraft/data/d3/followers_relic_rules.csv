@@ -1,0 +1,3 @@
+rule,value,unit,source
+relic_ancient_primal,1,flag,"the designer, q-1021-138 (b): follower relics may roll Ancient and Primal Ancient like any legendary (the ancient and primal rows of followers_relic_pools.csv); no D3 source either way (docs/research/followers-relics-d3.md section 4). 0 builds the relics as Legendary only. followers_0006 shipped this at 0; followers_0007_rare_relics.sql carries the 1"
+rare_relic_drops,1,flag,"the designer, q-1021-140 (b): the rare follower relics also drop like other rares, besides the Blacksmith recipe; no D3 source says they do (docs/research/followers-relics-d3.md, rare relics section). 0 keeps them craft-only, 1 puts the three rare relics in the ordinary rare drop pool (generate_rare_relics.py writes craft_only from it)"

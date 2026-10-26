@@ -1,0 +1,25 @@
+rule,value,notes,source_url
+cost_armor_helm,25 Blood Shards,"Cost to gamble a random Helm (includes class-specific helms like Spirit Stones, Voodoo Masks, Wizard Hats)",https://diablo.fandom.com/wiki/Kadala
+cost_armor_shoulders,25 Blood Shards,Cost to gamble a random Pauldrons / Shoulders item,https://diablo.fandom.com/wiki/Kadala
+cost_armor_torso,25 Blood Shards,Cost to gamble a random Chest Armor / Cloak item,https://diablo.fandom.com/wiki/Kadala
+cost_armor_gloves,25 Blood Shards,Cost to gamble a random Gloves item,https://diablo.fandom.com/wiki/Kadala
+cost_armor_bracers,25 Blood Shards,Cost to gamble a random Bracers item,https://diablo.fandom.com/wiki/Kadala
+cost_armor_belt,25 Blood Shards,Cost to gamble a random Belt (includes class-specific Mighty Belts),https://diablo.fandom.com/wiki/Kadala
+cost_armor_pants,25 Blood Shards,Cost to gamble a random Pants item,https://diablo.fandom.com/wiki/Kadala
+cost_armor_boots,25 Blood Shards,Cost to gamble a random Boots item,https://diablo.fandom.com/wiki/Kadala
+cost_offhand_shield,25 Blood Shards,Cost to gamble a Shield (includes Crusader Shields),https://diablo.fandom.com/wiki/Kadala
+cost_offhand_caster_and_quiver,25 Blood Shards,"Cost to gamble class-specific offhands (Mojo, Source, Quiver, Phylactery)",https://diablo.fandom.com/wiki/Kadala
+cost_ring,50 Blood Shards,Cost to gamble a random Ring,https://diablo.fandom.com/wiki/Kadala
+cost_amulet,100 Blood Shards,Cost to gamble a random Amulet,https://diablo.fandom.com/wiki/Kadala
+cost_onehand_weapon,75 Blood Shards,Cost to gamble a random One-Handed weapon (any 1H type the class can equip),https://diablo.fandom.com/wiki/Kadala
+cost_twohand_weapon,75 Blood Shards,Cost to gamble a random Two-Handed weapon (any 2H type the class can equip),https://diablo.fandom.com/wiki/Kadala
+legendary_gamble_chance,10%,Flat 10% chance (1 in 10) for any purchased item to roll as a Legendary or Set piece (Patch 2.1.1+); smart loot rules apply,https://diablo.fandom.com/wiki/Kadala
+ancient_chance_at_level_70,10%,10% of rolled Legendaries from Kadala roll as Ancient (if character is level 70),https://diablo.fandom.com/wiki/Kadala
+primal_ancient_chance,~0.2%,Approximately 1 in 400 to 1 in 500 (~0.2%) of rolled Legendaries roll as Primal Ancient; requires unlocking solo GR70 on the account,https://diablo.fandom.com/wiki/Kadala
+blood_shard_capacity_base,500,Base carrying capacity of Blood Shards for any account / character mode,https://diablo.fandom.com/wiki/Blood_Shard
+blood_shard_capacity_increase_per_gr,+10 per solo Greater Rift rank cleared,Capacity permanently increases by 10 for each personal best solo Greater Rift level completed (e.g. GR 100 = 1500 cap; GR 150 = 2000 cap); account-wide per character mode,https://diablo.fandom.com/wiki/Blood_Shard
+blood_shard_drop_gr_formula,Blood Shards = (GR Level * 3) + 127,Formula for Blood Shard drop count from Greater Rift Guardians; scales linearly by +3 shards per GR rank; capped at higher GR tiers (~475 at GR 150),https://maxroll.gg/d3/resources/greater-rift-mechanics
+blood_shard_drop_nephalem_rift_normal_to_t1,~50–60 Blood Shards,Normal through Torment I Nephalem Rift Guardians drop the same base amount of Blood Shards,https://diablo.fandom.com/wiki/Blood_Shard
+blood_shard_drop_nephalem_rift_t2_to_t16,not published,"Scales with difficulty above Torment I up to ~300–350 shards at Torment XVI, but exact per-tier drop table is not published by Blizzard",https://diablo.fandom.com/wiki/Blood_Shard
+blood_shard_drop_bounty_cache,not published,Bounties award 1 shard per bounty (5 per act) on Normal–Hard and 2 per bounty (10 per act) on Expert+; exact scaling of cache shards across Torment tiers is not published,https://diablo.fandom.com/wiki/Bounties
+blood_shard_drop_blood_thief_goblin,not published,Drops multiple large piles of Blood Shards scaling with difficulty (~150 on Normal up to ~400–600+ on Torment XVI); exact formula not published,https://diablo.fandom.com/wiki/Blood_Thief

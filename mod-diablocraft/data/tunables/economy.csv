@@ -1,0 +1,17 @@
+name,d3_value,value,unit,notes
+stash_launch_tabs,,1,count,"audit row 31 LaunchTabs; decisions.md 2026-09-10 ""one tab free and four more purchasable"""
+stash_max_tabs,,5,count,"audit row 30 MaxTabs; decisions.md 2026-09-10, quoted in dc_stash.h's header comment. Ours: D3 sells more than five"
+stash_tab_2_price_gold,,100000,gold,ruling 2026-10-04 q-1004-05 (q-1003-30); tab 2 price; regenerate generate_account_economy.py and apply its stash migration.
+stash_tab_3_price_gold,,100000,gold,ruling 2026-10-04 q-1004-05 (q-1003-30); tab 3 price; regenerate generate_account_economy.py and apply its stash migration.
+stash_tab_4_price_gold,,100000,gold,ruling 2026-10-04 q-1004-05 (q-1003-30); tab 4 price; regenerate generate_account_economy.py and apply its stash migration.
+stash_tab_5_price_gold,,100000,gold,ruling 2026-10-04 q-1004-05 (q-1003-30); tab 5 price; regenerate generate_account_economy.py and apply its stash migration.
+starter_satchel_count,,2,count,Codex literal audit 36; mod-diablocraft/src/common/dc_world.cpp:38; Satchels granted to each character; origin: comment above GrantStarterBags; Also sets existing-character top-up target.
+legacy_gold_bar_stack_count,,2147483647,count,Codex literal audit 112; mod-diablocraft/scripts/generate_crafting.py:147; Legacy Gold Bar maximum stack; origin: none found; Chosen inventory stack size equals signed-int ceiling; legacy denomination is retired.
+gem_vendor_gold,,0,gold,Codex literal audit 123; mod-diablocraft/scripts/generate_crafting.py:165; Gem vendor buy/sell prices; origin: none found; Both prices disabled; repeated same-line zero is one policy row.
+legendary_gem_sell_gold,,16,gold,"the designer, card q-1006-04 (docs/decisions.md 2026-10-06, diablocraft-ozl9): the price a vendor pays for any legendary gem item, written to SellPrice as it is (this project's gold is the core's money unit, dc_economy.h CopperPerGold 1, as gem_vendor_gold is). The buy price stays gem_vendor_gold (0): no vendor sells them. Regenerate generate_legendary_gem_items.py and apply its world migration"
+wing_shirt_vendor_gold,,0,gold,"Codex literal audit 229; mod-diablocraft/scripts/generate_wings.py:263; Wing shirt vendor buy/sell prices; origin: generated SQL comment: tunables, cosmetic shirts/no prices/level 1/bind on pickup; Columns BuyPrice and SellPrice are zero."
+item_sell_divisor,25,,count,"ruling 2026-10-04 q-1004-08 (diablocraft-item-base-sell-price); a vendor pays floor(D3 ItemTable.Cost / this) for a base item (data/d3/base_item_costs.csv); d3_value 25 is D3's own: Inventory.SellItem pays Math.Floor(item.GetPrice() / 25f), blizzless-diiis 6292f950aed3b29c58f35ce55caff6fd6c9d16b5 src/DiIiS-NA/D3-GameServer/GSSystem/PlayerSystem/Inventory.cs:327-337 (docs/research/item-sell-prices.md 2.2); value blank = D3's; a change needs generate_sql.py rerun and its items_0021_item_sell_price.sql applied, a .dc tunables set does not move SellPrice."
+tester_coffer_gold,,500000000000,gold,the designer-approved docs/briefs/codex-tester-coffer-brief.md 2026-09-23; account gold target; Torment dc_economy.h CopperPerGold is 1.
+tester_coffer_materials,,100000,count,the designer-approved docs/briefs/codex-tester-coffer-brief.md 2026-09-23; target per tracked account material.
+tester_coffer_gems,,20,count,the designer-approved docs/briefs/codex-tester-coffer-brief.md 2026-09-23; target per Flawless Royal colour.
+tester_coffer_paragon,,200,level,the designer-approved docs/briefs/codex-tester-coffer-brief.md 2026-09-23; target for the active Paragon pool.

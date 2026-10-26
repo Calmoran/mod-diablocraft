@@ -1,0 +1,4 @@
+rule,value,unit,source
+main_stat_multiplier,2.5,factor,"Followers receive 2.5 times more Strength, Dexterity, Intelligence and Vitality per stat point: Diablo Wiki Followers (Fandom), Icy Veins follower gearing guide (the innate 2.5x multiplier to mainstats for all followers); docs/research/followers-web-sources.md R1a section 2"
+crit_damage_cap_pct,150,percent,"The Critical Hit Damage stat is hard-capped at 150% for a follower: Diablo Wiki Followers, Icy Veins follower guide; R1a section 2"
+player_share_pct,20,percent,"Followers share 20% of their Magic Find, Gold Find and Experience Gain stats from their equipment to the player: Icy Veins follower guide and Diablo Wiki Followers; R1a section 2"

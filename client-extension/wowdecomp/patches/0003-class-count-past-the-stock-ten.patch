@@ -1,0 +1,35 @@
+diff --git a/WoW/Source/Glue/CharacterCreation.cpp b/WoW/Source/Glue/CharacterCreation.cpp
+index f5af90a..2e2e8d0 100644
+--- a/WoW/Source/Glue/CharacterCreation.cpp
++++ b/WoW/Source/Glue/CharacterCreation.cpp
+@@ -394,11 +394,13 @@ int32_t CCharacterCreation::GetExistingClassIndex() {
+ // VERIFY: 6c4329fd manual
+ // OFFSET: 0x004E0F50
+ int32_t CCharacterCreation::GetRandomClassID() {
+-    int32_t classes[10];
++    // Torment: room for 32 classes, not the stock ten, so a class past the stock ones (the Monk) can be picked
++    // without writing past the array; the 32 is tswow's class limit, as the role table below.
++    int32_t classes[32];
+     int32_t count = 0;
+     uint8_t expansion = ClientServices::Connection()->m_accountExpansion;
+ 
+-    for (uint32_t i = 0; i < CCharacterCreation::m_classes.Count(); i++) {
++    for (uint32_t i = 0; i < CCharacterCreation::m_classes.Count() && count < 32; i++) {
+         ChrClassesRec* rec = CCharacterCreation::m_classes.m_data[i];
+ 
+         if (expansion >= rec->m_requiredExpansion) {
+diff --git a/WoW/Source/Ui/CGLookingForGroup.cpp b/WoW/Source/Ui/CGLookingForGroup.cpp
+index 05410f8..b17471c 100644
+--- a/WoW/Source/Ui/CGLookingForGroup.cpp
++++ b/WoW/Source/Ui/CGLookingForGroup.cpp
+@@ -25,7 +25,9 @@
+ #include "Engine/Source/FrameXML/LoadXML.h"
+ 
+ // STATIC: 0x00A394B0
+-static const uint8_t s_classRoles[11] = { 0x0B, 0x0F, 0x09, 0x09, 0x0D, 0x0B, 0x0D, 0x09, 0x09, 0x00, 0x0F };
++// Torment: one entry per class id up to 32 (tswow's class limit), read as s_classRoles[classID - 1]; the stock
++// eleven are unchanged and every later class (the Monk, id 12) is 0, no LFG role (docs/contracts/monk-class.md).
++static const uint8_t s_classRoles[32] = { 0x0B, 0x0F, 0x09, 0x09, 0x0D, 0x0B, 0x0D, 0x09, 0x09, 0x00, 0x0F };
+ 
+ // STATIC: 0x00ACDD6C
+ static int32_t s_joinAttempts;

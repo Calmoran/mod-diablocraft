@@ -1,0 +1,9 @@
+part,key,value,source
+colour,Ruby,str,"cube_recipes.csv / cube_costs.csv: Caldesann's Despair, the controlling gem colour Ruby = Strength; str is the affix id dc_items.cpp Mappings() reads"
+colour,Topaz,int,"as above: Topaz = Intelligence"
+colour,Emerald,dex,"as above: Emerald = Dexterity"
+colour,Amethyst,vit,"as above: Amethyst = Vitality"
+per_rank,,5,"cube_recipes.csv: a separate bonus of +5 of the chosen core attribute per rank of the consumed Legendary Gem"
+min_rank,Weapon,30,"cube_recipes.csv: Legendary Gem of sufficient rank, weapons and off-hand rank 30+; the key is a power slot label of cube_slots.csv (Weapon takes the off-hand items too)"
+min_rank,Armor,50,"as above: armor rank 50+"
+min_rank,Jewelry,40,"as above: jewelry rank 40+"

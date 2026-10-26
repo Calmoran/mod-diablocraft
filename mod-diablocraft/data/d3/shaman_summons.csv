@@ -1,0 +1,5 @@
+summon,skill,rune,entry,donor_creature,script,why
+Fire Totem,Totems,,900180,2523,dc_shaman_totem,"the stock Searing Totem creature: the fire totem slot's totem; the core gives it the caster's race's model for the slot and the module its pulse. Every fire totem skill and rune places this one"
+Earth Totem,Totems,,900181,2630,dc_shaman_totem,"the stock Earthbind Totem creature: the earth totem slot's totem; the core gives it the caster's race's model for the slot and the module its pulse"
+Water Totem,Totems,,900182,3527,dc_shaman_totem,"the stock Healing Stream Totem creature: the water totem slot's totem; the core gives it the caster's race's model for the slot and the module its pulse"
+Air Totem,Totems,,900183,6112,dc_shaman_totem,"the stock Windfury Totem creature: the air totem slot's totem; the core gives it the caster's race's model for the slot and the module its pulse"

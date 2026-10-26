@@ -1,0 +1,7 @@
+summon,skill,rune,entry,donor_creature,script,why
+Raven,Companion,,900160,7605,dc_minion,"Raven (the stock raven): the Companion's own form, the skill with no rune; the module gives it its AI and no loot"
+Spider Companion,Companion,Spider Companion,900161,14881,dc_minion,Spider (the stock spider): the form of the Spider Companion rune; the module gives it its AI and no loot
+Boar Companion,Companion,Boar Companion,900162,2809,dc_minion,Boar (the stock boar): the form of the Boar Companion rune; the module gives it its AI and no loot
+Wolf Companion,Companion,Wolf Companion,900163,393,dc_minion,Tame Wolf (a plain wolf): the form of the Wolf Companion rune; the module gives it its AI and no loot
+Bat Companion,Companion,Bat Companion,900164,20725,dc_minion,Bat (the stock bat): the form of the Bat Companion rune; the module gives it its AI and no loot
+Ferret Companion,Companion,Ferret Companion,900165,1412,dc_minion,"Squirrel (the stock small furred animal; the stock creatures have no ferret): the form of the Ferret Companion rune, a pair of them; the module gives it its AI and no loot"

@@ -1,0 +1,641 @@
+diff --git a/Engine/Source/Os/KeyState.cpp b/Engine/Source/Os/KeyState.cpp
+new file mode 100644
+index 0000000..8a2a9f2
+--- /dev/null
++++ b/Engine/Source/Os/KeyState.cpp
+@@ -0,0 +1,3 @@
++#include "Engine/Source/Os/KeyState.h"
++
++torment::KeyTable g_osKeyState;
+diff --git a/Engine/Source/Os/KeyState.h b/Engine/Source/Os/KeyState.h
+new file mode 100644
+index 0000000..f9c53db
+--- /dev/null
++++ b/Engine/Source/Os/KeyState.h
+@@ -0,0 +1,10 @@
++#ifndef ENGINE_SOURCE_OS_KEYSTATE_H
++#define ENGINE_SOURCE_OS_KEYSTATE_H
++
++#include "Engine/Source/Os/KeyTable.h"
++
++// Which keyboard keys the client window was told are down. OsWindowProc hands it every window message
++// before its own handling; TormentKeyDown reads it. Reading only: it consumes no message.
++extern torment::KeyTable g_osKeyState;
++
++#endif
+diff --git a/Engine/Source/Os/KeyTable.h b/Engine/Source/Os/KeyTable.h
+new file mode 100644
+index 0000000..12b1ea6
+--- /dev/null
++++ b/Engine/Source/Os/KeyTable.h
+@@ -0,0 +1,156 @@
++// The key table behind TormentKeyDown (docs/contracts/client-key-state.md in the Torment repo): which keyboard
++// keys are down, kept from the client window's own messages (OsWindowProc feeds it every message), and the
++// binding names the addon asks by. The same code as the Torment module's KeyTable.hpp, which its unit test runs.
++
++#pragma once
++
++#include <windows.h>
++
++#include <cstdint>
++#include <cstring>
++
++namespace torment
++{
++    class KeyTable
++    {
++    public:
++        /// One window message, as the client window receives it. Reads only; never consumes it.
++        void OnMessage(uint32_t message, uintptr_t wparam)
++        {
++            switch (message)
++            {
++                case WM_KEYDOWN:
++                case WM_SYSKEYDOWN:
++                    Set(wparam, true);
++                    break;
++                case WM_KEYUP:
++                case WM_SYSKEYUP:
++                    Set(wparam, false);
++                    break;
++                // A key held while the window loses focus never gets its key-up here: forget them all,
++                // so a channel stops rather than running on a key nobody holds.
++                case WM_KILLFOCUS:
++                    Clear();
++                    break;
++                case WM_ACTIVATEAPP:
++                    if (!wparam)
++                        Clear();
++                    break;
++            }
++        }
++
++        /// True while the virtual key is down.
++        bool IsDown(int vk) const
++        {
++            return vk >= 0 && vk < 256 && down_[vk];
++        }
++
++    private:
++        void Set(uintptr_t vk, bool down)
++        {
++            if (vk < 256)
++                down_[vk] = down;
++        }
++        void Clear()
++        {
++            std::memset(down_, 0, sizeof down_);
++        }
++
++        bool down_[256] = {};
++    };
++
++    namespace detail
++    {
++        /// The number after prefix when name is prefix and then digits only; -1 otherwise.
++        inline int NumberAfter(const char* name, const char* prefix)
++        {
++            const size_t n = std::strlen(prefix);
++            if (std::strncmp(name, prefix, n) != 0 || !name[n])
++                return -1;
++            int value = 0;
++            for (const char* p = name + n; *p; ++p)
++            {
++                if (*p < '0' || *p > '9' || value > 99)
++                    return -1;
++                value = value * 10 + (*p - '0');
++            }
++            return value;
++        }
++    } // namespace detail
++
++    /**
++     * @brief The virtual key a WoW binding name stands for, as GetBindingKey returns it.
++     *
++     * Modifier prefixes ("SHIFT-1", "CTRL-SHIFT--") are skipped: the answer is for the last key.
++     * Letters and digits are their own key; other single characters go through the player's
++     * keyboard layout, as WoW names them. Mouse buttons and anything else unknown are 0.
++     */
++    inline int VirtualKeyFor(const char* name)
++    {
++        if (!name)
++            return 0;
++
++        static const char* const kModifiers[] = {"ALT-", "CTRL-", "SHIFT-"};
++        for (bool skipped = true; skipped;)
++        {
++            skipped = false;
++            for (const char* m : kModifiers)
++            {
++                const size_t n = std::strlen(m);
++                if (std::strncmp(name, m, n) == 0)
++                {
++                    name += n;
++                    skipped = true;
++                }
++            }
++        }
++
++        if (name[0] && !name[1])
++        {
++            const char c = name[0];
++            if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
++                return c;
++            const SHORT scan = VkKeyScanA(c);
++            return scan == -1 ? 0 : (scan & 0xFF);
++        }
++
++        struct Named
++        {
++            const char* name;
++            int vk;
++        };
++        static const Named kNamed[] = {
++            {"SPACE", VK_SPACE},
++            {"TAB", VK_TAB},
++            {"ENTER", VK_RETURN},
++            {"ESCAPE", VK_ESCAPE},
++            {"BACKSPACE", VK_BACK},
++            {"INSERT", VK_INSERT},
++            {"DELETE", VK_DELETE},
++            {"HOME", VK_HOME},
++            {"END", VK_END},
++            {"PAGEUP", VK_PRIOR},
++            {"PAGEDOWN", VK_NEXT},
++            {"UP", VK_UP},
++            {"DOWN", VK_DOWN},
++            {"LEFT", VK_LEFT},
++            {"RIGHT", VK_RIGHT},
++            {"NUMPADPLUS", VK_ADD},
++            {"NUMPADMINUS", VK_SUBTRACT},
++            {"NUMPADMULTIPLY", VK_MULTIPLY},
++            {"NUMPADDIVIDE", VK_DIVIDE},
++            {"NUMPADDECIMAL", VK_DECIMAL},
++        };
++        for (const Named& k : kNamed)
++            if (std::strcmp(name, k.name) == 0)
++                return k.vk;
++
++        const int f = detail::NumberAfter(name, "F");
++        if (f >= 1 && f <= 24)
++            return VK_F1 + f - 1;
++        const int pad = detail::NumberAfter(name, "NUMPAD");
++        if (pad >= 0 && pad <= 9)
++            return VK_NUMPAD0 + pad;
++        return 0;
++    }
++} // namespace torment
+diff --git a/Engine/Source/Os/Win64/Input.cpp b/Engine/Source/Os/Win64/Input.cpp
+index 58ebd13..83dfd5e 100644
+--- a/Engine/Source/Os/Win64/Input.cpp
++++ b/Engine/Source/Os/Win64/Input.cpp
+@@ -8,6 +8,7 @@
+ #include "Engine/Source/Os/Gui.h"
+ #include "Engine/Source/Os/Input.h"
+ #include "Engine/Source/Os/Joystick.h"
++#include "Engine/Source/Os/KeyState.h"
+ #include "Engine/Source/Os/TimeManager.h"
+ #include "Engine/Source/Storm/H/storm.h"
+ #include "Engine/Source/Tempest/C2iVector.h"
+@@ -1297,6 +1298,9 @@ intptr_t OsWindowProc(void* window, uint32_t message, uintptr_t wparam, intptr_t
+     HWND hwnd = static_cast<HWND>(window);
+     UINT_PTR timer = 0;
+ 
++    // Torment: the key state behind TormentKeyDown sees every message first; it only reads.
++    g_osKeyState.OnMessage(message, wparam);
++
+     switch (message) {
+         case WM_SIZE:
+         case WM_DISPLAYCHANGE:
+diff --git a/WoW/Source/Game/GameClient/PlayerName.cpp b/WoW/Source/Game/GameClient/PlayerName.cpp
+index cf2f41d..da4ff3c 100644
+--- a/WoW/Source/Game/GameClient/PlayerName.cpp
++++ b/WoW/Source/Game/GameClient/PlayerName.cpp
+@@ -28,6 +28,7 @@
+ #include "WoW/Source/Ui/GameUI.h"
+ #include "WoW/Source/Ui/WorldFrame.h"
+ #include "WoW/Source/UIUtil/Camera.h"
++#include "WoW/Source/Ui/Torment/TormentScripts.h"
+ #include "Engine/Source/Tempest/CWFrustum.h"
+ #include "WoW/Source/WorldClient/World.h"
+ #include "Engine/Source/Os/TimeManager.h"
+@@ -663,6 +664,11 @@ void PlayerNameCreateText(PLAYERNAMEDESC* desc, uint32_t type, const char* text,
+     CGCamera* camera = CGWorldFrame::s_currentWorldFrame->m_camera;
+ 
+     if ((desc->m_guid != camera->m_targetGUID || !camera->IsFirstPersonView()) && !ClntObjMgrGetPlayerType()) {
++        // Torment: a hit the addon draws is queued for it, and the engine creates nothing for it.
++        if (TormentDamageTextTake(text)) {
++            return;
++        }
++
+         desc->CreateWorldText(type, text, color, pvpRank);
+     }
+ }
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.cpp b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+index 8975228..bfef9b6 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.cpp
++++ b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+@@ -143,6 +143,7 @@
+ #include "WoW/Source/WorldClient/FrameTime.h"
+ #include "WoW/Source/WorldClient/Map.h"
+ #include "WoW/Source/WowSvcs/WowSvcsClient/ClientServices.h"
++#include "WoW/Source/Ui/Torment/TormentScripts.h"
+ 
+ // STATIC: 0x00ADB674
+ static float s_emoteSoundHeight = 2.0f;
+@@ -15976,6 +15977,8 @@ static bool IsOwnedByActivePlayer(const WOWGUID& guid, bool* isPlayer) {
+ // VERIFY: d0bc6fd3 auto
+ // OFFSET: 0x0071F990
+ void CGUnit_C::AddWorldText(const WOWGUID& source, int32_t reason, const SpellRec* spell, bool periodic) {
++    // Torment: the addon may draw this word instead (TormentDamageTextTake).
++    TormentDamageTextScope tormentHit(this, source, torment::damage_text::Kind::Word, 0, spell, false, periodic);
+     bool melee = !spell || (spell->m_attributesExC & 0x8000);
+     bool isPlayer;
+ 
+@@ -16014,6 +16017,8 @@ void CGUnit_C::AddWorldText(const WOWGUID& source, int32_t reason, const SpellRe
+ // VERIFY: 813b4b44 manual
+ // OFFSET: 0x00722340
+ void CGUnit_C::AddWorldDamageText(const WOWGUID& source, uint32_t amount, const SpellRec* spell, bool crit, bool periodic, bool spellColor) {
++    // Torment: the addon may draw this number instead (TormentDamageTextTake).
++    TormentDamageTextScope tormentHit(this, source, torment::damage_text::Kind::Damage, amount, spell, crit, periodic);
+     bool melee = !spellColor && (!spell || (spell->m_attributesExC & 0x8000));
+     bool isPlayer;
+ 
+@@ -21827,6 +21832,8 @@ void CGUnit_C::AddWorldHonorGainText(int32_t honor, int32_t pvpRank, const char*
+ // VERIFY: 5809ed27 auto
+ // OFFSET: 0x00722440
+ void CGUnit_C::AddWorldHealingText(const WOWGUID& source, int32_t amount, const SpellRec* spell, bool crit, int32_t a6) {
++    // Torment: the addon may draw this heal instead (TormentDamageTextTake); the packet's field is unsigned.
++    TormentDamageTextScope tormentHit(this, source, torment::damage_text::Kind::Heal, static_cast<uint32_t>(amount), spell, crit, false);
+     bool isPlayer;
+ 
+     if (!amount || this->m_obj->m_guid == CGUnit_C::s_activeMover || !IsOwnedByActivePlayer(source, &isPlayer) || !g_combatHealingCVar->m_intValue) {
+diff --git a/WoW/Source/Ui/ScriptEvents_Scripts.cpp b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+index e81857d..3f3b460 100644
+--- a/WoW/Source/Ui/ScriptEvents_Scripts.cpp
++++ b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+@@ -3,6 +3,7 @@
+ #include "Engine/Source/FrameScript/FrameScript.h"
+ #include "Engine/Source/FrameScript/FrameScript_Object.h"
+ #include "Engine/Source/Os/TimeManager.h"
++#include "WoW/Source/Ui/Torment/TormentScripts.h"
+ #include "Engine/Source/lua-5.1/src/lauxlib.h"
+ #include "Engine/Source/lua-5.1/src/lua.h"
+ #include "WoW/Source/Game/GameTime.h"
+@@ -4377,6 +4378,9 @@ void SystemRegisterFunctions() {
+     for (uint32_t i = 0; i < sizeof(s_SystemFunctions) / sizeof(s_SystemFunctions[0]); i++) {
+         FrameScript_RegisterFunction(s_SystemFunctions[i].m_name, s_SystemFunctions[i].m_method);
+     }
++
++    // Torment: its read-only globals, on the glue screens and on every in-game interface load.
++    TormentScriptsRegister();
+ }
+ 
+ // VERIFY: 570706e7 auto
+diff --git a/WoW/Source/Ui/Torment/DamageTextQueue.h b/WoW/Source/Ui/Torment/DamageTextQueue.h
+new file mode 100644
+index 0000000..fc01276
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/DamageTextQueue.h
+@@ -0,0 +1,132 @@
++// The queue behind TormentDamageTextRead (docs/contracts/damage-text.md in the Torment repo): the hits the engine
++// would draw a floating number or word for, held until the addon reads them, and whether the addon is reading at
++// all. The same code as the Torment module's DamageText.hpp, which its unit test runs.
++
++#pragma once
++
++#include <cstddef>
++#include <cstdint>
++#include <cstring>
++
++namespace torment::damage_text
++{
++    enum class Kind : uint8_t
++    {
++        Damage,
++        Heal,
++        Word,
++    };
++
++    /// One hit, as TormentDamageTextRead hands it over.
++    struct Hit
++    {
++        Kind kind = Kind::Damage;
++        uint32_t amount = 0;
++        uint32_t school = 0;
++        bool crit = false;
++        bool periodic = false;
++        bool own = false;
++        float x = 0.0f;
++        float y = 0.0f;
++        float z = 0.0f;
++        /// The engine's word for a Kind::Word, NUL terminated; empty otherwise. The engine's own text
++        /// buffer is this size (WORLDTEXTSTRING::m_text).
++        char word[64] = {};
++
++        void SetWord(const char* text)
++        {
++            word[0] = '\0';
++            if (text)
++            {
++                std::strncpy(word, text, sizeof word - 1);
++                word[sizeof word - 1] = '\0';
++            }
++        }
++    };
++
++    /// The school mask of a hit that carries no spell: a white melee swing, a damage-shield hit.
++    constexpr uint32_t kNoSpellSchool = 1;
++
++    /// How long after the addon's last read it still counts as reading. ponytail: one frame at 2 fps; a
++    /// longer stall hands the next hits back to the engine, which then draws them as it always did.
++    constexpr uint32_t kReadingWindowMs = 500;
++
++    /// The oldest hit first; when full, a new hit drops the oldest.
++    class Queue
++    {
++    public:
++        /// ponytail: a ceiling, so a reader that stops cannot grow it; the oldest hit is the stalest.
++        static constexpr size_t kCapacity = 128;
++
++        void Push(const Hit& hit)
++        {
++            if (count_ == kCapacity)
++            {
++                head_ = (head_ + 1) % kCapacity;
++                --count_;
++            }
++            hits_[(head_ + count_) % kCapacity] = hit;
++            ++count_;
++        }
++
++        bool Pop(Hit& out)
++        {
++            if (!count_)
++                return false;
++            out = hits_[head_];
++            head_ = (head_ + 1) % kCapacity;
++            --count_;
++            return true;
++        }
++
++        void Clear()
++        {
++            head_ = 0;
++            count_ = 0;
++        }
++
++        size_t Size() const
++        {
++            return count_;
++        }
++
++    private:
++        Hit hits_[kCapacity];
++        size_t head_ = 0;
++        size_t count_ = 0;
++    };
++
++    /// Whether the addon is drawing the numbers: it read within kReadingWindowMs. Times are the client's
++    /// millisecond tick count, which wraps; the difference is taken unsigned, so a wrap reads as a short gap.
++    class Reader
++    {
++    public:
++        void MarkRead(uint32_t nowMs)
++        {
++            lastReadMs_ = nowMs;
++            hasRead_ = true;
++        }
++
++        bool Reading(uint32_t nowMs) const
++        {
++            return hasRead_ && nowMs - lastReadMs_ <= kReadingWindowMs;
++        }
++
++        /// A new interface: the engine draws until the addon's first read on it.
++        void Reset()
++        {
++            hasRead_ = false;
++        }
++
++    private:
++        uint32_t lastReadMs_ = 0;
++        bool hasRead_ = false;
++    };
++
++    /// A device (DDC) coordinate in GetCursorPosition's units, by the client's own formula
++    /// (Script_GetCursorPosition: DDCToNDCWidth(aspect compensation * 1024 * ddc), for both axes).
++    inline float CursorUnits(float ddc, float aspectCompensation, float ddcWidthScale)
++    {
++        return aspectCompensation * 1024.0f * ddc / ddcWidthScale;
++    }
++} // namespace torment::damage_text
+diff --git a/WoW/Source/Ui/Torment/TormentScripts.cpp b/WoW/Source/Ui/Torment/TormentScripts.cpp
+new file mode 100644
+index 0000000..ecd6b16
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/TormentScripts.cpp
+@@ -0,0 +1,162 @@
++#include "WoW/Source/Ui/Torment/TormentScripts.h"
++#include "Engine/Source/Base/Coordinate.h"
++#include "Engine/Source/FrameScript/FrameScript.h"
++#include "Engine/Source/Os/KeyState.h"
++#include "Engine/Source/Os/TimeManager.h"
++#include "Engine/Source/Tempest/C3Vector.h"
++#include "Engine/Source/lua-5.1/src/lua.h"
++#include "WoW/Source/DB/Rec/SpellRec.h"
++#include "WoW/Source/Object/ObjectClient/Unit_C.h"
++#include "WoW/Source/ObjectMgrClient/ObjectMgrClient.h"
++#include "WoW/Source/Ui/WorldFrame.h"
++
++namespace {
++    namespace dt = torment::damage_text;
++
++    // The engine starts a floating text this far below the unit's name position (PLAYERNAMEDESC::CreateWorldText).
++    constexpr float kTextStartDrop = 0.33333334f;
++
++    dt::Queue s_hits;
++    dt::Reader s_reader;
++
++    // The hit an AddWorld*Text call is deciding; null outside those calls.
++    struct PendingHit {
++        CGUnit_C* unit;
++        dt::Hit hit;
++    };
++    PendingHit s_pendingHit;
++    PendingHit* s_pending = nullptr;
++
++    const char* KindName(dt::Kind kind) {
++        switch (kind) {
++            case dt::Kind::Heal:
++                return "heal";
++            case dt::Kind::Word:
++                return "word";
++            default:
++                return "damage";
++        }
++    }
++
++    // TormentKeyDown(key): true while the key is held, false when not, nil for a name it does not know. key is
++    // a WoW binding name, as GetBindingKey returns it.
++    int32_t Script_TormentKeyDown(lua_State* L) {
++        int vk = torment::VirtualKeyFor(lua_isstring(L, 1) ? lua_tolstring(L, 1, nullptr) : nullptr);
++
++        if (vk) {
++            lua_pushboolean(L, g_osKeyState.IsDown(vk));
++        } else {
++            lua_pushnil(L);
++        }
++
++        return 1;
++    }
++
++    // TormentDamageTextRead(): the oldest queued hit as kind, amount, school, crit, periodic, own, x, y, z, word;
++    // nil when there is none. Every call counts as the addon reading.
++    int32_t Script_TormentDamageTextRead(lua_State* L) {
++        s_reader.MarkRead(OsGetAsyncTimeMs());
++        dt::Hit hit;
++
++        if (!s_hits.Pop(hit)) {
++            lua_pushnil(L);
++            return 1;
++        }
++
++        lua_pushstring(L, KindName(hit.kind));
++        lua_pushnumber(L, hit.amount);
++        lua_pushnumber(L, hit.school);
++        lua_pushboolean(L, hit.crit);
++        lua_pushboolean(L, hit.periodic);
++        lua_pushboolean(L, hit.own);
++        lua_pushnumber(L, hit.x);
++        lua_pushnumber(L, hit.y);
++        lua_pushnumber(L, hit.z);
++
++        if (hit.kind == dt::Kind::Word) {
++            lua_pushstring(L, hit.word);
++        } else {
++            lua_pushnil(L);
++        }
++
++        return 10;
++    }
++
++    // TormentWorldToScreen(x, y, z): the point projected as the engine's own world text is, in the units
++    // GetCursorPosition returns; nil behind the camera or outside the world view.
++    int32_t Script_TormentWorldToScreen(lua_State* L) {
++        CGWorldFrame* frame = CGWorldFrame::s_currentWorldFrame;
++
++        if (!frame || !frame->m_camera || !lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3)) {
++            lua_pushnil(L);
++            return 1;
++        }
++
++        C3Vector world;
++        world.x = static_cast<float>(lua_tonumber(L, 1));
++        world.y = static_cast<float>(lua_tonumber(L, 2));
++        world.z = static_cast<float>(lua_tonumber(L, 3));
++        C3Vector screen;
++
++        if (!frame->GetScreenCoordinates(world, &screen, nullptr)) {
++            lua_pushnil(L);
++            return 1;
++        }
++
++        // Script_GetCursorPosition's own conversion.
++        lua_pushnumber(L, DDCToNDCWidth(CoordinateGetAspectCompensation() * 1024.0f * screen.x));
++        lua_pushnumber(L, DDCToNDCWidth(CoordinateGetAspectCompensation() * 1024.0f * screen.y));
++        return 2;
++    }
++}
++
++void TormentScriptsRegister() {
++    FrameScript_RegisterFunction("TormentKeyDown", &Script_TormentKeyDown);
++    FrameScript_RegisterFunction("TormentDamageTextRead", &Script_TormentDamageTextRead);
++    FrameScript_RegisterFunction("TormentWorldToScreen", &Script_TormentWorldToScreen);
++
++    // A new interface: nothing queued for the old one is drawn, and the engine draws until the addon reads.
++    s_hits.Clear();
++    s_reader.Reset();
++}
++
++TormentDamageTextScope::TormentDamageTextScope(CGUnit_C* unit, const WOWGUID& source, torment::damage_text::Kind kind, uint32_t amount, const SpellRec* spell, bool crit, bool periodic) {
++    s_pendingHit.unit = unit;
++    dt::Hit& hit = s_pendingHit.hit;
++    hit = dt::Hit();
++    hit.kind = kind;
++    hit.amount = amount;
++    hit.school = spell ? static_cast<uint32_t>(spell->m_schoolMask) : dt::kNoSpellSchool;
++    hit.crit = crit;
++    hit.periodic = periodic;
++    hit.own = source == ClntObjMgrGetActivePlayer();
++    s_pending = &s_pendingHit;
++}
++
++TormentDamageTextScope::~TormentDamageTextScope() {
++    s_pending = nullptr;
++}
++
++bool TormentDamageTextTake(const char* text) {
++    PendingHit* pending = s_pending;
++
++    if (!pending || !s_reader.Reading(OsGetAsyncTimeMs())) {
++        return false;
++    }
++
++    // One text per AddWorld*Text call.
++    s_pending = nullptr;
++
++    dt::Hit hit = pending->hit;
++    C3Vector position = pending->unit->GetNamePosition();
++    hit.x = position.x;
++    hit.y = position.y;
++    hit.z = position.z - kTextStartDrop;
++
++    if (hit.kind == dt::Kind::Word) {
++        hit.SetWord(text);
++    }
++
++    s_hits.Push(hit);
++    return true;
++}
+diff --git a/WoW/Source/Ui/Torment/TormentScripts.h b/WoW/Source/Ui/Torment/TormentScripts.h
+new file mode 100644
+index 0000000..2d2ecf1
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/TormentScripts.h
+@@ -0,0 +1,35 @@
++#ifndef WOW_SOURCE_UI_TORMENT_TORMENTSCRIPTS_H
++#define WOW_SOURCE_UI_TORMENT_TORMENTSCRIPTS_H
++
++#include <cstdint>
++#include "WoW/Source/Object/WGUID.h"
++#include "WoW/Source/Ui/Torment/DamageTextQueue.h"
++
++class CGUnit_C;
++class SpellRec;
++
++// Puts Torment's three read-only Lua globals on the script context being built: TormentKeyDown
++// (docs/contracts/client-key-state.md), TormentDamageTextRead and TormentWorldToScreen
++// (docs/contracts/damage-text.md). Called from SystemRegisterFunctions, which runs for the glue screens and
++// for every in-game interface load (login, UI reload) before any interface file, so GlueXML, FrameXML and
++// every addon see them. A new interface also empties the damage text queue, and the engine draws its own
++// numbers until the addon's first read.
++void TormentScriptsRegister();
++
++// Holds one hit for the length of a CGUnit_C::AddWorld*Text call. If the engine decides to draw it
++// (PlayerNameCreateText passes all of its checks) while the addon reads, TormentDamageTextTake queues it
++// instead. Main thread only, as the combat log is.
++class TormentDamageTextScope {
++    public:
++    TormentDamageTextScope(CGUnit_C* unit, const WOWGUID& source, torment::damage_text::Kind kind, uint32_t amount, const SpellRec* spell, bool crit, bool periodic);
++    ~TormentDamageTextScope();
++    TormentDamageTextScope(const TormentDamageTextScope&) = delete;
++    TormentDamageTextScope& operator=(const TormentDamageTextScope&) = delete;
++};
++
++// Called by PlayerNameCreateText once the engine has decided to create a world text. True when that text is
++// a held hit and the addon is reading: the hit is queued and the engine creates nothing. False for any other
++// world text, or while the addon is not reading: the engine draws as it always did.
++bool TormentDamageTextTake(const char* text);
++
++#endif

@@ -1,0 +1,2478 @@
+diff --git a/WoW/Source/Ui/Torment/BeaconRenderer.cpp b/WoW/Source/Ui/Torment/BeaconRenderer.cpp
+new file mode 100644
+index 0000000..a5c6643
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/BeaconRenderer.cpp
+@@ -0,0 +1,513 @@
++// The additive triangle queue behind the loot beam.
++// Port of manatactical/wxl-loot-beam at fd75b76 with Torment's patches; the render-target and
++// shader-compile helpers it needs are carried over from WarcraftXL's wxl-core (src/game/Gx.cpp).
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#include "WoW/Source/Ui/Torment/BeaconRenderer.h"
++#include "WoW/Source/Ui/Torment/TormentRender.h"
++#include "Engine/Source/Gx/CGxDevice/CGxDevice.h"
++#include "Engine/Source/Gx/Gx.h"
++#include "Engine/Source/Tempest/C44Matrix.h"
++#include "WoW/Source/WorldClient/World.h"
++
++#include <windows.h>
++#include <d3d9.h>
++#include <d3dcompiler.h>
++
++#include <cmath>
++#include <cstring>
++#include <vector>
++
++namespace loot_beam {
++    namespace beacon_gfx {
++        namespace {
++            struct Vertex {
++                float x, y, z;
++                Color color;
++            };
++            static_assert(sizeof(Vertex) == 16, "Vertex must match the declared vertex format stride");
++
++            std::vector<Vertex> g_vertices;
++
++            // Render and texture-stage states the draw changes and puts back by hand.
++            constexpr D3DRENDERSTATETYPE kTouchedStates[] = {
++                D3DRS_ZENABLE, D3DRS_SHADEMODE, D3DRS_ZWRITEENABLE, D3DRS_ALPHATESTENABLE,
++                D3DRS_SRCBLEND, D3DRS_DESTBLEND, D3DRS_CULLMODE, D3DRS_ZFUNC,
++                D3DRS_ALPHABLENDENABLE, D3DRS_FOGENABLE, D3DRS_STENCILENABLE,
++                D3DRS_LIGHTING, D3DRS_COLORWRITEENABLE, D3DRS_SCISSORTESTENABLE,
++                D3DRS_ALPHAREF, D3DRS_ALPHAFUNC,
++            };
++            constexpr size_t kTouchedStateCount = sizeof(kTouchedStates) / sizeof(kTouchedStates[0]);
++
++            struct StageState {
++                DWORD stage;
++                D3DTEXTURESTAGESTATETYPE type;
++            };
++            constexpr StageState kTouchedStages[] = {
++                { 0, D3DTSS_COLOROP }, { 0, D3DTSS_COLORARG1 },
++                { 0, D3DTSS_ALPHAOP }, { 0, D3DTSS_ALPHAARG1 },
++                { 1, D3DTSS_COLOROP },
++            };
++            constexpr size_t kTouchedStageCount = sizeof(kTouchedStages) / sizeof(kTouchedStages[0]);
++
++            // Every sampler stage the beacon clears before drawing. It is untextured, so no texture is
++            // wanted; all of them are cleared so no depth texture left bound by an earlier pass can
++            // overlap the target being drawn into.
++            constexpr DWORD kMaxTextureStages = 16;
++
++            // Captures the whole device state and applies it back when it goes out of scope. The
++            // engine's Direct3D devices keep their own copy of what they last sent (vertex declaration,
++            // stream sources, sampler and render states, shader constants) and skip a call whose value
++            // matches it, so anything this file changes on the device has to be back as it was before the
++            // engine draws again. A state block does not hold the render target or the depth-stencil
++            // surface; those are put back by hand.
++            class ScopedDeviceState final {
++                public:
++                explicit ScopedDeviceState(IDirect3DDevice9* dev) {
++                    if (dev && SUCCEEDED(dev->CreateStateBlock(D3DSBT_ALL, &this->m_state)) && this->m_state) {
++                        this->m_state->Capture();
++                    }
++                }
++
++                ~ScopedDeviceState() {
++                    if (this->m_state) {
++                        this->m_state->Apply();
++                        this->m_state->Release();
++                    }
++                }
++
++                ScopedDeviceState(const ScopedDeviceState&) = delete;
++                ScopedDeviceState& operator=(const ScopedDeviceState&) = delete;
++
++                private:
++                IDirect3DStateBlock9* m_state = nullptr;
++            };
++
++            template <class T>
++            void SafeRelease(T*& obj) {
++                if (obj) {
++                    obj->Release();
++                    obj = nullptr;
++                }
++            }
++
++            // d3dcompiler_47 is resolved by name on first use, so a machine without it keeps the beam
++            // without the player mask instead of failing to start.
++            pD3DCompile ResolveD3DCompile() {
++                static const pD3DCompile compile = [] {
++                    HMODULE module = GetModuleHandleA("d3dcompiler_47.dll");
++
++                    if (!module) {
++                        module = LoadLibraryA("d3dcompiler_47.dll");
++                    }
++
++                    return module ? reinterpret_cast<pD3DCompile>(GetProcAddress(module, "D3DCompile")) : nullptr;
++                }();
++
++                return compile;
++            }
++
++            IDirect3DPixelShader9* CompilePixelShader(IDirect3DDevice9* dev, const char* hlsl, const char* target) {
++                if (!dev || !hlsl) {
++                    return nullptr;
++                }
++
++                const pD3DCompile compile = ResolveD3DCompile();
++
++                if (!compile) {
++                    return nullptr;
++                }
++
++                ID3DBlob* code = nullptr;
++                ID3DBlob* err = nullptr;
++                HRESULT hr = compile(hlsl, std::strlen(hlsl), nullptr, nullptr, nullptr, "main", target, 0, 0, &code, &err);
++                SafeRelease(err);
++
++                if (FAILED(hr) || !code) {
++                    SafeRelease(code);
++                    return nullptr;
++                }
++
++                IDirect3DPixelShader9* ps = nullptr;
++                hr = dev->CreatePixelShader(static_cast<const DWORD*>(code->GetBufferPointer()), &ps);
++                code->Release();
++                return SUCCEEDED(hr) ? ps : nullptr;
++            }
++
++            // A back-buffer-sized render target and its texture, created on first use in
++            // D3DPOOL_DEFAULT and released on device loss.
++            struct RenderTarget {
++                IDirect3DTexture9* texture = nullptr;
++                IDirect3DSurface9* surface = nullptr;
++                int width = 0;
++                int height = 0;
++            };
++
++            bool EnsureBackbufferTarget(IDirect3DDevice9* dev, RenderTarget& rt, D3DFORMAT format) {
++                if (!dev) {
++                    return false;
++                }
++
++                if (rt.surface) {
++                    return true;
++                }
++
++                IDirect3DSurface9* backBuffer = nullptr;
++
++                if (FAILED(dev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)) || !backBuffer) {
++                    return false;
++                }
++
++                D3DSURFACE_DESC desc = {};
++                backBuffer->GetDesc(&desc);
++                backBuffer->Release();
++
++                const UINT width = desc.Width > 0 ? desc.Width : 1;
++                const UINT height = desc.Height > 0 ? desc.Height : 1;
++
++                IDirect3DTexture9* texture = nullptr;
++
++                if (FAILED(dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &texture, nullptr)) || !texture) {
++                    return false;
++                }
++
++                IDirect3DSurface9* surface = nullptr;
++                texture->GetSurfaceLevel(0, &surface);
++                rt.texture = texture;
++                rt.surface = surface;
++                rt.width = static_cast<int>(width);
++                rt.height = static_cast<int>(height);
++                return true;
++            }
++
++            void ReleaseTarget(RenderTarget& rt) {
++                SafeRelease(rt.surface);
++                SafeRelease(rt.texture);
++                rt.width = 0;
++                rt.height = 0;
++            }
++
++            // --- player occluder mask ---
++            //
++            // The active player's exact silhouette: its own model batches are re-issued into a
++            // screen-sized target (StampOccluder), and the beam's pixel shader drops the fragments that
++            // land on it. Same geometry, same size, real shape: arms, weapon and all.
++            RenderTarget g_mask;
++            IDirect3DPixelShader9* g_maskFillPS = nullptr;
++            IDirect3DPixelShader9* g_maskCutoutPS = nullptr;
++            IDirect3DPixelShader9* g_maskSamplePS = nullptr;
++            bool g_maskCleared = false;
++            bool g_maskHasContent = false;
++
++            // Fills the mask with opaque white; the texture alpha is ignored here because a model's
++            // diffuse alpha carries material data that would speckle the silhouette.
++            constexpr const char* kMaskFillHLSL =
++                "float4 main(float2 uv : TEXCOORD0) : COLOR0 { return float4(1,1,1,1); }\n";
++            // Alpha-tested batches (hair, capes, wings) follow their real cutout instead of a solid card.
++            constexpr const char* kMaskCutoutHLSL =
++                "sampler2D s0 : register(s0);\n"
++                "float4 main(float2 uv : TEXCOORD0) : COLOR0 { clip(tex2D(s0, uv).a - 0.5); return float4(1,1,1,1); }\n";
++            // Beam side: keep the light's colour, scale its alpha to nothing wherever the mask is set.
++            constexpr const char* kMaskSampleHLSL =
++                "sampler2D s0 : register(s0);\n"
++                "float4 scale : register(c0);\n"
++                "float4 main(float4 color : COLOR0, float4 vpos : VPOS) : COLOR0 {\n"
++                "  float m = tex2D(s0, vpos.xy * scale.xy).a;\n"
++                "  return float4(color.rgb, color.a * (1.0 - m));\n"
++                "}\n";
++        }
++
++        void OnDeviceLost() {
++            ReleaseTarget(g_mask);
++            SafeRelease(g_maskFillPS);
++            SafeRelease(g_maskCutoutPS);
++            SafeRelease(g_maskSamplePS);
++        }
++
++        void ResetOccluder() {
++            // The mask is only trusted for the frame that stamped it: a frame the player did not draw
++            // leaves nothing to sample, so the previous silhouette must not linger.
++            g_maskCleared = false;
++            g_maskHasContent = false;
++        }
++
++        void StampOccluder(const TormentM2Draw& draw) {
++            IDirect3DDevice9* dev = draw.device;
++
++            if (!dev) {
++                return;
++            }
++
++            if (!g_mask.surface && !EnsureBackbufferTarget(dev, g_mask, D3DFMT_A8R8G8B8)) {
++                return;
++            }
++
++            // Mesh only: attached particles, glows and billboards ride the same model with alpha
++            // blending on, and letting them in would mask the beam over their broad cards.
++            DWORD blending = 0;
++            dev->GetRenderState(D3DRS_ALPHABLENDENABLE, &blending);
++
++            if (blending != 0) {
++                return;
++            }
++
++            if (!g_maskFillPS) {
++                g_maskFillPS = CompilePixelShader(dev, kMaskFillHLSL, "ps_2_0");
++            }
++
++            if (!g_maskCutoutPS) {
++                g_maskCutoutPS = CompilePixelShader(dev, kMaskCutoutHLSL, "ps_2_0");
++            }
++
++            if (!g_maskFillPS) {
++                return;
++            }
++
++            ScopedDeviceState state(dev);
++
++            IDirect3DSurface9* oldRT = nullptr;
++            dev->GetRenderTarget(0, &oldRT);
++            IDirect3DSurface9* oldDS = nullptr;
++            dev->GetDepthStencilSurface(&oldDS);
++            IDirect3DPixelShader9* oldPS = nullptr;
++            dev->GetPixelShader(&oldPS);
++            D3DVIEWPORT9 oldVP = {};
++            dev->GetViewport(&oldVP);
++
++            DWORD sAB = 0, sZE = 0, sZW = 0, sZF = 0, sCW = 0, sSt = 0, sSc = 0, alphaTest = 0, alphaRef = 0;
++            dev->GetRenderState(D3DRS_ALPHABLENDENABLE, &sAB);
++            dev->GetRenderState(D3DRS_ZENABLE, &sZE);
++            dev->GetRenderState(D3DRS_ZWRITEENABLE, &sZW);
++            dev->GetRenderState(D3DRS_ZFUNC, &sZF);
++            dev->GetRenderState(D3DRS_COLORWRITEENABLE, &sCW);
++            dev->GetRenderState(D3DRS_STENCILENABLE, &sSt);
++            dev->GetRenderState(D3DRS_SCISSORTESTENABLE, &sSc);
++            dev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
++            dev->GetRenderState(D3DRS_ALPHAREF, &alphaRef);
++            const bool cutout = alphaTest != 0 && alphaRef >= 8;
++
++            dev->SetRenderTarget(0, g_mask.surface);
++            // No depth test. The mask target is not multisampled while the scene depth may be, and that
++            // mismatched pair made the stamp depend on the antialiasing setting. The player is always
++            // between the camera and the beam, and a player behind terrain is already covered by the CPU
++            // trace, so the depth test is not needed. Depth writes stay off regardless.
++            dev->SetDepthStencilSurface(oldDS);
++            dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
++            dev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
++            dev->SetRenderState(D3DRS_COLORWRITEENABLE, 0xF);
++            dev->SetRenderState(D3DRS_STENCILENABLE, FALSE);
++            dev->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
++
++            if (!g_maskCleared) {
++                dev->Clear(0, nullptr, D3DCLEAR_TARGET, 0x00000000, 1.0f, 0);
++                g_maskCleared = true;
++            }
++
++            dev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
++            dev->SetPixelShader(cutout && g_maskCutoutPS ? g_maskCutoutPS : g_maskFillPS);
++            dev->DrawIndexedPrimitive(draw.primType, draw.baseVertex, draw.minIndex, draw.numVerts, draw.startIndex, draw.primCount);
++            g_maskHasContent = true;
++
++            dev->SetPixelShader(oldPS);
++            dev->SetRenderTarget(0, oldRT);
++            dev->SetDepthStencilSurface(oldDS);
++            dev->SetViewport(&oldVP);
++            dev->SetRenderState(D3DRS_ALPHABLENDENABLE, sAB);
++            dev->SetRenderState(D3DRS_ZENABLE, sZE);
++            dev->SetRenderState(D3DRS_ZWRITEENABLE, sZW);
++            dev->SetRenderState(D3DRS_ZFUNC, sZF);
++            dev->SetRenderState(D3DRS_COLORWRITEENABLE, sCW);
++            dev->SetRenderState(D3DRS_STENCILENABLE, sSt);
++            dev->SetRenderState(D3DRS_SCISSORTESTENABLE, sSc);
++            SafeRelease(oldRT);
++            SafeRelease(oldDS);
++            SafeRelease(oldPS);
++        }
++
++        void Clear() {
++            g_vertices.clear();
++        }
++
++        size_t Pending() {
++            return g_vertices.size() / 3;
++        }
++
++        void Triangle(const float a[3], const float b[3], const float c[3], Color ca, Color cb, Color cc) {
++            g_vertices.push_back(Vertex { a[0], a[1], a[2], ca });
++            g_vertices.push_back(Vertex { b[0], b[1], b[2], cb });
++            g_vertices.push_back(Vertex { c[0], c[1], c[2], cc });
++        }
++
++        long Draw(IDirect3DDevice9* dev) {
++            // Emptied on every path, so shapes queued while the device is away never appear all at once
++            // when it comes back.
++            struct Emptied {
++                ~Emptied() {
++                    g_vertices.clear();
++                }
++            } emptied;
++
++            if (!dev || g_vertices.empty() || !g_theGxDevicePtr) {
++                return 0;
++            }
++
++            // The matrices the world was drawn with: the engine's projection and the top of its view
++            // stack, which CGWorldFrame::RenderWorld only puts back after the world text batch.
++            C44Matrix viewMatrix;
++            GxXformView(viewMatrix);
++            const C44Matrix projectionMatrix = g_theGxDevicePtr->m_projection;
++            const float* view = reinterpret_cast<const float*>(&viewMatrix);
++            const float* projection = reinterpret_cast<const float*>(&projectionMatrix);
++
++            ScopedDeviceState state(dev);
++
++            IDirect3DVertexShader9* oldVS = nullptr;
++            dev->GetVertexShader(&oldVS);
++            IDirect3DPixelShader9* oldPS = nullptr;
++            dev->GetPixelShader(&oldPS);
++
++            IDirect3DBaseTexture9* oldTextures[kMaxTextureStages] = {};
++
++            for (DWORD i = 0; i < kMaxTextureStages; i++) {
++                dev->GetTexture(i, &oldTextures[i]);
++            }
++
++            D3DMATRIX oldWorld, oldView, oldProjection;
++            dev->GetTransform(D3DTS_WORLD, &oldWorld);
++            dev->GetTransform(D3DTS_VIEW, &oldView);
++            dev->GetTransform(D3DTS_PROJECTION, &oldProjection);
++
++            DWORD oldStates[kTouchedStateCount];
++
++            for (size_t i = 0; i < kTouchedStateCount; i++) {
++                dev->GetRenderState(kTouchedStates[i], &oldStates[i]);
++            }
++
++            DWORD oldStages[kTouchedStageCount];
++
++            for (size_t i = 0; i < kTouchedStageCount; i++) {
++                dev->GetTextureStageState(kTouchedStages[i].stage, kTouchedStages[i].type, &oldStages[i]);
++            }
++
++            // Untextured, unlit, vertex-coloured geometry through the fixed-function pipeline. Every one
++            // of these is inherited from whatever drew last, and any one left wrong rejects the draw or
++            // repaints it in a colour that is not the one asked for.
++            dev->SetVertexShader(nullptr);
++            dev->SetPixelShader(nullptr);
++
++            for (DWORD i = 0; i < kMaxTextureStages; i++) {
++                dev->SetTexture(i, nullptr);
++            }
++
++            dev->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
++
++            dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
++            dev->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
++            dev->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
++            dev->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
++            dev->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
++
++            // The scene's view matrix carries no translation: the world is drawn about the camera, so a
++            // world-space vertex is moved to that origin or it projects thousands of units away.
++            const C3Vector& eye = CWorldScene::s_activeWorldView;
++            const float toCameraOrigin[16] = {
++                1.0f, 0.0f, 0.0f, 0.0f,
++                0.0f, 1.0f, 0.0f, 0.0f,
++                0.0f, 0.0f, 1.0f, 0.0f,
++                -eye.x, -eye.y, -eye.z, 1.0f,
++            };
++
++            dev->SetTransform(D3DTS_WORLD, reinterpret_cast<const D3DMATRIX*>(toCameraOrigin));
++            dev->SetTransform(D3DTS_VIEW, reinterpret_cast<const D3DMATRIX*>(view));
++            dev->SetTransform(D3DTS_PROJECTION, reinterpret_cast<const D3DMATRIX*>(projection));
++
++            dev->SetRenderState(D3DRS_LIGHTING, FALSE);
++            dev->SetRenderState(D3DRS_FOGENABLE, FALSE); // world fog would tint the beacon with distance
++            dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
++            // Discard a fragment whose interpolated alpha is at or below 4 of 255. Additive light adds
++            // almost nothing there, so the test trims the all-but-transparent rim before it reaches the
++            // blender, reclaiming fill on the soft edges without a visible change.
++            dev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
++            dev->SetRenderState(D3DRS_ALPHAREF, 4);
++            dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
++            dev->SetRenderState(D3DRS_STENCILENABLE, FALSE);
++            dev->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
++            dev->SetRenderState(D3DRS_COLORWRITEENABLE, 0xF);
++            dev->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
++
++            // Light adds to the frame rather than covering it: source colour scaled by its own alpha,
++            // added straight onto what is behind. That keeps the shaft from looking like a pane of
++            // coloured glass and makes overlapping soft geometry sum into a glow.
++            dev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
++            dev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
++            dev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
++            dev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE); // a marker is not part of the world
++
++            // Drawn through the depth buffer; what the world hides was already cut on the CPU.
++            dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
++
++            // The player's exact silhouette, sampled per fragment: where it covers the screen the
++            // beam's alpha is scaled to nothing, so the shaft disappears behind the character's real
++            // shape instead of a stand-in box.
++            if (g_maskHasContent && g_mask.texture) {
++                if (!g_maskSamplePS) {
++                    g_maskSamplePS = CompilePixelShader(dev, kMaskSampleHLSL, "ps_3_0");
++                }
++
++                if (g_maskSamplePS) {
++                    const float scale[4] = { 1.0f / static_cast<float>(g_mask.width), 1.0f / static_cast<float>(g_mask.height), 0.0f, 0.0f };
++                    dev->SetTexture(0, g_mask.texture);
++                    dev->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
++                    dev->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
++                    dev->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
++                    dev->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
++                    dev->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
++                    dev->SetPixelShader(g_maskSamplePS);
++                    dev->SetPixelShaderConstantF(0, scale, 1);
++                }
++            }
++
++            const HRESULT result = dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, static_cast<UINT>(g_vertices.size() / 3), g_vertices.data(), sizeof(Vertex));
++
++            for (size_t i = 0; i < kTouchedStageCount; i++) {
++                dev->SetTextureStageState(kTouchedStages[i].stage, kTouchedStages[i].type, oldStages[i]);
++            }
++
++            for (size_t i = 0; i < kTouchedStateCount; i++) {
++                dev->SetRenderState(kTouchedStates[i], oldStates[i]);
++            }
++
++            dev->SetTransform(D3DTS_WORLD, &oldWorld);
++            dev->SetTransform(D3DTS_VIEW, &oldView);
++            dev->SetTransform(D3DTS_PROJECTION, &oldProjection);
++
++            for (DWORD i = 0; i < kMaxTextureStages; i++) {
++                dev->SetTexture(i, oldTextures[i]);
++                SafeRelease(oldTextures[i]);
++            }
++
++            dev->SetPixelShader(oldPS);
++            dev->SetVertexShader(oldVS);
++            SafeRelease(oldPS);
++            SafeRelease(oldVS);
++
++            // The state block applied on the way out puts back what the hand restore above does not
++            // cover: the vertex declaration SetFVF replaced, stream 0 (DrawPrimitiveUP clears it),
++            // the sampler states and the pixel shader constant the mask path set.
++            return result;
++        }
++    }
++}
+diff --git a/WoW/Source/Ui/Torment/BeaconRenderer.h b/WoW/Source/Ui/Torment/BeaconRenderer.h
+new file mode 100644
+index 0000000..e39829e
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/BeaconRenderer.h
+@@ -0,0 +1,66 @@
++// The additive, per-vertex-graduated draw the loot beam uses.
++// Port of manatactical/wxl-loot-beam at fd75b76 with Torment's patches.
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#ifndef WOW_SOURCE_UI_TORMENT_BEACONRENDERER_H
++#define WOW_SOURCE_UI_TORMENT_BEACONRENDERER_H
++
++#include <cstddef>
++#include <cstdint>
++#include <d3d9.h>
++
++struct TormentM2Draw;
++
++// A small triangle queue drawn additively (source alpha added to the frame, never dimming what is
++// behind it) with a colour on every vertex, so the GPU interpolates the falloffs and a handful of quads
++// read as a soft volume. It is drawn with the view and projection the world was drawn with, so it lands
++// where its world coordinates say. The world never occludes it through the depth buffer: the beam's
++// foot is clipped to cover on the CPU (LootBeam.cpp), and the player's own silhouette is masked out
++// per pixel.
++namespace loot_beam {
++    namespace beacon_gfx {
++        // D3DCOLOR, 0xAARRGGBB.
++        using Color = uint32_t;
++
++        // Empties the queue without drawing it.
++        void Clear();
++
++        // How many triangles are queued.
++        size_t Pending();
++
++        // Releases every D3DPOOL_DEFAULT resource (the mask target and the shaders). Called before the
++        // device resets; they are rebuilt lazily on the next use.
++        void OnDeviceLost();
++
++        // Starts a new frame's occluder mask: the previous frame's silhouette is dropped and the target
++        // stays untouched until the player's first batch stamps into it. Called once a frame.
++        void ResetOccluder();
++
++        // Stamps one batch of the active player's model into the occluder mask: the batch is drawn again,
++        // with its own vertex stream, vertex shader and transforms still bound, into a screen-sized
++        // target with a solid-fill pixel shader. The device is left as it was found.
++        void StampOccluder(const TormentM2Draw& draw);
++
++        // Queues a triangle with an independent colour at each vertex (Gouraud-interpolated).
++        void Triangle(const float a[3], const float b[3], const float c[3], Color ca, Color cb, Color cc);
++
++        // Draws everything queued and empties it, leaving the device as it was found. Returns the
++        // device's result for the draw, or 0 when nothing was drawn.
++        long Draw(IDirect3DDevice9* dev);
++    }
++}
++
++#endif
+diff --git a/WoW/Source/Ui/Torment/LootBeam.cpp b/WoW/Source/Ui/Torment/LootBeam.cpp
+new file mode 100644
+index 0000000..1a37ce4
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/LootBeam.cpp
+@@ -0,0 +1,1725 @@
++// The loot beam: the world-space beacon over corpses that hold the viewing player's own legendary, set
++// or Primal Ancient drops.
++// Port of manatactical/wxl-loot-beam at fd75b76 with Torment's patches: tiers 7 and 8 are named Set
++// and Primal, the tier comes only from the server's UNIT_FIELD_PADDING on the corpse and follows it
++// every frame, a corpse with no tier gets no beacon, the open loot window is not read, and there is
++// no settings panel (the .ini is the only way to tune it). The object walk, unit fields, camera,
++// world trace and cursor pick read the client's own types instead of fixed addresses.
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#include "WoW/Source/Ui/Torment/LootBeam.h"
++#include "WoW/Source/Ui/Torment/BeaconRenderer.h"
++#include "WoW/Source/Ui/Torment/TormentRender.h"
++#include "WoW/Source/Ui/WorldFrame.h"
++#include "WoW/Source/Object/Object.h"
++#include "WoW/Source/Object/Unit.h"
++#include "WoW/Source/Object/Types.h"
++#include "WoW/Source/Object/ObjectClient/Object_C.h"
++#include "WoW/Source/Object/ObjectClient/Unit_C.h"
++#include "WoW/Source/ObjectMgrClient/ObjectMgrClient.h"
++#include "WoW/Source/WorldClient/World.h"
++#include "WoW/Source/WorldClient/Map.h"
++#include "Engine/Source/Gx/CGxDevice/CGxDevice.h"
++#include "Engine/Source/Gx/CGxDeviceD3d/CGxDeviceD3d.h"
++#include "Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.h"
++#include "Engine/Source/Model2/M2Model.h"
++#include "Engine/Source/Storm/H/storm.h"
++#include "Engine/Source/Tempest/C3Vector.h"
++
++#include <windows.h>
++#include <d3d9.h>
++
++#include <cmath>
++#include <cstdarg>
++#include <cstdint>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <string>
++
++namespace loot_beam {
++    namespace {
++        // The beam categories a corpse can fall into, in the server's numbering: the server sends 1..8
++        // as the tier index itself and 9 for currency. Torment's server sends only 6, 7 and 8; the
++        // others stay in the table so the .ini keys and their order are the module's own.
++        enum GearTier {
++            kTierCurrency = 0, // server value 9
++            kTierPoor,         // 1
++            kTierCommon,       // 2
++            kTierUncommon,     // 3
++            kTierRare,         // 4
++            kTierEpic,         // 5
++            kTierLegendary,    // 6
++            kTierSet,          // 7 (upstream's Artifact)
++            kTierPrimal,       // 8 (upstream's Heirloom)
++            kTierCount
++        };
++
++        // One sparkle mote: a small glint that drifts, twinkles and is reborn where it flies. Positions
++        // are offsets from the beacon's base, in yards.
++        struct Sparkle {
++            float pos[3] = {};      // offset from the beacon base, yards
++            float vel[3] = {};      // drift, yards/s
++            float age = 0.0f;       // seconds it has lived
++            float life = 1.0f;      // seconds before it respawns
++            float twinkle = 0.0f;   // phase of its brightness flicker, radians
++            float twinkleSpeed = 0.0f;
++        };
++
++        // One tier's look: whether it is drawn at all, and the colour it is drawn in.
++        struct TierStyle {
++            bool enabled = true;
++            float color[3] = { 1.0f, 1.0f, 1.0f };
++        };
++
++        // The look, read from wxl-loot-beam.ini. These are the module's built-in defaults, used for any
++        // key the file does not carry (and for every key when there is no file).
++        struct BeamStyle {
++            bool enabled = true;           // master switch
++            float height = 20.0f;          // how far the beam rises, yards
++            float baseOffset = 1.0f;       // how far above the body the shaft begins, yards
++            float beamWidth = 0.50f;       // half-width of the beam at its base, yards
++            float widthPerYard = 0.010f;   // minimum half-width per yard of camera distance (0 = off)
++            float color[3] = { 1.00f, 0.82f, 0.42f }; // fallback when a tier has no colour of its own
++
++            // Per-tier tint and on/off, indexed by GearTier. A tier switched off gets no beacon.
++            TierStyle tiers[kTierCount] = {
++                { true, { 0.00f, 0.00f, 0.00f } },             // Currency
++                { true, { 0.00f, 0.00f, 0.00f } },             // Poor
++                { true, { 0.00f, 0.00f, 0.00f } },             // Common
++                { true, { 0.12f, 1.00f, 0.00f } },             // Uncommon
++                { true, { 0.00f, 0.19607843f, 1.00f } },       // Rare #0032FF
++                { true, { 0.58823529f, 0.00f, 1.00f } },       // Epic #9600FF
++                { true, { 1.00f, 0.50f, 0.00f } },             // Legendary
++                { true, { 0.90f, 0.80f, 0.50f } },             // Set
++                { true, { 0.00f, 0.80f, 1.00f } },             // Primal
++            };
++
++            float beamAlpha = 0.75f;       // opacity of the beam at its base
++            float pulse = 0.20f;           // slow breathing depth, 0 = steady
++            float pulseSpeed = 1.60f;      // breathing rate
++            float fadeIn = 0.35f;          // seconds for a new beacon to reach full opacity
++            float fadeOut = 0.70f;         // seconds for a lost beacon to fade away
++
++            float maxDistance = 0.0f;      // ignore corpses farther than this, yards (0 = unlimited)
++            bool showBeam = true;          // raise the beam
++            bool throughWalls = false;     // false: terrain, buildings and models cut the beam
++
++            // Read and written for the file's sake; the draw does not use them (the beam is always drawn
++            // through the depth buffer and cut on the CPU instead).
++            float depthPush = 1.50f;
++            float depthPushPerYard = 0.02f;
++
++            bool requireLootable = true;   // only corpses the server still flags lootable
++            bool lootColor = true;         // both must be on: the tier comes only from the server
++            bool serverColor = true;
++
++            bool showSparkles = true;
++            int sparkleCount = 24;         // motes per beacon
++            float sparkleSize = 0.04f;     // half-extent of a mote, yards
++            float sparkleAlpha = 0.90f;
++            float sparkleRise = 1.00f;     // upward drift, yards/s
++            float sparkleDrift = 0.05f;    // lateral wander, yards/s
++            float sparkleLife = 2.40f;     // seconds a mote lives
++            float sparkleTwinkle = 6.00f;  // flicker speed, radians/s
++        };
++
++        constexpr int kMaxBeacons = 64;   // corpses beamed at once; the rest wait for a slot
++        constexpr int kMaxSparkles = 32;  // mote field size a single beacon can carry
++
++        struct Beacon {
++            uint64_t guid = 0;
++            float pos[3] = {};
++            float fade = 0.0f;  // 0..1 opacity multiplier, eased over fadeIn/fadeOut
++            int tier = -1;      // GearTier from the server
++            bool seen = false;
++            Sparkle sparkles[kMaxSparkles] {};
++            uint32_t rngSeed = 0;
++        };
++
++        constexpr const char* kIniSection = "LootBeam";
++        constexpr const char* kIniRelativePath = "Extensions\\wxl-loot-beam\\wxl-loot-beam.ini";
++        constexpr const char* kLogPath = "Logs\\wxl-loot-beam.log";
++        constexpr float kTwoPi = 6.28318530717959f;
++        constexpr float kUnitToByte = 255.0f;
++        // Bumped when a shipped default changes in a way an existing file must adopt. A file older than
++        // this has its stale keys replaced with the current defaults and is written back.
++        constexpr int kConfigVersion = 9;
++
++        // UNIT_FIELD_PADDING: 1..8 are the tier index itself, 9 is currency, 0 is no tier.
++        constexpr uint32_t kTierValueMax = 8;
++        constexpr uint32_t kTierValueCurrency = 9;
++        // UNIT_DYNFLAG_LOOTABLE, set while a corpse can still be looted by this player.
++        constexpr uint32_t kDynamicFlagLootable = 0x0001;
++        // The bits UNIT_DYNAMIC_FLAGS may carry; a value outside it is not trusted and the lootable
++        // test falls back to the health-only verdict, as the module did.
++        constexpr uint32_t kDynamicFlagKnownMask = 0x0000FFFF;
++        // The collision mask World::Intersect is asked with: terrain and map objects, the value the
++        // client's own cursor pick hands it.
++        constexpr uint32_t kTraceMask = 0x01000124;
++        // HitTestPoint's result kind for a model (M2 / doodad) hit.
++        constexpr int32_t kHitKindModel = 2;
++
++        struct TierDef {
++            const char* stem;
++        };
++        constexpr TierDef kTierDefs[kTierCount] = {
++            { "Currency" }, { "Poor" }, { "Common" }, { "Uncommon" }, { "Rare" }, { "Epic" },
++            { "Legendary" }, { "Set" }, { "Primal" },
++        };
++
++        // --- module state ---
++        Beacon s_beacons[kMaxBeacons] {};  // persists across frames so a beacon can fade
++        int s_beaconCount = 0;             // tracked entries with a visible fade this frame
++        int s_trackedCount = 0;
++        BeamStyle s_style {};
++        std::string s_iniPath;
++        uint64_t s_configStamp = 0;
++        bool s_configLoaded = false;
++        bool s_inWorld = false;
++        float s_phase = 0.0f;
++        // The active player's model, refreshed once a frame; the model pass matches batches against it
++        // to stamp the character's silhouette into the beam's occluder mask.
++        const CM2Model* s_playerModel = nullptr;
++
++        // One-shot diagnostics: each fires once and then stays quiet.
++        bool s_loggedFirstScan = false;
++        bool s_loggedFirstFlush = false;
++        bool s_loggedClipDiag = false;
++        bool s_loggedServerHint = false;
++        bool s_loggedFirstDead = false;
++        int s_occlDiag = 0;
++        int s_emptyFrameStreak = 0;
++        int s_emptyWarnings = 0;
++
++        enum LogLevel {
++            kLogInfo,
++            kLogWarn,
++        };
++
++        void Log(LogLevel level, const char* fmt, ...) {
++            static HSLOG log = nullptr;
++            static bool opened = false;
++
++            if (!opened) {
++                opened = true;
++                SLogCreate(kLogPath, 0, &log);
++            }
++
++            if (!log) {
++                return;
++            }
++
++            char msg[512];
++            va_list ap;
++            va_start(ap, fmt);
++            std::vsnprintf(msg, sizeof(msg), fmt, ap);
++            va_end(ap);
++            SLogWrite(log, "[%s] wxl-loot-beam: %s", level == kLogWarn ? "WARN" : "INFO", msg);
++        }
++
++        float Clamp01(float v) {
++            return v < 0.0f ? 0.0f : (v > 1.0f ? 1.0f : v);
++        }
++
++        // A tiny xorshift so a mote's drift and flicker vary; the state lives on the beacon, seeded from
++        // its GUID, so two corpses do not sparkle in lockstep.
++        uint32_t NextRandom(uint32_t& state) {
++            state ^= state << 13;
++            state ^= state >> 17;
++            state ^= state << 5;
++            return state;
++        }
++
++        float Random01(uint32_t& state) {
++            return static_cast<float>(NextRandom(state) >> 8) * (1.0f / 16777216.0f);
++        }
++
++        // Puts one mote back at the start of its life: a fresh spot in the beam, a fresh drift and a
++        // fresh flicker. The age starts part-way in so a new beacon's motes are not all at the same point
++        // of their fade the instant the body appears.
++        void SpawnSparkle(Sparkle& sp, uint32_t& rng, const BeamStyle& style) {
++            const float top = fmaxf(style.height, style.baseOffset + 0.1f);
++            const float span = top - style.baseOffset;
++            const float ang = Random01(rng) * kTwoPi;
++            const float rad = sqrtf(Random01(rng)) * style.beamWidth * 1.5f;
++            const float dir = Random01(rng) * kTwoPi;
++            const float drift = style.sparkleDrift * (0.4f + 1.2f * Random01(rng));
++
++            sp.vel[0] = cosf(dir) * drift;
++            sp.vel[1] = sinf(dir) * drift;
++            sp.vel[2] = style.sparkleRise * (0.5f + Random01(rng));
++            sp.life = style.sparkleLife * (0.6f + 0.8f * Random01(rng));
++            sp.age = Random01(rng) * sp.life * 0.5f;
++            sp.twinkle = Random01(rng) * kTwoPi;
++            sp.twinkleSpeed = style.sparkleTwinkle * (0.6f + 0.8f * Random01(rng));
++
++            // Spread over most of the beam's height, biased low (the min of three uniforms), so motes are
++            // denser at the foot than the crest; the initial age is applied to the offset so the fade is
++            // desynced too.
++            const float h = fminf(fminf(Random01(rng), Random01(rng)), Random01(rng));
++            sp.pos[0] = cosf(ang) * rad + sp.vel[0] * sp.age;
++            sp.pos[1] = sinf(ang) * rad + sp.vel[1] * sp.age;
++            sp.pos[2] = style.baseOffset + span * 0.85f * h + sp.vel[2] * sp.age;
++        }
++
++        // Drifts one mote and respawns it once it has outlived its life or climbed out of the beam.
++        void AdvanceSparkle(Sparkle& sp, uint32_t& rng, const BeamStyle& style, float dt) {
++            sp.age += dt;
++            sp.pos[0] += sp.vel[0] * dt;
++            sp.pos[1] += sp.vel[1] * dt;
++            sp.pos[2] += sp.vel[2] * dt;
++            sp.twinkle += sp.twinkleSpeed * dt;
++
++            const float top = fmaxf(style.height, style.baseOffset + 0.1f);
++
++            if (sp.age >= sp.life || sp.pos[2] > top) {
++                SpawnSparkle(sp, rng, style);
++            }
++        }
++
++        beacon_gfx::Color Pack(float alpha, const float rgb[3]) {
++            const uint32_t a = static_cast<uint32_t>(Clamp01(alpha) * kUnitToByte + 0.5f);
++            const uint32_t r = static_cast<uint32_t>(Clamp01(rgb[0]) * kUnitToByte + 0.5f);
++            const uint32_t g = static_cast<uint32_t>(Clamp01(rgb[1]) * kUnitToByte + 0.5f);
++            const uint32_t b = static_cast<uint32_t>(Clamp01(rgb[2]) * kUnitToByte + 0.5f);
++            return (a << 24) | (r << 16) | (g << 8) | b;
++        }
++
++        // --- the client's view of a unit ---
++
++        // The unit's update fields, or null for an object that has none yet.
++        const CGUnitData* UnitFields(const CGUnit_C* unit) {
++            return unit ? unit->m_unit : nullptr;
++        }
++
++        // The server's loot-beam tier on a corpse (UNIT_FIELD_PADDING). False when there is no tier: 0,
++        // or any value outside 1..9.
++        bool UnitLootBeamTier(const CGUnit_C* unit, int& tier) {
++            const CGUnitData* fields = UnitFields(unit);
++
++            if (!fields) {
++                return false;
++            }
++
++            const uint32_t value = fields->m_unitFieldPadding;
++
++            if (value == kTierValueCurrency) {
++                tier = kTierCurrency;
++                return true;
++            }
++
++            if (value < 1 || value > kTierValueMax) {
++                return false;
++            }
++
++            tier = static_cast<int>(value);
++            return true;
++        }
++
++        // True when the object is a non-player unit that is dead (health 0) and, when the style asks,
++        // still flagged lootable. A dynamic-flags value with bits the field cannot carry is not trusted
++        // and the health-only verdict stands.
++        bool IsLootableCorpse(const CGUnit_C* unit, const BeamStyle& style) {
++            if (!unit || !unit->m_obj) {
++                return false;
++            }
++
++            const uint32_t mask = static_cast<uint32_t>(unit->m_obj->m_type);
++
++            if (!(mask & TYPEMASK_UNIT)) {
++                return false;
++            }
++
++            if (mask & TYPEMASK_PLAYER) {
++                return false; // a player corpse gets its own marker
++            }
++
++            const CGUnitData* fields = UnitFields(unit);
++
++            if (!fields || fields->m_unitFieldHealth != 0) {
++                return false;
++            }
++
++            if (style.requireLootable) {
++                const uint32_t flags = fields->m_unitDynamicFlags;
++
++                if ((flags & ~kDynamicFlagKnownMask) == 0 && !(flags & kDynamicFlagLootable)) {
++                    return false;
++                }
++            }
++
++            return true;
++        }
++
++        // --- camera and scene ---
++
++        // The world camera's position and the scene matrices the world builds each frame. Row-major
++        // float[16], D3D row-vector convention. The view carries no translation (the world is drawn about
++        // the camera); the clip-buffer matrix is a translated view-projection used here only to cull.
++        void CameraPosition(float out[3]) {
++            const C3Vector& eye = CWorldScene::s_activeWorldView;
++            out[0] = eye.x;
++            out[1] = eye.y;
++            out[2] = eye.z;
++        }
++
++        const float* SceneView() {
++            return reinterpret_cast<const float*>(&CWorldScene::viewMatrix);
++        }
++
++        const float* SceneProjection() {
++            return reinterpret_cast<const float*>(&CWorldScene::projMatrix);
++        }
++
++        const float* SceneViewProjection() {
++            return reinterpret_cast<const float*>(&CWorldScene::s_clipBufferMatrix);
++        }
++
++        // --- world queries ---
++
++        struct WorldHit {
++            int32_t type = 0; // 0 miss, 2 model, 3 terrain or map object
++            float pos[3] = {};
++            float t = 0.0f;   // fraction of the segment (trace) or distance (pick)
++        };
++
++        // A segment against terrain and map objects (not models). True on a hit, with the point reached.
++        bool TraceLine(const float from[3], const float to[3], WorldHit& out) {
++            out = WorldHit();
++
++            const C3Vector start(from[0], from[1], from[2]);
++            const C3Vector end(to[0], to[1], to[2]);
++            C3Vector hit(0.0f, 0.0f, 0.0f);
++            float fraction = 1.0f; // the whole segment
++
++            if (!World::Intersect(start, end, &hit, &fraction, kTraceMask, nullptr)) {
++                return false;
++            }
++
++            out.type = 3;
++            out.pos[0] = from[0] + (to[0] - from[0]) * fraction;
++            out.pos[1] = from[1] + (to[1] - from[1]) * fraction;
++            out.pos[2] = from[2] + (to[2] - from[2]) * fraction;
++            out.t = fraction;
++            return true;
++        }
++
++        // The world frame's own cursor pick through a device pixel: the only ray here that tests model
++        // geometry.
++        int32_t Pick(float ddcX, float ddcY, WorldHit& out) {
++            out = WorldHit();
++            CGWorldFrame* frame = CGWorldFrame::s_currentWorldFrame;
++
++            if (!frame) {
++                return 0;
++            }
++
++            HITTESTRESULT result = {};
++            const int32_t kind = frame->HitTestPoint(ddcX, ddcY, 0, &result);
++
++            if (kind == 0) {
++                return 0;
++            }
++
++            out.type = kind;
++            out.pos[0] = result.m_point.x;
++            out.pos[1] = result.m_point.y;
++            out.pos[2] = result.m_point.z;
++            out.t = result.m_distance;
++            return kind;
++        }
++
++        // --- INI ---
++
++        std::string ExeDirectory() {
++            char path[MAX_PATH] = {};
++            const DWORD n = GetModuleFileNameA(nullptr, path, MAX_PATH);
++            std::string dir(path, n);
++            const size_t slash = dir.find_last_of("\\/");
++            return slash == std::string::npos ? std::string() : dir.substr(0, slash + 1);
++        }
++
++        uint64_t FileStamp(const std::string& path) {
++            WIN32_FILE_ATTRIBUTE_DATA data;
++
++            if (!GetFileAttributesExA(path.c_str(), GetFileExInfoStandard, &data)) {
++                return 0;
++            }
++
++            return (static_cast<uint64_t>(data.ftLastWriteTime.dwHighDateTime) << 32) | data.ftLastWriteTime.dwLowDateTime;
++        }
++
++        std::string Trim(const std::string& text) {
++            const size_t first = text.find_first_not_of(" \t\r\n");
++
++            if (first == std::string::npos) {
++                return std::string();
++            }
++
++            const size_t last = text.find_last_not_of(" \t\r\n");
++            return text.substr(first, last - first + 1);
++        }
++
++        bool ReadBool(const std::string& path, const char* key, bool fallback) {
++            return GetPrivateProfileIntA(kIniSection, key, fallback ? 1 : 0, path.c_str()) != 0;
++        }
++
++        float ReadFloat(const std::string& path, const char* key, float fallback, float lo, float hi) {
++            char buf[64] = {};
++            GetPrivateProfileStringA(kIniSection, key, "", buf, sizeof(buf), path.c_str());
++
++            if (!buf[0]) {
++                return fallback;
++            }
++
++            char* end = nullptr;
++            const float v = std::strtof(buf, &end);
++
++            if (end == buf || v != v) {
++                return fallback;
++            }
++
++            return v < lo ? lo : (v > hi ? hi : v);
++        }
++
++        int ReadInt(const std::string& path, const char* key, int fallback, int lo, int hi) {
++            const int v = static_cast<int>(GetPrivateProfileIntA(kIniSection, key, fallback, path.c_str()));
++            return v < lo ? lo : (v > hi ? hi : v);
++        }
++
++        // Accepts "#RRGGBB" / "RRGGBB" or "R,G,B" (0-255). Anything else leaves out untouched.
++        void ReadColor(const std::string& path, const char* key, float out[3]) {
++            char buf[64] = {};
++            GetPrivateProfileStringA(kIniSection, key, "", buf, sizeof(buf), path.c_str());
++            const std::string text = Trim(buf);
++
++            if (text.empty()) {
++                return;
++            }
++
++            int r = -1;
++            int g = -1;
++            int b = -1;
++
++            if (text.find(',') != std::string::npos) {
++                if (std::sscanf(text.c_str(), "%d , %d , %d", &r, &g, &b) != 3) {
++                    return;
++                }
++            } else {
++                const char* hex = text.c_str();
++
++                if (*hex == '#') {
++                    ++hex;
++                }
++
++                char* end = nullptr;
++                const unsigned long v = std::strtoul(hex, &end, 16);
++
++                if (end == hex || *end != '\0' || std::strlen(hex) != 6) {
++                    return;
++                }
++
++                r = static_cast<int>((v >> 16) & 0xFF);
++                g = static_cast<int>((v >> 8) & 0xFF);
++                b = static_cast<int>(v & 0xFF);
++            }
++
++            out[0] = Clamp01(static_cast<float>(r < 0 ? 0 : (r > 255 ? 255 : r)) / 255.0f);
++            out[1] = Clamp01(static_cast<float>(g < 0 ? 0 : (g > 255 ? 255 : g)) / 255.0f);
++            out[2] = Clamp01(static_cast<float>(b < 0 ? 0 : (b > 255 ? 255 : b)) / 255.0f);
++        }
++
++        void WriteInt(const std::string& path, const char* key, int value) {
++            char buf[16];
++            std::snprintf(buf, sizeof(buf), "%d", value);
++            WritePrivateProfileStringA(kIniSection, key, buf, path.c_str());
++        }
++
++        void WriteFloat(const std::string& path, const char* key, float value) {
++            char buf[32];
++            std::snprintf(buf, sizeof(buf), "%.3f", value);
++            WritePrivateProfileStringA(kIniSection, key, buf, path.c_str());
++        }
++
++        void WriteColor(const std::string& path, const char* key, const float rgb[3]) {
++            const int r = static_cast<int>(Clamp01(rgb[0]) * 255.0f + 0.5f);
++            const int g = static_cast<int>(Clamp01(rgb[1]) * 255.0f + 0.5f);
++            const int b = static_cast<int>(Clamp01(rgb[2]) * 255.0f + 0.5f);
++            char buf[16];
++            std::snprintf(buf, sizeof(buf), "#%02X%02X%02X", r, g, b);
++            WritePrivateProfileStringA(kIniSection, key, buf, path.c_str());
++        }
++
++        // Writes the live look back to the file: on first run (no file) and after a version migration.
++        bool SaveConfig() {
++            if (s_iniPath.empty()) {
++                return false;
++            }
++
++            const std::string& p = s_iniPath;
++            const BeamStyle& s = s_style;
++            WriteInt(p, "Enabled", s.enabled ? 1 : 0);
++            WriteFloat(p, "Height", s.height);
++            WriteFloat(p, "BeamWidth", s.beamWidth);
++            WriteFloat(p, "BaseOffset", s.baseOffset);
++            WriteFloat(p, "WidthPerYard", s.widthPerYard);
++            WriteFloat(p, "BeamAlpha", s.beamAlpha);
++            WriteFloat(p, "Pulse", s.pulse);
++            WriteFloat(p, "PulseSpeed", s.pulseSpeed);
++            WriteFloat(p, "FadeIn", s.fadeIn);
++            WriteFloat(p, "FadeOut", s.fadeOut);
++            WriteFloat(p, "MaxDistance", s.maxDistance);
++            WriteInt(p, "ShowBeam", s.showBeam ? 1 : 0);
++            WriteInt(p, "ThroughWalls", s.throughWalls ? 1 : 0);
++            WriteFloat(p, "DepthPush", s.depthPush);
++            WriteFloat(p, "DepthPushPerYard", s.depthPushPerYard);
++            WriteInt(p, "RequireLootable", s.requireLootable ? 1 : 0);
++            WriteInt(p, "LootColor", s.lootColor ? 1 : 0);
++            WriteInt(p, "ServerColor", s.serverColor ? 1 : 0);
++            WriteColor(p, "Color", s.color);
++
++            WriteInt(p, "Sparkles", s.showSparkles ? 1 : 0);
++            WriteInt(p, "SparkleCount", s.sparkleCount);
++            WriteFloat(p, "SparkleSize", s.sparkleSize);
++            WriteFloat(p, "SparkleAlpha", s.sparkleAlpha);
++            WriteFloat(p, "SparkleRise", s.sparkleRise);
++            WriteFloat(p, "SparkleDrift", s.sparkleDrift);
++            WriteFloat(p, "SparkleLife", s.sparkleLife);
++            WriteFloat(p, "SparkleTwinkle", s.sparkleTwinkle);
++
++            for (int t = 0; t < kTierCount; t++) {
++                const std::string stem = std::string("Tier.") + kTierDefs[t].stem;
++                WriteInt(p, (stem + ".Enabled").c_str(), s.tiers[t].enabled ? 1 : 0);
++                WriteColor(p, (stem + ".Color").c_str(), s.tiers[t].color);
++            }
++
++            // The ground glow was removed from the module; drop its keys so an old file does not carry
++            // dead settings. A null string removes the key.
++            WritePrivateProfileStringA(kIniSection, "GroundRadius", nullptr, p.c_str());
++            WritePrivateProfileStringA(kIniSection, "GroundAlpha", nullptr, p.c_str());
++            WritePrivateProfileStringA(kIniSection, "ShowGround", nullptr, p.c_str());
++
++            WriteInt(p, "ConfigVersion", kConfigVersion);
++
++            // The write bumps the file stamp; adopt it so the self-write is not taken for an edit.
++            s_configStamp = FileStamp(p);
++            Log(kLogInfo, "settings saved to %s", p.c_str());
++            return true;
++        }
++
++        void LoadConfigNow() {
++            const std::string& p = s_iniPath;
++            BeamStyle s = BeamStyle();
++            s.enabled = ReadBool(p, "Enabled", s.enabled);
++            s.height = ReadFloat(p, "Height", s.height, 0.0f, 40.0f);
++            s.beamWidth = ReadFloat(p, "BeamWidth", s.beamWidth, 0.05f, 2.0f);
++            s.baseOffset = ReadFloat(p, "BaseOffset", s.baseOffset, 0.0f, 10.0f);
++            s.widthPerYard = ReadFloat(p, "WidthPerYard", s.widthPerYard, 0.0f, 0.05f);
++            s.beamAlpha = ReadFloat(p, "BeamAlpha", s.beamAlpha, 0.0f, 1.0f);
++            s.pulse = ReadFloat(p, "Pulse", s.pulse, 0.0f, 1.0f);
++            s.pulseSpeed = ReadFloat(p, "PulseSpeed", s.pulseSpeed, 0.0f, 6.0f);
++            s.fadeIn = ReadFloat(p, "FadeIn", s.fadeIn, 0.0f, 5.0f);
++            s.fadeOut = ReadFloat(p, "FadeOut", s.fadeOut, 0.0f, 5.0f);
++            s.maxDistance = ReadFloat(p, "MaxDistance", s.maxDistance, 0.0f, 400.0f);
++            s.showBeam = ReadBool(p, "ShowBeam", s.showBeam);
++            s.throughWalls = ReadBool(p, "ThroughWalls", s.throughWalls);
++            s.depthPush = ReadFloat(p, "DepthPush", s.depthPush, 0.0f, 6.0f);
++            s.depthPushPerYard = ReadFloat(p, "DepthPushPerYard", s.depthPushPerYard, 0.0f, 0.2f);
++            s.requireLootable = ReadBool(p, "RequireLootable", s.requireLootable);
++            s.lootColor = ReadBool(p, "LootColor", s.lootColor);
++            s.serverColor = ReadBool(p, "ServerColor", s.serverColor);
++            ReadColor(p, "Color", s.color);
++
++            s.showSparkles = ReadBool(p, "Sparkles", s.showSparkles);
++            s.sparkleCount = ReadInt(p, "SparkleCount", s.sparkleCount, 0, kMaxSparkles);
++            s.sparkleSize = ReadFloat(p, "SparkleSize", s.sparkleSize, 0.01f, 0.60f);
++            s.sparkleAlpha = ReadFloat(p, "SparkleAlpha", s.sparkleAlpha, 0.0f, 1.0f);
++            s.sparkleRise = ReadFloat(p, "SparkleRise", s.sparkleRise, 0.0f, 3.0f);
++            s.sparkleDrift = ReadFloat(p, "SparkleDrift", s.sparkleDrift, 0.0f, 2.0f);
++            s.sparkleLife = ReadFloat(p, "SparkleLife", s.sparkleLife, 0.2f, 6.0f);
++            s.sparkleTwinkle = ReadFloat(p, "SparkleTwinkle", s.sparkleTwinkle, 0.0f, 12.0f);
++
++            // Per-tier look. A file without the tier keys keeps the tier defaults above.
++            for (int t = 0; t < kTierCount; t++) {
++                const std::string stem = std::string("Tier.") + kTierDefs[t].stem;
++                s.tiers[t].enabled = ReadBool(p, (stem + ".Enabled").c_str(), s.tiers[t].enabled);
++                ReadColor(p, (stem + ".Color").c_str(), s.tiers[t].color);
++            }
++
++            // A file written by an older version adopts the defaults that changed since, for exactly
++            // those keys, and is written back. A missing file reads as version 0.
++            const int version = static_cast<int>(GetPrivateProfileIntA(kIniSection, "ConfigVersion", 0, p.c_str()));
++            const bool migrated = version < kConfigVersion;
++
++            if (migrated) {
++                if (version < 2) {
++                    s.maxDistance = 0.0f;
++
++                    if (s.beamWidth < 0.7f) {
++                        s.beamWidth = 0.7f;
++                    }
++
++                    if (s.beamAlpha < 0.6f) {
++                        s.beamAlpha = 0.6f;
++                    }
++                }
++
++                // Version 3 marks only still-lootable corpses.
++                if (version < 3) {
++                    s.requireLootable = true;
++                }
++
++                // Version 7: a taller, narrower beam and a denser field of smaller, faster sparkles.
++                if (version < 7) {
++                    s.height = 20.0f;
++                    s.beamWidth = 0.50f;
++                    s.sparkleCount = 24;
++                    s.sparkleSize = 0.04f;
++                    s.sparkleAlpha = 0.90f;
++                    s.sparkleRise = 1.00f;
++                    s.sparkleDrift = 0.05f;
++                    s.sparkleLife = 2.40f;
++                    s.sparkleTwinkle = 6.00f;
++                }
++
++                // Version 8: currency, poor and common go black, rare and epic take their tints, and the
++                // beam starts at 0.75 opacity.
++                if (version < 8) {
++                    for (int c = 0; c < 3; c++) {
++                        s.tiers[kTierCurrency].color[c] = 0.0f;
++                        s.tiers[kTierPoor].color[c] = 0.0f;
++                        s.tiers[kTierCommon].color[c] = 0.0f;
++                    }
++
++                    s.tiers[kTierRare].color[0] = 0.00f;
++                    s.tiers[kTierRare].color[1] = 0.19607843f;
++                    s.tiers[kTierRare].color[2] = 1.00f;
++                    s.tiers[kTierEpic].color[0] = 0.58823529f;
++                    s.tiers[kTierEpic].color[1] = 0.00f;
++                    s.tiers[kTierEpic].color[2] = 1.00f;
++                    s.beamAlpha = 0.75f;
++                }
++
++                // Version 9: the depth pull defaults.
++                if (version < 9) {
++                    s.depthPush = 1.50f;
++                    s.depthPushPerYard = 0.02f;
++                }
++            }
++
++            s_style = s;
++
++            if (migrated) {
++                Log(kLogInfo, "migrating config from version %d to %d", version, kConfigVersion);
++                SaveConfig();
++            }
++        }
++
++        void LoadConfig(const std::string& iniPath) {
++            s_iniPath = iniPath;
++            s_configStamp = FileStamp(s_iniPath);
++            LoadConfigNow();
++
++            // A first run has no file to edit, so lay one down from the defaults.
++            if (FileStamp(s_iniPath) == 0) {
++                SaveConfig();
++                Log(kLogInfo, "wrote default config to %s", s_iniPath.c_str());
++            }
++
++            Log(kLogInfo, "config: throughWalls=%d maxDistance=%.0f height=%.0f baseOffset=%.2f beamWidth=%.2f widthPerYard=%.3f beamAlpha=%.2f",
++                s_style.throughWalls ? 1 : 0, s_style.maxDistance, s_style.height, s_style.baseOffset,
++                s_style.beamWidth, s_style.widthPerYard, s_style.beamAlpha);
++        }
++
++        void ReloadConfigIfChanged() {
++            if (s_iniPath.empty()) {
++                return;
++            }
++
++            // The stat is not free; a live edit does not need frame accuracy.
++            static DWORD lastCheck = 0;
++            const DWORD now = GetTickCount();
++
++            if (now - lastCheck < 1000u) {
++                return;
++            }
++
++            lastCheck = now;
++
++            const uint64_t stamp = FileStamp(s_iniPath);
++
++            if (stamp == s_configStamp) {
++                return;
++            }
++
++            s_configStamp = stamp;
++            LoadConfigNow();
++            Log(kLogInfo, "config reloaded from %s", s_iniPath.c_str());
++        }
++
++        // --- beacons ---
++
++        void SeedSparkles(Beacon& b) {
++            uint32_t seed = static_cast<uint32_t>(b.guid) ^ static_cast<uint32_t>(b.guid >> 32);
++            seed ^= 0x9E3779B9u;
++
++            if (seed == 0) {
++                seed = 0xA341316Cu;
++            }
++
++            b.rngSeed = seed;
++
++            for (int i = 0; i < kMaxSparkles; i++) {
++                SpawnSparkle(b.sparkles[i], b.rngSeed, s_style);
++            }
++        }
++
++        void AdvanceSparkles(Beacon& b, float dt) {
++            if (s_style.sparkleCount <= 0) {
++                return;
++            }
++
++            for (int i = 0; i < kMaxSparkles; i++) {
++                AdvanceSparkle(b.sparkles[i], b.rngSeed, s_style, dt);
++            }
++        }
++
++        // Logs the fields the module decides on, for the first dead unit of the session, so a wrong
++        // field shows at a glance.
++        void LogFirstDeadUnit(const CGUnit_C* unit, uint64_t guid) {
++            const CGUnitData* fields = UnitFields(unit);
++
++            if (!fields) {
++                Log(kLogInfo, "diag: first dead unit guid=%llX has no unit fields", static_cast<unsigned long long>(guid));
++                return;
++            }
++
++            Log(kLogInfo, "diag: first dead unit guid=%llX health=%d dynflags=0x%X padding=%u",
++                static_cast<unsigned long long>(guid), fields->m_unitFieldHealth, fields->m_unitDynamicFlags, fields->m_unitFieldPadding);
++        }
++
++        struct ScanContext {
++            float camera[3];
++            float maxD2;
++            int enumerated;
++        };
++
++        // One visible object: tracks it when it is a corpse with a tier.
++        int32_t ScanObject(WOWGUID guid, void* param) {
++            ScanContext& ctx = *static_cast<ScanContext*>(param);
++            CGObject_C* object = ClntObjMgrObjectPtr(guid, TYPEMASK_UNIT, __FILE__, __LINE__);
++
++            if (!object) {
++                return 1;
++            }
++
++            const CGUnit_C* unit = static_cast<const CGUnit_C*>(object);
++            ctx.enumerated++;
++
++            if (!s_loggedFirstDead) {
++                const CGUnitData* fields = UnitFields(unit);
++
++                if (fields && fields->m_unitFieldHealth == 0) {
++                    s_loggedFirstDead = true;
++                    LogFirstDeadUnit(unit, guid.m_guid);
++                }
++            }
++
++            if (!IsLootableCorpse(unit, s_style)) {
++                return 1;
++            }
++
++            // The tier is the server's alone, this viewer's own drops on the corpse, read every frame;
++            // no tier, no beacon.
++            int serverTier = -1;
++
++            if (s_style.lootColor && s_style.serverColor) {
++                UnitLootBeamTier(unit, serverTier);
++            }
++
++            if (serverTier < 0) {
++                return 1;
++            }
++
++            const C3Vector& position = unit->m_movementData.m_position;
++            const float p[3] = { position.x, position.y, position.z };
++
++            if (ctx.maxD2 > 0.0f) {
++                const float dx = p[0] - ctx.camera[0];
++                const float dy = p[1] - ctx.camera[1];
++                const float dz = p[2] - ctx.camera[2];
++
++                if (dx * dx + dy * dy + dz * dz > ctx.maxD2) {
++                    return 1;
++                }
++            }
++
++            // Matched on GUID so a corpse keeps its fade level while it is tracked; a new one enters at
++            // zero and eases up.
++            Beacon* b = nullptr;
++
++            for (int i = 0; i < s_trackedCount; i++) {
++                if (s_beacons[i].guid == guid.m_guid) {
++                    b = &s_beacons[i];
++                    break;
++                }
++            }
++
++            if (!b) {
++                if (s_trackedCount >= kMaxBeacons) {
++                    return 1; // table full; let it go this pass
++                }
++
++                b = &s_beacons[s_trackedCount++];
++                b->guid = guid.m_guid;
++                b->fade = 0.0f;
++                b->tier = -1;
++                SeedSparkles(*b);
++            }
++
++            b->pos[0] = p[0];
++            b->pos[1] = p[1];
++            b->pos[2] = p[2];
++            b->seen = true;
++            b->tier = serverTier; // follows the server down as well as up
++
++            if (!s_loggedServerHint) {
++                s_loggedServerHint = true;
++                Log(kLogInfo, "diag: server loot hint guid=%llX tier=%d", static_cast<unsigned long long>(guid.m_guid), serverTier);
++            }
++
++            return 1;
++        }
++
++        // Marks the tracked beacons seen this frame and returns how many units were visited.
++        int ScanUnits() {
++            // Everything tracked starts unseen; what is left unseen afterwards was looted or despawned
++            // and fades out.
++            for (int i = 0; i < s_trackedCount; i++) {
++                s_beacons[i].seen = false;
++            }
++
++            s_beaconCount = 0;
++
++            // No active player means no live session; the walk below reads the object manager without
++            // checking for one.
++            if (!ClntObjMgrGetCurrent() || !ClntObjMgrGetActivePlayer()) {
++                return 0;
++            }
++
++            ScanContext ctx = {};
++            CameraPosition(ctx.camera);
++            ctx.maxD2 = s_style.maxDistance > 0.0f ? s_style.maxDistance * s_style.maxDistance : 0.0f;
++            ctx.enumerated = 0;
++
++            ClntObjMgrEnumVisibleObjects(&ScanObject, &ctx);
++            return ctx.enumerated;
++        }
++
++        // Advances every tracked beacon's fade toward full (seen this frame) or zero (not seen) and
++        // forgets the ones that finished fading out.
++        void UpdateFade(float dt) {
++            const float inRate = s_style.fadeIn > 0.001f ? 1.0f / s_style.fadeIn : 1.0e9f;
++            const float outRate = s_style.fadeOut > 0.001f ? 1.0f / s_style.fadeOut : 1.0e9f;
++
++            int kept = 0;
++
++            for (int i = 0; i < s_trackedCount; i++) {
++                Beacon b = s_beacons[i];
++
++                if (b.seen) {
++                    b.fade += inRate * dt;
++
++                    if (b.fade > 1.0f) {
++                        b.fade = 1.0f;
++                    }
++                } else {
++                    b.fade -= outRate * dt;
++
++                    if (b.fade <= 0.0f) {
++                        continue; // finished fading; forget it
++                    }
++                }
++
++                if (b.fade > 0.001f) {
++                    AdvanceSparkles(b, dt);
++                }
++
++                s_beacons[kept++] = b;
++            }
++
++            s_trackedCount = kept;
++            s_beaconCount = 0;
++
++            for (int i = 0; i < s_trackedCount; i++) {
++                if (s_beacons[i].fade > 0.001f) {
++                    s_beaconCount++;
++                }
++            }
++        }
++
++        // --- shapes ---
++
++        // Soft falloff from 1 at x = 0 to 0 at x = 1, with a flat top and a gentle shoulder.
++        float SoftEdge(float x) {
++            const float a = x < 0.0f ? 0.0f : (x > 1.0f ? 1.0f : x);
++            return 1.0f - a * a * (3.0f - 2.0f * a);
++        }
++
++        // The shaft's vertical profile: transparent where it leaves the body, rising to a soft peak a
++        // short way up, then easing to nothing at the top.
++        float BeamVertical(float t) {
++            constexpr float kRise = 0.22f;
++
++            if (t < kRise) {
++                return 1.0f - SoftEdge(t / kRise);
++            }
++
++            return SoftEdge((t - kRise) / (1.0f - kRise));
++        }
++
++        // The tint pulled toward white by whiten: the middle of a light shaft is hotter and whiter than
++        // its edges.
++        beacon_gfx::Color PackTint(float alpha, const float rgb[3], float whiten) {
++            const float c[3] = {
++                rgb[0] + (1.0f - rgb[0]) * whiten,
++                rgb[1] + (1.0f - rgb[1]) * whiten,
++                rgb[2] + (1.0f - rgb[2]) * whiten,
++            };
++            return Pack(alpha, c);
++        }
++
++        // The largest beam grid; the actual grid follows the beam's size on screen.
++        constexpr int kBeamMaxRows = 64;
++        constexpr int kBeamMaxCols = 4;
++
++        // Per-frame cap on the costly model picks. Terrain traces are not capped; when the budget runs
++        // out the terrain trace still carries the shape for the rest of that frame.
++        constexpr int kModelPickBudget = 1200;
++        int s_modelPicksLeft = kModelPickBudget;
++
++        // True when the shaft's bounding sphere may cross the view frustum, tested against the scene's
++        // clip-buffer matrix. A conservative sphere test never drops a beacon that is even partly visible.
++        bool BeamInView(const float pos[3], const BeamStyle& style) {
++            const float* m = SceneViewProjection();
++
++            const float lo = style.baseOffset;
++            const float hi = fmaxf(style.height, lo + 0.1f);
++            const float cx = pos[0];
++            const float cy = pos[1];
++            const float cz = pos[2] + 0.5f * (lo + hi);
++            const float radius = 0.5f * (hi - lo) + style.beamWidth + 0.5f;
++
++            // Row-vector clip space: clip = p * m. A point is inside a plane when the plane value is >= 0;
++            // the sphere is outside only when even its nearest point is negative.
++            const float planes[5][4] = {
++                { m[0] + m[3], m[4] + m[7], m[8] + m[11], m[12] + m[15] },  // left
++                { m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12] },  // right
++                { m[1] + m[3], m[5] + m[7], m[9] + m[11], m[13] + m[15] },  // bottom
++                { m[3] - m[1], m[7] - m[5], m[11] - m[9], m[15] - m[13] },  // top
++                { m[2], m[6], m[10], m[14] },                               // near (clip z >= 0)
++            };
++
++            for (const auto& p : planes) {
++                const float dist = cx * p[0] + cy * p[1] + cz * p[2] + p[3];
++                const float len = sqrtf(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
++
++                if (dist + radius * len < 0.0f) {
++                    return false;
++                }
++            }
++
++            return true;
++        }
++
++        // True when a hit is cover rather than the ground the beam stands on: the eye-to-point segment
++        // must reach the hit with more than clearance yards still to run before the point.
++        bool HitIsCover(const float eye[3], const float to[3], const WorldHit& hit, float clearance) {
++            const float hx = hit.pos[0] - eye[0];
++            const float hy = hit.pos[1] - eye[1];
++            const float hz = hit.pos[2] - eye[2];
++            const float hlen = sqrtf(hx * hx + hy * hy + hz * hz);
++            const float dx = to[0] - eye[0];
++            const float dy = to[1] - eye[1];
++            const float dz = to[2] - eye[2];
++            const float len = sqrtf(dx * dx + dy * dy + dz * dz);
++            return len - hlen > clearance;
++        }
++
++        // The live Direct3D viewport in pixels, or false when there is no device.
++        bool ViewportSize(float& w, float& h) {
++            IDirect3DDevice9* dev = LootBeamD3dDevice();
++
++            if (!dev) {
++                return false;
++            }
++
++            D3DVIEWPORT9 vp = {};
++
++            if (FAILED(dev->GetViewport(&vp)) || vp.Width == 0 || vp.Height == 0) {
++                return false;
++            }
++
++            w = static_cast<float>(vp.Width);
++            h = static_cast<float>(vp.Height);
++            return true;
++        }
++
++        // Projects a world point to a device pixel and runs the world frame's cursor pick through it.
++        // False when the device is not ready, the point is behind the eye, or the ray misses.
++        bool PickProjected(const float eye[3], const float to[3], WorldHit& hit) {
++            float vpW = 0.0f;
++            float vpH = 0.0f;
++
++            if (!ViewportSize(vpW, vpH)) {
++                return false;
++            }
++
++            const float* view = SceneView();
++            const float* proj = SceneProjection();
++            const float px = to[0] - eye[0];
++            const float py = to[1] - eye[1];
++            const float pz = to[2] - eye[2];
++            const float vx = px * view[0] + py * view[4] + pz * view[8] + view[12];
++            const float vy = px * view[1] + py * view[5] + pz * view[9] + view[13];
++            const float vz = px * view[2] + py * view[6] + pz * view[10] + view[14];
++            const float cw = vx * proj[3] + vy * proj[7] + vz * proj[11] + proj[15];
++
++            if (cw <= 1.0e-3f) {
++                return false; // behind the eye: no pixel to shoot through
++            }
++
++            const float cx = vx * proj[0] + vy * proj[4] + vz * proj[8] + proj[12];
++            const float cy = vx * proj[1] + vy * proj[5] + vz * proj[9] + proj[13];
++            const float ddcX = (0.5f * cx / cw + 0.5f) * vpW;
++            const float ddcY = (0.5f - 0.5f * cy / cw) * vpH;
++            return Pick(ddcX, ddcY, hit) != 0;
++        }
++
++        // A model (a tree, a rock, a banner, another body) between the eye and a point. Only a model hit
++        // counts: terrain and map objects are the trace below.
++        bool ModelBlocked(const float eye[3], const float to[3], float clearance) {
++            if (s_modelPicksLeft <= 0) {
++                return false;
++            }
++
++            s_modelPicksLeft--;
++            WorldHit hit;
++
++            if (!PickProjected(eye, to, hit) || hit.type != kHitKindModel) {
++                return false;
++            }
++
++            return HitIsCover(eye, to, hit, clearance);
++        }
++
++        // True when terrain or a map object stands between the eye and a point by more than clearance
++        // yards. A beam stands on the ground, so a trace to it nearly always meets that ground at the
++        // beam itself; only a hit well short of the point is occlusion.
++        bool LineBlocked(const float eye[3], const float to[3], float clearance) {
++            WorldHit hit;
++            return TraceLine(eye, to, hit) && HitIsCover(eye, to, hit, clearance);
++        }
++
++        // The lowest t in [0,1] the eye can see up a beam column, found by bisection on the usual shape
++        // of cover (hidden low, clear high). 2 means the whole column is hidden.
++        template <class BlockedFn>
++        float ColumnCut(BlockedFn blocked) {
++            if (!blocked(0.0f)) {
++                return 0.0f;
++            }
++
++            if (blocked(1.0f)) {
++                return 2.0f;
++            }
++
++            float lo = 0.0f;
++            float hi = 1.0f;
++
++            for (int i = 0; i < 5; i++) {
++                const float mid = 0.5f * (lo + hi);
++
++                if (blocked(mid)) {
++                    lo = mid;
++                } else {
++                    hi = mid;
++                }
++            }
++
++            return hi;
++        }
++
++        // The shaft: one camera-facing billboard, gridded so a colour can sit on every vertex. The
++        // horizontal falloff keeps the core bright and the edges transparent; the vertical one is
++        // transparent at the floating base, peaks just above it, then eases to nothing at the top.
++        void QueueBeamColumn(const float pos[3], float bodyZ, const BeamStyle& style, float alphaScale, const float rgb[3], bool occlude) {
++            float camera[3];
++            CameraPosition(camera);
++            const float dx = camera[0] - pos[0];
++            const float dy = camera[1] - pos[1];
++            const float dz = camera[2] - pos[2];
++            const float len = sqrtf(dx * dx + dy * dy);
++            const float dist = sqrtf(dx * dx + dy * dy + dz * dz);
++
++            // Billboard across the view direction: the only vertical plane the camera sees face-on.
++            float fx = 1.0f;
++            float fy = 0.0f;
++
++            if (len > 1e-3f) {
++                fx = dx / len;
++                fy = dy / len;
++            }
++
++            const float sx = -fy;
++            const float sy = fx;
++
++            // A floor under the half-width so a distant corpse still shows a column; 0 leaves the taper.
++            const float minHalfWidth = style.widthPerYard > 0.0f ? style.widthPerYard * dist : 0.0f;
++
++            const float baseZ = bodyZ + style.baseOffset;
++            const float topZ = bodyZ + fmaxf(style.height, style.baseOffset + 0.1f);
++
++            if (baseZ >= topZ - 0.05f) {
++                return;
++            }
++
++            const float spanZ = topZ - baseZ;
++
++            // The grid follows the shaft's screen size: about 5 px per cell.
++            int rows = kBeamMaxRows;
++            int cols = kBeamMaxCols;
++            float vpW = 0.0f;
++            float vpH = 0.0f;
++
++            if (ViewportSize(vpW, vpH) && dist > 0.5f) {
++                const float* proj = SceneProjection();
++                const float invDist = 1.0f / dist;
++                const float pxH = fabsf(proj[5]) * spanZ * invDist * 0.5f * vpH;
++                const float pxW = fabsf(proj[0]) * (2.0f * style.beamWidth) * invDist * 0.5f * vpW;
++                rows = static_cast<int>(pxH / 5.0f) + 1;
++                cols = static_cast<int>(pxW / 5.0f) + 1;
++
++                if (rows < 4) {
++                    rows = 4;
++                }
++
++                if (rows > kBeamMaxRows) {
++                    rows = kBeamMaxRows;
++                }
++
++                if (cols < 2) {
++                    cols = 2;
++                }
++
++                if (cols > kBeamMaxCols) {
++                    cols = kBeamMaxCols;
++                }
++            } else if (dist > 150.0f) {
++                rows = 5;
++                cols = 2;
++            } else if (dist > 80.0f) {
++                rows = 12;
++                cols = 4;
++            }
++
++            float xs[kBeamMaxRows + 1][kBeamMaxCols + 1];
++            float ys[kBeamMaxRows + 1][kBeamMaxCols + 1];
++            float zs[kBeamMaxRows + 1];
++            beacon_gfx::Color cs[kBeamMaxRows + 1][kBeamMaxCols + 1];
++
++            // One line-of-sight bisection per column; every vertex in that column compares its height to
++            // the cut. The model pick is asked only while the beam is close enough for it to matter.
++            const bool modelTest = occlude && dist < 250.0f;
++            float cut[kBeamMaxCols + 1];
++
++            for (int c = 0; c <= cols; c++) {
++                if (!occlude) {
++                    cut[c] = 0.0f;
++                    continue;
++                }
++
++                const float u = -1.0f + 2.0f * static_cast<float>(c) / static_cast<float>(cols);
++                cut[c] = ColumnCut([&](float t) {
++                    const float w = fmaxf(style.beamWidth * (1.0f - 0.55f * t), minHalfWidth);
++                    const float p[3] = { pos[0] + sx * (w * u), pos[1] + sy * (w * u), baseZ + spanZ * t };
++
++                    if (LineBlocked(camera, p, 2.0f)) {
++                        return true;
++                    }
++
++                    return modelTest && ModelBlocked(camera, p, 2.0f);
++                });
++            }
++
++            for (int r = 0; r <= rows; r++) {
++                const float t = static_cast<float>(r) / static_cast<float>(rows);
++                const float w = fmaxf(style.beamWidth * (1.0f - 0.55f * t), minHalfWidth);
++                const float v = BeamVertical(t);
++                zs[r] = baseZ + spanZ * t;
++
++                for (int c = 0; c <= cols; c++) {
++                    const float u = -1.0f + 2.0f * static_cast<float>(c) / static_cast<float>(cols);
++                    const float h = SoftEdge(fabsf(u));
++                    xs[r][c] = pos[0] + sx * (w * u);
++                    ys[r][c] = pos[1] + sy * (w * u);
++
++                    // 0 below the column's cut, 1 above it; Gouraud then fades across one cell.
++                    const float vis = t >= cut[c] ? 1.0f : 0.0f;
++                    cs[r][c] = PackTint(style.beamAlpha * v * h * vis * alphaScale, rgb, 0.45f * h * (1.0f - 0.3f * t));
++                }
++            }
++
++            for (int r = 0; r < rows; r++) {
++                for (int c = 0; c < cols; c++) {
++                    const float p00[3] = { xs[r][c], ys[r][c], zs[r] };
++                    const float p10[3] = { xs[r][c + 1], ys[r][c + 1], zs[r] };
++                    const float p11[3] = { xs[r + 1][c + 1], ys[r + 1][c + 1], zs[r + 1] };
++                    const float p01[3] = { xs[r + 1][c], ys[r + 1][c], zs[r + 1] };
++                    beacon_gfx::Triangle(p00, p10, p11, cs[r][c], cs[r][c + 1], cs[r + 1][c + 1]);
++                    beacon_gfx::Triangle(p00, p11, p01, cs[r][c], cs[r + 1][c + 1], cs[r + 1][c]);
++                }
++            }
++        }
++
++        // Drifting, twinkling motes inside the beam, each a small camera-facing disc of light: a hot
++        // core easing out to a transparent rim through a shoulder ring.
++        void QueueSparkles(const float pos[3], const Sparkle* sparkles, int count, const BeamStyle& style, float alphaScale, const float rgb[3], bool occlude) {
++            if (count <= 0) {
++                return;
++            }
++
++            float camera[3];
++            CameraPosition(camera);
++
++            constexpr int kSegments = 8;
++            constexpr float kRing1 = 0.45f;     // radii, as fractions of the mote size
++            constexpr float kRing2 = 1.0f;
++            constexpr float kShoulder = 0.58f;  // brightness of the middle ring
++
++            for (int i = 0; i < count; i++) {
++                const Sparkle& sp = sparkles[i];
++                const float lifeT = sp.life > 0.001f ? sp.age / sp.life : 1.0f;
++
++                // Ease in off the spawn, hold, then ease out, so a mote never pops in or cuts off.
++                constexpr float kIn = 0.15f;
++                constexpr float kOut = 0.45f;
++                float env = 1.0f;
++
++                if (lifeT < kIn) {
++                    env = lifeT / kIn;
++                } else if (lifeT > 1.0f - kOut) {
++                    env = (1.0f - lifeT) / kOut;
++                }
++
++                if (env < 0.0f) {
++                    env = 0.0f;
++                }
++
++                if (env > 1.0f) {
++                    env = 1.0f;
++                }
++
++                const float twinkle = 0.5f + 0.5f * sinf(sp.twinkle);
++                const float alpha = style.sparkleAlpha * env * twinkle * alphaScale;
++
++                if (alpha <= 0.003f) {
++                    continue;
++                }
++
++                const float wx = pos[0] + sp.pos[0];
++                const float wy = pos[1] + sp.pos[1];
++                const float wz = pos[2] + sp.pos[2];
++
++                // A mote the eye cannot see is dropped, so the particles never glitter through a wall.
++                if (occlude) {
++                    const float to[3] = { wx, wy, wz };
++
++                    if (LineBlocked(camera, to, 2.0f)) {
++                        continue;
++                    }
++                }
++
++                // The disc lies across the eye-to-mote ray, so it reads as a round ball from any angle;
++                // straight up or down falls back to a world axis.
++                float f[3] = { wx - camera[0], wy - camera[1], wz - camera[2] };
++                float flen = sqrtf(f[0] * f[0] + f[1] * f[1] + f[2] * f[2]);
++
++                if (flen < 1e-4f) {
++                    f[0] = 0.0f;
++                    f[1] = 1.0f;
++                    f[2] = 0.0f;
++                    flen = 1.0f;
++                }
++
++                f[0] /= flen;
++                f[1] /= flen;
++                f[2] /= flen;
++
++                float r[3] = { -f[1], f[0], 0.0f };
++                float rlen = sqrtf(r[0] * r[0] + r[1] * r[1]);
++
++                if (rlen < 1e-4f) {
++                    r[0] = 1.0f;
++                    r[1] = 0.0f;
++                    r[2] = 0.0f;
++                    rlen = 1.0f;
++                }
++
++                r[0] /= rlen;
++                r[1] /= rlen;
++                r[2] /= rlen;
++
++                float u[3] = {
++                    f[1] * r[2] - f[2] * r[1],
++                    f[2] * r[0] - f[0] * r[2],
++                    f[0] * r[1] - f[1] * r[0],
++                };
++
++                // A mote swells a little as it brightens, so a flicker reads as a glint.
++                const float size = style.sparkleSize * (0.85f + 0.15f * twinkle);
++
++                for (int k = 0; k < 3; k++) {
++                    r[k] *= size;
++                    u[k] *= size;
++                }
++
++                const beacon_gfx::Color core = PackTint(alpha, rgb, 0.85f);
++                const beacon_gfx::Color shoulder = PackTint(alpha * kShoulder, rgb, 0.55f);
++                const beacon_gfx::Color rim = Pack(0.0f, rgb);
++
++                float mid[kSegments][3];
++                float edge[kSegments][3];
++
++                for (int s = 0; s < kSegments; s++) {
++                    const float a = kTwoPi * static_cast<float>(s) / static_cast<float>(kSegments);
++                    const float ca = cosf(a);
++                    const float sa = sinf(a);
++                    const float ddx = r[0] * ca + u[0] * sa;
++                    const float ddy = r[1] * ca + u[1] * sa;
++                    const float ddz = r[2] * ca + u[2] * sa;
++
++                    mid[s][0] = wx + ddx * kRing1;
++                    mid[s][1] = wy + ddy * kRing1;
++                    mid[s][2] = wz + ddz * kRing1;
++                    edge[s][0] = wx + ddx * kRing2;
++                    edge[s][1] = wy + ddy * kRing2;
++                    edge[s][2] = wz + ddz * kRing2;
++                }
++
++                const float centre[3] = { wx, wy, wz };
++
++                for (int s = 0; s < kSegments; s++) {
++                    const int n = (s + 1) % kSegments;
++                    beacon_gfx::Triangle(centre, mid[s], mid[n], core, shoulder, shoulder);
++                    beacon_gfx::Triangle(mid[s], edge[s], edge[n], shoulder, rim, rim);
++                    beacon_gfx::Triangle(mid[s], edge[n], mid[n], shoulder, rim, shoulder);
++                }
++            }
++        }
++
++        void QueueBeacon(const Beacon& beacon, float alphaScale, const float rgb[3]) {
++            // The shaft rises from the body's own position: a ground query risked a bad hit on a lower
++            // surface burying it under the rendered terrain.
++            const float baseZ = beacon.pos[2];
++
++            // Line-of-sight occlusion: every band of the shaft, and every mote, traces to the eye, and
++            // whatever the eye cannot see is dropped.
++            const bool occlude = !s_style.throughWalls;
++
++            if (occlude && s_occlDiag < 12) {
++                s_occlDiag++;
++                float eye[3];
++                CameraPosition(eye);
++                const float bz = beacon.pos[2];
++                const float hz = bz + s_style.height;
++
++                for (int k = 0; k < 3; k++) {
++                    const float z = bz + (hz - bz) * (static_cast<float>(k) / 2.0f);
++                    const float to[3] = { beacon.pos[0], beacon.pos[1], z };
++                    WorldHit hit;
++                    WorldHit mhit;
++                    const int ty = TraceLine(eye, to, hit) ? hit.type : 0;
++                    const int my = PickProjected(eye, to, mhit) ? mhit.type : 0;
++                    const float dx = to[0] - eye[0];
++                    const float dy = to[1] - eye[1];
++                    const float dz = to[2] - eye[2];
++                    const float len = sqrtf(dx * dx + dy * dy + dz * dz);
++                    Log(kLogInfo, "occl: z=%.1f gap=%.2f type=%d t=%.3f mtype=%d", z, ty ? (1.0f - hit.t) * len : -1.0f, ty, hit.t, my);
++                }
++            }
++
++            if (s_style.showBeam && s_style.height > 0.01f) {
++                QueueBeamColumn(beacon.pos, baseZ, s_style, alphaScale, rgb, occlude);
++            }
++
++            if (s_style.showSparkles && s_style.sparkleCount > 0) {
++                int count = s_style.sparkleCount;
++
++                if (count > kMaxSparkles) {
++                    count = kMaxSparkles;
++                }
++
++                QueueSparkles(beacon.pos, beacon.sparkles, count, s_style, alphaScale, rgb, occlude);
++            }
++        }
++
++        // The root of the active player's model chain (a mount parents its rider, so the mount is
++        // masked as well), or null outside a world.
++        const CM2Model* ActivePlayerModel() {
++            if (!ClntObjMgrGetCurrent()) {
++                return nullptr;
++            }
++
++            CGObject_C* player = ClntObjMgrObjectPtr(ClntObjMgrGetActivePlayer(), TYPEMASK_PLAYER, __FILE__, __LINE__);
++            const CM2Model* model = player ? player->m_worldModel : nullptr;
++
++            for (int hop = 0; model && hop < 8; hop++) {
++                const CM2Model* parent = model->m_attachParent;
++
++                if (!parent) {
++                    break;
++                }
++
++                model = parent;
++            }
++
++            return model;
++        }
++
++        // One-shot: where the first beacon lands in clip space, so a beacon the far plane or the
++        // projection rejects can be told apart from one that draws.
++        void LogClipDiagnostic() {
++            int first = -1;
++
++            for (int i = 0; i < s_trackedCount; i++) {
++                if (s_beacons[i].fade > 0.001f) {
++                    first = i;
++                    break;
++                }
++            }
++
++            if (first < 0) {
++                first = 0;
++            }
++
++            float eye[3];
++            CameraPosition(eye);
++            const float* view = SceneView();
++            const float* proj = SceneProjection();
++            const float px = s_beacons[first].pos[0] - eye[0];
++            const float py = s_beacons[first].pos[1] - eye[1];
++            const float pz = s_beacons[first].pos[2] - eye[2];
++            const float vx = px * view[0] + py * view[4] + pz * view[8] + view[12];
++            const float vy = px * view[1] + py * view[5] + pz * view[9] + view[13];
++            const float vz = px * view[2] + py * view[6] + pz * view[10] + view[14];
++            const float cx = vx * proj[0] + vy * proj[4] + vz * proj[8] + proj[12];
++            const float cy = vx * proj[1] + vy * proj[5] + vz * proj[9] + proj[13];
++            const float cz = vx * proj[2] + vy * proj[6] + vz * proj[10] + proj[14];
++            const float cw = vx * proj[3] + vy * proj[7] + vz * proj[11] + proj[15];
++            const float dist = sqrtf(px * px + py * py + pz * pz);
++            Log(kLogInfo,
++                "diag: beacon0=(%.0f,%.0f,%.0f) eye=(%.0f,%.0f,%.0f) dist=%.1f viewZ=%.1f ndc=(%.2f,%.2f,%.2f) w=%.1f projFar=%.0f proj10=%.4f proj11=%.4f proj14=%.2f",
++                s_beacons[first].pos[0], s_beacons[first].pos[1], s_beacons[first].pos[2], eye[0], eye[1], eye[2],
++                dist, vz, cw != 0.0f ? cx / cw : 0.0f, cw != 0.0f ? cy / cw : 0.0f, cw != 0.0f ? cz / cw : 0.0f, cw,
++                proj[14] != 0.0f ? -proj[14] / proj[10] : -1.0f, proj[10], proj[11], proj[14]);
++        }
++    }
++}
++
++IDirect3DDevice9* LootBeamD3dDevice() {
++    CGxDevice* device = g_theGxDevicePtr;
++
++    if (!device) {
++        return nullptr;
++    }
++
++    switch (device->m_api) {
++        case GxApi_D3d9:
++            return static_cast<CGxDeviceD3d*>(device)->m_d3dDevice;
++
++        case GxApi_D3d9Ex:
++            return static_cast<CGxDeviceD3d9Ex*>(device)->m_d3dDevice;
++
++        default:
++            return nullptr;
++    }
++}
++
++namespace loot_beam {
++    void FrameUpdate(float elapsedSec) {
++        if (!s_configLoaded) {
++            s_configLoaded = true;
++            LoadConfig(ExeDirectory() + kIniRelativePath);
++            Log(kLogInfo, "loot beam loaded");
++        }
++
++        ReloadConfigIfChanged();
++        s_phase += elapsedSec * s_style.pulseSpeed * kTwoPi;
++        s_phase = fmodf(s_phase, kTwoPi); // keep the phase bounded over a long session
++
++        // One frame's worth of shapes only: a frame that never reached the world pass would otherwise
++        // leave its shapes under the next one.
++        beacon_gfx::Clear();
++        s_modelPicksLeft = kModelPickBudget;
++        beacon_gfx::ResetOccluder();
++
++        // The world state is derived live each frame, not from the enter event alone.
++        s_inWorld = s_mapId >= 0;
++
++        // The player's model, refreshed once a frame, for the occluder mask (LootBeamM2BatchDrawn).
++        s_playerModel = s_inWorld ? ActivePlayerModel() : nullptr;
++
++        if (!s_style.enabled || !s_inWorld) {
++            s_beaconCount = 0;
++            s_trackedCount = 0;
++            return;
++        }
++
++        const int enumerated = ScanUnits();
++        UpdateFade(elapsedSec);
++
++        if (s_beaconCount == 0) {
++            if (!s_loggedFirstScan) {
++                s_loggedFirstScan = true;
++                Log(kLogInfo, "diag: map=%d player=%llu enumerated=%d beacons=0 (first scan)",
++                    s_mapId, static_cast<unsigned long long>(ClntObjMgrGetCurrent() ? ClntObjMgrGetActivePlayer().m_guid : 0), enumerated);
++            }
++
++            if (++s_emptyFrameStreak >= 240 && s_emptyWarnings < 5) {
++                s_emptyWarnings++;
++                s_emptyFrameStreak = 0;
++                Log(kLogWarn, "diag: 240 frames in world, enumerated=%d, no dead units -- the health field may be wrong", enumerated);
++            }
++
++            return;
++        }
++
++        s_emptyFrameStreak = 0;
++
++        if (!s_loggedFirstScan) {
++            s_loggedFirstScan = true;
++            Log(kLogInfo, "diag: map=%d player=%llu enumerated=%d beacons=%d (first scan)",
++                s_mapId, static_cast<unsigned long long>(ClntObjMgrGetActivePlayer().m_guid), enumerated, s_beaconCount);
++        }
++
++        // -1..+1 mapped into [1 - pulse, 1], so the beacon never gets brighter than the configured alpha.
++        // The per-beacon fade folds in on top.
++        const float pulseScale = 1.0f - 0.5f * s_style.pulse * (1.0f - sinf(s_phase));
++
++        for (int i = 0; i < s_trackedCount; i++) {
++            if (s_beacons[i].fade <= 0.001f) {
++                continue;
++            }
++
++            const float* rgb = s_style.color;
++            const int t = s_beacons[i].tier;
++
++            if (s_style.lootColor && t >= 0 && t < kTierCount) {
++                // A tier switched off gets no beacon at all.
++                if (!s_style.tiers[t].enabled) {
++                    continue;
++                }
++
++                rgb = s_style.tiers[t].color;
++            }
++
++            // An off-screen shaft would draw no pixel; skip it before the queue.
++            if (!BeamInView(s_beacons[i].pos, s_style)) {
++                continue;
++            }
++
++            QueueBeacon(s_beacons[i], pulseScale * s_beacons[i].fade, rgb);
++        }
++    }
++
++    void WorldRendered(IDirect3DDevice9* device) {
++        if (!s_style.enabled || !s_inWorld || s_beaconCount == 0 || !device) {
++            beacon_gfx::Clear();
++            return;
++        }
++
++        if (!s_loggedClipDiag) {
++            s_loggedClipDiag = true;
++            LogClipDiagnostic();
++        }
++
++        const size_t queued = beacon_gfx::Pending();
++        const long result = beacon_gfx::Draw(device);
++
++        if (!s_loggedFirstFlush) {
++            s_loggedFirstFlush = true;
++            Log(kLogInfo, "diag: first flush dev=%p queued=%zu result=%ld", static_cast<void*>(device), queued, result);
++        }
++    }
++
++    void WorldEnter() {
++        s_inWorld = true;
++        Log(kLogInfo, "world entered (map %d)", s_mapId);
++    }
++
++    void WorldLeave() {
++        s_inWorld = false;
++        s_beaconCount = 0;
++        s_trackedCount = 0;
++        beacon_gfx::Clear();
++    }
++
++    void M2BatchDrawn(const TormentM2Draw& draw) {
++        // Collect the active player's exact silhouette while its geometry is on the device.
++        if (!s_playerModel || s_style.throughWalls) {
++            return;
++        }
++
++        for (const CM2Model* m = draw.model; m; m = m->m_attachParent) {
++            if (m == s_playerModel) {
++                beacon_gfx::StampOccluder(draw);
++                break;
++            }
++        }
++    }
++
++    void DeviceLost() {
++        // The mask target and the shaders are D3DPOOL_DEFAULT resources the device is about to free.
++        beacon_gfx::OnDeviceLost();
++    }
++}
++
++// The entry points the engine and game code call; each forwards into the namespace so the names above
++// never meet the client's own globals.
++void LootBeamFrameUpdate(float elapsedSec) {
++    loot_beam::FrameUpdate(elapsedSec);
++}
++
++void LootBeamWorldRendered(IDirect3DDevice9* device) {
++    loot_beam::WorldRendered(device);
++}
++
++void LootBeamWorldEnter() {
++    loot_beam::WorldEnter();
++}
++
++void LootBeamWorldLeave() {
++    loot_beam::WorldLeave();
++}
++
++void LootBeamM2BatchDrawn(const TormentM2Draw& draw) {
++    loot_beam::M2BatchDrawn(draw);
++}
++
++void LootBeamDeviceLost() {
++    loot_beam::DeviceLost();
++}
+diff --git a/WoW/Source/Ui/Torment/LootBeam.h b/WoW/Source/Ui/Torment/LootBeam.h
+new file mode 100644
+index 0000000..7380fed
+--- /dev/null
++++ b/WoW/Source/Ui/Torment/LootBeam.h
+@@ -0,0 +1,51 @@
++// The loot beam: a beam of light over every corpse that holds one of the viewing player's own
++// legendary, set or Primal Ancient drops, coloured by the tier the server puts on the corpse.
++// Port of manatactical/wxl-loot-beam at fd75b76 with Torment's patches, moved from a DLL that hooked
++// the stock client into the client's own source.
++// Copyright (C) 2026 WarcraftXL
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program. If not, see <https://www.gnu.org/licenses/>.
++
++#ifndef WOW_SOURCE_UI_TORMENT_LOOTBEAM_H
++#define WOW_SOURCE_UI_TORMENT_LOOTBEAM_H
++
++#include <d3d9.h>
++
++struct TormentM2Draw;
++
++// Once a frame, from FrameTime::Update, with the frame's elapsed seconds. Reloads the .ini when it
++// changed, finds the corpses that get a beam and queues their geometry for LootBeamWorldRendered.
++void LootBeamFrameUpdate(float elapsedSec);
++
++// From CGWorldFrame::RenderWorld right after the world pass (OnWorldRender), while the world's view
++// and projection are still the engine's current ones. Draws what LootBeamFrameUpdate queued.
++// device may be null (no Direct3D device): the queue is then dropped.
++void LootBeamWorldRendered(IDirect3DDevice9* device);
++
++// From World::Preload: Leave before the preload, Enter after it.
++void LootBeamWorldEnter();
++void LootBeamWorldLeave();
++
++// After one model batch is drawn: stamps the active player's own batches into the mask that hides the
++// beam behind the character.
++void LootBeamM2BatchDrawn(const TormentM2Draw& draw);
++
++// Before the Direct3D device resets or goes away: releases the beam's D3DPOOL_DEFAULT resources.
++void LootBeamDeviceLost();
++
++// The IDirect3DDevice9 behind the engine's graphics device, or null when the engine runs another API
++// or has no device yet.
++IDirect3DDevice9* LootBeamD3dDevice();
++
++#endif
+diff --git a/WoW/Source/Ui/Torment/TormentRender.cpp b/WoW/Source/Ui/Torment/TormentRender.cpp
+index e7e6344..aa4ab65 100644
+--- a/WoW/Source/Ui/Torment/TormentRender.cpp
++++ b/WoW/Source/Ui/Torment/TormentRender.cpp
+@@ -5,6 +5,7 @@
+ #include "Engine/Source/Gx/CGxDeviceD3d9Ex/CGxDeviceD3d9Ex.h"
+ #include "Engine/Source/Gx/RenderHooks.h"
+ #include "Engine/Source/Gx/Types.h"
++#include "WoW/Source/Ui/Torment/LootBeam.h"
+ #include "WoW/Source/Ui/Torment/UnitOutline.h"
+ 
+ namespace {
+@@ -32,6 +33,7 @@ namespace {
+ 
+     void OnDeviceLost(void* d3dDevice) {
+         UnitOutlineDeviceLost();
++        LootBeamDeviceLost();
+     }
+ 
+     // The values CGxDeviceD3d::Draw (and its D3d9Ex twin) has just passed to DrawIndexedPrimitive for this batch,
+@@ -55,6 +57,7 @@ namespace {
+         draw.primCount = device->PrimCalcCount(batch->m_primType, batch->m_count);
+ 
+         UnitOutlineM2BatchDrawn(draw);
++        LootBeamM2BatchDrawn(draw);
+     }
+ }
+ 
+diff --git a/WoW/Source/Ui/WorldFrame.cpp b/WoW/Source/Ui/WorldFrame.cpp
+index 6957907..abc5dbf 100644
+--- a/WoW/Source/Ui/WorldFrame.cpp
++++ b/WoW/Source/Ui/WorldFrame.cpp
+@@ -88,6 +88,7 @@
+ #include <cfloat>
+ #include <cmath>
+ #include "WoW/Source/Ui/SpellBookFrame.h"
++#include "WoW/Source/Ui/Torment/LootBeam.h"
+ 
+ // STATIC: 0x009F9864
+ static const uint32_t s_skinCursorModes[2] = { 21, 20 };
+@@ -2100,6 +2101,8 @@ void CGWorldFrame::RenderWorld(void* param) {
+     worldFrame->OnWorldUpdate();
+     PlayerNameUpdateWorldText();
+     worldFrame->OnWorldRender();
++    // Torment: the loot beams, while the world's camera matrices are still on the device.
++    LootBeamWorldRendered(LootBeamD3dDevice());
+     WorldTextRenderBatch();
+ 
+     g_theGxDevicePtr->XformSetProjection(projection);
+diff --git a/WoW/Source/WorldClient/FrameTime.cpp b/WoW/Source/WorldClient/FrameTime.cpp
+index 03cebea..3fe23a2 100644
+--- a/WoW/Source/WorldClient/FrameTime.cpp
++++ b/WoW/Source/WorldClient/FrameTime.cpp
+@@ -1,6 +1,7 @@
+ #include "FrameTime.h"
+ #include "WoW/Source/WorldClient/MapWeather.h"
+ #include "WoW/Source/WorldClient/World.h"
++#include "WoW/Source/Ui/Torment/LootBeam.h"
+ 
+ // STATIC: 0x00CD7698
+ int32_t FrameTime::s_tickTimeFixed;
+@@ -29,4 +30,7 @@ void FrameTime::Update(float elapsedSec, uint32_t time) {
+     int32_t ticks = Weather::TimeToFixed(elapsedSec);
+     CWorld::s_elapsedTicks += ticks;
+     FrameTime::s_tickTimeFixed = ticks;
++
++    // Torment: the loot beam scans the corpses around the player once a frame.
++    LootBeamFrameUpdate(elapsedSec);
+ }
+diff --git a/WoW/Source/WorldClient/World.cpp b/WoW/Source/WorldClient/World.cpp
+index e0ff5fd..64f0ff6 100644
+--- a/WoW/Source/WorldClient/World.cpp
++++ b/WoW/Source/WorldClient/World.cpp
+@@ -99,6 +99,7 @@
+ #include <cstring>
+ #include "WoW/Source/Object/ObjectClient/Object_C.h"
+ #include "WoW/Source/Game/GameClient/ProjectTex.h"
++#include "WoW/Source/Ui/Torment/LootBeam.h"
+ 
+ // STATIC: 0x00ADEE48
+ static const char* s_zonePaths[11] = {
+@@ -1012,6 +1013,8 @@ void CMap::ObjectUpdate(CMapEntity* entity, C44Matrix& mat, CAaBox& box, CAaSphe
+ // VERIFY: d0b5cfbd manual
+ // OFFSET: 0x00781500
+ void World::Preload(const C3Vector& position, int32_t showLoading) {
++    // Torment: the loot beam forgets the old world's corpses before the load and starts over after it.
++    LootBeamWorldLeave();
+     World::PrepareAreaOfInterest(position);
+     s_preloadX = 3.4028235e38f;
+     s_preloadY = 3.4028235e38f;
+@@ -1033,6 +1036,8 @@ void World::Preload(const C3Vector& position, int32_t showLoading) {
+         AsyncFileReadSetProgressCallback(nullptr, nullptr);
+         LoadingScreenDisable();
+     }
++
++    LootBeamWorldEnter();
+ }
+ 
+ // VERIFY: a7db51a8 manual

@@ -1,0 +1,56 @@
+{
+  "manifest": 1,
+
+  "extension": {
+    "id": "wxl-modern-m2",
+    "version": "1.0.0",
+    "abi": "1.1",
+    "entry": "wxl-modern-m2.dll",
+    "assets": [],
+    "requires": {},
+    "conflicts": [],
+
+    "hooks": [
+      { "target": "M2.Init" },
+      { "target": "M2.FinalizeSkin" },
+      { "target": "M2.BuildBatchMaterial" },
+      { "target": "M2.SetupMaterial" },
+      { "target": "M2.InitializeLoaded" },
+      { "target": "M2.AnimLoadComplete" },
+      { "target": "M2.BuildBonePalette" },
+      { "target": "M2.PerFrameUpdate" },
+      { "target": "M2.DrawBatch" },
+      { "target": "M2.DrawBatchDoodad" },
+      { "target": "M2.RibbonDraw" },
+      { "target": "M2.RenderBatchShadowMap" },
+      { "target": "M2.SortOpaqueGeoBatches" },
+      { "target": "M2.SceneTriangleHitTest" },
+      { "target": "M2.BufferAlloc" },
+      { "target": "M2.BufferFree" },
+      { "target": "Storage.FileOpen" }
+    ]
+  },
+
+  "deploy": {
+    "mode": "release",
+    "match": "*.dll"
+  },
+
+  "listing": {
+    "title": "Modern M2",
+    "tagline": "Loads models authored for newer versions of the game, natively, with per-tier LOD skin variants for distant placements.",
+    "description": "store/description.md",
+    "cover": "store/cover.png",
+    "gallery": [
+      "store/gallery/preview_1.gif",
+      "store/gallery/preview_2.gif",
+      "store/gallery/preview_3.gif",
+      "store/gallery/preview_4.gif"
+    ],
+    "categories": ["assets", "models", "rendering"],
+    "accent": "#5b8fb9"
+  },
+
+  "license": "GPL-3.0-or-later",
+  "signature": null
+}

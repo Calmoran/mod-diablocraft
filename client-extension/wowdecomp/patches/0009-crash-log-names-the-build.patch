@@ -1,0 +1,63 @@
+diff --git a/Tools/WowClient/crash_log.cpp b/Tools/WowClient/crash_log.cpp
+index d0483fa..41baa6c 100644
+--- a/Tools/WowClient/crash_log.cpp
++++ b/Tools/WowClient/crash_log.cpp
+@@ -25,6 +25,44 @@ static void LogLine(const char* text) {
+     }
+ }
+ 
++// The first line of the log names the build, so a crash line's WowClient64.exe+0x<offset> is looked up in the
++// PDB kept for exactly this build (client-extension/wowdecomp/build_id.py in the Torment repo): the image's PE
++// TimeDateStamp and SizeOfImage, and the GUID and age of the PDB its CodeView entry names. `image` is the module
++// as the loader mapped it; the debug directory and the CodeView entry are bounds-checked against SizeOfImage.
++static void BuildLine(const unsigned char* image, const char* module, char* out, size_t size) {
++    const IMAGE_DOS_HEADER* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(image);
++    const IMAGE_NT_HEADERS* nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(image + dos->e_lfanew);
++    const DWORD imageSize = nt->OptionalHeader.SizeOfImage;
++    const IMAGE_DATA_DIRECTORY& dir = nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG];
++
++    char pdb[MAX_PATH + 96] = "pdb=none";
++
++    for (DWORD at = 0; at + sizeof(IMAGE_DEBUG_DIRECTORY) <= dir.Size && static_cast<unsigned long long>(dir.VirtualAddress) + at + sizeof(IMAGE_DEBUG_DIRECTORY) <= imageSize; at += sizeof(IMAGE_DEBUG_DIRECTORY)) {
++        const IMAGE_DEBUG_DIRECTORY* entry = reinterpret_cast<const IMAGE_DEBUG_DIRECTORY*>(image + dir.VirtualAddress + at);
++
++        if (entry->Type != IMAGE_DEBUG_TYPE_CODEVIEW || entry->SizeOfData < 25 || static_cast<unsigned long long>(entry->AddressOfRawData) + entry->SizeOfData > imageSize) {
++            continue;
++        }
++
++        const unsigned char* cv = image + entry->AddressOfRawData;
++
++        if (memcmp(cv, "RSDS", 4) != 0 || !memchr(cv + 24, 0, entry->SizeOfData - 24)) {
++            continue;
++        }
++
++        GUID guid;
++        DWORD age;
++        memcpy(&guid, cv + 4, sizeof(guid));
++        memcpy(&age, cv + 20, sizeof(age));
++        const char* name = reinterpret_cast<const char*>(cv + 24);
++        const char* slash = strrchr(name, '\\');
++        _snprintf_s(pdb, sizeof(pdb), _TRUNCATE, "pdb=%s guid=%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X age=%lu", slash ? slash + 1 : name, guid.Data1, guid.Data2, guid.Data3, guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7], age);
++        break;
++    }
++
++    _snprintf_s(out, size, _TRUNCATE, "BUILD %s timedatestamp=%08lX sizeofimage=%lX %s\n", module, nt->FileHeader.TimeDateStamp, imageSize, pdb);
++}
++
+ static void ModuleOffset(void* address, char* out, size_t size) {
+     HMODULE module = nullptr;
+     char path[MAX_PATH] = "?";
+@@ -145,6 +183,13 @@ static struct CrashLogInit {
+             s_console = CreateFileA("CONOUT$", GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
+         }
+ 
++        char exePath[MAX_PATH] = "?";
++        GetModuleFileNameA(nullptr, exePath, sizeof(exePath));
++        const char* exeName = strrchr(exePath, '\\');
++        char build[MAX_PATH + 256];
++        BuildLine(reinterpret_cast<const unsigned char*>(GetModuleHandleA(nullptr)), exeName ? exeName + 1 : exePath, build, sizeof(build));
++        LogLine(build);
++
+         AddVectoredExceptionHandler(1, FirstChanceHandler);
+         _CrtSetReportHook(CrtReportHook);
+         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);

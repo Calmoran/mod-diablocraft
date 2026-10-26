@@ -1,0 +1,4 @@
+map_id,area_id,phase_scope,status,note
+1,876,all,closed,Former GM Island hub
+530,3703,all,open,Shattrath hub at Scryer's Tier; native area spawns removed by world_0005
+530,3898,all,open,Scryer's Tier hub subarea; map and area verified by the designer's in-game .gps 2026-09-11

@@ -1,0 +1,7 @@
+{
+  "columns": ["item_entry", "name", "kind", "copper_per_item", "source"],
+  "min_rows": 7,
+  "number_columns": ["item_entry", "copper_per_item"],
+  "allow_empty": [],
+  "notes_columns": ["source"]
+}

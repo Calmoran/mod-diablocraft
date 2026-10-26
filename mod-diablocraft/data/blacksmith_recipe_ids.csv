@@ -1,0 +1,14 @@
+slot,recipe_id
+head,1
+shoulders,2
+neck,3
+torso,4
+waist,5
+hands,6
+wrists,7
+legs,8
+feet,9
+leftfinger,10
+rightfinger,11
+mainhand,12
+offhand,13

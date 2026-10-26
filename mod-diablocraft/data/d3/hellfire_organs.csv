@@ -1,0 +1,5 @@
+d3_id,item_entry,name,displayid,item_level,max_stack,source
+DemonOrgan_SkeletonKing_x1,103200,Leoric's Regret,3320,60,2000000000,"Items_Other.gam (blizzless-diiis 6292f950; Core.mpq): item level 60, max stack 2,000,000,000, a crafting material like Forgotten Soul; name from data/d3/jeweler.csv hellfire_ring rows; icon is a stock INV_Misc_Organ placeholder"
+DemonOrgan_Ghom_x1,103201,Vial of Putridness,3308,60,2000000000,"Items_Other.gam (blizzless-diiis 6292f950; Core.mpq): item level 60, max stack 2,000,000,000; name from data/d3/jeweler.csv hellfire_ring rows; icon is a stock INV_Misc_Organ placeholder"
+DemonOrgan_SiegeBreaker_x1,103202,Idol of Terror,1040,60,2000000000,"Items_Other.gam (blizzless-diiis 6292f950; Core.mpq): item level 60, max stack 2,000,000,000; name from data/d3/jeweler.csv hellfire_ring rows; icon is a stock INV_Misc_Idol placeholder"
+DemonOrgan_Diablo_x1,103203,Heart of Evil,4278,60,2000000000,"Items_Other.gam (blizzless-diiis 6292f950; Core.mpq): item level 60, max stack 2,000,000,000; name from data/d3/jeweler.csv hellfire_ring rows; icon is a stock INV_Misc_Organ placeholder"

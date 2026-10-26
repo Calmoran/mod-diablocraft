@@ -1,0 +1,85 @@
+skill,category,class
+Ignore Pain,8100,barbarian
+Ground Stomp,8101,barbarian
+Leap,8102,barbarian
+Furious Charge,8103,barbarian
+Avalanche,8104,barbarian
+Overpower,8105,barbarian
+War Cry,8106,barbarian
+Threatening Shout,8107,barbarian
+Wrath of the Berserker,8108,barbarian
+Call of the Ancients,8109,barbarian
+Earthquake,8110,barbarian
+Frost Nova,8200,wizard
+Diamond Skin,8201,wizard
+Slow Time,8202,wizard
+Teleport,8203,wizard
+Explosive Blast,8204,wizard
+Mirror Image,8205,wizard
+Archon,8206,wizard
+Black Hole,8207,wizard
+Wave of Force,8208,wizard
+Meteor,8209,wizard
+Blinding Flash,8300,monk
+Breath of Heaven,8301,monk
+Serenity,8302,monk
+Inner Sanctuary,8303,monk
+Dashing Strike,8304,monk
+Seven-Sided Strike,8305,monk
+Mystic Ally,8306,monk
+Epiphany,8307,monk
+Command Golem,8400,necromancer
+Army of the Dead,8401,necromancer
+Land of the Dead,8402,necromancer
+Bone Armor,8403,necromancer
+Bone Spirit,8404,necromancer
+Blood Rush,8405,necromancer
+Simulacrum,8406,necromancer
+Shield Glare,8500,crusader
+Iron Skin,8501,crusader
+Consecration,8502,crusader
+Judgment,8503,crusader
+Provoke,8504,crusader
+Steed Charge,8505,crusader
+Condemn,8506,crusader
+Laws of Valor,8507,crusader
+Laws of Justice,8508,crusader
+Laws of Hope,8509,crusader
+Falling Sword,8510,crusader
+Akarat's Champion,8511,crusader
+Heaven's Fury,8512,crusader
+Bombardment,8513,crusader
+Smoke Screen,8600,demon_hunter
+Preparation,8601,demon_hunter
+Companion,8602,demon_hunter
+Fan of Knives,8603,demon_hunter
+Sentry,8604,demon_hunter
+Vengeance,8605,demon_hunter
+Rain of Vengeance,8606,demon_hunter
+Vault,8607,demon_hunter
+Grasp of the Dead,8700,witch_doctor
+Summon Zombie Dogs,8701,witch_doctor
+Horrify,8702,witch_doctor
+Spirit Walk,8703,witch_doctor
+Hex,8704,witch_doctor
+Soul Harvest,8705,witch_doctor
+Mass Confusion,8706,witch_doctor
+Wall of Death,8707,witch_doctor
+Piranhas,8708,witch_doctor
+Gargantuan,8709,witch_doctor
+Big Bad Voodoo,8710,witch_doctor
+Fetish Army,8711,witch_doctor
+Thunderstorm,8800,shaman
+Ghost Wolf,8801,shaman
+Elemental Shield,8802,shaman
+Purge,8803,shaman
+Earthbind Totem,8804,shaman
+Healing Stream Totem,8805,shaman
+Tempest Totem,8806,shaman
+Spirit Link,8807,shaman
+Call of the Ancestors,8808,shaman
+Spirit Wolves,8809,shaman
+Bloodlust,8810,shaman
+Fire Elemental,8811,shaman
+Earth Elemental,8812,shaman
+Ascendance,8813,shaman

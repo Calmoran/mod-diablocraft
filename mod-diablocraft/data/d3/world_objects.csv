@@ -1,0 +1,11 @@
+entry,display_id,name,size,notes
+910090,9700,Azjol-Nerub Stairs,1,"Type 5 (generic, a decoration; nothing is spawned, the designer places it with the editor or .gobject add 910090). Entry in the 9100xx object block, free in every sheet and migration (910000-910046, 910060-910062, 910070-910086 used by other objects)."
+910091,264,Red Aura,1.0,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 264."
+910092,7060,Platform,2.2,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 7060."
+910093,264,Red Aura (small),0.5,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 264."
+910094,4152,Ritual Candle,1.0,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 4152."
+910095,6893,The Book of the Dead,1.5,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 6893."
+910096,164,Musty Scroll,1.0,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 164."
+910097,2230,Zone Wall,2.0,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 2230, the model of stock gameobject 194935 Blocked Passage (ruling q-1013-20)."
+910098,2230,Zone Wall (large),3.0,"Type 5 (generic, a decoration; nothing is spawned). Wears stock display 2230, the model of stock gameobject 194935 Blocked Passage (ruling q-1013-20)."
+910099,8365,Orb candidate,1.0,"Type 5 (generic, a decoration; nothing is spawned by data). The stock orb pick round's object (diablocraft-xwwg9): .dc orbrow spawns it once per candidate look and sets each copy's display id and scale, so one template serves every candidate; wears stock display 8365 (Blood Orb) by default."

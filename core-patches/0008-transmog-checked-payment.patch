@@ -1,0 +1,84 @@
+Reason: Persist cosmetic purchases before charging and reject failed payments (the designer's approved free-cosmetic failure policy).
+
+--- a/src/Transmogrification.h
++++ b/src/Transmogrification.h
+@@ -304,3 +304,3 @@
+     void DeleteFakeEntry(Player* player, uint8 slot, Item* itemTransmogrified, CharacterDatabaseTransaction* trans = nullptr);
+-    void SetFakeEntry(Player* player, uint32 newEntry, uint8 slot, Item* itemTransmogrified);
++    bool SetFakeEntry(Player* player, uint32 newEntry, uint8 slot, Item* itemTransmogrified);
+     bool AddCollectedAppearance(uint32 accountId, uint32 itemId);
+--- a/src/Transmogrification.cpp
++++ b/src/Transmogrification.cpp
+@@ -458,8 +458,12 @@
+-void Transmogrification::SetFakeEntry(Player* player, uint32 newEntry, uint8 /*slot*/, Item* itemTransmogrified)
++bool Transmogrification::SetFakeEntry(Player* player, uint32 newEntry, uint8 /*slot*/, Item* itemTransmogrified)
+ {
+     ObjectGuid itemGUID = itemTransmogrified->GetGUID();
++    auto transaction = CharacterDatabase.BeginTransaction();
++    transaction->Append("REPLACE INTO custom_transmogrification (GUID, FakeEntry, Owner) VALUES ({}, {}, {})", itemGUID.GetCounter(), newEntry, player->GetGUID().GetCounter());
++    if (!CharacterDatabase.AsyncCommitTransaction(transaction).m_future.get())
++        return false;
+     entryMap[player->GetGUID()][itemGUID] = newEntry;
+     dataMap[itemGUID] = player->GetGUID();
+-    CharacterDatabase.Execute("REPLACE INTO custom_transmogrification (GUID, FakeEntry, Owner) VALUES ({}, {}, {})", itemGUID.GetCounter(), newEntry, player->GetGUID().GetCounter());
+     UpdateItem(player, itemTransmogrified);
++    return true;
+ }
+@@ -574,5 +579,8 @@
+-                player->ModifyMoney(-cost, false);
+             }
+         }
+-        SetFakeEntry(player, HIDDEN_ITEM_ID, slot, itemTransmogrified); // newEntry
++        if (!SetFakeEntry(player, HIDDEN_ITEM_ID, slot, itemTransmogrified))
++            return LANG_TRANSMOG_MISSING_DEST_ITEM;
++        // A failed charge may leave a free cosmetic, never charge for a failed write.
++        if (!HiddenTransmogIsFree && cost > 0 && !player->ModifyMoney(-int64(cost), false))
++            return LANG_TRANSMOG_NOT_ENOUGH_MONEY;
+         return LANG_TRANSMOG_OK;
+@@ -598,4 +606,2 @@
+-                if (player->HasItemCount(TokenEntry, TokenAmount))
+-                    player->DestroyItemCount(TokenEntry, TokenAmount, true);
+-                else
++                if (!player->HasItemCount(TokenEntry, TokenAmount))
+                     return LANG_TRANSMOG_NOT_ENOUGH_TOKENS;
+@@ -617,9 +623,13 @@
+-                    player->ModifyMoney(-cost, false);
+                 }
+             }
+         }
+ 
+         // Custom
+-        SetFakeEntry(player, itemTransmogrifier->GetEntry(), slot, itemTransmogrified); // newEntry
++        if (!SetFakeEntry(player, itemTransmogrifier->GetEntry(), slot, itemTransmogrified))
++            return LANG_TRANSMOG_MISSING_DEST_ITEM;
++        if (!no_cost && cost > 0 && !player->ModifyMoney(-int64(cost), false))
++            return LANG_TRANSMOG_NOT_ENOUGH_MONEY;
++        if (!no_cost && RequireToken)
++            player->DestroyItemCount(TokenEntry, TokenAmount, true);
+ 
+         itemTransmogrified->UpdatePlayedTime(player);
+--- a/src/transmog_scripts.cpp
++++ b/src/transmog_scripts.cpp
+@@ -472,11 +472,17 @@
+                 std::ostringstream ss;
+                 for (std::map<uint8, uint32>::iterator it = items.begin(); it != items.end(); ++it)
+                 {
+                     ss << uint32(it->first) << ' ' << it->second << ' ';
+-                    sT->presetById[player->GetGUID()][presetID][it->first] = it->second;
+                 }
+-                sT->presetByName[player->GetGUID()][presetID] = name; // Make sure code doesnt mess up SQL!
+-                CharacterDatabase.Execute("REPLACE INTO `custom_transmogrification_sets` (`Owner`, `PresetID`, `SetName`, `SetData`) VALUES ({}, {}, \"{}\", \"{}\")", player->GetGUID().GetCounter(), uint32(presetID), name, ss.str());
+-                if (cost)
+-                    player->ModifyMoney(-cost);
++                auto transaction = CharacterDatabase.BeginTransaction();
++                transaction->Append("REPLACE INTO `custom_transmogrification_sets` (`Owner`, `PresetID`, `SetName`, `SetData`) VALUES ({}, {}, \"{}\", \"{}\")", player->GetGUID().GetCounter(), uint32(presetID), name, ss.str());
++                if (!CharacterDatabase.AsyncCommitTransaction(transaction).m_future.get())
++                    break;
++                if (cost > 0 && !player->ModifyMoney(-int64(cost)))
++                {
++                    ChatHandler(player->GetSession()).SendNotification(Tstr(player->GetSession(), LANG_TRANSMOG_NOT_ENOUGH_MONEY));
++                    break;
++                }
++                sT->presetById[player->GetGUID()][presetID] = items;
++                sT->presetByName[player->GetGUID()][presetID] = name;
+                 break;

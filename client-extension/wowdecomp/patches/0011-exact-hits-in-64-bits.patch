@@ -1,0 +1,303 @@
+diff --git a/WoW/Source/Object/ObjectClient/UnitCombatLog_C.cpp b/WoW/Source/Object/ObjectClient/UnitCombatLog_C.cpp
+index e9a116a..d3f8919 100644
+--- a/WoW/Source/Object/ObjectClient/UnitCombatLog_C.cpp
++++ b/WoW/Source/Object/ObjectClient/UnitCombatLog_C.cpp
+@@ -251,16 +251,17 @@ void SendToCombatText(int32_t type, const char* text, int32_t amount, int32_t ov
+ 
+ // VERIFY: 41c0dd5e auto
+ // OFFSET: 0x0074D4C0
+-void SendToCombatText(int32_t type, uint32_t amount, int32_t overflow) {
+-    // Torment: the amount is unsigned and sent as %u, so a hit of 4,294,967,295 shows that number, not -1.
+-    FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%u%d", s_combatTextTypes[type], amount, overflow);
++void SendToCombatText(int32_t type, uint64_t amount, int32_t overflow) {
++    // Torment: the amount is unsigned and 64 bits wide, sent to Lua as a number (%f, a double: exact to 2^53), so a hit of
++    // 10,000,000,000 shows that number, and one of 4,294,967,295 not -1.
++    FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%f%d", s_combatTextTypes[type], static_cast<double>(amount), overflow);
+ }
+ 
+ // VERIFY: 832fb9f0 auto
+ // OFFSET: 0x0074D4F0
+-void SendToCombatText(int32_t type, uint32_t amount) {
+-    // Torment: unsigned, %u, as above.
+-    FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%u", s_combatTextTypes[type], amount);
++void SendToCombatText(int32_t type, uint64_t amount) {
++    // Torment: unsigned, 64 bits, as above.
++    FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%f", s_combatTextTypes[type], static_cast<double>(amount));
+ }
+ 
+ // VERIFY: 4c54569b auto
+@@ -2373,17 +2374,16 @@ void UnitCombatLogAuraRefreshed(CGUnit_C* unit, const AuraData* aura, int32_t sp
+     UnitCombatLogSpellMechanic(unitGuid, aura, &spell);
+ }
+ 
+-// Torment: damage and overkill are uint32_t, as the packet carries them, all the way to the log and the text, so
+-// the server's clamp of 4,294,967,295 shows as that number and not -1 (GitHub #111).
++// Torment: damage and overkill are uint64_t, as the rebuilt client's packets carry them (docs/contracts/life-64bit-wire.md),
++// all the way to the log and the text: a hit of 10,000,000,000 shows that number, and one of 4,294,967,295 not -1 (GitHub #111).
+ // VERIFY: 9d679be0 manual
+ // OFFSET: 0x00750660
+-void SendDamageEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, uint32_t damage, uint32_t overkill, uint32_t school, int32_t resisted, int32_t blocked, int32_t absorbed, bool crit, bool a11, bool a12, uint32_t timeOffset) {
++void SendDamageEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, uint64_t damage, uint64_t overkill, uint32_t school, int32_t resisted, int32_t blocked, int32_t absorbed, bool crit, bool a11, bool a12, uint32_t timeOffset) {
+     if (event != 1) {
+         CGUnit_C* unit = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(dest, TYPEMASK_UNIT, __FILE__, __LINE__));
+ 
+         if (unit) {
+-            // The predicted Life is still 32-bit: the same int32_t delta as before.
+-            unit->ModifyPredictedHealth(-static_cast<int32_t>(damage));
++            unit->ModifyPredictedHealth(-static_cast<int64_t>(damage));
+         }
+     }
+ 
+@@ -2403,7 +2403,7 @@ void SendDamageEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest,
+     }
+ 
+     if (resisted > 0) {
+-        FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%u%d", s_combatTextTypes[event == 9 ? 22 : 10], damage, resisted);
++        FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%f%d", s_combatTextTypes[event == 9 ? 22 : 10], static_cast<double>(damage), resisted);
+     } else if (blocked) {
+         SendToCombatText(event == 9 ? 23 : 11, damage, blocked);
+     } else if (absorbed) {
+@@ -2417,10 +2417,10 @@ void SendDamageEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest,
+     }
+ }
+ 
+-// Torment: damage and overkill unsigned, as in SendDamageEvent.
++// Torment: damage and overkill unsigned and 64 bits, as in SendDamageEvent.
+ // VERIFY: d14d7c4f manual
+ // OFFSET: 0x00751C40
+-void UnitCombatLogSpellDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint32_t damage, uint32_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, bool periodic, uint32_t timeOffset) {
++void UnitCombatLogSpellDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint64_t damage, uint64_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, bool periodic, uint32_t timeOffset) {
+     SpellRec spell;
+ 
+     if (!g_spellDB.GetRecord(spellId, &spell) || (spell.m_attributes & 0x180) || !*spell.m_name) {
+@@ -2477,10 +2477,10 @@ void UnitCombatLogSpellDamage(const WOWGUID& source, const WOWGUID& dest, int32_
+     }
+ }
+ 
+-// Torment: damage and overkill unsigned, as in SendDamageEvent.
++// Torment: damage and overkill unsigned and 64 bits, as in SendDamageEvent.
+ // VERIFY: 9129ea05 manual
+ // OFFSET: 0x00752DE0
+-void UnitCombatLogSplitDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint32_t damage, uint32_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, uint32_t timeOffset) {
++void UnitCombatLogSplitDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint64_t damage, uint64_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, uint32_t timeOffset) {
+     SpellRec spell;
+ 
+     if (!g_spellDB.GetRecord(spellId, &spell) || (spell.m_attributes & 0x180) || !*spell.m_name) {
+@@ -2490,7 +2490,7 @@ void UnitCombatLogSplitDamage(const WOWGUID& source, const WOWGUID& dest, int32_
+     SendDamageEvent(42, source, dest, &spell, damage, overkill, school, resisted, blocked, absorbed, (hitInfo >> 1) & 1, false, false, timeOffset);
+ 
+     if (s_combatTextActiveUnit == dest) {
+-        FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%u", s_combatTextTypes[42], damage);
++        FrameScript_SignalEvent(SCRIPT_EVENT_COMBAT_TEXT_UPDATE, "%s%f", s_combatTextTypes[42], static_cast<double>(damage));
+     }
+ }
+ 
+@@ -2525,6 +2525,8 @@ int32_t CombatLog::HandleSpellRemoveLog(NETMESSAGE msgId, CDataStore* msg, int32
+     return 1;
+ }
+ 
++// Torment: the rebuilt client's SMSG_SPELLNONMELEEDAMAGELOG carries the hit and its overkill as 64 bits (core patch 0028,
++// docs/contracts/life-64bit-wire.md); absorbed, resisted and blocked stay 32 bits.
+ // VERIFY: f5db08bc manual
+ // OFFSET: 0x006D3840
+ int32_t CombatLog::HandleSpellNonMeleeDamageLog(CDataStore* msg, int32_t timeOffset) {
+@@ -2534,9 +2536,9 @@ int32_t CombatLog::HandleSpellNonMeleeDamageLog(CDataStore* msg, int32_t timeOff
+     *msg >> caster;
+     uint32_t spellId = 0;
+     msg->Get(spellId);
+-    uint32_t damage = 0;
++    uint64_t damage = 0;
+     msg->Get(damage);
+-    uint32_t overkill = 0;
++    uint64_t overkill = 0;
+     msg->Get(overkill);
+     uint8_t schoolByte = 0;
+     msg->Get(schoolByte);
+@@ -2659,9 +2661,10 @@ int32_t CombatLog::HandlePeriodicAuraLog(CDataStore* msg, int32_t timeOffset) {
+         switch (auraType) {
+             case 3:
+             case 89: {
+-                uint32_t damage = 0;
++                // Torment: the damage and the overkill of a periodic damage tick are 64 bits (core patch 0028).
++                uint64_t damage = 0;
+                 msg->Get(damage);
+-                uint32_t overkill = 0;
++                uint64_t overkill = 0;
+                 msg->Get(overkill);
+                 uint32_t school = 0;
+                 msg->Get(school);
+diff --git a/WoW/Source/Object/ObjectClient/UnitCombatLog_C.h b/WoW/Source/Object/ObjectClient/UnitCombatLog_C.h
+index e258517..1e941b8 100644
+--- a/WoW/Source/Object/ObjectClient/UnitCombatLog_C.h
++++ b/WoW/Source/Object/ObjectClient/UnitCombatLog_C.h
+@@ -144,8 +144,8 @@ void __stdcall CheckToSanitizeUnitLowGuid(WOWGUID* guid);
+ int32_t IsCombatTextActiveUnit(WOWGUID guid);
+ void SendToCombatText(int32_t type, const char* text, int32_t amount);
+ void SendToCombatText(int32_t type, const char* text, int32_t amount, int32_t overflow);
+-void SendToCombatText(int32_t type, uint32_t amount, int32_t overflow);
+-void SendToCombatText(int32_t type, uint32_t amount);
++void SendToCombatText(int32_t type, uint64_t amount, int32_t overflow);
++void SendToCombatText(int32_t type, uint64_t amount);
+ void SendToCombatText(int32_t type, const char* text);
+ void SendToCombatText(int32_t type);
+ void UnitCombatLogAuraAddedOrRemoved(CGUnit_C* unit, AuraData* aura, const SpellRec* spell, uint8_t harmful, int32_t added);
+@@ -157,9 +157,9 @@ void UnitCombatLogEnergize(const WOWGUID& casterGuid, const WOWGUID& targetGuid,
+ void SendHealEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, int32_t amount, int32_t overheal, int32_t absorbed, bool crit, uint32_t timeOffset);
+ void SendEnergizeEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, int32_t powerType, int32_t amount, uint32_t timeOffset);
+ void AddPowerDrainEntry(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, int32_t amount, int32_t powerType, int32_t extra, uint32_t timeOffset);
+-void SendDamageEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, uint32_t damage, uint32_t overkill, uint32_t school, int32_t resisted, int32_t blocked, int32_t absorbed, bool crit, bool a11, bool a12, uint32_t timeOffset);
+-void UnitCombatLogSpellDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint32_t damage, uint32_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, bool periodic, uint32_t timeOffset);
+-void UnitCombatLogSplitDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint32_t damage, uint32_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, uint32_t timeOffset);
++void SendDamageEvent(int32_t event, const WOWGUID& source, const WOWGUID& dest, const SpellRec* spell, uint64_t damage, uint64_t overkill, uint32_t school, int32_t resisted, int32_t blocked, int32_t absorbed, bool crit, bool a11, bool a12, uint32_t timeOffset);
++void UnitCombatLogSpellDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint64_t damage, uint64_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, bool periodic, uint32_t timeOffset);
++void UnitCombatLogSplitDamage(const WOWGUID& source, const WOWGUID& dest, int32_t spellId, uint64_t damage, uint64_t overkill, uint32_t school, int32_t absorbed, int32_t resisted, int32_t blocked, uint32_t hitInfo, uint32_t timeOffset);
+ void UnitCombatLogSpellMechanic(const WOWGUID& guid, const AuraData* aura, const SpellRec* spell);
+ bool SpellIsHiddenInCombatLog(const SpellRec* spell);
+ bool SpellHasOpenLockEffect(const SpellRec* spell);
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.cpp b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+index 9319915..020d40f 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.cpp
++++ b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+@@ -16044,10 +16044,10 @@ void CGUnit_C::AddWorldText(const WOWGUID& source, int32_t reason, const SpellRe
+     }
+ }
+ 
+-// Torment: amount is uint32_t and printed %u, so a hit of 4,294,967,295 floats as that number, not -1 (GitHub #111).
++// Torment: amount is uint64_t and printed %llu, so a hit of 10,000,000,000 floats as that number, and one of 4,294,967,295 not -1 (GitHub #111).
+ // VERIFY: 813b4b44 manual
+ // OFFSET: 0x00722340
+-void CGUnit_C::AddWorldDamageText(const WOWGUID& source, uint32_t amount, const SpellRec* spell, bool crit, bool periodic, bool spellColor) {
++void CGUnit_C::AddWorldDamageText(const WOWGUID& source, uint64_t amount, const SpellRec* spell, bool crit, bool periodic, bool spellColor) {
+     // Torment: the addon may draw this number instead (TormentDamageTextTake).
+     TormentDamageTextScope tormentHit(this, source, torment::damage_text::Kind::Damage, amount, spell, crit, periodic);
+     bool melee = !spellColor && (!spell || (spell->m_attributesExC & 0x8000));
+@@ -16058,7 +16058,7 @@ void CGUnit_C::AddWorldDamageText(const WOWGUID& source, uint32_t amount, const
+     }
+ 
+     char text[32];
+-    SStrPrintf(text, sizeof(text), "%u", amount);
++    SStrPrintf(text, sizeof(text), "%llu", static_cast<unsigned long long>(amount));
+     const CImVector* color;
+ 
+     if (melee) {
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.h b/WoW/Source/Object/ObjectClient/Unit_C.h
+index 01525a9..64e4e0e 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.h
++++ b/WoW/Source/Object/ObjectClient/Unit_C.h
+@@ -1006,7 +1006,7 @@ class CGUnit_C : public CGObject_C, public CGUnit {
+     void FaceTarget(const WOWGUID& target, int32_t flush);
+     int32_t DeferVehicleTransitionSpline(CDataStore* msg, uint64_t transport, uint8_t seat);
+     int32_t VehiclePassengerShouldWaitForVehicleTransitionAnim(uint64_t transport, uint8_t seat) const;
+-    void AddWorldDamageText(const WOWGUID& source, uint32_t amount, const SpellRec* spell, bool crit, bool periodic, bool spellColor);
++    void AddWorldDamageText(const WOWGUID& source, uint64_t amount, const SpellRec* spell, bool crit, bool periodic, bool spellColor);
+     void UpdateSpellCastBars(uint32_t time);
+     void OnChannelUpdate(int32_t remaining);
+     void ClearUIChannel();
+diff --git a/WoW/Source/Ui/GameUI.cpp b/WoW/Source/Ui/GameUI.cpp
+index 508e1f8..a78cd2f 100644
+--- a/WoW/Source/Ui/GameUI.cpp
++++ b/WoW/Source/Ui/GameUI.cpp
+@@ -4568,11 +4568,12 @@ void CGGameUI::ShowHealingFeedback(const WOWGUID& guid, int32_t amount, bool cri
+ void CGGameUI::ShowEnergizeFeedback(const WOWGUID& guid, int32_t powerType, int32_t amount) {
+ }
+ 
+-// Torment: amount is uint32_t and sent as %u, so the portrait shows a hit of 4,294,967,295 as that number, not -1,
+-// and keeps its CRITICAL word (GitHub #111). The test was amount <= 0; unsigned, that is amount == 0.
++// Torment: amount is uint64_t and sent to Lua as a number (%f, a double: exact to 2^53), so the portrait shows a hit of
++// 10,000,000,000 as that number, and one of 4,294,967,295 not -1, and keeps its CRITICAL word (GitHub #111). The test was
++// amount <= 0; unsigned, that is amount == 0.
+ // VERIFY: c776ed02 auto
+ // OFFSET: 0x005132C0
+-void CGGameUI::SignalUnitCombat(const WOWGUID& guid, const char* action, uint32_t amount, uint32_t schoolMask, uint32_t flags) {
++void CGGameUI::SignalUnitCombat(const WOWGUID& guid, const char* action, uint64_t amount, uint32_t schoolMask, uint32_t flags) {
+     const char* modifier = "";
+ 
+     if (amount == 0) {
+@@ -4595,7 +4596,7 @@ void CGGameUI::SignalUnitCombat(const WOWGUID& guid, const char* action, uint32_
+     char** tokens = Script_GetTokenIDsFromGUID(guid, &count);
+ 
+     for (int32_t i = 0; i < count; i++) {
+-        FrameScript_SignalEvent(SCRIPT_EVENT_UNIT_COMBAT, "%s%s%s%u%d", tokens[i], action, modifier, amount, schoolMask);
++        FrameScript_SignalEvent(SCRIPT_EVENT_UNIT_COMBAT, "%s%s%s%f%d", tokens[i], action, modifier, static_cast<double>(amount), schoolMask);
+     }
+ }
+ 
+@@ -4673,10 +4674,10 @@ void CGGameUI::CastSpiritHealSpell() {
+     }
+ }
+ 
+-// Torment: amount unsigned, as SignalUnitCombat.
++// Torment: amount unsigned and 64 bits, as SignalUnitCombat.
+ // VERIFY: cd2d4923 auto
+ // OFFSET: 0x00513380
+-void CGGameUI::ShowCombatFeedback(const WOWGUID& guid, uint32_t amount, uint32_t schoolMask, uint32_t flags) {
++void CGGameUI::ShowCombatFeedback(const WOWGUID& guid, uint64_t amount, uint32_t schoolMask, uint32_t flags) {
+     CGGameUI::SignalUnitCombat(guid, "WOUND", amount, schoolMask, flags);
+ }
+ 
+diff --git a/WoW/Source/Ui/GameUI.h b/WoW/Source/Ui/GameUI.h
+index 1334446..33da016 100644
+--- a/WoW/Source/Ui/GameUI.h
++++ b/WoW/Source/Ui/GameUI.h
+@@ -252,11 +252,11 @@ class CGGameUI {
+     static void HandleDisplaySizeChanged(const CSizeEvent& evt);
+     static void DisplayError(UIErrors error, ...);
+     static int32_t IsAutoLooting();
+-    static void ShowCombatFeedback(const WOWGUID& guid, uint32_t amount, uint32_t schoolMask, uint32_t flags);
++    static void ShowCombatFeedback(const WOWGUID& guid, uint64_t amount, uint32_t schoolMask, uint32_t flags);
+     static void ShowSpellMissFeedback(const WOWGUID& guid, int32_t reason);
+     static void ShowHealingFeedback(const WOWGUID& guid, int32_t amount, bool crit);
+     static void ShowEnergizeFeedback(const WOWGUID& guid, int32_t powerType, int32_t amount);
+-    static void SignalUnitCombat(const WOWGUID& guid, const char* action, uint32_t amount, uint32_t schoolMask, uint32_t flags);
++    static void SignalUnitCombat(const WOWGUID& guid, const char* action, uint64_t amount, uint32_t schoolMask, uint32_t flags);
+     static void ShowCombatFeedbackAttackRoundInfo(const ATTACKROUNDINFO* info);
+     static void HandleFocusChanged(const CFocusEvent& evt);
+     static int32_t Idle(const void* data, void* param);
+diff --git a/WoW/Source/Ui/Torment/DamageTextQueue.h b/WoW/Source/Ui/Torment/DamageTextQueue.h
+index fc01276..6feaafa 100644
+--- a/WoW/Source/Ui/Torment/DamageTextQueue.h
++++ b/WoW/Source/Ui/Torment/DamageTextQueue.h
+@@ -21,7 +21,7 @@ namespace torment::damage_text
+     struct Hit
+     {
+         Kind kind = Kind::Damage;
+-        uint32_t amount = 0;
++        uint64_t amount = 0;  // the hit, 64 bits since the rebuilt client reads the server's 64-bit hit; Lua gets it as a double
+         uint32_t school = 0;
+         bool crit = false;
+         bool periodic = false;
+diff --git a/WoW/Source/Ui/Torment/TormentScripts.cpp b/WoW/Source/Ui/Torment/TormentScripts.cpp
+index ecd6b16..98cdc16 100644
+--- a/WoW/Source/Ui/Torment/TormentScripts.cpp
++++ b/WoW/Source/Ui/Torment/TormentScripts.cpp
+@@ -64,7 +64,7 @@ namespace {
+         }
+ 
+         lua_pushstring(L, KindName(hit.kind));
+-        lua_pushnumber(L, hit.amount);
++        lua_pushnumber(L, static_cast<lua_Number>(hit.amount));
+         lua_pushnumber(L, hit.school);
+         lua_pushboolean(L, hit.crit);
+         lua_pushboolean(L, hit.periodic);
+@@ -120,7 +120,7 @@ void TormentScriptsRegister() {
+     s_reader.Reset();
+ }
+ 
+-TormentDamageTextScope::TormentDamageTextScope(CGUnit_C* unit, const WOWGUID& source, torment::damage_text::Kind kind, uint32_t amount, const SpellRec* spell, bool crit, bool periodic) {
++TormentDamageTextScope::TormentDamageTextScope(CGUnit_C* unit, const WOWGUID& source, torment::damage_text::Kind kind, uint64_t amount, const SpellRec* spell, bool crit, bool periodic) {
+     s_pendingHit.unit = unit;
+     dt::Hit& hit = s_pendingHit.hit;
+     hit = dt::Hit();
+diff --git a/WoW/Source/Ui/Torment/TormentScripts.h b/WoW/Source/Ui/Torment/TormentScripts.h
+index 2d2ecf1..51127cf 100644
+--- a/WoW/Source/Ui/Torment/TormentScripts.h
++++ b/WoW/Source/Ui/Torment/TormentScripts.h
+@@ -21,7 +21,7 @@ void TormentScriptsRegister();
+ // instead. Main thread only, as the combat log is.
+ class TormentDamageTextScope {
+     public:
+-    TormentDamageTextScope(CGUnit_C* unit, const WOWGUID& source, torment::damage_text::Kind kind, uint32_t amount, const SpellRec* spell, bool crit, bool periodic);
++    TormentDamageTextScope(CGUnit_C* unit, const WOWGUID& source, torment::damage_text::Kind kind, uint64_t amount, const SpellRec* spell, bool crit, bool periodic);
+     ~TormentDamageTextScope();
+     TormentDamageTextScope(const TormentDamageTextScope&) = delete;
+     TormentDamageTextScope& operator=(const TormentDamageTextScope&) = delete;

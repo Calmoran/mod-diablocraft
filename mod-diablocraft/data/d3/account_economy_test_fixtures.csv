@@ -1,0 +1,2 @@
+kind,entry,name,related_entry,copper,source
+money_quest,11545,A Charitable Donation,25112,100000,Installed acore_world quest_template and creature_questender read 2026-09-07; acceptance fixture only; RewardMoney=-100000 RewardMoneyDifficulty=0 RewardXPDifficulty=0

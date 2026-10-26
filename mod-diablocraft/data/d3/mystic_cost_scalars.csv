@@ -1,0 +1,11 @@
+use_count,scalar_tenths,source
+1,12,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 1.2; charged on the first paid roll (mystic-enchant.md 10.1: 39478/33839 = 1.4/1.2)"
+2,14,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 1.4; the second paid roll"
+5,20,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 2.0; rolls 3 and 4 are the straight line from 1.4 to 2.0"
+10,60,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 6.0; rolls 6 to 9 are the straight line from 2.0 to 6.0"
+20,180,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 18.0; every doubling of the roll number triples the scalar from here"
+40,540,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 54.0"
+80,1620,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 162.0"
+160,4860,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 486.0"
+320,14580,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 1458.0"
+640,43740,"x1_EnchantItemAffixUseCountCostScalars.gam (SNO 346698), 4374.0; the table ends here, a roll past it is refused"

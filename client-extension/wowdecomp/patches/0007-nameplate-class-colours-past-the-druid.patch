@@ -1,0 +1,48 @@
+diff --git a/WoW/Source/Ui/NamePlateFrame.cpp b/WoW/Source/Ui/NamePlateFrame.cpp
+index cc7e3e9..e43de76 100644
+--- a/WoW/Source/Ui/NamePlateFrame.cpp
++++ b/WoW/Source/Ui/NamePlateFrame.cpp
+@@ -40,19 +40,26 @@ static CImVector s_hostileColor = CImVector(0x00, 0x00, 0xFF, 0xFF);
+ static CImVector s_levelTextColor = CImVector(0xFF, 0xFF, 0xFF, 0xFF);
+ 
+ // STATIC: 0x00B2DA20
+-static CImVector s_classColors[12] = {
++// Torment: one entry per class id through the Witch Doctor (14), indexed by class id; the stock table stopped at the
++// Druid (11), so a Monk, Necromancer or Witch Doctor nameplate read past its end. The classes in mod-diablocraft/data/class_colours.csv
++// take its hex (CImVector is b, g, r, a): Barbarian (Warrior), Crusader (Paladin), Demon Hunter (Hunter), Wizard
++// (Mage), Shaman, Monk, Necromancer, Witch Doctor. The others keep the stock bytes. A class id past the table falls back below.
++static CImVector s_classColors[15] = {
+     CImVector(0x00, 0x00, 0x00, 0xFF),
+-    CImVector(0x6D, 0x9B, 0xC6, 0xFF),
+-    CImVector(0xBA, 0x8C, 0xF4, 0xFF),
+-    CImVector(0x72, 0xD3, 0xAA, 0xFF),
++    CImVector(0x2F, 0x3B, 0xFF, 0xFF), // 1 Barbarian #FF3B2F
++    CImVector(0x35, 0xE1, 0xFF, 0xFF), // 2 Crusader #FFE135
++    CImVector(0xFF, 0x61, 0xB0, 0xFF), // 3 Demon Hunter #B061FF
+     CImVector(0x68, 0xF4, 0xFF, 0xFF),
+     CImVector(0xFF, 0xFF, 0xFF, 0xFF),
+     CImVector(0x3A, 0x1E, 0xC4, 0xFF),
+-    CImVector(0xDD, 0x70, 0x00, 0xFF),
++    CImVector(0xDE, 0x70, 0x00, 0xFF), // 7 Shaman #0070DE
+-    CImVector(0xEF, 0xCC, 0x68, 0xFF),
++    CImVector(0xFF, 0x8D, 0x3D, 0xFF), // 8 Wizard #3D8DFF
+     CImVector(0xC9, 0x82, 0x93, 0xFF),
+     CImVector(0x00, 0x00, 0x00, 0xFF),
+     CImVector(0x0A, 0x7C, 0xFF, 0xFF),
++    CImVector(0x0A, 0x7D, 0xFF, 0xFF), // 12 Monk #FF7D0A
++    CImVector(0xC8, 0xD8, 0x1F, 0xFF), // 13 Necromancer #1FD8C8
++    CImVector(0x3E, 0xDB, 0x4C, 0xFF), // 14 Witch Doctor #4CDB3E
+ };
+ 
+ // STATIC: 0x00B2DA70
+@@ -358,7 +365,9 @@ void CGNamePlateFrame::OnLayerUpdate(float elapsedSec) {
+ void CGNamePlateFrame::UpdateColorDisplay(CGUnit_C* unit) {
+     CGUnit_C* player = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(ClntObjMgrGetActivePlayer(), TYPEMASK_PLAYER, __FILE__, __LINE__));
+ 
+-    if (g_ShowClassColorInNameplateCVar->m_intValue && (unit->m_obj->m_type & TYPEMASK_PLAYER) && unit->UnitReaction(player) <= 1) {
++    // Torment: a class id with no entry takes the hostile colour, never the bytes past the table.
++    if (g_ShowClassColorInNameplateCVar->m_intValue && (unit->m_obj->m_type & TYPEMASK_PLAYER) && unit->UnitReaction(player) <= 1
++        && unit->m_unit->m_unitFieldBytes0[1] < sizeof(s_classColors) / sizeof(s_classColors[0])) {
+         this->m_healthBarColor = s_classColors[unit->m_unit->m_unitFieldBytes0[1]];
+     } else if (unit->UnitReaction(player) <= 1) {
+         this->m_healthBarColor = s_hostileColor;

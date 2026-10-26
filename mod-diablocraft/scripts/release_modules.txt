@@ -1,0 +1,12 @@
+# The third-party modules a release binary carries (one name per line).
+#
+# A release build (build.sh --release) and the release gate's tree link ONLY these from
+# the main core's modules/ folder; every other mod-* entry there is left out. A module
+# put into modules/ for dev (mod-gobject-editor, 2026-10-04) therefore reaches the dev
+# build (dev_realm.sh links everything) and never a release binary. To ship one, add its
+# line here in a reviewed change; the cut that carries the line carries the module.
+# mod-diablocraft is the repo's own module and is always linked; it is not listed.
+mod-ale
+mod-autobalance
+mod-heimdall
+mod-transmog

@@ -1,0 +1,1782 @@
+spell_id,name,element,base_spell,kind
+81000,Frenzy,physical,23881,active
+81001,Weapon Throw,physical,57755,active
+81002,Bash,physical,1464,active
+81003,Cleave,physical,845,active
+81004,Whirlwind,physical,1680,active
+81005,Ancient Spear,physical,64382,active
+81006,Seismic Slam,physical,46968,active
+81007,Hammer of the Ancients,physical,53595,active
+81008,Rend,physical,772,active
+81009,Sprint,physical,2983,active
+81010,Ignore Pain,physical,871,active
+81011,Ground Stomp,physical,20549,active
+81012,Leap,physical,6544,active
+81013,Furious Charge,physical,100,active
+81014,Avalanche,physical,55216,active
+81015,Overpower,physical,7384,active
+81016,Revenge,physical,6572,active
+81017,War Cry,physical,469,active
+81018,Battle Rage,physical,6673,active
+81019,Threatening Shout,physical,1160,active
+81020,Wrath of the Berserker,physical,19135,active
+81021,Call of the Ancients,physical,42650,active
+81022,Earthquake,fire,19798,active
+81023,Frenzy - Maniac,fire,23881,rune
+81024,Frenzy - Sidearm,cold,23881,rune
+81025,Frenzy - Vanguard,physical,23881,rune
+81026,Frenzy - Smite,lightning,23881,rune
+81027,Frenzy - Berserk,cold,23881,rune
+81028,Weapon Throw - Mighty Throw,lightning,57755,rune
+81029,Weapon Throw - Ricochet,fire,57755,rune
+81030,Weapon Throw - Throwing Hammer,physical,57755,rune
+81031,Weapon Throw - Balanced Weapon,fire,57755,rune
+81032,Weapon Throw - Stupefy,physical,57755,rune
+81033,Bash - Onslaught,lightning,1464,rune
+81034,Bash - Punish,physical,1464,rune
+81035,Bash - Frostbite,cold,1464,rune
+81036,Bash - Instigation,fire,1464,rune
+81037,Bash - Pulverize,fire,1464,rune
+81038,Cleave - Broad Sweep,lightning,845,rune
+81039,Cleave - Gathering Storm,cold,845,rune
+81040,Cleave - Scattering Blast,physical,845,rune
+81041,Cleave - Reaping Swing,fire,845,rune
+81042,Cleave - Rupture,fire,845,rune
+81043,Whirlwind - Volcanic Eruption,fire,1680,rune
+81044,Whirlwind - Dust Devils,physical,1680,rune
+81045,Whirlwind - Hurricane,cold,1680,rune
+81046,Whirlwind - Wind Shear,lightning,1680,rune
+81047,Whirlwind - Blood Funnel,physical,1680,rune
+81048,Ancient Spear - Harpoon,physical,64382,rune
+81049,Ancient Spear - Boulder Toss,physical,64382,rune
+81050,Ancient Spear - Jagged Edge,fire,64382,rune
+81051,Ancient Spear - Ranseur,physical,64382,rune
+81052,Ancient Spear - Rage Flip,physical,64382,rune
+81053,Seismic Slam - Shattered Ground,fire,46968,rune
+81054,Seismic Slam - Rumble,physical,46968,rune
+81055,Seismic Slam - Stagger,lightning,46968,rune
+81056,Seismic Slam - Strength from Earth,physical,46968,rune
+81057,Seismic Slam - Permafrost,cold,46968,rune
+81058,Hammer of the Ancients - Smash,fire,53595,rune
+81059,Hammer of the Ancients - Rolling Thunder,physical,53595,rune
+81060,Hammer of the Ancients - The Devil's Anvil,cold,53595,rune
+81061,Hammer of the Ancients - Birthright,physical,53595,rune
+81062,Hammer of the Ancients - Thunderstrike,lightning,53595,rune
+81063,Rend - Lacerate,lightning,772,rune
+81064,Rend - Ravage,fire,772,rune
+81065,Rend - Mutilate,cold,772,rune
+81066,Rend - Blood Lust,physical,772,rune
+81067,Rend - Bloodbath,physical,772,rune
+81068,Sprint - Marathon,physical,2983,rune
+81069,Sprint - Rush,physical,2983,rune
+81070,Sprint - Run Like the Wind,physical,2983,rune
+81071,Sprint - Forced March,physical,2983,rune
+81072,Sprint - Gangway,physical,2983,rune
+81073,Ignore Pain - Contempt for Weakness,physical,871,rune
+81074,Ignore Pain - Iron Hide,physical,871,rune
+81075,Ignore Pain - Mob Rule,physical,871,rune
+81076,Ignore Pain - Bravado,physical,871,rune
+81077,Ignore Pain - Ignorance is Bliss,physical,871,rune
+81078,Ground Stomp - Trembling Stomp,fire,20549,rune
+81079,Ground Stomp - Wrenching Smash,physical,20549,rune
+81080,Ground Stomp - Jarring Slam,physical,20549,rune
+81081,Ground Stomp - Foot of the Mountain,physical,20549,rune
+81082,Ground Stomp - Deafening Crash,cold,20549,rune
+81083,Leap - Call of Arreat,physical,6544,rune
+81084,Leap - Toppling Impact,physical,6544,rune
+81085,Leap - Launch,physical,6544,rune
+81086,Leap - Iron Impact,physical,6544,rune
+81087,Leap - Death from Above,physical,6544,rune
+81088,Furious Charge - Battering Ram,fire,100,rune
+81089,Furious Charge - Dreadnought,lightning,100,rune
+81090,Furious Charge - Cold Rush,cold,100,rune
+81091,Furious Charge - Stamina,physical,100,rune
+81092,Furious Charge - Merciless Assault,physical,100,rune
+81093,Avalanche - Glacier,cold,55216,rune
+81094,Avalanche - Snow-Capped Mountain,cold,55216,rune
+81095,Avalanche - Volcano,fire,55216,rune
+81096,Avalanche - Lahar,physical,55216,rune
+81097,Avalanche - Tectonic Rift,physical,55216,rune
+81098,Overpower - Killing Spree,lightning,7384,rune
+81099,Overpower - Storm of Steel,physical,7384,rune
+81100,Overpower - Revel,fire,7384,rune
+81101,Overpower - Momentum,physical,7384,rune
+81102,Overpower - Crushing Advance,cold,7384,rune
+81103,Revenge - Retribution,fire,6572,rune
+81104,Revenge - Provocation,physical,6572,rune
+81105,Revenge - Grudge,lightning,6572,rune
+81106,Revenge - Blood Law,physical,6572,rune
+81107,Revenge - Best Served Cold,cold,6572,rune
+81108,War Cry - Hardened Wrath,physical,469,rune
+81109,War Cry - Veteran's Warning,physical,469,rune
+81110,War Cry - Impunity,physical,469,rune
+81111,War Cry - Charge!,physical,469,rune
+81112,War Cry - Invigorate,physical,469,rune
+81113,Battle Rage - Marauder's Rage,physical,6673,rune
+81114,Battle Rage - Ferocity,physical,6673,rune
+81115,Battle Rage - Swords to Ploughshares,physical,6673,rune
+81116,Battle Rage - Into the Fray,physical,6673,rune
+81117,Battle Rage - Bloodshed,physical,6673,rune
+81118,Threatening Shout - Demoralize,physical,1160,rune
+81119,Threatening Shout - Intimidate,physical,1160,rune
+81120,Threatening Shout - Grim Harvest,physical,1160,rune
+81121,Threatening Shout - Falter,physical,1160,rune
+81122,Threatening Shout - Terrify,physical,1160,rune
+81123,Wrath of the Berserker - Insanity,physical,19135,rune
+81124,Wrath of the Berserker - Arreat's Wail,fire,19135,rune
+81125,Wrath of the Berserker - Striding Giant,physical,19135,rune
+81126,Wrath of the Berserker - Thrive on Chaos,physical,19135,rune
+81127,Wrath of the Berserker - Slaughter,physical,19135,rune
+81128,Call of the Ancients - Ancients' Blessing,physical,42650,rune
+81129,Call of the Ancients - The Council Rises,fire,42650,rune
+81130,Call of the Ancients - Ancients' Fury,physical,42650,rune
+81131,Call of the Ancients - Duty to the Clan,cold,42650,rune
+81132,Call of the Ancients - Together as One,lightning,42650,rune
+81133,Earthquake - Molten Fury,fire,19798,rune
+81134,Earthquake - Giant's Stride,fire,19798,rune
+81135,Earthquake - Chilling Earth,cold,19798,rune
+81136,Earthquake - The Mountain's Call,lightning,19798,rune
+81137,Earthquake - Cave-In,physical,19798,rune
+81138,Pound of Flesh,physical,81,passive
+81139,Ruthless,physical,81,passive
+81140,Nerves of Steel,physical,81,passive
+81141,Weapons Master,physical,81,passive
+81142,Inspiring Presence,physical,81,passive
+81143,Berserker Rage,physical,81,passive
+81144,Bloodthirst,physical,81,passive
+81145,Animosity,physical,81,passive
+81146,Superstition,physical,81,passive
+81147,Tough as Nails,physical,81,passive
+81148,No Escape,physical,81,passive
+81149,Relentless,physical,81,passive
+81150,Brawler,physical,81,passive
+81151,Juggernaut,physical,81,passive
+81152,Unforgiving,physical,81,passive
+81153,Boon of Bul-Kathos,physical,81,passive
+81154,Earthen Might,physical,81,passive
+81155,Sword and Board,physical,81,passive
+81156,Rampage,physical,81,passive
+81157,Rend Bleed,physical,772,bleed
+81158,Rend Bleed - Lacerate,lightning,772,bleed
+81159,Rend Bleed - Ravage,fire,772,bleed
+81160,Rend Bleed - Mutilate,cold,772,bleed
+81161,Rend Bleed - Blood Lust,physical,772,bleed
+81162,Rend Bleed - Bloodbath,physical,772,bleed
+81163,Molten,fire,62373,affix
+81164,Frozen,cold,122,affix
+81165,Electrified,lightning,52960,affix
+81166,Plagued,poison,3815,affix
+81167,Town Portal,physical,10059,portal
+81168,Agnidox - Fireball Volley,fire,11988,guardian
+81169,Agnidox - Flame Nova,fire,1535,guardian
+81170,Bloodmaw - Leap Rage,physical,6544,guardian
+81171,Bloodmaw - Frenzy,physical,28131,guardian
+81172,Cold Snap - Cold Nova,cold,122,guardian
+81173,Cold Snap - Charge,physical,52305,guardian
+81174,Arcane Enchanted,arcane,1449,affix
+81175,Desecrator,physical,845,affix
+81176,Fire Chains,fire,62373,affix
+81177,Frozen Pulse,cold,122,affix
+81178,Jailer,physical,845,affix
+81179,Mortar,fire,62373,affix
+81180,Orbiter,lightning,52960,affix
+81181,Poison Enchanted,poison,3815,affix
+81182,Reflects Damage,physical,845,affix
+81183,Thunderstorm,lightning,52960,affix
+81184,Thorns,physical,845,stat
+81185,Life Regen,holy,139,stat
+81186,Life per Hit,holy,2061,stat
+81187,Life per Kill,holy,2054,stat
+81188,Rupture,fire,845,primary_internal
+81189,Frostbite,cold,122,primary_internal
+81190,Smite,lightning,52960,primary_internal
+81191,Throwing Hammer,physical,46968,primary_internal
+81192,Stupefy,physical,57755,primary_internal
+81193,Onslaught,lightning,845,primary_internal
+81194,Frostbite,cold,122,primary_internal
+81195,Vanguard,physical,2983,primary_internal
+81196,Frenzy,physical,23881,primary_internal
+81197,Gathering Storm,cold,122,primary_internal
+81198,Pulverize,fire,1464,primary_internal
+81199,Sidearm,cold,57755,primary_internal
+81200,Scattering Blast,physical,845,primary_internal
+81201,Scattering Blast,physical,845,primary_internal
+81202,Health Potion,holy,439,potion
+81203,Identify,arcane,10059,identify_item
+81204,Identify All,arcane,10059,identify_tome
+81205,Bottomless Potion of Regeneration,holy,439,potion
+83000,Fire Chains Beam,physical,22576,beam_visual
+83001,Health Link Beam,physical,22576,beam_visual
+83400,Wreath of Lightning,lightning,324,gem_pulse
+83401,Gem of Efficacious Toxin,poison,2818,gem_dot
+83402,Pain Enhancer,physical,772,gem_dot
+83403,"Mirinae, Teardrop of the Starweaver",holy,585,gem_hit
+83404,Moratorium,physical,871,gem_stagger
+83405,Zei's Stone of Vengeance,physical,853,gem_stun
+83406,Boyarsky's Chip,physical,355,gem_taunt
+83407,Iceblink,cold,7321,gem_slow
+83408,Bane of the Trapped,physical,1715,gem_slow
+83409,Molten Wildebeest's Gizzard,holy,17,gem_absorb
+83410,Simplicity's Strength,holy,635,gem_heal
+83411,Gogok of Swiftness,physical,5118,gem_buff
+83412,Gogok of Swiftness,physical,5118,gem_buff
+83413,Taeguk,physical,12042,gem_buff
+83414,Taeguk,physical,12042,gem_buff
+83415,Invigorating Gemstone,physical,774,gem_buff
+83416,Bane of the Powerful,physical,1719,gem_buff
+83417,Pain Enhancer,physical,2687,gem_buff
+83418,Esoteric Alteration,physical,19891,gem_buff
+83419,Moratorium,physical,871,gem_buff
+81310,Frenzy,physical,23881,ability_aura
+81311,Weapon Throw,physical,57755,ability_aura
+81312,Bash,physical,1464,ability_aura
+81313,Cleave,physical,845,ability_aura
+81314,Whirlwind,physical,1680,ability_aura
+81315,Ancient Spear,physical,64382,ability_aura
+81316,Seismic Slam,physical,46968,ability_aura
+81317,Hammer of the Ancients,physical,53595,ability_aura
+81318,Rend,physical,772,ability_aura
+81319,Sprint,physical,2983,ability_aura
+81320,Ignore Pain,physical,871,ability_aura
+81321,Ground Stomp,physical,20549,ability_aura
+81322,Leap,physical,6544,ability_aura
+81323,Furious Charge,physical,100,ability_aura
+81324,Avalanche,physical,55216,ability_aura
+81325,Overpower,physical,7384,ability_aura
+81326,Revenge,physical,6572,ability_aura
+81327,War Cry,physical,469,ability_aura
+81328,Battle Rage,physical,6673,ability_aura
+81329,Threatening Shout,physical,1160,ability_aura
+81330,Wrath of the Berserker,physical,19135,ability_aura
+81331,Call of the Ancients,physical,42650,ability_aura
+81332,Earthquake,fire,19798,ability_aura
+81333,Frenzy - Maniac,fire,23881,ability_aura
+81334,Frenzy - Sidearm,cold,23881,ability_aura
+81335,Frenzy - Vanguard,physical,23881,ability_aura
+81336,Frenzy - Smite,lightning,23881,ability_aura
+81337,Frenzy - Berserk,cold,23881,ability_aura
+81338,Weapon Throw - Mighty Throw,lightning,57755,ability_aura
+81339,Weapon Throw - Ricochet,fire,57755,ability_aura
+81340,Weapon Throw - Throwing Hammer,physical,57755,ability_aura
+81341,Weapon Throw - Balanced Weapon,fire,57755,ability_aura
+81342,Weapon Throw - Stupefy,physical,57755,ability_aura
+81343,Bash - Onslaught,lightning,1464,ability_aura
+81344,Bash - Punish,physical,1464,ability_aura
+81345,Bash - Frostbite,cold,1464,ability_aura
+81346,Bash - Instigation,fire,1464,ability_aura
+81347,Bash - Pulverize,fire,1464,ability_aura
+81348,Cleave - Broad Sweep,lightning,845,ability_aura
+81349,Cleave - Gathering Storm,cold,845,ability_aura
+81350,Cleave - Scattering Blast,physical,845,ability_aura
+81351,Cleave - Reaping Swing,fire,845,ability_aura
+81352,Cleave - Rupture,fire,845,ability_aura
+81353,Whirlwind - Volcanic Eruption,fire,1680,ability_aura
+81354,Whirlwind - Dust Devils,physical,1680,ability_aura
+81355,Whirlwind - Hurricane,cold,1680,ability_aura
+81356,Whirlwind - Wind Shear,lightning,1680,ability_aura
+81357,Whirlwind - Blood Funnel,physical,1680,ability_aura
+81358,Ancient Spear - Harpoon,physical,64382,ability_aura
+81359,Ancient Spear - Boulder Toss,physical,64382,ability_aura
+81360,Ancient Spear - Jagged Edge,fire,64382,ability_aura
+81361,Ancient Spear - Ranseur,physical,64382,ability_aura
+81362,Ancient Spear - Rage Flip,physical,64382,ability_aura
+81363,Seismic Slam - Shattered Ground,fire,46968,ability_aura
+81364,Seismic Slam - Rumble,physical,46968,ability_aura
+81365,Seismic Slam - Stagger,lightning,46968,ability_aura
+81366,Seismic Slam - Strength from Earth,physical,46968,ability_aura
+81367,Seismic Slam - Permafrost,cold,46968,ability_aura
+81368,Hammer of the Ancients - Smash,fire,53595,ability_aura
+81369,Hammer of the Ancients - Rolling Thunder,physical,53595,ability_aura
+81370,Hammer of the Ancients - The Devil's Anvil,cold,53595,ability_aura
+81371,Hammer of the Ancients - Birthright,physical,53595,ability_aura
+81372,Hammer of the Ancients - Thunderstrike,lightning,53595,ability_aura
+81373,Rend - Lacerate,lightning,772,ability_aura
+81374,Rend - Ravage,fire,772,ability_aura
+81375,Rend - Mutilate,cold,772,ability_aura
+81376,Rend - Blood Lust,physical,772,ability_aura
+81377,Rend - Bloodbath,physical,772,ability_aura
+81378,Sprint - Marathon,physical,2983,ability_aura
+81379,Sprint - Rush,physical,2983,ability_aura
+81380,Sprint - Run Like the Wind,physical,2983,ability_aura
+81381,Sprint - Forced March,physical,2983,ability_aura
+81382,Sprint - Gangway,physical,2983,ability_aura
+81383,Ignore Pain - Contempt for Weakness,physical,871,ability_aura
+81384,Ignore Pain - Iron Hide,physical,871,ability_aura
+81385,Ignore Pain - Mob Rule,physical,871,ability_aura
+81386,Ignore Pain - Bravado,physical,871,ability_aura
+81387,Ignore Pain - Ignorance is Bliss,physical,871,ability_aura
+81388,Ground Stomp - Trembling Stomp,fire,20549,ability_aura
+81389,Ground Stomp - Wrenching Smash,physical,20549,ability_aura
+81390,Ground Stomp - Jarring Slam,physical,20549,ability_aura
+81391,Ground Stomp - Foot of the Mountain,physical,20549,ability_aura
+81392,Ground Stomp - Deafening Crash,cold,20549,ability_aura
+81393,Leap - Call of Arreat,physical,6544,ability_aura
+81394,Leap - Toppling Impact,physical,6544,ability_aura
+81395,Leap - Launch,physical,6544,ability_aura
+81396,Leap - Iron Impact,physical,6544,ability_aura
+81397,Leap - Death from Above,physical,6544,ability_aura
+81398,Furious Charge - Battering Ram,fire,100,ability_aura
+81399,Furious Charge - Dreadnought,lightning,100,ability_aura
+81400,Furious Charge - Cold Rush,cold,100,ability_aura
+81401,Furious Charge - Stamina,physical,100,ability_aura
+81402,Furious Charge - Merciless Assault,physical,100,ability_aura
+81403,Avalanche - Glacier,cold,55216,ability_aura
+81404,Avalanche - Snow-Capped Mountain,cold,55216,ability_aura
+81405,Avalanche - Volcano,fire,55216,ability_aura
+81406,Avalanche - Lahar,physical,55216,ability_aura
+81407,Avalanche - Tectonic Rift,physical,55216,ability_aura
+81408,Overpower - Killing Spree,lightning,7384,ability_aura
+81409,Overpower - Storm of Steel,physical,7384,ability_aura
+81410,Overpower - Revel,fire,7384,ability_aura
+81411,Overpower - Momentum,physical,7384,ability_aura
+81412,Overpower - Crushing Advance,cold,7384,ability_aura
+81413,Revenge - Retribution,fire,6572,ability_aura
+81414,Revenge - Provocation,physical,6572,ability_aura
+81415,Revenge - Grudge,lightning,6572,ability_aura
+81416,Revenge - Blood Law,physical,6572,ability_aura
+81417,Revenge - Best Served Cold,cold,6572,ability_aura
+81418,War Cry - Hardened Wrath,physical,469,ability_aura
+81419,War Cry - Veteran's Warning,physical,469,ability_aura
+81420,War Cry - Impunity,physical,469,ability_aura
+81421,War Cry - Charge!,physical,469,ability_aura
+81422,War Cry - Invigorate,physical,469,ability_aura
+81423,Battle Rage - Marauder's Rage,physical,6673,ability_aura
+81424,Battle Rage - Ferocity,physical,6673,ability_aura
+81425,Battle Rage - Swords to Ploughshares,physical,6673,ability_aura
+81426,Battle Rage - Into the Fray,physical,6673,ability_aura
+81427,Battle Rage - Bloodshed,physical,6673,ability_aura
+81428,Threatening Shout - Demoralize,physical,1160,ability_aura
+81429,Threatening Shout - Intimidate,physical,1160,ability_aura
+81430,Threatening Shout - Grim Harvest,physical,1160,ability_aura
+81431,Threatening Shout - Falter,physical,1160,ability_aura
+81432,Threatening Shout - Terrify,physical,1160,ability_aura
+81433,Wrath of the Berserker - Insanity,physical,19135,ability_aura
+81434,Wrath of the Berserker - Arreat's Wail,fire,19135,ability_aura
+81435,Wrath of the Berserker - Striding Giant,physical,19135,ability_aura
+81436,Wrath of the Berserker - Thrive on Chaos,physical,19135,ability_aura
+81437,Wrath of the Berserker - Slaughter,physical,19135,ability_aura
+81438,Call of the Ancients - Ancients' Blessing,physical,42650,ability_aura
+81439,Call of the Ancients - The Council Rises,fire,42650,ability_aura
+81440,Call of the Ancients - Ancients' Fury,physical,42650,ability_aura
+81441,Call of the Ancients - Duty to the Clan,cold,42650,ability_aura
+81442,Call of the Ancients - Together as One,lightning,42650,ability_aura
+81443,Earthquake - Molten Fury,fire,19798,ability_aura
+81444,Earthquake - Giant's Stride,fire,19798,ability_aura
+81445,Earthquake - Chilling Earth,cold,19798,ability_aura
+81446,Earthquake - The Mountain's Call,lightning,19798,ability_aura
+81447,Earthquake - Cave-In,physical,19798,ability_aura
+81721,Ground Stomp,physical,20549,ability_control
+81722,Leap,physical,6544,ability_control
+81758,Ancient Spear - Harpoon,physical,64382,ability_control
+81762,Ancient Spear - Rage Flip,physical,64382,ability_control
+81767,Seismic Slam - Permafrost,cold,46968,ability_control
+81770,Hammer of the Ancients - The Devil's Anvil,cold,53595,ability_control
+81772,Hammer of the Ancients - Thunderstrike,lightning,53595,ability_control
+81788,Ground Stomp - Trembling Stomp,fire,20549,ability_control
+81789,Ground Stomp - Wrenching Smash,physical,20549,ability_control
+81790,Ground Stomp - Jarring Slam,physical,20549,ability_control
+81791,Ground Stomp - Foot of the Mountain,physical,20549,ability_control
+81792,Ground Stomp - Deafening Crash,cold,20549,ability_control
+81793,Leap - Call of Arreat,physical,6544,ability_control
+81794,Leap - Toppling Impact,physical,6544,ability_control
+81795,Leap - Launch,physical,6544,ability_control
+81796,Leap - Iron Impact,physical,6544,ability_control
+81797,Leap - Death from Above,physical,6544,ability_control
+81800,Furious Charge - Cold Rush,cold,100,ability_control
+81803,Avalanche - Glacier,cold,55216,ability_control
+81828,Threatening Shout - Demoralize,physical,1160,ability_control
+81832,Threatening Shout - Terrify,physical,1160,ability_control
+81841,Call of the Ancients - Duty to the Clan,cold,42650,ability_control
+81845,Earthquake - Chilling Earth,cold,19798,ability_control
+81223,Bottomless Potion of Regeneration,holy,439,potion_power
+81211,Bottomless Potion of the Tower,holy,439,potion
+81221,Bottomless Potion of the Tower,holy,439,potion_power
+81212,Bottomless Potion of the Diamond,holy,439,potion
+81222,Bottomless Potion of the Diamond,holy,439,potion_power
+81213,Bottomless Potion of the Leech,holy,439,potion
+81224,Bottomless Potion of the Leech,holy,439,potion_power
+81214,Bottomless Potion of Mutilation,holy,439,potion
+81225,Bottomless Potion of Mutilation,holy,439,potion_power
+81215,Bottomless Potion of Kulle-Aid,holy,439,potion
+81216,Bottomless Potion of Rejuvenation,holy,439,potion
+81217,Bottomless Potion of Fear,holy,439,potion
+81226,Bottomless Potion of Fear,holy,439,potion_power
+81218,Bottomless Potion of Amplification,holy,439,potion
+81227,Bottomless Potion of Amplification,holy,439,potion_power
+81219,Bottomless Potion of Chaos,holy,439,potion
+81220,Bottomless Potion of the Unfettered,holy,439,potion
+81228,Bottomless Potion of the Unfettered,holy,439,potion_power
+82300,Inspiring Presence,physical,81,passive_effect
+82301,Nerves of Steel,physical,81,passive_effect
+82302,Unforgiving,physical,81,passive_effect
+82303,Rampage,physical,81,passive_effect
+82304,Pound of Flesh,physical,81,passive_effect
+82009,Overpower - Storm of Steel,physical,57755,ability_proc
+82400,Weapons Master - token storage,physical,81,token_storage
+82401,Relentless - cost modifier,physical,81,cost_modifier
+82402,Sword and Board - cost modifier,physical,81,cost_modifier
+82403,Resource cost reduction - gear and paragon - cost modifier,physical,81,cost_modifier
+82418,Fire skills cost reduction - Barbarian,fire,81,element_cost_modifier
+82420,Seismic Slam cost reduction,physical,81,skill_cost_modifier
+82404,Boon of Bul-Kathos - cooldown modifier 15s,physical,81,cooldown_modifier
+82405,Boon of Bul-Kathos - cooldown modifier 30s,physical,81,cooldown_modifier
+82406,Cooldown reduction - gear and paragon - cooldown modifier,physical,81,cooldown_modifier
+82407,Inspiring Presence - duration modifier,physical,81,duration_modifier
+82408,"Movement speed - gear, paragon and skills - movement modifier",physical,81,movement_modifier
+82410,Frozen Pulse - affix slow,physical,81,affix_slow
+82411,Knockback - affix slow,physical,81,affix_slow
+82412,Punish,physical,81,barbarian_buff
+82413,Relentless - buff,physical,81,class_buff
+82414,Berserker Rage - buff,physical,81,class_buff
+82415,Brawler - buff,physical,81,class_buff
+82416,War Cry - Hardened Wrath - buff,physical,81,class_buff
+82417,Battle Rage - Into the Fray - buff,physical,81,class_buff
+82419,Barbarian - resource pulse - core regeneration mask,physical,81,regeneration_mask
+83100,Magic Missile,arcane,7268,active
+83101,Shock Pulse,lightning,403,active
+83102,Spectral Blade,arcane,44425,active
+83103,Electrocute,lightning,421,active
+83104,Ray of Frost,cold,5138,active
+83105,Arcane Orb,arcane,30451,active
+83106,Arcane Torrent,arcane,5143,active
+83107,Disintegrate,arcane,15407,active
+83108,Frost Nova,cold,122,active
+83109,Diamond Skin,arcane,11426,active
+83110,Slow Time,arcane,31589,active
+83111,Teleport,arcane,1953,active
+83112,Wave of Force,arcane,1449,active
+83113,Energy Twister,arcane,33786,active
+83114,Hydra,fire,3599,active
+83115,Meteor,fire,2120,active
+83116,Blizzard,cold,10,active
+83117,Ice Armor,cold,7302,active
+83118,Storm Armor,lightning,324,active
+83119,Magic Weapon,arcane,1008,active
+83120,Familiar,arcane,688,active
+83121,Energy Armor,arcane,6117,active
+83122,Explosive Blast,arcane,1449,active
+83123,Mirror Image,arcane,55342,active
+83124,Archon,arcane,12042,active
+83125,Black Hole,arcane,16914,active
+83126,Magic Missile - Charged Blast,arcane,7268,rune
+83127,Magic Missile - Split,arcane,7268,rune
+83128,Magic Missile - Conflagrate,fire,133,rune
+83129,Magic Missile - Glacial Spike,cold,30455,rune
+83130,Magic Missile - Seeker,arcane,7268,rune
+83131,Shock Pulse - Fire Bolts,fire,133,rune
+83132,Shock Pulse - Living Lightning,lightning,403,rune
+83133,Shock Pulse - Piercing Orb,lightning,403,rune
+83134,Shock Pulse - Power Affinity,arcane,7268,rune
+83135,Shock Pulse - Explosive Bolts,cold,116,rune
+83136,Spectral Blade - Flame Blades,fire,31661,rune
+83137,Spectral Blade - Thrown Blade,lightning,403,rune
+83138,Spectral Blade - Ice Blades,cold,120,rune
+83139,Spectral Blade - Siphoning Blade,arcane,44425,rune
+83140,Spectral Blade - Barrier Blades,arcane,44425,rune
+83141,Electrocute - Lightning Blast,lightning,421,rune
+83142,Electrocute - Chain Lightning,lightning,421,rune
+83143,Electrocute - Arc Lightning,lightning,421,rune
+83144,Electrocute - Surge of Power,lightning,421,rune
+83145,Electrocute - Forked Lightning,fire,8050,rune
+83146,Ray of Frost - Snow Blast,cold,5138,rune
+83147,Ray of Frost - Sleet Storm,cold,5138,rune
+83148,Ray of Frost - Numb,cold,5138,rune
+83149,Ray of Frost - Cold Blood,cold,5138,rune
+83150,Ray of Frost - Black Ice,cold,5138,rune
+83151,Arcane Orb - Obliteration,arcane,30451,rune
+83152,Arcane Orb - Spark,lightning,403,rune
+83153,Arcane Orb - Arcane Orbit,arcane,30451,rune
+83154,Arcane Orb - Scorch,fire,11366,rune
+83155,Arcane Orb - Frozen Orb,cold,116,rune
+83156,Arcane Torrent - Flame Ward,fire,5740,rune
+83157,Arcane Torrent - Cascade,arcane,5143,rune
+83158,Arcane Torrent - Arcane Mines,arcane,5143,rune
+83159,Arcane Torrent - Static Discharge,lightning,421,rune
+83160,Arcane Torrent - Death Blossom,arcane,5143,rune
+83161,Disintegrate - Intensify,arcane,15407,rune
+83162,Disintegrate - Convergence,fire,15407,rune
+83163,Disintegrate - Entropy,arcane,15407,rune
+83164,Disintegrate - Chaos Nexus,arcane,15407,rune
+83165,Disintegrate - Volatility,arcane,15407,rune
+83166,Frost Nova - Bone Chill,cold,122,rune
+83167,Frost Nova - Shatter,cold,122,rune
+83168,Frost Nova - Frozen Mist,cold,122,rune
+83169,Frost Nova - Cold Snap,cold,122,rune
+83170,Frost Nova - Deep Freeze,cold,122,rune
+83171,Diamond Skin - Sleek Shell,arcane,11426,rune
+83172,Diamond Skin - Enduring Skin,arcane,11426,rune
+83173,Diamond Skin - Crystal Shell,arcane,11426,rune
+83174,Diamond Skin - Prism,arcane,11426,rune
+83175,Diamond Skin - Diamond Shards,arcane,11426,rune
+83176,Slow Time - Time Warp,arcane,31589,rune
+83177,Slow Time - Point of No Return,arcane,31589,rune
+83178,Slow Time - Time Shell,arcane,31589,rune
+83179,Slow Time - Exhaustion,arcane,31589,rune
+83180,Slow Time - Stretch Time,arcane,31589,rune
+83181,Teleport - Calamity,arcane,1953,rune
+83182,Teleport - Fracture,arcane,1953,rune
+83183,Teleport - Safe Passage,arcane,1953,rune
+83184,Teleport - Reversal,arcane,1953,rune
+83185,Teleport - Wormhole,arcane,1953,rune
+83186,Wave of Force - Impactful Wave,arcane,1449,rune
+83187,Wave of Force - Static Pulse,lightning,51490,rune
+83188,Wave of Force - Heat Wave,fire,11113,rune
+83189,Wave of Force - Arcane Attunement,arcane,1449,rune
+83190,Wave of Force - Debilitating Force,arcane,1449,rune
+83191,Energy Twister - Gale Force,fire,33786,rune
+83192,Energy Twister - Raging Storm,arcane,33786,rune
+83193,Energy Twister - Storm Chaser,lightning,33786,rune
+83194,Energy Twister - Mistral Breeze,cold,33786,rune
+83195,Energy Twister - Wicked Wind,arcane,33786,rune
+83196,Hydra - Frost Hydra,cold,31687,rune
+83197,Hydra - Lightning Hydra,lightning,3599,rune
+83198,Hydra - Blazing Hydra,fire,3599,rune
+83199,Hydra - Mammoth Hydra,fire,3599,rune
+83200,Hydra - Arcane Hydra,arcane,3599,rune
+83201,Meteor - Molten Impact,fire,2120,rune
+83202,Meteor - Meteor Shower,fire,5740,rune
+83203,Meteor - Comet,cold,33395,rune
+83204,Meteor - Star Pact,arcane,20687,rune
+83205,Meteor - Thunder Crash,lightning,403,rune
+83206,Blizzard - Unrelenting Storm,cold,10,rune
+83207,Blizzard - Apocalypse,fire,5740,rune
+83208,Blizzard - Lightning Storm,lightning,16914,rune
+83209,Blizzard - Snowbound,cold,10,rune
+83210,Blizzard - Frozen Solid,cold,10,rune
+83211,Ice Armor - Jagged Ice,cold,7302,rune
+83212,Ice Armor - Chilling Aura,cold,7302,rune
+83213,Ice Armor - Frozen Storm,cold,7302,rune
+83214,Ice Armor - Crystallize,cold,7302,rune
+83215,Ice Armor - Ice Reflect,cold,7302,rune
+83216,Storm Armor - Thunder Storm,lightning,324,rune
+83217,Storm Armor - Scramble,lightning,324,rune
+83218,Storm Armor - Reactive Armor,lightning,324,rune
+83219,Storm Armor - Power of the Storm,lightning,324,rune
+83220,Storm Armor - Shocking Aspect,lightning,324,rune
+83221,Magic Weapon - Ignite,fire,8024,rune
+83222,Magic Weapon - Electrify,lightning,324,rune
+83223,Magic Weapon - Force Weapon,arcane,1008,rune
+83224,Magic Weapon - Conduit,arcane,1008,rune
+83225,Magic Weapon - Deflection,arcane,1008,rune
+83226,Familiar - Sparkflint,fire,688,rune
+83227,Familiar - Cannoneer,arcane,688,rune
+83228,Familiar - Icicle,cold,31687,rune
+83229,Familiar - Arcanot,arcane,688,rune
+83230,Familiar - Ancient Guardian,arcane,688,rune
+83231,Energy Armor - Prismatic Armor,arcane,6117,rune
+83232,Energy Armor - Energy Tap,arcane,6117,rune
+83233,Energy Armor - Force Armor,arcane,6117,rune
+83234,Energy Armor - Absorption,arcane,6117,rune
+83235,Energy Armor - Pinpoint Barrier,arcane,6117,rune
+83236,Explosive Blast - Short Fuse,fire,11113,rune
+83237,Explosive Blast - Obliterate,cold,122,rune
+83238,Explosive Blast - Flash,lightning,51490,rune
+83239,Explosive Blast - Unleashed,arcane,1449,rune
+83240,Explosive Blast - Chain Reaction,fire,11113,rune
+83241,Mirror Image - Mirror Mimics,arcane,55342,rune
+83242,Mirror Image - Duplicates,arcane,55342,rune
+83243,Mirror Image - Hard Light,arcane,55342,rune
+83244,Mirror Image - Extension of Will,arcane,55342,rune
+83245,Mirror Image - Mocking Demise,arcane,55342,rune
+83246,Archon - Improved Archon,arcane,12042,rune
+83247,Archon - Slow Time,cold,12472,rune
+83248,Archon - Teleport,arcane,12042,rune
+83249,Archon - Pure Power,lightning,324,rune
+83250,Archon - Combustion,fire,11129,rune
+83251,Black Hole - Supermassive,lightning,16914,rune
+83252,Black Hole - Event Horizon,arcane,16914,rune
+83253,Black Hole - Blazar,fire,5740,rune
+83254,Black Hole - Spellsteal,arcane,16914,rune
+83255,Black Hole - Absolute Zero,cold,10,rune
+83256,Power Hungry,physical,81,passive
+83257,Blur,physical,81,passive
+83258,Evocation,physical,81,passive
+83259,Glass Cannon,physical,81,passive
+83260,Prodigy,physical,81,passive
+83261,Astral Presence,physical,81,passive
+83262,Illusionist,physical,81,passive
+83263,Cold Blooded,physical,81,passive
+83264,Conflagration,physical,81,passive
+83265,Paralysis,physical,81,passive
+83266,Galvanizing Ward,physical,81,passive
+83267,Temporal Flux,physical,81,passive
+83268,Dominance,physical,81,passive
+83269,Arcane Dynamo,physical,81,passive
+83270,Unstable Anomaly,physical,81,passive
+83271,Unwavering Will,physical,81,passive
+83272,Audacity,physical,81,passive
+83273,Elemental Exposure,physical,81,passive
+83274,Arcane Strike,arcane,44425,archon
+83275,Arcane Blast,arcane,1449,archon
+83276,Disintegration Wave,arcane,15407,archon
+83277,Slow Time,arcane,31589,archon
+83278,Teleport,arcane,1953,archon
+83300,Ray of Frost - token storage,cold,81,token_storage
+83301,Ray of Frost - Snow Blast - token storage,cold,81,token_storage
+83302,Ray of Frost - Sleet Storm - token storage,cold,81,token_storage
+83303,Ray of Frost - Numb - token storage,cold,81,token_storage
+83304,Ray of Frost - Cold Blood - token storage,cold,81,token_storage
+83305,Ray of Frost - Black Ice - token storage,cold,81,token_storage
+83306,Arcane Torrent - Flame Ward - token storage,fire,81,token_storage
+83307,Arcane Torrent - Cascade - token storage,arcane,81,token_storage
+83308,Arcane Torrent - Arcane Mines - token storage,arcane,81,token_storage
+83309,Arcane Torrent - Static Discharge - token storage,lightning,81,token_storage
+83310,Disintegrate - Intensify - token storage,arcane,81,token_storage
+83311,Disintegrate - Chaos Nexus - token storage,arcane,81,token_storage
+83312,Disintegrate - Volatility - token storage,arcane,81,token_storage
+83313,Slow Time - Time Warp - token storage,arcane,81,token_storage
+83314,Slow Time - Time Shell - token storage,arcane,81,token_storage
+83315,Slow Time - Exhaustion - token storage,arcane,81,token_storage
+83318,Energy Armor - Force Armor - token storage,arcane,81,token_storage
+83316,Archon - Improved Archon - token storage,arcane,81,token_storage
+83317,Archon - Combustion - token storage,fire,81,token_storage
+83322,Black Hole - Blazar - token storage,fire,81,token_storage
+83323,Black Hole - Spellsteal - token storage,arcane,81,token_storage
+83371,Wizard - resource pulse - core regeneration mask,physical,81,regeneration_mask
+83348,Resource cost reduction - gear and paragon - Wizard - cost modifier,physical,81,cost_modifier
+83349,Cooldown reduction - gear and paragon - Wizard - cooldown modifier,physical,81,cooldown_modifier
+83364,Fire skills cost reduction - Wizard,fire,81,element_cost_modifier
+83373,Arcane Torrent cost reduction,physical,81,skill_cost_modifier
+83374,Disintegrate cost reduction,physical,81,skill_cost_modifier
+83375,Meteor cost reduction,physical,81,skill_cost_modifier
+83376,Ray of Frost cost reduction,physical,81,skill_cost_modifier
+83372,Teleport cost addition,physical,81,skill_cost_adder
+83650,Fists of Thunder,lightning,17364,active
+83651,Deadly Reach,physical,62544,active
+83652,Crippling Wave,physical,845,active
+83653,Way of the Hundred Fists,physical,1329,active
+83654,Lashing Tail Kick,physical,6343,active
+83655,Tempest Rush,physical,100,active
+83656,Wave of Light,holy,879,active
+83657,Blinding Flash,holy,15237,active
+83658,Breath of Heaven,holy,34861,active
+83659,Serenity,holy,642,active
+83660,Inner Sanctuary,holy,26573,active
+83661,Dashing Strike,physical,36554,active
+83662,Exploding Palm,physical,1943,active
+83663,Sweeping Wind,physical,46924,active
+83664,Cyclone Strike,holy,49576,active
+83665,Seven-Sided Strike,physical,51690,active
+83666,Mystic Ally,physical,51533,active
+83667,Epiphany,holy,31884,active
+83668,Mantra of Salvation,physical,465,active
+83669,Mantra of Retribution,holy,7294,active
+83670,Mantra of Healing,holy,17,active
+83671,Mantra of Conviction,physical,1160,active
+83672,Fists of Thunder - Thunderclap,lightning,17364,rune
+83673,Fists of Thunder - Bounding Light,holy,35395,rune
+83674,Fists of Thunder - Static Charge,lightning,17364,rune
+83675,Fists of Thunder - Quickening,physical,1752,rune
+83676,Fists of Thunder - Wind Blast,cold,49143,rune
+83677,Deadly Reach - Foresight,physical,62544,rune
+83678,Deadly Reach - Piercing Trident,physical,62544,rune
+83679,Deadly Reach - Scattered Blows,lightning,403,rune
+83680,Deadly Reach - Strike from Beyond,cold,30455,rune
+83681,Deadly Reach - Searing Grasp,fire,2136,rune
+83682,Crippling Wave - Mangle,fire,11113,rune
+83683,Crippling Wave - Tsunami,cold,120,rune
+83684,Crippling Wave - Concussion,physical,845,rune
+83685,Crippling Wave - Rising Tide,holy,2812,rune
+83686,Crippling Wave - Breaking Wave,physical,845,rune
+83687,Way of the Hundred Fists - Fists of Fury,holy,35395,rune
+83688,Way of the Hundred Fists - Hands of Lightning,lightning,17364,rune
+83689,Way of the Hundred Fists - Blazing Fists,fire,60103,rune
+83690,Way of the Hundred Fists - Assimilation,physical,1329,rune
+83691,Way of the Hundred Fists - Windforce Flurry,cold,120,rune
+83692,Lashing Tail Kick - Vulture Claw Kick,fire,1535,rune
+83693,Lashing Tail Kick - Spinning Flame Kick,fire,11113,rune
+83694,Lashing Tail Kick - Hand of Ytar,cold,120,rune
+83695,Lashing Tail Kick - Sweeping Armada,physical,6343,rune
+83696,Lashing Tail Kick - Scorpion Sting,lightning,51490,rune
+83697,Tempest Rush - Bluster,fire,100,rune
+83698,Tempest Rush - Tailwind,physical,100,rune
+83699,Tempest Rush - Electric Field,lightning,100,rune
+83700,Tempest Rush - Northern Breeze,holy,100,rune
+83701,Tempest Rush - Flurry,cold,122,rune
+83702,Wave of Light - Wall of Light,physical,57755,rune
+83703,Wave of Light - Explosive Light,fire,1535,rune
+83704,Wave of Light - Pillar of the Ancients,lightning,403,rune
+83705,Wave of Light - Empowered Wave,holy,879,rune
+83706,Wave of Light - Shattering Light,cold,116,rune
+83707,Blinding Flash - Faith in the Light,holy,15237,rune
+83708,Blinding Flash - Replenishing Light,holy,15237,rune
+83709,Blinding Flash - Mystifying Light,holy,15237,rune
+83710,Blinding Flash - Self Reflection,holy,15237,rune
+83711,Blinding Flash - Crippling Light,holy,15237,rune
+83712,Breath of Heaven - Circle of Scorn,holy,34861,rune
+83713,Breath of Heaven - Circle of Life,holy,34861,rune
+83714,Breath of Heaven - Blazing Wrath,holy,34861,rune
+83715,Breath of Heaven - Infused with Light,holy,34861,rune
+83716,Breath of Heaven - Zephyr,holy,34861,rune
+83717,Serenity - Peaceful Repose,holy,642,rune
+83718,Serenity - Instant Karma,holy,642,rune
+83719,Serenity - Ascension,holy,642,rune
+83720,Serenity - Tranquility,holy,642,rune
+83721,Serenity - Unwelcome Disturbance,physical,642,rune
+83722,Inner Sanctuary - Intervene,holy,3411,rune
+83723,Inner Sanctuary - Sanctified Ground,holy,26573,rune
+83724,Inner Sanctuary - Temple of Protection,holy,26573,rune
+83725,Inner Sanctuary - Safe Haven,holy,26573,rune
+83726,Inner Sanctuary - Forbidden Palace,holy,26573,rune
+83727,Dashing Strike - Barrage,physical,36554,rune
+83728,Dashing Strike - Way of the Falling Star,holy,36554,rune
+83729,Dashing Strike - Blinding Speed,cold,36554,rune
+83730,Dashing Strike - Quicksilver,lightning,36554,rune
+83731,Dashing Strike - Radiance,fire,36554,rune
+83732,Exploding Palm - Shocking Grasp,lightning,403,rune
+83733,Exploding Palm - Impending Doom,cold,45477,rune
+83734,Exploding Palm - The Flesh is Weak,physical,1943,rune
+83735,Exploding Palm - Strong Spirit,holy,35395,rune
+83736,Exploding Palm - Essence Burn,fire,348,rune
+83737,Sweeping Wind - Blade Storm,physical,46924,rune
+83738,Sweeping Wind - Fire Storm,fire,1535,rune
+83739,Sweeping Wind - Cyclone,lightning,51490,rune
+83740,Sweeping Wind - Inner Storm,holy,15237,rune
+83741,Sweeping Wind - Master of Wind,cold,122,rune
+83742,Cyclone Strike - Sunburst,fire,1535,rune
+83743,Cyclone Strike - Implosion,holy,49576,rune
+83744,Cyclone Strike - Soothing Breeze,holy,49576,rune
+83745,Cyclone Strike - Eye of the Storm,lightning,51490,rune
+83746,Cyclone Strike - Wall of Wind,cold,122,rune
+83747,Seven-Sided Strike - Sudden Assault,lightning,51690,rune
+83748,Seven-Sided Strike - Incinerate,fire,51690,rune
+83749,Seven-Sided Strike - Pandemonium,cold,51690,rune
+83750,Seven-Sided Strike - Sustained Attack,physical,51690,rune
+83751,Seven-Sided Strike - Fulminating Onslaught,holy,51690,rune
+83752,Mystic Ally - Fire Ally,fire,2894,rune
+83753,Mystic Ally - Water Ally,cold,31687,rune
+83754,Mystic Ally - Earth Ally,physical,2062,rune
+83755,Mystic Ally - Air Ally,physical,8512,rune
+83756,Mystic Ally - Enduring Ally,physical,51533,rune
+83757,Epiphany - Desert Shroud,physical,22812,rune
+83758,Epiphany - Soothing Mist,cold,24398,rune
+83759,Epiphany - Insight,holy,31884,rune
+83760,Epiphany - Inner Fire,fire,588,rune
+83761,Epiphany - Ascendance,lightning,324,rune
+83762,Mantra of Salvation - Agility,physical,465,rune
+83763,Mantra of Salvation - Perseverance,physical,465,rune
+83764,Mantra of Salvation - Hard Target,physical,465,rune
+83765,Mantra of Salvation - Wind through the Reeds,physical,465,rune
+83766,Mantra of Salvation - Divine Protection,physical,465,rune
+83767,Mantra of Retribution - Retaliation,fire,7294,rune
+83768,Mantra of Retribution - Transgression,holy,7294,rune
+83769,Mantra of Retribution - Indignation,holy,7294,rune
+83770,Mantra of Retribution - Against All Odds,holy,7294,rune
+83771,Mantra of Retribution - Collateral Damage,holy,7294,rune
+83772,Mantra of Healing - Sustenance,holy,17,rune
+83773,Mantra of Healing - Boon of Inspiration,holy,17,rune
+83774,Mantra of Healing - Heavenly Body,holy,17,rune
+83775,Mantra of Healing - Circular Breathing,holy,17,rune
+83776,Mantra of Healing - Time of Need,holy,17,rune
+83777,Mantra of Conviction - Overawe,physical,1160,rune
+83778,Mantra of Conviction - Submission,holy,1160,rune
+83779,Mantra of Conviction - Dishearten,physical,1160,rune
+83780,Mantra of Conviction - Annihilation,physical,1160,rune
+83781,Mantra of Conviction - Intimidation,physical,1160,rune
+83782,Resolve,physical,81,passive
+83783,Fleet Footed,physical,81,passive
+83784,Exalted Soul,physical,81,passive
+83785,Transcendence,physical,81,passive
+83786,Chant of Resonance,physical,81,passive
+83787,Seize the Initiative,physical,81,passive
+83788,The Guardian's Path,physical,81,passive
+83789,Sixth Sense,physical,81,passive
+83790,Determination,physical,81,passive
+83791,Relentless Assault,physical,81,passive
+83792,Beacon of Ytar,physical,81,passive
+83793,Alacrity,physical,81,passive
+83794,Harmony,physical,81,passive
+83795,Combination Strike,physical,81,passive
+83796,Near Death Experience,physical,81,passive
+83797,Unity,physical,81,passive
+83798,Momentum,physical,81,passive
+83799,Mythic Rhythm,physical,81,passive
+83850,Crippling Wave - token storage,physical,81,token_storage
+83851,Fists of Thunder - Thunderclap - token storage,lightning,81,token_storage
+83852,Fists of Thunder - Bounding Light - token storage,holy,81,token_storage
+83853,Fists of Thunder - Static Charge - token storage,lightning,81,token_storage
+83854,Crippling Wave - Mangle - token storage,fire,81,token_storage
+83855,Crippling Wave - Tsunami - token storage,cold,81,token_storage
+83856,Crippling Wave - Concussion - token storage,physical,81,token_storage
+83857,Crippling Wave - Breaking Wave - token storage,physical,81,token_storage
+83858,Mystic Ally - Air Ally - token storage,physical,81,token_storage
+83859,Mystic Ally - Enduring Ally - token storage,physical,81,token_storage
+83860,Mantra of Salvation - Divine Protection - token storage,physical,81,token_storage
+83861,Mantra of Healing - Time of Need - token storage,holy,81,token_storage
+83866,Monk - resource pulse - core regeneration mask,physical,81,regeneration_mask
+83862,Resource cost reduction - gear and paragon - Monk - cost modifier,physical,81,cost_modifier
+83863,Cooldown reduction - gear and paragon - Monk - cooldown modifier,physical,81,cooldown_modifier
+83864,Fire skills cost reduction - Monk,fire,81,element_cost_modifier
+83865,Epiphany - reach,holy,81,range_modifier
+83867,Wave of Light cost reduction,physical,81,skill_cost_modifier
+85400,Punish,physical,23922,active
+85401,Slash,fire,31661,active
+85402,Smite,holy,585,active
+85403,Justice,holy,24275,active
+85404,Shield Bash,holy,72,active
+85405,Sweep Attack,physical,845,active
+85406,Blessed Hammer,holy,53385,active
+85407,Blessed Shield,holy,31935,active
+85408,Fist of the Heavens,lightning,403,active
+85409,Shield Glare,holy,2812,active
+85410,Iron Skin,physical,871,active
+85411,Consecration,holy,26573,active
+85412,Judgment,physical,53407,active
+85413,Provoke,physical,1161,active
+85414,Steed Charge,physical,34767,active
+85415,Condemn,holy,15237,active
+85416,Phalanx,physical,42650,active
+85417,Laws of Valor,physical,6673,active
+85418,Laws of Justice,physical,465,active
+85419,Laws of Hope,physical,17,active
+85420,Falling Sword,physical,6544,active
+85421,Akarat's Champion,fire,31884,active
+85422,Heaven's Fury,holy,47540,active
+85423,Bombardment,physical,5740,active
+85424,Punish - Retaliate,holy,35395,rune
+85425,Punish - Celerity,physical,23922,rune
+85426,Punish - Rebirth,physical,23922,rune
+85427,Punish - Roar,fire,60103,rune
+85428,Punish - Fury,lightning,17364,rune
+85429,Slash - Zeal,holy,2812,rune
+85430,Slash - Electrify,lightning,421,rune
+85431,Slash - Crush,fire,31661,rune
+85432,Slash - Carve,fire,31661,rune
+85433,Slash - Guard,fire,31661,rune
+85434,Smite - Shared Fate,lightning,403,rune
+85435,Smite - Shackle,holy,585,rune
+85436,Smite - Shatter,holy,585,rune
+85437,Smite - Reaping,holy,585,rune
+85438,Smite - Surge,holy,585,rune
+85439,Justice - Sword of Justice,physical,57755,rune
+85440,Justice - Crack,holy,24275,rune
+85441,Justice - Hammer of Pursuit,physical,57755,rune
+85442,Justice - Burst,lightning,403,rune
+85443,Justice - Holy Bolt,holy,24275,rune
+85444,Shield Bash - Crumble,fire,72,rune
+85445,Shield Bash - Shattered Shield,holy,72,rune
+85446,Shield Bash - Shield Cross,physical,1752,rune
+85447,Shield Bash - Pound,physical,1752,rune
+85448,Shield Bash - One on One,lightning,17364,rune
+85449,Sweep Attack - Gathering Sweep,holy,2812,rune
+85450,Sweep Attack - Blazing Sweep,fire,11113,rune
+85451,Sweep Attack - Holy Shock,physical,845,rune
+85452,Sweep Attack - Trip Attack,lightning,421,rune
+85453,Sweep Attack - Inspiring Sweep,holy,2812,rune
+85454,Blessed Hammer - Burning Wrath,fire,1535,rune
+85455,Blessed Hammer - Thunderstruck,lightning,51490,rune
+85456,Blessed Hammer - Limitless,holy,53385,rune
+85457,Blessed Hammer - Brute Force,physical,6343,rune
+85458,Blessed Hammer - Dominion,holy,53385,rune
+85459,Blessed Shield - Staggering Shield,lightning,403,rune
+85460,Blessed Shield - Combust,fire,2136,rune
+85461,Blessed Shield - Divine Aegis,physical,57755,rune
+85462,Blessed Shield - Shattering Throw,holy,31935,rune
+85463,Blessed Shield - Piercing Shield,holy,31935,rune
+85464,Fist of the Heavens - Heaven's Tempest,fire,5740,rune
+85465,Fist of the Heavens - Reverberation,lightning,403,rune
+85466,Fist of the Heavens - Fissure,lightning,403,rune
+85467,Fist of the Heavens - Divine Well,holy,26573,rune
+85468,Fist of the Heavens - Retribution,holy,26573,rune
+85469,Shield Glare - Divine Verdict,holy,2812,rune
+85470,Shield Glare - Uncertainty,holy,2812,rune
+85471,Shield Glare - Emblazoned Shield,physical,2812,rune
+85472,Shield Glare - Zealous Glare,holy,2812,rune
+85473,Shield Glare - Subdue,holy,2812,rune
+85474,Iron Skin - Charged Up,lightning,871,rune
+85475,Iron Skin - Steel Skin,physical,871,rune
+85476,Iron Skin - Explosive Skin,physical,871,rune
+85477,Iron Skin - Reflective Skin,physical,871,rune
+85478,Iron Skin - Flash,lightning,871,rune
+85479,Consecration - Aegis Purgatory,holy,26573,rune
+85480,Consecration - Bed of Nails,physical,26573,rune
+85481,Consecration - Bathed in Light,holy,26573,rune
+85482,Consecration - Shattered Ground,fire,26573,rune
+85483,Consecration - Fearful,holy,26573,rune
+85484,Judgment - Penitence,physical,53407,rune
+85485,Judgment - Mass Verdict,physical,53407,rune
+85486,Judgment - Deliberation,physical,53407,rune
+85487,Judgment - Resolved,physical,53407,rune
+85488,Judgment - Debilitate,physical,53407,rune
+85489,Provoke - Cleanse,physical,1161,rune
+85490,Provoke - Flee Fool,physical,1161,rune
+85491,Provoke - Too Scared to Run,physical,1161,rune
+85492,Provoke - Charged Up,lightning,1161,rune
+85493,Provoke - Hit Me,physical,1161,rune
+85494,Steed Charge - Spiked Barding,physical,34767,rune
+85495,Steed Charge - Endurance,physical,34767,rune
+85496,Steed Charge - Rejuvenation,physical,34767,rune
+85497,Steed Charge - Nightmare,fire,34767,rune
+85498,Steed Charge - Draw and Quarter,holy,34767,rune
+85499,Condemn - Reciprocate,fire,1535,rune
+85500,Condemn - Vacuum,holy,15237,rune
+85501,Condemn - Eternal Retaliation,holy,15237,rune
+85502,Condemn - Shattering Explosion,physical,6343,rune
+85503,Condemn - Unleashed,holy,15237,rune
+85504,Phalanx - Bowmen,physical,42650,rune
+85505,Phalanx - Shield Charge,physical,42650,rune
+85506,Phalanx - Stampede,physical,42650,rune
+85507,Phalanx - Shield Bearers,physical,42650,rune
+85508,Phalanx - Bodyguard,physical,42650,rune
+85509,Laws of Valor - Invincible,physical,6673,rune
+85510,Laws of Valor - Frozen in Terror,physical,6673,rune
+85511,Laws of Valor - Critical,physical,6673,rune
+85512,Laws of Valor - Unstoppable Force,physical,6673,rune
+85513,Laws of Valor - Answered Prayer,physical,6673,rune
+85514,Laws of Justice - Protect the Innocent,physical,465,rune
+85515,Laws of Justice - Immovable Object,physical,465,rune
+85516,Laws of Justice - Faith's Armor,physical,465,rune
+85517,Laws of Justice - Decaying Strength,physical,465,rune
+85518,Laws of Justice - Bravery,physical,465,rune
+85519,Laws of Hope - Wings of Angels,physical,17,rune
+85520,Laws of Hope - Eternal Hope,physical,17,rune
+85521,Laws of Hope - Hopeful Cry,physical,17,rune
+85522,Laws of Hope - Faith's Reward,physical,17,rune
+85523,Laws of Hope - Promise of Faith,physical,17,rune
+85524,Falling Sword - Superheated,fire,6544,rune
+85525,Falling Sword - Part the Clouds,lightning,6544,rune
+85526,Falling Sword - Rise Brothers,physical,6544,rune
+85527,Falling Sword - Rapid Descent,lightning,6544,rune
+85528,Falling Sword - Flurry,holy,6544,rune
+85529,Akarat's Champion - Fire Starter,fire,31884,rune
+85530,Akarat's Champion - Embodiment of Power,physical,31884,rune
+85531,Akarat's Champion - Rally,lightning,31884,rune
+85532,Akarat's Champion - Prophet,holy,31884,rune
+85533,Akarat's Champion - Hasteful,holy,31884,rune
+85534,Heaven's Fury - Ascendancy,holy,47540,rune
+85535,Heaven's Fury - Blessed Ground,holy,47540,rune
+85536,Heaven's Fury - Split Fury,holy,47540,rune
+85537,Heaven's Fury - Thou Shalt Not Pass,lightning,47540,rune
+85538,Heaven's Fury - Fires of Heaven,holy,47540,rune
+85539,Bombardment - Barrels of Spikes,physical,5740,rune
+85540,Bombardment - Annihilate,fire,5740,rune
+85541,Bombardment - Mine Field,fire,5740,rune
+85542,Bombardment - Impactful Bombardment,physical,5740,rune
+85543,Bombardment - Targeted,holy,26573,rune
+85544,Heavenly Strength,physical,81,passive
+85545,Fervor,physical,81,passive
+85546,Vigilant,physical,81,passive
+85547,Righteousness,physical,81,passive
+85548,Insurmountable,physical,81,passive
+85549,Fanaticism,physical,81,passive
+85550,Indestructible,physical,81,passive
+85551,Holy Cause,physical,81,passive
+85552,Wrathful,physical,81,passive
+85553,Divine Fortress,physical,81,passive
+85554,Lord Commander,physical,81,passive
+85555,Hold Your Ground,physical,81,passive
+85556,Long Arm of the Law,physical,81,passive
+85557,Iron Maiden,physical,81,passive
+85558,Renewal,physical,81,passive
+85559,Finery,physical,81,passive
+85560,Blunt,physical,81,passive
+85561,Towering Shield,physical,81,passive
+85602,Punish - Celerity - token storage,physical,81,token_storage
+85603,Punish - Rebirth - token storage,physical,81,token_storage
+85604,Punish - Fury - token storage,lightning,81,token_storage
+85605,Smite - Shatter - token storage,holy,81,token_storage
+85606,Smite - Reaping - token storage,holy,81,token_storage
+85607,Fist of the Heavens - Fissure - token storage,lightning,81,token_storage
+85608,Provoke - Too Scared to Run - token storage,physical,81,token_storage
+85609,Laws of Justice - Decaying Strength - token storage,physical,81,token_storage
+85600,Crusader - energy rate,physical,81,energy_rate
+85601,Crusader - resource pulse - core regeneration mask,physical,81,regeneration_mask
+85610,Resource cost reduction - gear and paragon - Crusader - cost modifier,physical,81,cost_modifier
+85611,Cooldown reduction - gear and paragon - Crusader - cooldown modifier,physical,81,cooldown_modifier
+85612,Fire skills cost reduction - Crusader,fire,81,element_cost_modifier
+85100,Bone Spikes,physical,1510,active
+85101,Grim Scythe,physical,845,active
+85102,Siphon Blood,physical,689,active
+85103,Bone Spear,physical,6789,active
+85104,Skeletal Mage,physical,46584,active
+85105,Death Nova,poison,50842,active
+85106,Corpse Explosion,physical,49158,active
+85107,Corpse Lance,physical,6789,active
+85108,Devour,physical,48743,active
+85109,Revive,physical,46619,active
+85110,Command Skeletons,physical,56222,active
+85111,Command Golem,physical,1122,active
+85112,Army of the Dead,physical,42650,active
+85113,Land of the Dead,physical,43265,active
+85114,Decrepify,physical,702,active
+85115,Leech,physical,63106,active
+85116,Frailty,physical,603,active
+85117,Bone Armor,physical,49222,active
+85118,Bone Spirit,physical,48181,active
+85119,Blood Rush,physical,1953,active
+85120,Simulacrum,physical,55342,active
+85121,Bone Spikes - Sudden Impact,physical,1510,rune
+85122,Bone Spikes - Path of Bones,physical,1510,rune
+85123,Bone Spikes - Bone Pillars,poison,3815,rune
+85124,Bone Spikes - Frost Spikes,cold,10,rune
+85125,Bone Spikes - Blood Spikes,physical,1510,rune
+85126,Grim Scythe - Blood Scythe,physical,845,rune
+85127,Grim Scythe - Execution,physical,845,rune
+85128,Grim Scythe - Frost Scythe,cold,49143,rune
+85129,Grim Scythe - Dual Scythes,physical,845,rune
+85130,Grim Scythe - Cursed Scythe,poison,45462,rune
+85131,Siphon Blood - Suppress,cold,689,rune
+85132,Siphon Blood - Purity of Essence,physical,689,rune
+85133,Siphon Blood - Drain Life,physical,689,rune
+85134,Siphon Blood - Power Shift,poison,689,rune
+85135,Siphon Blood - Blood Sucker,physical,689,rune
+85136,Bone Spear - Crystallization,cold,116,rune
+85137,Bone Spear - Shatter,physical,6789,rune
+85138,Bone Spear - Blighted Marrow,poison,21067,rune
+85139,Bone Spear - Blood Spear,physical,6789,rune
+85140,Bone Spear - Teeth,physical,6789,rune
+85141,Skeletal Mage - Gift of Death,physical,46584,rune
+85142,Skeletal Mage - Singularity,physical,46584,rune
+85143,Skeletal Mage - Life Support,physical,46584,rune
+85144,Skeletal Mage - Contamination,poison,46584,rune
+85145,Skeletal Mage - Skeleton Archer,cold,46584,rune
+85146,Death Nova - Tendril Nova,physical,1680,rune
+85147,Death Nova - Bone Nova,physical,1680,rune
+85148,Death Nova - Blood Nova,physical,1680,rune
+85149,Death Nova - Blight,poison,50842,rune
+85150,Death Nova - Unstable Compound,poison,50842,rune
+85151,Corpse Explosion - Shrapnel,poison,49158,rune
+85152,Corpse Explosion - Final Embrace,physical,49158,rune
+85153,Corpse Explosion - Close Quarters,poison,49158,rune
+85154,Corpse Explosion - Bloody Mess,physical,49158,rune
+85155,Corpse Explosion - Dead Cold,cold,49158,rune
+85156,Corpse Lance - Ricochet,poison,21067,rune
+85157,Corpse Lance - Brittle Touch,cold,116,rune
+85158,Corpse Lance - Blood Lance,physical,6789,rune
+85159,Corpse Lance - Visceral Impact,physical,6789,rune
+85160,Corpse Lance - Shredding Splinters,poison,21067,rune
+85161,Devour - Cannibalize,physical,48743,rune
+85162,Devour - Ruthless,physical,48743,rune
+85163,Devour - Voracious,physical,48743,rune
+85164,Devour - Devouring Aura,physical,48743,rune
+85165,Devour - Satiated,physical,48743,rune
+85166,Revive - Purgatory,physical,46619,rune
+85167,Revive - Oblation,physical,46619,rune
+85168,Revive - Personal Army,physical,46619,rune
+85169,Revive - Recklessness,cold,46619,rune
+85170,Revive - Horrific Return,poison,46619,rune
+85171,Command Skeletons - Enforcer,physical,56222,rune
+85172,Command Skeletons - Dark Mending,physical,56222,rune
+85173,Command Skeletons - Freezing Grasp,cold,56222,rune
+85174,Command Skeletons - Kill Command,poison,56222,rune
+85175,Command Skeletons - Frenzy,physical,56222,rune
+85176,Command Golem - Bone Golem,physical,1122,rune
+85177,Command Golem - Blood Golem,physical,1122,rune
+85178,Command Golem - Decay Golem,poison,1122,rune
+85179,Command Golem - Flesh Golem,physical,1122,rune
+85180,Command Golem - Ice Golem,cold,1122,rune
+85181,Army of the Dead - Blighted Grasp,poison,42650,rune
+85182,Army of the Dead - Frozen Army,cold,42650,rune
+85183,Army of the Dead - Unconventional Warfare,physical,42650,rune
+85184,Army of the Dead - Death Valley,physical,42650,rune
+85185,Army of the Dead - Dead Storm,physical,42650,rune
+85186,Land of the Dead - Invigoration,physical,43265,rune
+85187,Land of the Dead - Frozen Lands,cold,43265,rune
+85188,Land of the Dead - Plaguelands,poison,43265,rune
+85189,Land of the Dead - Land of Plenty,physical,43265,rune
+85190,Land of the Dead - Shallow Graves,physical,43265,rune
+85191,Decrepify - Enfeeblement,physical,702,rune
+85192,Decrepify - Opportunist,physical,702,rune
+85193,Decrepify - Borrowed Time,physical,702,rune
+85194,Decrepify - Wither,physical,702,rune
+85195,Decrepify - Dizzying Curse,physical,702,rune
+85196,Leech - Osmosis,physical,63106,rune
+85197,Leech - Transmittable,physical,63106,rune
+85198,Leech - Sanguine End,physical,63106,rune
+85199,Leech - Cursed Ground,physical,63106,rune
+85200,Leech - Blood Flask,physical,63106,rune
+85201,Frailty - Early Grave,physical,603,rune
+85202,Frailty - Harvest Essence,physical,603,rune
+85203,Frailty - Volatile Death,physical,603,rune
+85204,Frailty - Scent of Blood,physical,603,rune
+85205,Frailty - Aura of Frailty,physical,603,rune
+85206,Bone Armor - Vengeful Armaments,physical,49222,rune
+85207,Bone Armor - Limited Immunity,physical,49222,rune
+85208,Bone Armor - Dislocation,poison,49222,rune
+85209,Bone Armor - Thy Flesh Sustained,physical,49222,rune
+85210,Bone Armor - Harvest of Anguish,cold,49222,rune
+85211,Bone Spirit - Possession,physical,48181,rune
+85212,Bone Spirit - Panic Attack,poison,48181,rune
+85213,Bone Spirit - Poltergeist,physical,48181,rune
+85214,Bone Spirit - Unfinished Business,cold,48181,rune
+85215,Bone Spirit - Astral Projection,cold,48181,rune
+85216,Blood Rush - Transfusion,physical,1953,rune
+85217,Blood Rush - Hemostasis,physical,1953,rune
+85218,Blood Rush - Metabolism,physical,1953,rune
+85219,Blood Rush - Potency,physical,1953,rune
+85220,Blood Rush - Molting,physical,1953,rune
+85221,Simulacrum - Reservoir,physical,55342,rune
+85222,Simulacrum - Cursed Form,physical,55342,rune
+85223,Simulacrum - Blood Debt,physical,55342,rune
+85224,Simulacrum - Blood and Bone,physical,55342,rune
+85225,Simulacrum - Self Sacrifice,physical,55342,rune
+85226,Life from Death,physical,81,passive
+85227,Fueled by Death,physical,81,passive
+85228,Stand Alone,physical,81,passive
+85229,Bone Prison,physical,81,passive
+85230,Swift Harvesting,physical,81,passive
+85231,Commander of the Risen Dead,physical,81,passive
+85232,Extended Servitude,physical,81,passive
+85233,Rigor Mortis,physical,81,passive
+85234,Overwhelming Essence,physical,81,passive
+85235,Dark Reaping,physical,81,passive
+85236,Spreading Malediction,physical,81,passive
+85237,Eternal Torment,physical,81,passive
+85238,Final Service,physical,81,passive
+85239,Grisly Tribute,physical,81,passive
+85240,Draw Life,physical,81,passive
+85241,Serration,physical,81,passive
+85242,Aberrant Animator,physical,81,passive
+85243,Blood for Blood,physical,81,passive
+85244,Blood Is Power,physical,81,passive
+85245,Rathma's Shield,physical,81,passive
+85300,Siphon Blood - Suppress - token storage,cold,81,token_storage
+85301,Siphon Blood - Purity of Essence - token storage,physical,81,token_storage
+85302,Siphon Blood - Power Shift - token storage,poison,81,token_storage
+85303,Decrepify - Opportunist - token storage,physical,81,token_storage
+85304,Decrepify - Borrowed Time - token storage,physical,81,token_storage
+85305,Necromancer - resource pulse - core regeneration mask,physical,81,regeneration_mask
+85306,Resource cost reduction - gear and paragon - Necromancer - cost modifier,physical,81,cost_modifier
+85307,Cooldown reduction - gear and paragon - Necromancer - cooldown modifier,physical,81,cooldown_modifier
+85308,Fire skills cost reduction - Necromancer,fire,81,element_cost_modifier
+85309,Command Skeletons cost reduction,physical,81,skill_cost_modifier
+85310,Decrepify cost reduction,physical,81,skill_cost_modifier
+85311,Frailty cost reduction,physical,81,skill_cost_modifier
+85312,Leech cost reduction,physical,81,skill_cost_modifier
+85700,Hungering Arrow,physical,3044,active
+85701,Entangling Shot,physical,5116,active
+85702,Bolas,fire,60053,active
+85703,Evasive Fire,physical,2643,active
+85704,Grenade,fire,13813,active
+85705,Impale,physical,26679,active
+85706,Rapid Fire,physical,3045,active
+85707,Chakram,physical,57755,active
+85708,Elemental Arrow,fire,133,active
+85709,Caltrops,physical,13809,active
+85710,Smoke Screen,physical,7964,active
+85711,Shadow Power,physical,51713,active
+85712,Vault,physical,781,active
+85713,Preparation,physical,14185,active
+85714,Companion,physical,883,active
+85715,Marked for Death,physical,1130,active
+85716,Fan of Knives,physical,51723,active
+85717,Spike Trap,fire,13813,active
+85718,Sentry,physical,3599,active
+85719,Vengeance,physical,47241,active
+85720,Strafe,physical,1510,active
+85721,Multishot,physical,2643,active
+85722,Cluster Arrow,fire,19434,active
+85723,Rain of Vengeance,physical,1510,active
+85724,Hungering Arrow - Serrated Arrow,fire,133,rune
+85725,Hungering Arrow - Shatter Shot,lightning,403,rune
+85726,Hungering Arrow - Devouring Arrow,cold,116,rune
+85727,Hungering Arrow - Puncturing Arrow,physical,3044,rune
+85728,Hungering Arrow - Spray of Teeth,physical,3044,rune
+85729,Entangling Shot - Heavy Burden,cold,116,rune
+85730,Entangling Shot - Chain Gang,physical,5116,rune
+85731,Entangling Shot - Shock Collar,lightning,403,rune
+85732,Entangling Shot - Justice is Served,fire,133,rune
+85733,Entangling Shot - Bounty Hunter,physical,5116,rune
+85734,Bolas - Volatile Explosives,fire,60053,rune
+85735,Bolas - Freezing Strike,cold,116,rune
+85736,Bolas - Thunder Ball,lightning,403,rune
+85737,Bolas - Bitter Pill,lightning,403,rune
+85738,Bolas - Imminent Doom,fire,60053,rune
+85739,Evasive Fire - Hardened,physical,2643,rune
+85740,Evasive Fire - Covering Fire,fire,133,rune
+85741,Evasive Fire - Parting Gift,physical,2643,rune
+85742,Evasive Fire - Surge,lightning,403,rune
+85743,Evasive Fire - Focus,cold,116,rune
+85744,Grenade - Cold Grenade,cold,13809,rune
+85745,Grenade - Cluster Grenades,fire,13813,rune
+85746,Grenade - Grenade Cache,fire,13813,rune
+85747,Grenade - Tinkerer,fire,13813,rune
+85748,Grenade - Stun Grenade,lightning,421,rune
+85749,Impale - Overpenetration,cold,116,rune
+85750,Impale - Impact,physical,26679,rune
+85751,Impale - Chemical Burn,fire,133,rune
+85752,Impale - Ricochet,lightning,403,rune
+85753,Impale - Grievous Wounds,physical,26679,rune
+85754,Rapid Fire - Bombardment,fire,133,rune
+85755,Rapid Fire - High Velocity,lightning,403,rune
+85756,Rapid Fire - Fire Support,physical,3045,rune
+85757,Rapid Fire - Withering Fire,fire,133,rune
+85758,Rapid Fire - Frost Shots,cold,116,rune
+85759,Chakram - Twin Chakrams,fire,133,rune
+85760,Chakram - Boomerang,lightning,403,rune
+85761,Chakram - Serpentine,cold,116,rune
+85762,Chakram - Razor Disk,physical,57755,rune
+85763,Chakram - Shuriken Cloud,physical,57755,rune
+85764,Elemental Arrow - Frost Arrow,cold,116,rune
+85765,Elemental Arrow - Ball Lightning,lightning,403,rune
+85766,Elemental Arrow - Immolation Arrow,fire,133,rune
+85767,Elemental Arrow - Nether Tentacles,physical,3044,rune
+85768,Elemental Arrow - Lightning Bolts,lightning,403,rune
+85769,Caltrops - Jagged Spikes,physical,13809,rune
+85770,Caltrops - Hooked Spines,physical,13809,rune
+85771,Caltrops - Torturous Ground,physical,13809,rune
+85772,Caltrops - Carved Stakes,physical,13809,rune
+85773,Caltrops - Bait the Trap,physical,13809,rune
+85774,Smoke Screen - Vanishing Powder,physical,7964,rune
+85775,Smoke Screen - Lingering Fog,physical,7964,rune
+85776,Smoke Screen - Healing Vapors,physical,7964,rune
+85777,Smoke Screen - Special Recipe,physical,7964,rune
+85778,Smoke Screen - Displacement,physical,7964,rune
+85779,Shadow Power - Night Bane,physical,51713,rune
+85780,Shadow Power - Shadow Glide,physical,51713,rune
+85781,Shadow Power - Gloom,physical,51713,rune
+85782,Shadow Power - Well of Darkness,physical,51713,rune
+85783,Shadow Power - Blood Moon,physical,51713,rune
+85784,Vault - Trail of Cinders,fire,781,rune
+85785,Vault - Acrobatics,physical,781,rune
+85786,Vault - Action Shot,physical,781,rune
+85787,Vault - Tumble,physical,781,rune
+85788,Vault - Rattling Roll,physical,781,rune
+85789,Preparation - Punishment,physical,14185,rune
+85790,Preparation - Invigoration,physical,14185,rune
+85791,Preparation - Focused Mind,physical,14185,rune
+85792,Preparation - Battle Scars,physical,14185,rune
+85793,Preparation - Backup Plan,physical,14185,rune
+85794,Companion - Spider Companion,physical,883,rune
+85795,Companion - Boar Companion,physical,883,rune
+85796,Companion - Wolf Companion,physical,883,rune
+85797,Companion - Bat Companion,physical,883,rune
+85798,Companion - Ferret Companion,physical,883,rune
+85799,Marked for Death - Grim Reaper,physical,1130,rune
+85800,Marked for Death - Contagion,physical,1130,rune
+85801,Marked for Death - Valley of Death,physical,1130,rune
+85802,Marked for Death - Mortal Enemy,physical,1130,rune
+85803,Marked for Death - Death Toll,physical,1130,rune
+85804,Fan of Knives - Knives Expert,fire,1535,rune
+85805,Fan of Knives - Assassin's Knives,physical,51723,rune
+85806,Fan of Knives - Fan of Daggers,fire,1535,rune
+85807,Fan of Knives - Pinpoint Accuracy,lightning,51490,rune
+85808,Fan of Knives - Bladed Armor,cold,122,rune
+85809,Spike Trap - Impaling Spines,physical,1510,rune
+85810,Spike Trap - Echoing Blast,cold,13809,rune
+85811,Spike Trap - Custom Trigger,fire,13813,rune
+85812,Spike Trap - Scatter,fire,13813,rune
+85813,Spike Trap - Lightning Rod,lightning,421,rune
+85814,Sentry - Chain of Torment,physical,3599,rune
+85815,Sentry - Impaling Bolt,lightning,3599,rune
+85816,Sentry - Spitfire Turret,fire,3599,rune
+85817,Sentry - Polar Station,cold,3599,rune
+85818,Sentry - Guardian Turret,physical,3599,rune
+85819,Vengeance - From the Shadows,cold,47241,rune
+85820,Vengeance - Dark Heart,lightning,47241,rune
+85821,Vengeance - Personal Mortar,fire,47241,rune
+85822,Vengeance - Side Cannons,physical,47241,rune
+85823,Vengeance - Seethe,physical,47241,rune
+85824,Strafe - Demolition,fire,133,rune
+85825,Strafe - Icy Trail,cold,116,rune
+85826,Strafe - Rocket Storm,fire,133,rune
+85827,Strafe - Drifting Shadow,lightning,403,rune
+85828,Strafe - Stinging Steel,physical,1510,rune
+85829,Multishot - Full Broadside,physical,2643,rune
+85830,Multishot - Wind Chill,cold,116,rune
+85831,Multishot - Arsenal,fire,133,rune
+85832,Multishot - Fire at Will,lightning,403,rune
+85833,Multishot - Suppression Fire,physical,2643,rune
+85834,Cluster Arrow - Loaded for Bear,fire,19434,rune
+85835,Cluster Arrow - Shooting Stars,physical,1510,rune
+85836,Cluster Arrow - Cluster Bombs,fire,19434,rune
+85837,Cluster Arrow - Maelstrom,cold,13809,rune
+85838,Cluster Arrow - Dazzling Arrow,lightning,421,rune
+85839,Rain of Vengeance - Shade,lightning,51490,rune
+85840,Rain of Vengeance - Dark Cloud,physical,1510,rune
+85841,Rain of Vengeance - Anathema,fire,5740,rune
+85842,Rain of Vengeance - Flying Strike,cold,10,rune
+85843,Rain of Vengeance - Stampede,fire,5740,rune
+85844,Thrill of the Hunt,physical,81,passive
+85845,Tactical Advantage,physical,81,passive
+85846,Blood Vengeance,physical,81,passive
+85847,Steady Aim,physical,81,passive
+85848,Cull the Weak,physical,81,passive
+85849,Night Stalker,physical,81,passive
+85850,Brooding,physical,81,passive
+85851,Hot Pursuit,physical,81,passive
+85852,Archery,physical,81,passive
+85853,Numbing Traps,physical,81,passive
+85854,Perfectionist,physical,81,passive
+85855,Custom Engineering,physical,81,passive
+85856,Grenadier,physical,81,passive
+85857,Sharpshooter,physical,81,passive
+85858,Ballistics,physical,81,passive
+85859,Ambush,physical,81,passive
+85860,Awareness,physical,81,passive
+85861,Single Out,physical,81,passive
+85862,Leech (Demon Hunter),physical,81,passive
+85902,Bolas - Freezing Strike - token storage,cold,81,token_storage
+85903,Bolas - Bitter Pill - token storage,lightning,81,token_storage
+85904,Evasive Fire - Hardened - token storage,physical,81,token_storage
+85905,Evasive Fire - Covering Fire - token storage,fire,81,token_storage
+85906,Evasive Fire - Parting Gift - token storage,physical,81,token_storage
+85907,Grenade - Cold Grenade - token storage,cold,81,token_storage
+85908,Companion - Spider Companion - token storage,physical,81,token_storage
+85909,Companion - Boar Companion - token storage,physical,81,token_storage
+85910,Companion - Bat Companion - token storage,physical,81,token_storage
+85911,Vengeance - From the Shadows - token storage,cold,81,token_storage
+85912,Vengeance - Dark Heart - token storage,lightning,81,token_storage
+85913,Vengeance - Personal Mortar - token storage,fire,81,token_storage
+85914,Vengeance - Side Cannons - token storage,physical,81,token_storage
+85915,Vengeance - Seethe - token storage,physical,81,token_storage
+85916,Cluster Arrow - Maelstrom - token storage,cold,81,token_storage
+85917,Archery - token storage,physical,81,token_storage
+85900,Demon Hunter - energy rate,physical,81,energy_rate
+85901,Demon Hunter - resource pulse - core regeneration mask,physical,81,regeneration_mask
+85918,Resource cost reduction - gear and paragon - Demon Hunter - cost modifier,physical,81,cost_modifier
+85919,Cooldown reduction - gear and paragon - Demon Hunter - cooldown modifier,physical,81,cooldown_modifier
+85920,Fire skills cost reduction - Demon Hunter,fire,81,element_cost_modifier
+85923,Caltrops cost reduction,physical,81,skill_cost_modifier
+85924,Marked for Death cost reduction,physical,81,skill_cost_modifier
+85925,Shadow Power cost reduction,physical,81,skill_cost_modifier
+85926,Smoke Screen cost reduction,physical,81,skill_cost_modifier
+85922,Vault cost reduction,physical,81,skill_cost_modifier
+86000,Poison Dart,poison,1978,active
+86001,Corpse Spiders,physical,54706,active
+86002,Plague of Toads,poison,21067,active
+86003,Firebomb,fire,133,active
+86004,Grasp of the Dead,physical,339,active
+86005,Firebats,fire,31661,active
+86006,Haunt,cold,48181,active
+86007,Locust Swarm,poison,5570,active
+86008,Summon Zombie Dogs,physical,883,active
+86009,Horrify,physical,5484,active
+86010,Spirit Walk,physical,27827,active
+86011,Hex,physical,51514,active
+86012,Soul Harvest,physical,1120,active
+86013,Sacrifice,physical,47986,active
+86014,Mass Confusion,physical,605,active
+86015,Zombie Charger,poison,100,active
+86016,Spirit Barrage,cold,116,active
+86017,Acid Cloud,poison,3815,active
+86018,Wall of Death,physical,42650,active
+86019,Piranhas,poison,43265,active
+86020,Gargantuan,physical,1122,active
+86021,Big Bad Voodoo,physical,10060,active
+86022,Fetish Army,physical,51533,active
+86023,Poison Dart - Flaming Dart,fire,2136,rune
+86024,Poison Dart - Splinters,poison,1978,rune
+86025,Poison Dart - Numbing Dart,cold,116,rune
+86026,Poison Dart - Spined Dart,physical,6789,rune
+86027,Poison Dart - Snake to the Face,poison,1978,rune
+86028,Corpse Spiders - Blazing Spiders,fire,54706,rune
+86029,Corpse Spiders - Spider Queen,poison,54706,rune
+86030,Corpse Spiders - Leaping Spiders,poison,54706,rune
+86031,Corpse Spiders - Widowmakers,physical,54706,rune
+86032,Corpse Spiders - Medusa Spiders,cold,54706,rune
+86033,Plague of Toads - Explosive Toads,fire,2136,rune
+86034,Plague of Toads - Rain of Toads,poison,21067,rune
+86035,Plague of Toads - Piercing Toads,physical,6789,rune
+86036,Plague of Toads - Toad Affinity,cold,116,rune
+86037,Plague of Toads - Addling Toads,poison,21067,rune
+86038,Firebomb - Ghost Bomb,cold,116,rune
+86039,Firebomb - Roll the Bones,fire,133,rune
+86040,Firebomb - Fire Pit,fire,133,rune
+86041,Firebomb - Pyrogeist,fire,133,rune
+86042,Firebomb - Flash Fire,fire,133,rune
+86043,Grasp of the Dead - Groping Eels,physical,339,rune
+86044,Grasp of the Dead - Rain of Corpses,physical,339,rune
+86045,Grasp of the Dead - Unbreakable Grasp,cold,339,rune
+86046,Grasp of the Dead - Desperate Grasp,poison,339,rune
+86047,Grasp of the Dead - Death Is Life,poison,339,rune
+86048,Firebats - Dire Bats,fire,31661,rune
+86049,Firebats - Hungry Bats,fire,31661,rune
+86050,Firebats - Plague Bats,poison,31661,rune
+86051,Firebats - Vampire Bats,physical,31661,rune
+86052,Firebats - Cloud of Bats,fire,31661,rune
+86053,Haunt - Consuming Spirit,fire,48181,rune
+86054,Haunt - Lingering Spirit,cold,48181,rune
+86055,Haunt - Poisoned Spirit,poison,48181,rune
+86056,Haunt - Draining Spirit,physical,48181,rune
+86057,Haunt - Resentful Spirits,cold,48181,rune
+86058,Locust Swarm - Searing Locusts,fire,5570,rune
+86059,Locust Swarm - Pestilence,poison,5570,rune
+86060,Locust Swarm - Cloud of Insects,physical,5570,rune
+86061,Locust Swarm - Devouring Swarm,cold,5570,rune
+86062,Locust Swarm - Diseased Swarm,poison,5570,rune
+86063,Summon Zombie Dogs - Burning Dogs,fire,883,rune
+86064,Summon Zombie Dogs - Life Link,physical,883,rune
+86065,Summon Zombie Dogs - Rabid Dogs,poison,883,rune
+86066,Summon Zombie Dogs - Chilled to the Bone,cold,883,rune
+86067,Summon Zombie Dogs - Leeching Beasts,physical,883,rune
+86068,Horrify - Frightening Aspect,physical,5484,rune
+86069,Horrify - Face of Death,physical,5484,rune
+86070,Horrify - Phobia,physical,5484,rune
+86071,Horrify - Ruthless Terror,physical,5484,rune
+86072,Horrify - Stalker,physical,5484,rune
+86073,Spirit Walk - Severance,physical,27827,rune
+86074,Spirit Walk - Jaunt,physical,27827,rune
+86075,Spirit Walk - Umbral Shock,fire,27827,rune
+86076,Spirit Walk - Honored Guest,physical,27827,rune
+86077,Spirit Walk - Healing Journey,physical,27827,rune
+86078,Hex - Toad of Hugeness,poison,51514,rune
+86079,Hex - Angry Chicken,poison,51514,rune
+86080,Hex - Unstable Form,fire,51514,rune
+86081,Hex - Hedge Magic,cold,51514,rune
+86082,Hex - Jinx,poison,51514,rune
+86083,Soul Harvest - Siphon,physical,1120,rune
+86084,Soul Harvest - Soul to Waste,fire,1120,rune
+86085,Soul Harvest - Languish,cold,1120,rune
+86086,Soul Harvest - Swallow Your Soul,poison,1120,rune
+86087,Soul Harvest - Vengeful Spirit,physical,1120,rune
+86088,Sacrifice - Provoke the Pack,physical,47986,rune
+86089,Sacrifice - For the Master,physical,47986,rune
+86090,Sacrifice - Black Blood,physical,47986,rune
+86091,Sacrifice - Pride,physical,47986,rune
+86092,Sacrifice - Next of Kin,physical,47986,rune
+86093,Mass Confusion - Paranoia,physical,605,rune
+86094,Mass Confusion - Mass Hysteria,physical,605,rune
+86095,Mass Confusion - Mass Hallucination,physical,605,rune
+86096,Mass Confusion - Unstable Realm,physical,605,rune
+86097,Mass Confusion - Devolution,physical,605,rune
+86098,Zombie Charger - Zombie Bears,poison,100,rune
+86099,Zombie Charger - Lumbering Cold,cold,100,rune
+86100,Zombie Charger - Pile On,physical,100,rune
+86101,Zombie Charger - Undeath,poison,100,rune
+86102,Zombie Charger - Explosive Beast,fire,100,rune
+86103,Spirit Barrage - Phlebotomize,cold,116,rune
+86104,Spirit Barrage - Well of Souls,fire,2136,rune
+86105,Spirit Barrage - Phantasm,cold,116,rune
+86106,Spirit Barrage - The Spirit Is Willing,cold,116,rune
+86107,Spirit Barrage - Manitou,cold,116,rune
+86108,Acid Cloud - Corpse Bomb,fire,3815,rune
+86109,Acid Cloud - Acid Rain,poison,3815,rune
+86110,Acid Cloud - Lob Blob Bomb,poison,3815,rune
+86111,Acid Cloud - Slow Burn,cold,3815,rune
+86112,Acid Cloud - Kiss of Death,poison,3815,rune
+86113,Wall of Death - Surrounded by Death,physical,42650,rune
+86114,Wall of Death - Ring of Poison,poison,42650,rune
+86115,Wall of Death - Communing with Spirits,cold,42650,rune
+86116,Wall of Death - Wall of Zombies,physical,42650,rune
+86117,Wall of Death - Fire Wall,fire,42650,rune
+86118,Piranhas - Bogadile,physical,43265,rune
+86119,Piranhas - Zombie Piranhas,poison,43265,rune
+86120,Piranhas - Piranhado,poison,43265,rune
+86121,Piranhas - Wave of Mutilation,poison,43265,rune
+86122,Piranhas - Frozen Piranhas,cold,43265,rune
+86123,Gargantuan - Restless Giant,physical,1122,rune
+86124,Gargantuan - Humongoid,cold,1122,rune
+86125,Gargantuan - Big Stinker,poison,1122,rune
+86126,Gargantuan - Wrathful Protector,fire,1122,rune
+86127,Gargantuan - Bruiser,fire,1122,rune
+86128,Big Bad Voodoo - Slam Dance,physical,10060,rune
+86129,Big Bad Voodoo - Jungle Drums,physical,10060,rune
+86130,Big Bad Voodoo - Ghost Trance,physical,10060,rune
+86131,Big Bad Voodoo - Rain Dance,physical,10060,rune
+86132,Big Bad Voodoo - Boogie Man,physical,10060,rune
+86133,Fetish Army - Fetish Ambush,cold,51533,rune
+86134,Fetish Army - Legion of Daggers,physical,51533,rune
+86135,Fetish Army - Tiki Torchers,fire,51533,rune
+86136,Fetish Army - Devoted Following,physical,51533,rune
+86137,Fetish Army - Head Hunters,poison,51533,rune
+86138,Jungle Fortitude,physical,81,passive
+86139,Circle of Life,physical,81,passive
+86140,Spiritual Attunement,physical,81,passive
+86141,Gruesome Feast,physical,81,passive
+86142,Blood Ritual,physical,81,passive
+86143,Bad Medicine,physical,81,passive
+86144,Zombie Handler,physical,81,passive
+86145,Pierce the Veil,physical,81,passive
+86146,Spirit Vessel,physical,81,passive
+86147,Fetish Sycophants,physical,81,passive
+86148,Rush of Essence,physical,81,passive
+86149,Vision Quest,physical,81,passive
+86150,Fierce Loyalty,physical,81,passive
+86151,Grave Injustice,physical,81,passive
+86152,Tribal Rites,physical,81,passive
+86153,Creeping Death,physical,81,passive
+86154,Swampland Attunement,physical,81,passive
+86155,Midnight Feast,physical,81,passive
+86156,Confidence Ritual,physical,81,passive
+86200,Gargantuan - Restless Giant - token storage,physical,81,token_storage
+86202,Witch Doctor - resource pulse - core regeneration mask,physical,81,regeneration_mask
+86203,Resource cost reduction - gear and paragon - Witch Doctor - cost modifier,physical,81,cost_modifier
+86204,Cooldown reduction - gear and paragon - Witch Doctor - cooldown modifier,physical,81,cooldown_modifier
+86205,Fire skills cost reduction - Witch Doctor,fire,81,element_cost_modifier
+86300,Lightning Bolt,lightning,403,active
+86301,Flame Shock,fire,8050,active
+86302,Elemental Lash,physical,17364,active
+86303,Frost Lance,cold,8056,active
+86304,Chain Lightning,lightning,421,active
+86305,Lava Burst,fire,51505,active
+86306,Earthquake (Shaman),physical,3600,active
+86307,Elemental Blast,lightning,8042,active
+86308,Thunderstorm,lightning,51490,active
+86309,Ghost Wolf,physical,2645,active
+86310,Elemental Shield,lightning,324,active
+86311,Purge,lightning,370,active
+86312,Searing Totem,fire,3599,active
+86313,Earthbind Totem,physical,2484,active
+86314,Healing Stream Totem,cold,5394,active
+86315,Tempest Totem,physical,8512,active
+86316,Elemental Weapon,physical,8017,active
+86317,Spirit Link,physical,1064,active
+86318,Call of the Ancestors,physical,2008,active
+86319,Spirit Wolves,physical,51533,active
+86320,Bloodlust,physical,2825,active
+86321,Fire Elemental,fire,2894,active
+86322,Earth Elemental,physical,2062,active
+86323,Ascendance,physical,16166,active
+86324,Lightning Bolt - Overload,lightning,403,rune
+86325,Lightning Bolt - Lava Beam,fire,51505,rune
+86326,Lightning Bolt - Hailstone,cold,8056,rune
+86327,Lightning Bolt - Earthen Spike,physical,8042,rune
+86328,Lightning Bolt - Stormcaller,lightning,403,rune
+86329,Flame Shock - Lava Shock,fire,8050,rune
+86330,Flame Shock - Frost Shock,cold,8056,rune
+86331,Flame Shock - Earth Shock,physical,8042,rune
+86332,Flame Shock - Static Shock,lightning,403,rune
+86333,Flame Shock - Primal Shock,lightning,8050,rune
+86334,Elemental Lash - Searing Lash,fire,60103,rune
+86335,Elemental Lash - Lava Surge,fire,60103,rune
+86336,Elemental Lash - Stonewhip,physical,17364,rune
+86337,Elemental Lash - Frost Lash,cold,8034,rune
+86338,Elemental Lash - Thunder Lash,lightning,25504,rune
+86339,Frost Lance - Icefury,cold,8056,rune
+86340,Frost Lance - Shattering Lance,cold,8056,rune
+86341,Frost Lance - Frostfire Bolt,fire,8050,rune
+86342,Frost Lance - Glacial Boulder,physical,8042,rune
+86343,Frost Lance - Thunderhail,lightning,403,rune
+86344,Chain Lightning - Forked Lightning,lightning,421,rune
+86345,Chain Lightning - Chain Lava,fire,8050,rune
+86346,Chain Lightning - Chain Frost,cold,8056,rune
+86347,Chain Lightning - Chain Heal,cold,1064,rune
+86348,Chain Lightning - Thunderhead,lightning,421,rune
+86349,Lava Burst - Path of Flames,fire,51505,rune
+86350,Lava Burst - Pyroclasm,fire,51505,rune
+86351,Lava Burst - Obsidian Burst,physical,8042,rune
+86352,Lava Burst - Steam Burst,cold,8056,rune
+86353,Lava Burst - Volcanic Lightning,lightning,403,rune
+86354,Earthquake (Shaman) - Aftershock,physical,3600,rune
+86355,Earthquake (Shaman) - Rolling Quake,physical,3600,rune
+86356,Earthquake (Shaman) - Magma Chamber,fire,8187,rune
+86357,Earthquake (Shaman) - Frozen Tundra,cold,63685,rune
+86358,Earthquake (Shaman) - Thundering Earth,lightning,51490,rune
+86359,Elemental Blast - Prismatic Cycle,lightning,8042,rune
+86360,Elemental Blast - Elemental Echo,lightning,8042,rune
+86361,Elemental Blast - Unstable Elements,lightning,8042,rune
+86362,Elemental Blast - Elemental Mastery,lightning,8042,rune
+86363,Elemental Blast - Primal Wellspring,lightning,8042,rune
+86364,Thunderstorm - Eye of the Storm,lightning,51490,rune
+86365,Thunderstorm - Gale Force,lightning,51490,rune
+86366,Thunderstorm - Frost Storm,cold,63685,rune
+86367,Thunderstorm - Sandstorm,physical,3600,rune
+86368,Thunderstorm - Volcanic Gale,fire,8349,rune
+86369,Ghost Wolf - Spirit Walk,physical,2645,rune
+86370,Ghost Wolf - Wind Rush,physical,2645,rune
+86371,Ghost Wolf - Thunderous Paws,lightning,2645,rune
+86372,Ghost Wolf - Spectral Recovery,cold,2645,rune
+86373,Ghost Wolf - Blazing Spirit,fire,2645,rune
+86374,Elemental Shield - Lightning Shield,lightning,324,rune
+86375,Elemental Shield - Stoneskin,physical,8072,rune
+86376,Elemental Shield - Water Shield,cold,52127,rune
+86377,Elemental Shield - Flame Shield,fire,324,rune
+86378,Elemental Shield - Totemic Ward,lightning,379,rune
+86379,Purge - Wind Shear,lightning,57994,rune
+86380,Purge - Greater Purge,lightning,370,rune
+86381,Purge - Cleanse Spirit,cold,51886,rune
+86382,Purge - Consuming Purge,fire,8050,rune
+86383,Purge - Earthen Purge,physical,8042,rune
+86384,Searing Totem - Magma Totem,fire,8187,rune
+86385,Searing Totem - Searing Flames,fire,3599,rune
+86386,Searing Totem - Capacitor Totem,lightning,2895,rune
+86387,Searing Totem - Frostflame Totem,cold,8181,rune
+86388,Searing Totem - Stoneclaw Totem,physical,5730,rune
+86389,Earthbind Totem - Earthgrab,physical,64695,rune
+86390,Earthbind Totem - Tremor Totem,physical,8143,rune
+86391,Earthbind Totem - Glacial Ground,cold,8181,rune
+86392,Earthbind Totem - Gale Vortex,lightning,2895,rune
+86393,Earthbind Totem - Magma Seep,fire,8187,rune
+86394,Healing Stream Totem - Healing Tide,cold,5394,rune
+86395,Healing Stream Totem - Maelstrom Spring,cold,5675,rune
+86396,Healing Stream Totem - Cleansing Stream,cold,8170,rune
+86397,Healing Stream Totem - Riptide,cold,61295,rune
+86398,Healing Stream Totem - Ancestral Protection,cold,21169,rune
+86399,Tempest Totem - Wrath of Air,lightning,2895,rune
+86400,Tempest Totem - Emberwind Totem,fire,8227,rune
+86401,Tempest Totem - Icewind Totem,cold,8181,rune
+86402,Tempest Totem - Strength of Earth,physical,8075,rune
+86403,Tempest Totem - Totemic Wrath,physical,30706,rune
+86404,Elemental Weapon - Flametongue,fire,8024,rune
+86405,Elemental Weapon - Frostbrand,cold,8033,rune
+86406,Elemental Weapon - Windfury,lightning,8232,rune
+86407,Elemental Weapon - Rockbiter,physical,8017,rune
+86408,Elemental Weapon - Maelstrom Weapon,physical,16166,rune
+86409,Spirit Link - Ancestral Chains,physical,1064,rune
+86410,Spirit Link - Searing Link,fire,8050,rune
+86411,Spirit Link - Frozen Link,cold,8056,rune
+86412,Spirit Link - Thunder Link,lightning,421,rune
+86413,Spirit Link - Spirit Harvest,physical,2008,rune
+86414,Call of the Ancestors - Ancestral Host,physical,2008,rune
+86415,Call of the Ancestors - Flamecaller Ancestors,fire,2008,rune
+86416,Call of the Ancestors - Tidecaller Ancestors,cold,2008,rune
+86417,Call of the Ancestors - Thundercaller Ancestors,lightning,2008,rune
+86418,Call of the Ancestors - Earthen Ancestors,physical,2008,rune
+86419,Spirit Wolves - Spirit Pack,physical,51533,rune
+86420,Spirit Wolves - Lightning Wolves,lightning,51533,rune
+86421,Spirit Wolves - Fiery Wolves,fire,51533,rune
+86422,Spirit Wolves - Frost Wolves,cold,51533,rune
+86423,Spirit Wolves - Spirit of the Pack,physical,51533,rune
+86424,Bloodlust - Heroism,physical,32182,rune
+86425,Bloodlust - Ancestral Fury,physical,2825,rune
+86426,Bloodlust - Thirst for Battle,physical,2825,rune
+86427,Bloodlust - Elemental Fervor,physical,2825,rune
+86428,Bloodlust - Primal Rage,physical,2825,rune
+86429,Fire Elemental - Primal Fire Elemental,fire,2894,rune
+86430,Fire Elemental - Meteor Call,fire,8349,rune
+86431,Fire Elemental - Storm Elemental,lightning,2895,rune
+86432,Fire Elemental - Water Elemental,cold,38624,rune
+86433,Fire Elemental - Magma Elemental,physical,2062,rune
+86434,Earth Elemental - Bedrock,physical,2062,rune
+86435,Earth Elemental - Primal Earth Elemental,physical,2062,rune
+86436,Earth Elemental - Magma Colossus,fire,2894,rune
+86437,Earth Elemental - Thunder Colossus,lightning,51490,rune
+86438,Earth Elemental - Glacial Colossus,cold,38624,rune
+86439,Ascendance - Flame Ascendance,fire,16166,rune
+86440,Ascendance - Storm Ascendance,lightning,16166,rune
+86441,Ascendance - Water Ascendance,cold,16166,rune
+86442,Ascendance - Earth Ascendance,physical,16166,rune
+86443,Ascendance - Eternal Ascendance,physical,16166,rune
+86444,Elemental Focus,physical,81,passive
+86445,Totemic Mastery,physical,81,passive
+86446,Call of Flame,physical,81,passive
+86447,Elemental Fury,physical,81,passive
+86448,Ancestral Knowledge,physical,81,passive
+86449,Lightning Overload,physical,81,passive
+86450,Frozen Power,physical,81,passive
+86451,Rooted in Earth,physical,81,passive
+86452,Deep Maelstrom,physical,81,passive
+86453,Storm Surge,physical,81,passive
+86454,Elemental Harmony,physical,81,passive
+86455,Reincarnation,physical,81,passive
+86456,Primal Wisdom,physical,81,passive
+86457,Ancestral Guidance,physical,81,passive
+86458,Totemic Focus,physical,81,passive
+86459,Elemental Oath,physical,81,passive
+86460,Echo of the Elements,physical,81,passive
+86461,Elemental Equilibrium,physical,81,passive
+86462,Primal Elementalist,physical,81,passive
+86463,Natural Harmony,physical,81,passive
+86500,Lightning Bolt - Hailstone - token storage,cold,81,token_storage
+86501,Lightning Bolt - Stormcaller - token storage,lightning,81,token_storage
+86502,Flame Shock - Lava Shock - token storage,fire,81,token_storage
+86503,Flame Shock - Frost Shock - token storage,cold,81,token_storage
+86504,Flame Shock - Earth Shock - token storage,physical,81,token_storage
+86505,Flame Shock - Static Shock - token storage,lightning,81,token_storage
+86506,Flame Shock - Primal Shock - token storage,lightning,81,token_storage
+86507,Elemental Lash - Searing Lash - token storage,fire,81,token_storage
+86508,Elemental Lash - Stonewhip - token storage,physical,81,token_storage
+86509,Frost Lance - Icefury - token storage,cold,81,token_storage
+86510,Elemental Blast - Elemental Echo - token storage,lightning,81,token_storage
+86511,Elemental Shield - Stoneskin - token storage,physical,81,token_storage
+86512,Elemental Shield - Water Shield - token storage,cold,81,token_storage
+86513,Elemental Shield - Flame Shield - token storage,fire,81,token_storage
+86514,Elemental Weapon - Flametongue - token storage,fire,81,token_storage
+86515,Elemental Weapon - Frostbrand - token storage,cold,81,token_storage
+86516,Elemental Weapon - Windfury - token storage,lightning,81,token_storage
+86517,Elemental Weapon - Rockbiter - token storage,physical,81,token_storage
+86518,Spirit Link - Thunder Link - token storage,lightning,81,token_storage
+86519,Fire Elemental - Storm Elemental - token storage,lightning,81,token_storage
+86520,Fire Elemental - Water Elemental - token storage,cold,81,token_storage
+86521,Earth Elemental - Bedrock - token storage,physical,81,token_storage
+86522,Shaman - resource pulse - core regeneration mask,physical,81,regeneration_mask
+86523,Resource cost reduction - gear and paragon - Shaman - cost modifier,physical,81,cost_modifier
+86524,Cooldown reduction - gear and paragon - Shaman - cooldown modifier,physical,81,cooldown_modifier
+86525,Fire skills cost reduction - Shaman,fire,81,element_cost_modifier
+86526,Overcharge - buff,physical,81,class_buff
+86527,Attunement - Fire - buff,physical,81,class_buff
+86528,Attunement - Cold - buff,physical,81,class_buff
+86529,Attunement - Physical - buff,physical,81,class_buff
+86530,Attunement - Lightning - buff,physical,81,class_buff
+86531,Elemental Shield - buff,physical,81,class_buff
+86532,Elemental Shield - Lightning Shield - buff,physical,81,class_buff
+86533,Elemental Shield - Stoneskin - buff,physical,81,class_buff
+86534,Elemental Shield - Stoneskin - shield,physical,81,class_buff
+86535,Elemental Shield - Water Shield - buff,physical,81,class_buff
+86536,Elemental Shield - Flame Shield - buff,physical,81,class_buff
+86538,Elemental Weapon - buff,physical,81,class_buff
+86539,Elemental Weapon - Flametongue - buff,physical,81,class_buff
+86540,Elemental Weapon - Frostbrand - buff,physical,81,class_buff
+86541,Elemental Weapon - Windfury - buff,physical,81,class_buff
+86542,Elemental Weapon - Rockbiter - buff,physical,81,class_buff
+86543,Elemental Weapon - Maelstrom Weapon - buff,physical,81,class_buff
+86544,Elemental Weapon - Maelstrom Weapon - free,physical,81,class_buff
+86545,Chain Lightning cost reduction,physical,81,skill_cost_modifier
+86546,Earthquake (Shaman) cost reduction,physical,81,skill_cost_modifier
+86547,Elemental Blast cost reduction,physical,81,skill_cost_modifier
+86537,Lava Burst cost reduction,physical,81,skill_cost_modifier
+83324,Slow Time - bubble,arcane,81,slow_bubble
+83325,Slow Time - Time Warp - bubble,arcane,81,slow_bubble
+83326,Slow Time - Point of No Return - bubble,arcane,81,slow_bubble
+83327,Slow Time - Time Shell - bubble,arcane,81,slow_bubble
+83328,Slow Time - Exhaustion - bubble,arcane,81,slow_bubble
+83329,Slow Time - Stretch Time - bubble,arcane,81,slow_bubble
+83365,Slow Time - follow,arcane,81,slow_follow
+83366,Slow Time - Time Warp - follow,arcane,81,slow_follow
+83367,Slow Time - Point of No Return - follow,arcane,81,slow_follow
+83368,Slow Time - Time Shell - follow,arcane,81,slow_follow
+83369,Slow Time - Exhaustion - follow,arcane,81,slow_follow
+83370,Slow Time - Stretch Time - follow,arcane,81,slow_follow
+83330,Meteor - molten ground,fire,81,meteor_ground
+83331,Meteor - Molten Impact - molten ground,fire,81,meteor_ground
+83332,Meteor - Meteor Shower - molten ground,fire,81,meteor_ground
+83333,Meteor - Comet - molten ground,cold,81,meteor_ground
+83334,Meteor - Star Pact - molten ground,arcane,81,meteor_ground
+83335,Meteor - Thunder Crash - molten ground,lightning,81,meteor_ground
+83336,Wizard - Frozen,arcane,81,wizard_control
+83337,Wizard - Stunned,arcane,81,wizard_control
+83338,Wizard - Slowed,arcane,81,wizard_control
+83339,Wizard - Taunted,arcane,81,wizard_control
+83340,Galvanizing Ward - shield,arcane,81,wizard_shield
+83341,Dominance - shield,arcane,81,wizard_shield
+83342,Unstable Anomaly - shield,arcane,81,wizard_shield
+83343,Magic Weapon - Deflection - shield,arcane,81,wizard_shield
+83344,Spectral Blade - Barrier Blades - shield,arcane,81,wizard_shield
+83350,Flame Blades,fire,81,wizard_stacks
+83351,Illusionist - buff,physical,81,class_buff
+83352,Unwavering Will - buff,physical,81,class_buff
+83353,Arcane Dynamo - flashes - buff,physical,81,class_buff
+83354,Arcane Dynamo - empowered - buff,physical,81,class_buff
+83355,Storm Armor - Scramble - buff,physical,81,class_buff
+83356,Frost Nova - Deep Freeze - buff,physical,81,class_buff
+83357,Teleport - Safe Passage - buff,physical,81,class_buff
+83358,Energy Twister - Storm Chaser - buff,physical,81,class_buff
+83359,Wave of Force - Arcane Attunement - buff,physical,81,class_buff
+83360,Arcane Orb - Spark - buff,physical,81,class_buff
+83361,Flame Ward - buff,physical,81,class_buff
+83362,Archon - kills - buff,physical,81,class_buff
+83363,Ice Armor - Crystallize - buff,physical,81,class_buff
+83345,Wizard - Slowed attacks,arcane,81,wizard_control
+83346,Magic Missile - Conflagrate - burn,fire,81,wizard_dot
+83347,Arcane Orb - Scorch - wall,fire,81,wizard_wall
+83500,Dimensional Power,physical,81,pylon_buff
+83501,Dimensional Conduit,physical,81,pylon_buff
+83502,Dimensional Channeling,physical,81,pylon_buff
+83503,Dimensional Shield,physical,81,pylon_buff
+83504,Dimensional Speed,physical,81,pylon_buff
+83505,Blessed,physical,81,pylon_buff
+83506,Empowered,physical,81,pylon_buff
+83507,Enlightened,physical,81,pylon_buff
+83508,Fleeting,physical,81,pylon_buff
+83509,Fortune,physical,81,pylon_buff
+83510,Frenzied,physical,81,pylon_buff
+83511,Dimensional Conduit,lightning,81,pylon_strike
+83512,Dimensional Speed,physical,81,pylon_tick
+83513,Dimensional Speed,physical,81,pylon_throw
+83550,The Burning Axe of Sankis,physical,81,power_buff
+83551,Stone Gauntlets,physical,81,power_buff
+83552,Stone Gauntlets,physical,81,power_buff
+83553,Orb of Infinite Depth,physical,81,power_buff
+83554,Cow,physical,81,power_buff
+83555,Bindings of the Lesser Gods,physical,81,power_buff
+83556,Binding of the Lost,physical,81,power_buff
+83560,Fiery Ball,fire,81,power_buff
+83561,Burn the Ground,fire,81,power_buff
+83562,Blood Brother,physical,81,power_buff
+83563,Wall of Man,physical,81,power_buff
+83564,Fleshrake,physical,81,power_buff
+83565,Spectral,physical,81,power_buff
+83600,Activating,physical,10059,bounty_click
+83601,Teleporting,physical,10059,bounty_travel
+85921,Grenadier - giant grenade,fire,81,strike_helper

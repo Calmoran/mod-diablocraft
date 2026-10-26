@@ -1,0 +1,710 @@
+diff --git a/WoW/Source/Magic/MagicClient/Spell_C.cpp b/WoW/Source/Magic/MagicClient/Spell_C.cpp
+index b65f035..3633a92 100644
+--- a/WoW/Source/Magic/MagicClient/Spell_C.cpp
++++ b/WoW/Source/Magic/MagicClient/Spell_C.cpp
+@@ -1225,7 +1225,7 @@ int32_t Packet_Group_30(void* param, NETMESSAGE msgId, uint32_t time, CDataStore
+ // VERIFY: 2ad579bf manual
+ // OFFSET: 0x00722C50
+ void CGUnit_C::SetPredictedPower(int32_t powerType, int32_t value) {
+-    uint32_t maximum = powerType == -2 ? this->m_unit->m_unitFieldMaxhealth : this->m_unit->m_unitFieldMaxpower[powerType];
++    uint32_t maximum = powerType == -2 ? static_cast<uint32_t>(UnitLifeAsPower(this->m_unit->m_unitFieldMaxhealth)) : this->m_unit->m_unitFieldMaxpower[powerType];
+ 
+     if (static_cast<int32_t>(maximum) < value) {
+         value = maximum;
+@@ -2848,7 +2848,7 @@ bool Spell_C::HandleSpriteRay(const WOWGUID& guid, bool checkRange) {
+             }
+         }
+ 
+-        int32_t health = data->m_unitFieldHealth;
++        int64_t health = data->m_unitFieldHealth;
+         uint32_t needTargets = s_needTargets;
+ 
+         if (health <= 0) {
+@@ -7259,7 +7259,7 @@ bool Spell_C_RangeCheckSelected(CGUnit_C* caster, const SpellRec* spell, WOWGUID
+             return false;
+         }
+ 
+-        int32_t health = unit->m_unit->m_unitFieldHealth;
++        int64_t health = unit->m_unit->m_unitFieldHealth;
+ 
+         if (health <= 0 && !(unit->m_unit->m_unitDynamicFlags & 0x20) && !(needTargets & 0x8600) && !(spell->m_attributesExB & 0x1)) {
+             return false;
+@@ -8777,7 +8777,7 @@ bool Spell_C_HandleSpriteClick(CGObject_C* object, PendingSpellCast* cast) {
+             return false;
+         }
+ 
+-        int32_t health = unit->m_unit->m_unitFieldHealth;
++        int64_t health = unit->m_unit->m_unitFieldHealth;
+ 
+         if (health <= 0 && !(unit->m_unit->m_unitDynamicFlags & 0x20) && !(s_needTargets & 0x8600) && !(spell.m_attributesExB & 0x1)) {
+             return false;
+diff --git a/WoW/Source/Object/ObjectClient/Player_C.cpp b/WoW/Source/Object/ObjectClient/Player_C.cpp
+index 32370f7..81348fe 100644
+--- a/WoW/Source/Object/ObjectClient/Player_C.cpp
++++ b/WoW/Source/Object/ObjectClient/Player_C.cpp
+@@ -14417,8 +14417,9 @@ void CGPlayer_C::FillPartyMemberState(CGPartyMemberState* state) {
+         state->m_flags |= 0x200;
+     }
+ 
+-    state->m_health = this->m_unit->m_unitFieldHealth;
+-    state->m_maxHealth = this->m_unit->m_unitFieldMaxhealth;
++    // Torment: the party member state stays 32 bits (SMSG_PARTY_MEMBER_STATS does); a player's Life is below 2^32.
++    state->m_health = static_cast<uint32_t>(this->m_unit->m_unitFieldHealth);
++    state->m_maxHealth = static_cast<uint32_t>(this->m_unit->m_unitFieldMaxhealth);
+     uint8_t powerType = this->m_unit->m_unitFieldBytes0[3];
+     state->m_powerType = powerType;
+     state->m_power = this->m_unit->m_unitFieldPower[powerType];
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.cpp b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+index fa28f27..9319915 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.cpp
++++ b/WoW/Source/Object/ObjectClient/Unit_C.cpp
+@@ -419,8 +419,8 @@ int32_t UnitPowerUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fiel
+     int32_t powerType = (fieldOffset - offsetof(CGUnitData, m_unitFieldPower)) / sizeof(uint32_t);
+ 
+     if (g_predictedPowerCVar->m_intValue && (guid == ClntObjMgrGetActivePlayer() || guid == CGPetInfo::GetPet(0))) {
+-        int32_t power = powerType == -2 ? unit->m_unit->m_unitFieldHealth : unit->m_unit->m_unitFieldPower[powerType];
+-        int32_t predicted = g_predictedPowerCVar->m_intValue ? unit->m_predictedPower[powerType] : (powerType == -2 ? unit->m_unit->m_unitFieldHealth : unit->m_unit->m_unitFieldPower[powerType]);
++        int32_t power = powerType == -2 ? UnitLifeAsPower(unit->m_unit->m_unitFieldHealth) : unit->m_unit->m_unitFieldPower[powerType];
++        int32_t predicted = g_predictedPowerCVar->m_intValue ? unit->m_predictedPower[powerType] : (powerType == -2 ? UnitLifeAsPower(unit->m_unit->m_unitFieldHealth) : unit->m_unit->m_unitFieldPower[powerType]);
+ 
+         if (power <= predicted) {
+             return 1;
+@@ -428,7 +428,7 @@ int32_t UnitPowerUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fiel
+     }
+ 
+     if (powerType == -2) {
+-        unit->SetPredictedPower(powerType, unit->m_unit->m_unitFieldHealth);
++        unit->SetPredictedPower(powerType, UnitLifeAsPower(unit->m_unit->m_unitFieldHealth));
+         return 1;
+     }
+ 
+@@ -444,7 +444,7 @@ int32_t UnitMaxPowerUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t f
+     int32_t powerType = (fieldOffset - offsetof(CGUnitData, m_unitFieldMaxpower)) / sizeof(uint32_t);
+ 
+     if (powerType == -2) {
+-        unit->SetPredictedPower(powerType, unit->m_unit->m_unitFieldHealth);
++        unit->SetPredictedPower(powerType, UnitLifeAsPower(unit->m_unit->m_unitFieldHealth));
+         return 1;
+     }
+ 
+@@ -460,7 +460,7 @@ int32_t UnitDisplayPowerUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32
+     int32_t powerType = unit->m_unit->m_unitFieldBytes0[3];
+ 
+     if (powerType == -2) {
+-        unit->SetPredictedPower(powerType, unit->m_unit->m_unitFieldHealth);
++        unit->SetPredictedPower(powerType, UnitLifeAsPower(unit->m_unit->m_unitFieldHealth));
+         return 1;
+     }
+ 
+@@ -682,23 +682,27 @@ int32_t UnitVisFlagUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fi
+ 
+ // VERIFY: acc767d0 manual
+ // OFFSET: 0x0073F330
+-int32_t UnitHealthUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param) {
+-    CGUnit_C* unit = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(guid, TYPEMASK_UNIT, __FILE__, __LINE__));
++// Torment: Life is 64 bits, two update-field dwords (docs/contracts/life-64bit-wire.md). The unit's mirror keeps the value each
++// dword had before the update, so the old Life is rebuilt from the mirror of both: the low dword's from oldValue or the mirror,
++// the high one's from the mirror. This is the stock handler's body, on 64-bit Life.
++static uint32_t UnitMirroredDword(const CGUnit_C* unit, size_t unitDataOffset) {
++    return static_cast<const uint32_t*>(unit->m_unitMirror)[CGUnit::MirrorIndexFromFieldIndex(static_cast<uint32_t>(unitDataOffset / sizeof(uint32_t)))];
++}
++
++static void UnitLifeChanged(CGUnit_C* unit, WOWGUID guid, int64_t oldHealth) {
+     unit->m_predictedHealth = unit->m_unit->m_unitFieldHealth;
+ 
+-    if (!(static_cast<float>(unit->m_unit->m_unitFieldHealth) / static_cast<int32_t>(unit->m_unit->m_unitFieldMaxhealth) < 0.2f) || unit->IsDeadOrGhost()) {
++    if (!(static_cast<float>(unit->m_unit->m_unitFieldHealth) / static_cast<float>(unit->m_unit->m_unitFieldMaxhealth) < 0.2f) || unit->IsDeadOrGhost()) {
+         unit->m_clientFlags &= ~0x2;
+     } else if (unit->m_bloodlevels) {
+         unit->m_clientFlags |= 0x2;
+     }
+ 
+-    int32_t oldHealth = *static_cast<const int32_t*>(oldValue);
+-
+     if (oldHealth > unit->m_unit->m_unitFieldHealth && unit->m_namePlateFrame) {
+         unit->m_namePlateFrame->TriggerDamageFeedback();
+     }
+ 
+-    int32_t health = unit->m_unit->m_unitFieldHealth;
++    int64_t health = unit->m_unit->m_unitFieldHealth;
+ 
+     if (health <= 0) {
+         if (oldHealth > 0) {
+@@ -719,7 +723,30 @@ int32_t UnitHealthUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fie
+     if (unit->m_obj->m_guid == ClntObjMgrGetActivePlayer()) {
+         CGSpellBook::UpdateUsable();
+     }
++}
++
++// OFFSET: 0x0073F330 (the stock handler of the low dword)
++int32_t UnitHealthUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param) {
++    CGUnit_C* unit = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(guid, TYPEMASK_UNIT, __FILE__, __LINE__));
++    uint64_t oldLow = *static_cast<const uint32_t*>(oldValue);
++    uint64_t oldHigh = UnitMirroredDword(unit, offsetof(CGUnitData, m_unitFieldHealthHigh));
++    UnitLifeChanged(unit, guid, static_cast<int64_t>((oldHigh << 32) | oldLow));
++    return 1;
++}
++
++// Torment: the same for an update that changed only the high dword (Life from 4,294,967,296 to 8,589,934,592 leaves the low dword
++// at 0). An update that changed the low dword too reaches UnitLifeChanged through UnitHealthUpdateHandler, which runs for it, so
++// this one stands down then and the death and life events fire once.
++int32_t UnitHealthHighUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param) {
++    CGUnit_C* unit = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(guid, TYPEMASK_UNIT, __FILE__, __LINE__));
++    uint32_t oldLow = UnitMirroredDword(unit, offsetof(CGUnitData, m_unitFieldHealth));
++
++    if (oldLow != unit->m_unit->m_unitFieldHealth.GetLow()) {
++        return 1;
++    }
+ 
++    uint64_t oldHigh = *static_cast<const uint32_t*>(oldValue);
++    UnitLifeChanged(unit, guid, static_cast<int64_t>((oldHigh << 32) | oldLow));
+     return 1;
+ }
+ 
+@@ -5103,7 +5130,8 @@ void CGUnit_C::RegisterMirrorHandlers() {
+ 
+     ClntObjMgrSetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldLevel), sizeof(uint32_t), UnitLevelUpdateHandler, nullptr, static_cast<HANDLER_PRIORITY>(0), 0);
+     ClntObjMgrSetTypeMirrorHandler(ID_OBJECT, offsetof(CGObjectData, m_entryID), sizeof(uint32_t), UnitModeUpdateHandler, nullptr, static_cast<HANDLER_PRIORITY>(0), 0);
+-    ClntObjMgrSetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), sizeof(int32_t), UnitHealthUpdateHandler, nullptr, static_cast<HANDLER_PRIORITY>(0), 0);
++    ClntObjMgrSetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), sizeof(uint32_t), UnitHealthUpdateHandler, nullptr, static_cast<HANDLER_PRIORITY>(0), 0);
++    ClntObjMgrSetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), sizeof(uint32_t), UnitHealthHighUpdateHandler, nullptr, static_cast<HANDLER_PRIORITY>(0), 0);
+ 
+     for (uint32_t offset = offsetof(CGUnitData, m_unitFieldMaxpower); offset < offsetof(CGUnitData, m_unitFieldMaxpower) + sizeof(CGUnitData::m_unitFieldMaxpower); offset += sizeof(uint32_t)) {
+         ClntObjMgrSetTypeMirrorHandler(ID_UNIT, offset - (offsetof(CGUnitData, m_unitFieldMaxpower) - offsetof(CGUnitData, m_unitFieldPower)), sizeof(uint32_t), UnitPowerUpdateHandler, nullptr, static_cast<HANDLER_PRIORITY>(0), 0);
+@@ -5144,6 +5172,7 @@ void CGUnit_C::UnregisterMirrorHandlers() {
+     ClntObjMgrUnsetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldLevel), UnitLevelUpdateHandler, nullptr);
+     ClntObjMgrUnsetTypeMirrorHandler(ID_OBJECT, offsetof(CGObjectData, m_entryID), UnitModeUpdateHandler, nullptr);
+     ClntObjMgrUnsetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), UnitHealthUpdateHandler, nullptr);
++    ClntObjMgrUnsetTypeMirrorHandler(ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), UnitHealthHighUpdateHandler, nullptr);
+ 
+     for (uint32_t offset = offsetof(CGUnitData, m_unitFieldMaxpower); offset < offsetof(CGUnitData, m_unitFieldMaxpower) + sizeof(CGUnitData::m_unitFieldMaxpower); offset += sizeof(uint32_t)) {
+         ClntObjMgrUnsetTypeMirrorHandler(ID_UNIT, offset - (offsetof(CGUnitData, m_unitFieldMaxpower) - offsetof(CGUnitData, m_unitFieldPower)), UnitPowerUpdateHandler, nullptr);
+@@ -6291,7 +6320,7 @@ void CGUnit_C::InitWheels() {
+ 
+ // VERIFY: 3f9e9d5b auto
+ // OFFSET: 0x00716050
+-void CGUnit_C::SetPredictedHealth(int32_t health) {
++void CGUnit_C::SetPredictedHealth(int64_t health) {
+     this->m_predictedHealth = health;
+ }
+ 
+@@ -7074,17 +7103,18 @@ float CGUnit_C::GetTrueScale() const {
+ 
+ // VERIFY: bbc73873 manual
+ // OFFSET: 0x0071C260
+-void CGUnit_C::ModifyPredictedHealth(int32_t delta) {
++void CGUnit_C::ModifyPredictedHealth(int64_t delta) {
+     if (delta < 0 && (this->m_unit->m_unitFieldFlags2 & 0x100)) {
+         return;
+     }
+ 
+-    int32_t health = delta + this->m_predictedHealth;
++    // Torment: Life and the delta are 64 bits.
++    int64_t health = delta + this->m_predictedHealth;
+ 
+     if (health < 1) {
+         this->m_predictedHealth = 1;
+     } else {
+-        if (health > static_cast<int32_t>(this->m_unit->m_unitFieldMaxhealth)) {
++        if (health > static_cast<int64_t>(this->m_unit->m_unitFieldMaxhealth)) {
+             health = this->m_unit->m_unitFieldMaxhealth;
+         }
+ 
+@@ -10045,7 +10075,7 @@ CGUnit_C::CGUnit_C(uint32_t time, const CClientObjCreate& create)
+ 
+     this->SetClientInitData(create, false);
+ 
+-    if (static_cast<float>(this->m_unit->m_unitFieldHealth) / static_cast<int32_t>(this->m_unit->m_unitFieldMaxhealth) < 0.2f && this->m_unit->m_unitFieldHealth > 0 && this->m_bloodlevels) {
++    if (static_cast<float>(this->m_unit->m_unitFieldHealth) / static_cast<float>(this->m_unit->m_unitFieldMaxhealth) < 0.2f && this->m_unit->m_unitFieldHealth > 0 && this->m_bloodlevels) {
+         this->m_clientFlags |= 0x2;
+     }
+ 
+@@ -10535,7 +10565,7 @@ void CGUnit_C::Reenable() {
+     this->m_powerRegenRemainder = 0;
+     this->m_manaRegenInterruptTime = 0;
+ 
+-    if (static_cast<float>(this->m_unit->m_unitFieldHealth) / static_cast<int32_t>(this->m_unit->m_unitFieldMaxhealth) < 0.2f && !this->IsDeadOrGhost() && this->m_bloodlevels) {
++    if (static_cast<float>(this->m_unit->m_unitFieldHealth) / static_cast<float>(this->m_unit->m_unitFieldMaxhealth) < 0.2f && !this->IsDeadOrGhost() && this->m_bloodlevels) {
+         this->m_clientFlags |= 0x2;
+     }
+ 
+@@ -12442,7 +12472,7 @@ bool CGUnit_C::IsOutdoors() const {
+ 
+ // VERIFY: b89ed3c2 auto
+ // OFFSET: 0x0071C2C0
+-int32_t CGUnit_C::GetPredictedHealth() const {
++int64_t CGUnit_C::GetPredictedHealth() const {
+     if (g_predictedHealthCVar->m_intValue) {
+         return this->m_predictedHealth;
+     }
+@@ -12458,7 +12488,7 @@ int32_t CGUnit_C::GetPredictedPower(int32_t powerType) const {
+     }
+ 
+     if (powerType == -2) {
+-        return this->m_unit->m_unitFieldHealth;
++        return UnitLifeAsPower(this->m_unit->m_unitFieldHealth);
+     }
+ 
+     return this->m_unit->m_unitFieldPower[powerType];
+@@ -14571,11 +14601,11 @@ void CGUnit_C::ModifyPredictedPower(int32_t powerType, int32_t delta) {
+         return;
+     }
+ 
+-    int32_t maximum = powerType == -2 ? this->m_unit->m_unitFieldMaxhealth : this->m_unit->m_unitFieldMaxpower[powerType];
++    int32_t maximum = powerType == -2 ? UnitLifeAsPower(this->m_unit->m_unitFieldMaxhealth) : this->m_unit->m_unitFieldMaxpower[powerType];
+ 
+     if (value > maximum) {
+         if (powerType == -2) {
+-            this->SetPredictedPower(-2, this->m_unit->m_unitFieldMaxhealth);
++            this->SetPredictedPower(-2, UnitLifeAsPower(this->m_unit->m_unitFieldMaxhealth));
+             return;
+         }
+ 
+@@ -19122,7 +19152,7 @@ void CGUnit_C::DoPowerRegen(int32_t powerType, uint32_t elapsed, uint32_t& remai
+     float delta = regen * static_cast<float>(elapsed) * 0.001f;
+ 
+     if (delta >= 0.0f) {
+-        int32_t maxPower = powerType == -2 ? this->m_unit->m_unitFieldMaxhealth : this->m_unit->m_unitFieldMaxpower[powerType];
++        int32_t maxPower = powerType == -2 ? UnitLifeAsPower(this->m_unit->m_unitFieldMaxhealth) : this->m_unit->m_unitFieldMaxpower[powerType];
+ 
+         if (this->GetPredictedPower(powerType) < maxPower) {
+             int32_t predicted = this->GetPredictedPower(powerType);
+@@ -19340,7 +19370,7 @@ void CGUnit_C::OnDynamicFlagsChanged(uint32_t oldFlags) {
+         }
+     }
+ 
+-    if (static_cast<int32_t>(this->m_unit->m_unitFieldHealth) <= 0 && (this->m_unit->m_unitDynamicFlags & 1)) {
++    if (this->m_unit->m_unitFieldHealth <= 0 && (this->m_unit->m_unitDynamicFlags & 1)) {
+         if (this->m_lootableTime) {
+             this->ClearEffectList(0);
+         }
+@@ -19778,7 +19808,7 @@ void CGUnit_C::OnFlagChanged(uint32_t oldFlags) {
+ 
+     if (this->m_obj->m_guid == ClntObjMgrGetActivePlayer()) {
+         this->OnFlagChangedActivePlayer(flags, changed);
+-    } else if (static_cast<int32_t>(this->m_unit->m_unitFieldHealth) > 0 && (changed & 0x400)) {
++    } else if (this->m_unit->m_unitFieldHealth > 0 && (changed & 0x400)) {
+         this->UpdateBaseAnimation(0, -1);
+     }
+ 
+@@ -25367,8 +25397,9 @@ void CGUnit_C::FillPartyMemberPetState(CGPartyPetState* state) {
+     state->m_guid = this->m_obj->m_guid;
+     SStrCopy(state->m_name, this->GetUnitName(nullptr, 1), sizeof(state->m_name));
+     state->m_displayId = this->m_unit->m_unitFieldDisplayid;
+-    state->m_health = this->m_unit->m_unitFieldHealth;
+-    state->m_maxHealth = this->m_unit->m_unitFieldMaxhealth;
++    // Torment: the party pet state stays 32 bits (the wire's SMSG_PARTY_MEMBER_STATS does); a pet's Life is below 2^32.
++    state->m_health = static_cast<uint32_t>(this->m_unit->m_unitFieldHealth);
++    state->m_maxHealth = static_cast<uint32_t>(this->m_unit->m_unitFieldMaxhealth);
+     uint8_t powerType = this->m_unit->m_unitFieldBytes0[3];
+     state->m_powerType = powerType;
+     state->m_power = this->m_unit->m_unitFieldPower[powerType];
+diff --git a/WoW/Source/Object/ObjectClient/Unit_C.h b/WoW/Source/Object/ObjectClient/Unit_C.h
+index 1410b49..01525a9 100644
+--- a/WoW/Source/Object/ObjectClient/Unit_C.h
++++ b/WoW/Source/Object/ObjectClient/Unit_C.h
+@@ -238,7 +238,7 @@ class CGUnit_C : public CGObject_C, public CGUnit {
+     static void MountAnimEndCallback(CM2Model* model, uint32_t boneId, uint32_t sequenceId, int32_t interrupted, uint32_t time, uint64_t param);
+     static void AnimEventCallback(CM2Model* model, uint32_t boneId, uint32_t eventId, uint32_t data, const C3Vector* position, uint32_t time, uint64_t param);
+ 
+-    /* 00DC */ TSList<void> m_unitMirrorLists [142];
++    /* 00DC */ TSList<void> m_unitMirrorLists [144];
+     /* 0784 */ float m_swimDepth;
+     /* 0788 */ CMovement_C m_movementData;
+     /* 08D0 */ float m_smoothFacing;
+@@ -382,7 +382,7 @@ class CGUnit_C : public CGObject_C, public CGUnit {
+     /* 0FA4 */ int32_t m_specialIdleAnim;
+     /* 0FA8 */ CM2Model* m_precastMissileModel;
+     /* 0FAC */ uint8_t m_precastCastCount;
+-    /* 0FB0 */ int32_t m_predictedHealth;
++    /* 0FB0 */ int64_t m_predictedHealth;
+     /* 0FB4 */ int32_t m_predictedPower [7];
+     /* 0FD0 */ uint32_t m_powerRegenRemainder;
+     /* 0FD4 */ uint32_t m_manaRegenInterruptTime;
+@@ -532,8 +532,8 @@ class CGUnit_C : public CGObject_C, public CGUnit {
+     uint64_t GetLooter() const;
+     uint64_t GetMasterLooter() const;
+     void InitWheels();
+-    int32_t GetPredictedHealth() const;
+-    void SetPredictedHealth(int32_t health);
++    int64_t GetPredictedHealth() const;
++    void SetPredictedHealth(int64_t health);
+     float GetMaxCameraHeight() const;
+     uint32_t GetCreatureClassification() const;
+     int32_t IsDeepInLiquid() const;
+@@ -570,7 +570,7 @@ class CGUnit_C : public CGObject_C, public CGUnit {
+     int32_t FindDefaultAnimForTier(int32_t tier, uint32_t* anim) const;
+     CreatureModelDataRec* GetModelData() const;
+     int32_t CanBeLooted(uint32_t time) const;
+-    void ModifyPredictedHealth(int32_t delta);
++    void ModifyPredictedHealth(int64_t delta);
+     void InitPredictedPower();
+     void SetManaRegenInterrupt();
+     int32_t UsesNpcBakedTexture() const;
+@@ -1056,6 +1056,7 @@ int32_t UnitFactionUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fi
+ int32_t UnitFlag2UpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
+ int32_t UnitFlagUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
+ int32_t UnitHealthUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
++int32_t UnitHealthHighUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
+ int32_t UnitLevelUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
+ int32_t UnitMaxPowerUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
+ int32_t UnitModeUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t fieldSize, const void* oldValue, void* param);
+diff --git a/WoW/Source/Object/Unit.cpp b/WoW/Source/Object/Unit.cpp
+index 5ae62b2..c1fc0e5 100644
+--- a/WoW/Source/Object/Unit.cpp
++++ b/WoW/Source/Object/Unit.cpp
+@@ -4,7 +4,7 @@
+ #include "WoW/Source/Object/Object.h"
+ 
+ // STATIC: 0x00AC49D8
+-const uint32_t CGUnit::s_mirrorFieldIndices[123] = {
++const uint32_t CGUnit::s_mirrorFieldIndices[124] = {
+     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11,
+     0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21,
+     0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31,
+@@ -13,6 +13,8 @@ const uint32_t CGUnit::s_mirrorFieldIndices[123] = {
+     0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70,
+     0x71, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F, 0x80, 0x81, 0x82,
+     0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8E,
++    // Torment: the slot of field 142 (the Life high dword) was already the last one; 143 (the max Life high dword) follows it.
++    0x8F,
+ };
+ 
+ // VERIFY: af22e65c auto
+@@ -180,7 +182,7 @@ uint32_t CGUnit::DescriptorToMirrorOffset(uint32_t offset, uint32_t a2, uint32_t
+ // VERIFY: 93ca7f49 auto
+ // OFFSET: 0x004F52C0
+ int32_t CGUnit::TotalFields() {
+-    return CGObject::TotalFieldsSaved() + 123;
++    return CGObject::TotalFieldsSaved() + 124;
+ }
+ 
+ // VERIFY: 65e96d9b auto
+diff --git a/WoW/Source/Object/Unit.h b/WoW/Source/Object/Unit.h
+index e9c55be..9f29f63 100644
+--- a/WoW/Source/Object/Unit.h
++++ b/WoW/Source/Object/Unit.h
+@@ -9,10 +9,35 @@
+ class CGUnitData;
+ class CMovement_C;
+ 
++// Torment: a unit's Life and max Life are 64 bits on the wire as two update-field dwords (docs/contracts/life-64bit-wire.md):
++// the low dword stays where the stock client had the 32-bit field, the high dword is a new field at the end of the unit block.
++// A member of this type is the low dword in place and reads as the whole value, so the many sites that test "alive"
++// (`m_unitFieldHealth > 0`) or convert to float need no edit and cannot see half a value. Both dwords sit inside CGUnitData at the
++// fixed distance the template is given (checked by the static_asserts after CGUnitData), so the low dword finds its high one
++// from its own address. A site that stores the value in 32 bits must say so with a cast.
++template <typename T, size_t LowOffset, size_t HighOffset>
++class UnitWideField {
++    public:
++    UnitWideField() = default;
++    UnitWideField(const UnitWideField&) = delete;
++    UnitWideField& operator=(const UnitWideField&) = delete;
++
++    operator T() const {
++        const uint32_t high = *reinterpret_cast<const uint32_t*>(reinterpret_cast<const char*>(this) - LowOffset + HighOffset);
++        return static_cast<T>((static_cast<uint64_t>(high) << 32) | m_low);
++    }
++
++    // The low dword alone, as it sits in the update fields (the Life change handlers compare it with its mirrored old value).
++    uint32_t GetLow() const { return m_low; }
++
++    private:
++    uint32_t m_low;
++};
++
+ class CGUnit {
+     public:
+     int32_t GetQuestGreenRange() const;
+-    static const uint32_t s_mirrorFieldIndices[123];
++    static const uint32_t s_mirrorFieldIndices[124];
+ 
+     static uint32_t MirrorIndexFromFieldIndex(uint32_t fieldIndex);
+     static uint32_t DescriptorToMirrorOffset(uint32_t offset, uint32_t a2, uint32_t a3, uint32_t base);
+@@ -48,6 +73,12 @@ class CGUnit {
+     float GetPowerRegen(int32_t powerType, bool inCombat) const;
+ };
+ 
++// Torment: Life shown as a power (power type -2, a vehicle) goes through the 32-bit predicted-power code, so it saturates at
++// 2,147,483,647 there. The Life members themselves are 64 bits (UnitWideField above).
++inline int32_t UnitLifeAsPower(int64_t life) {
++    return life > INT32_MAX ? INT32_MAX : (life < INT32_MIN ? INT32_MIN : static_cast<int32_t>(life));
++}
++
+ class CGUnitData {
+     public:
+     /* 0000 */ WOWGUID m_unitFieldCharm;
+@@ -60,9 +91,9 @@ class CGUnitData {
+     /* 0038 */ WOWGUID m_unitFieldChannelObject;
+     /* 0040 */ uint32_t m_unitChannelSpell;
+     /* 0044 */ uint8_t m_unitFieldBytes0 [4];
+-    /* 0048 */ int32_t m_unitFieldHealth;
++    /* 0048 */ UnitWideField<int64_t, 0x48, 0x238> m_unitFieldHealth;
+     /* 004C */ uint32_t m_unitFieldPower [7];
+-    /* 0068 */ uint32_t m_unitFieldMaxhealth;
++    /* 0068 */ UnitWideField<uint64_t, 0x68, 0x23C> m_unitFieldMaxhealth;
+     /* 006C */ uint32_t m_unitFieldMaxpower [7];
+     /* 0088 */ float m_unitFieldPowerRegenFlatModifier [7];
+     /* 00A4 */ float m_unitFieldPowerRegenInterruptedFlatModifier [7];
+@@ -115,6 +146,16 @@ class CGUnitData {
+     /* 022C */ float m_unitFieldMaxhealthmodifier;
+     /* 0230 */ float m_unitFieldHoverheight;
+     /* 0234 */ uint32_t m_unitFieldPadding;
++    // Torment: the high dwords of Life and max Life (UNIT_FIELD_HEALTH_HI 148 and UNIT_FIELD_MAXHEALTH_HI 149 from the object's
++    // start, 142 and 143 from the unit data), after the padding the loot-beam tier lives in. A player's and a pet's are 0.
++    /* 0238 */ uint32_t m_unitFieldHealthHigh;
++    /* 023C */ uint32_t m_unitFieldMaxhealthHigh;
+ };
+ 
++static_assert(offsetof(CGUnitData, m_unitFieldHealth) == 0x48, "UnitWideField<.., 0x48, ..> is the Life low dword");
++static_assert(offsetof(CGUnitData, m_unitFieldMaxhealth) == 0x68, "UnitWideField<.., 0x68, ..> is the max Life low dword");
++static_assert(offsetof(CGUnitData, m_unitFieldHealthHigh) == 0x238, "UNIT_FIELD_HEALTH_HI is dword 142 of the unit data");
++static_assert(offsetof(CGUnitData, m_unitFieldMaxhealthHigh) == 0x23C, "UNIT_FIELD_MAXHEALTH_HI is dword 143 of the unit data");
++static_assert(sizeof(CGUnitData) == 0x240, "the unit block is 150 dwords with the 6 object dwords");
++
+ #endif
+diff --git a/WoW/Source/ObjectMgrClient/Mirror.cpp b/WoW/Source/ObjectMgrClient/Mirror.cpp
+index e87e2e5..98cedc0 100644
+--- a/WoW/Source/ObjectMgrClient/Mirror.cpp
++++ b/WoW/Source/ObjectMgrClient/Mirror.cpp
+@@ -61,7 +61,7 @@ CGFieldDescriptor CONTAINER_DESCRIPTORS[3] = {
+ };
+ 
+ // STATIC: 0xAC5FE0
+-CGFieldDescriptor UNIT_DESCRIPTORS[89] = {
++CGFieldDescriptor UNIT_DESCRIPTORS[91] = {
+     { "UNIT_FIELD_CHARM", 0, 2, 4, 0x1 },
+     { "UNIT_FIELD_SUMMON", 2, 2, 4, 0x1 },
+     { "UNIT_FIELD_CRITTER", 4, 2, 4, 0x2 },
+@@ -151,6 +151,9 @@ CGFieldDescriptor UNIT_DESCRIPTORS[89] = {
+     { "UNIT_FIELD_MAXHEALTHMODIFIER", 139, 1, 3, 0x6 },
+     { "UNIT_FIELD_HOVERHEIGHT", 140, 1, 3, 0x1 },
+     { "UNIT_FIELD_PADDING", 141, 1, 1, 0x0 },
++    // Torment: the high dwords of Life and max Life (docs/contracts/life-64bit-wire.md), after the padding.
++    { "UNIT_FIELD_HEALTH_HI", 142, 1, 1, 0x1 },
++    { "UNIT_FIELD_MAXHEALTH_HI", 143, 1, 1, 0x1 },
+ };
+ 
+ // STATIC: 0xAC66D8
+diff --git a/WoW/Source/ObjectMgrClient/Mirror.h b/WoW/Source/ObjectMgrClient/Mirror.h
+index 7360dcf..41d9b7d 100644
+--- a/WoW/Source/ObjectMgrClient/Mirror.h
++++ b/WoW/Source/ObjectMgrClient/Mirror.h
+@@ -23,7 +23,7 @@ struct CGFieldDescriptor {
+ extern CGFieldDescriptor OBJECT_DISCRIPTORS[5];
+ extern CGFieldDescriptor ITEM_DESCRIPTORS[38];
+ extern CGFieldDescriptor CONTAINER_DESCRIPTORS[3];
+-extern CGFieldDescriptor UNIT_DESCRIPTORS[89];
++extern CGFieldDescriptor UNIT_DESCRIPTORS[91];
+ extern CGFieldDescriptor PLAYER_DESCRIPTORS[215];
+ extern CGFieldDescriptor GAMEOBJECT_DESCRIPTORS[8];
+ extern CGFieldDescriptor DYNAMICOBJECT_DESCRIPTORS[5];
+diff --git a/WoW/Source/ObjectMgrClient/ObjectMgrClient.cpp b/WoW/Source/ObjectMgrClient/ObjectMgrClient.cpp
+index 21fe8d1..9b1c51a 100644
+--- a/WoW/Source/ObjectMgrClient/ObjectMgrClient.cpp
++++ b/WoW/Source/ObjectMgrClient/ObjectMgrClient.cpp
+@@ -55,7 +55,11 @@ static const char* s_objNames[NUM_CLIENT_OBJECT_TYPES] = { "CGObject_C", "CGItem
+ static const uint32_t s_objHeapSize[NUM_CLIENT_OBJECT_TYPES] = { 0, 512, 32, 64, 64, 64, 32, 32 };
+ 
+ // STATIC: 0x00AC3D04
+-static const uint32_t s_objDwordCount[NUM_CLIENT_OBJECT_TYPES] = { 0x6, 0x40, 0x8A, 0x94, 0x52E, 0x12, 0xC, 0x24 };
++// Torment: the unit block is 0x96 dwords (148 and the two Life high dwords) and the player's fields end two later (0x530).
++static const uint32_t s_objDwordCount[NUM_CLIENT_OBJECT_TYPES] = { 0x6, 0x40, 0x8A, 0x96, 0x530, 0x12, 0xC, 0x24 };
++static_assert(0x96 * sizeof(uint32_t) == sizeof(CGObjectData) + sizeof(CGUnitData), "a unit's values block");
++static_assert(0x530 * sizeof(uint32_t) == sizeof(CGObjectData) + sizeof(CGUnitData) + sizeof(CGPlayerLocalData), "the active player's values block");
++static_assert(326 * sizeof(uint32_t) == sizeof(CGObjectData) + sizeof(CGUnitData) + sizeof(CGPlayerData), "a remote player's values block");
+ 
+ // STATIC: 0x00B6A160
+ uint32_t s_objTotalSize[NUM_CLIENT_OBJECT_TYPES] = {
+@@ -102,7 +106,8 @@ static uint32_t GetObjectTypeFieldByteOffset(OBJECT_TYPE_ID typeId) {
+         }
+ 
+         case ID_PLAYER: {
+-            return 0x250;
++            // Torment: the player's fields start at dword 150 now, after the unit block's two new Life dwords.
++            return 0x258;
+         }
+ 
+         default: {
+@@ -472,11 +477,11 @@ static uint32_t GetNumDwordBlocks(uint32_t type, WOWGUID guid) {
+         }
+ 
+         case TYPEMASK_OBJECT | TYPEMASK_UNIT: {
+-            return 148;
++            return 150;
+         }
+ 
+         case TYPEMASK_OBJECT | TYPEMASK_UNIT | TYPEMASK_PLAYER: {
+-            return guid == ClntObjMgrGetActivePlayer() ? 1326 : 324;
++            return guid == ClntObjMgrGetActivePlayer() ? 1328 : 326;
+         }
+ 
+         case TYPEMASK_OBJECT | TYPEMASK_GAMEOBJECT: {
+@@ -644,8 +649,8 @@ static uint32_t ObjDescriptorToMirrorOffset(OBJECT_TYPE_ID typeId, int32_t local
+         }
+ 
+         case ID_PLAYER: {
+-            if (offset >= 0x250) {
+-                return CGPlayer::DescriptorToMirrorOffset(offset, size, local, 0x250);
++            if (offset >= 0x258) {
++                return CGPlayer::DescriptorToMirrorOffset(offset, size, local, 0x258);
+             }
+         }
+ 
+@@ -1048,7 +1053,7 @@ static void ClearMirrorLists(CGObject_C* object) {
+         }
+ 
+         case ID_UNIT: {
+-            FreeMirrorHandlers(static_cast<CGUnit_C*>(object)->m_unitMirrorLists, 142);
++            FreeMirrorHandlers(static_cast<CGUnit_C*>(object)->m_unitMirrorLists, 144);
+             FreeMirrorHandlers(object->m_objMirrorLists, 6);
+             return;
+         }
+diff --git a/WoW/Source/UIUtil/Tooltip.cpp b/WoW/Source/UIUtil/Tooltip.cpp
+index f97dbe9..fc46dbc 100644
+--- a/WoW/Source/UIUtil/Tooltip.cpp
++++ b/WoW/Source/UIUtil/Tooltip.cpp
+@@ -525,7 +525,7 @@ static int32_t HealthUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uint32_t
+ 
+     if (unit) {
+         CSimpleStatusBar* statusBar = static_cast<CSimpleStatusBar*>(param);
+-        statusBar->SetMinMaxValues(0.0f, static_cast<float>(static_cast<int32_t>(unit->m_unit->m_unitFieldMaxhealth)));
++        statusBar->SetMinMaxValues(0.0f, static_cast<float>(unit->m_unit->m_unitFieldMaxhealth));
+         statusBar->SetValue(static_cast<float>(unit->m_unit->m_unitFieldHealth));
+     }
+ 
+@@ -896,6 +896,7 @@ void CGTooltip::ClearTooltip() {
+     if (this->m_healthGuid != WOWGUID()) {
+         if (this->m_unitGuid != WOWGUID()) {
+             ClntObjMgrUnsetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), HealthUpdateHandler, this->m_statusBar);
++            ClntObjMgrUnsetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), HealthUpdateHandler, this->m_statusBar);
+         } else {
+             ClntObjMgrUnsetObjMirrorHandler(this->m_healthGuid, ID_GAMEOBJECT, offsetof(CGGameObjectData, m_animProgress), ObjHealthUpdateHandler, this->m_statusBar);
+         }
+@@ -1153,6 +1154,7 @@ CGTooltip::~CGTooltip() {
+     if (this->m_healthGuid != WOWGUID() && ClntObjMgrGetCurrent()) {
+         if (this->m_unitGuid != WOWGUID()) {
+             ClntObjMgrUnsetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), HealthUpdateHandler, this->m_statusBar);
++            ClntObjMgrUnsetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), HealthUpdateHandler, this->m_statusBar);
+         } else {
+             ClntObjMgrUnsetObjMirrorHandler(this->m_healthGuid, ID_GAMEOBJECT, offsetof(CGGameObjectData, m_animProgress), ObjHealthUpdateHandler, this->m_statusBar);
+         }
+@@ -1778,7 +1780,9 @@ int32_t CGTooltip::SetUnit(const WOWGUID& guid, int32_t showHealth, const WOWGUI
+     if (this->m_statusBar && showHealth) {
+         this->m_healthGuid = healthGuid ? healthGuid : this->m_unitGuid;
+         CGUnit_C* healthUnit = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(this->m_healthGuid, TYPEMASK_UNIT, __FILE__, __LINE__));
+-        ClntObjMgrSetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), sizeof(int32_t), HealthUpdateHandler, this->m_statusBar, static_cast<HANDLER_PRIORITY>(0), 0);
++        ClntObjMgrSetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), sizeof(uint32_t), HealthUpdateHandler, this->m_statusBar, static_cast<HANDLER_PRIORITY>(0), 0);
++        // Torment: Life's high dword is a field of its own; a change to only it reaches the bar too.
++        ClntObjMgrSetObjMirrorHandler(this->m_healthGuid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), sizeof(uint32_t), HealthUpdateHandler, this->m_statusBar, static_cast<HANDLER_PRIORITY>(0), 0);
+ 
+         float maxHealth;
+ 
+@@ -7357,7 +7361,8 @@ void CGTooltip::AddEmpathyText(CGUnit_C* unit, char* buffer, uint32_t size) {
+     SStrPrintf(buffer, size, FrameScript_GetText("ARMOR_TEMPLATE", -1, GENDER_NOT_APPLICABLE), armor);
+     this->AddLine(buffer, nullptr, textColor, textColor, 0);
+ 
+-    SStrPrintf(buffer, size, FrameScript_GetText("HP_TEMPLATE", -1, GENDER_NOT_APPLICABLE), unit->m_unit->m_unitFieldHealth);
++    // Torment: varargs convert nothing; the template is a localised "%d" for a pet's Life, so pass the int it prints (saturating).
++    SStrPrintf(buffer, size, FrameScript_GetText("HP_TEMPLATE", -1, GENDER_NOT_APPLICABLE), UnitLifeAsPower(unit->m_unit->m_unitFieldHealth));
+     this->AddLine(buffer, nullptr, textColor, textColor, 0);
+ 
+     for (int32_t i = 0; i < 7; i++) {
+diff --git a/WoW/Source/Ui/GameUI.cpp b/WoW/Source/Ui/GameUI.cpp
+index 15a59a9..508e1f8 100644
+--- a/WoW/Source/Ui/GameUI.cpp
++++ b/WoW/Source/Ui/GameUI.cpp
+@@ -5644,7 +5644,7 @@ void CGGameUI::CloseLoot(bool a1, bool a2, bool a3) {
+ 
+     CGLootInfo::SetObject(nullptr, 0, 0);
+ 
+-    if (object && (object->m_obj->m_type & TYPEMASK_UNIT) && static_cast<int32_t>(static_cast<CGUnit_C*>(object)->m_unit->m_unitFieldHealth) <= 0) {
++    if (object && (object->m_obj->m_type & TYPEMASK_UNIT) && static_cast<CGUnit_C*>(object)->m_unit->m_unitFieldHealth <= 0) {
+         CGGameUI::ClearTarget(guid, 1);
+     }
+ 
+diff --git a/WoW/Source/Ui/HealthBar.cpp b/WoW/Source/Ui/HealthBar.cpp
+index 24c65dc..3034518 100644
+--- a/WoW/Source/Ui/HealthBar.cpp
++++ b/WoW/Source/Ui/HealthBar.cpp
+@@ -22,7 +22,7 @@ static int32_t SimpleHealthUpdateHandler(WOWGUID guid, uint32_t fieldOffset, uin
+ 
+     if (unit) {
+         CGSimpleHealthBar* bar = static_cast<CGSimpleHealthBar*>(param);
+-        bar->SetMinMaxValues(0.0f, static_cast<float>(static_cast<int32_t>(unit->m_unit->m_unitFieldMaxhealth)));
++        bar->SetMinMaxValues(0.0f, static_cast<float>(unit->m_unit->m_unitFieldMaxhealth));
+         bar->SetValue(static_cast<float>(unit->m_unit->m_unitFieldHealth));
+     }
+ 
+@@ -85,6 +85,9 @@ void CGSimpleHealthBar::InstallMirrorHandlers() {
+ 
+     ClntObjMgrSetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), sizeof(uint32_t), SimpleHealthUpdateHandler, this, static_cast<HANDLER_PRIORITY>(0), 0);
+     ClntObjMgrSetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldMaxhealth), sizeof(uint32_t), SimpleHealthUpdateHandler, this, static_cast<HANDLER_PRIORITY>(0), 0);
++    // Torment: the high dwords of Life and max Life are fields of their own; a change to only one of them reaches the bar too.
++    ClntObjMgrSetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), sizeof(uint32_t), SimpleHealthUpdateHandler, this, static_cast<HANDLER_PRIORITY>(0), 0);
++    ClntObjMgrSetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldMaxhealthHigh), sizeof(uint32_t), SimpleHealthUpdateHandler, this, static_cast<HANDLER_PRIORITY>(0), 0);
+ }
+ 
+ // VERIFY: 2cae92df auto
+@@ -96,6 +99,8 @@ void CGSimpleHealthBar::RemoveMirrorHandlers() {
+ 
+     ClntObjMgrUnsetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealth), SimpleHealthUpdateHandler, this);
+     ClntObjMgrUnsetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldMaxhealth), SimpleHealthUpdateHandler, this);
++    ClntObjMgrUnsetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldHealthHigh), SimpleHealthUpdateHandler, this);
++    ClntObjMgrUnsetObjMirrorHandler(this->m_guid, ID_UNIT, offsetof(CGUnitData, m_unitFieldMaxhealthHigh), SimpleHealthUpdateHandler, this);
+ }
+ 
+ // VERIFY: d35be450 auto
+@@ -112,6 +117,6 @@ void CGSimpleHealthBar::SetUnit(CGUnit_C* unit) {
+ 
+     this->m_guid = unit->m_obj->m_guid;
+     this->InstallMirrorHandlers();
+-    this->SetMinMaxValues(0.0f, static_cast<float>(static_cast<int32_t>(unit->m_unit->m_unitFieldMaxhealth)));
++    this->SetMinMaxValues(0.0f, static_cast<float>(unit->m_unit->m_unitFieldMaxhealth));
+     this->SetValue(static_cast<float>(unit->m_unit->m_unitFieldHealth));
+ }
+diff --git a/WoW/Source/Ui/ScriptEvents_Scripts.cpp b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+index 4e8d29c..07c8bb5 100644
+--- a/WoW/Source/Ui/ScriptEvents_Scripts.cpp
++++ b/WoW/Source/Ui/ScriptEvents_Scripts.cpp
+@@ -358,7 +358,7 @@ static int32_t Script_UnitHealth(lua_State* L) {
+         return 0;
+     }
+ 
+-    int32_t health = 0;
++    int64_t health = 0;
+     WOWGUID guid = WOWGUID();
+     Script_GetGUIDFromToken(lua_tolstring(L, 1, nullptr), guid, false);
+     WOWGUID unitGuid = guid;
+@@ -675,14 +675,14 @@ static int32_t Script_UnitHealthMax(lua_State* L) {
+         return 0;
+     }
+ 
+-    int32_t maxHealth = 0;
++    int64_t maxHealth = 0;
+     WOWGUID guid = WOWGUID();
+     Script_GetGUIDFromToken(lua_tolstring(L, 1, nullptr), guid, false);
+     WOWGUID unitGuid = guid;
+     CGUnit_C* unit = static_cast<CGUnit_C*>(ClntObjMgrObjectPtr(guid, TYPEMASK_UNIT, __FILE__, __LINE__));
+ 
+     if (unit) {
+-        maxHealth = unit->m_unit->m_unitFieldMaxhealth;
++        maxHealth = static_cast<int64_t>(unit->m_unit->m_unitFieldMaxhealth);
+     } else if (CGPartyMemberState* state = CGPartyMemberStateRepository::GetState(unitGuid)) {
+         maxHealth = state->m_maxHealth;
+     } else if (CGPartyPetState* petState = CGPartyMemberStateRepository::FindPetState(unitGuid)) {
+diff --git a/WoW/Source/Ui/Torment/LootBeam.cpp b/WoW/Source/Ui/Torment/LootBeam.cpp
+index 1a37ce4..0a06a15 100644
+--- a/WoW/Source/Ui/Torment/LootBeam.cpp
++++ b/WoW/Source/Ui/Torment/LootBeam.cpp
+@@ -808,8 +808,8 @@ namespace loot_beam {
+                 return;
+             }
+ 
+-            Log(kLogInfo, "diag: first dead unit guid=%llX health=%d dynflags=0x%X padding=%u",
+-                static_cast<unsigned long long>(guid), fields->m_unitFieldHealth, fields->m_unitDynamicFlags, fields->m_unitFieldPadding);
++            Log(kLogInfo, "diag: first dead unit guid=%llX health=%lld dynflags=0x%X padding=%u",
++                static_cast<unsigned long long>(guid), static_cast<long long>(fields->m_unitFieldHealth), fields->m_unitDynamicFlags, fields->m_unitFieldPadding);
+         }
+ 
+         struct ScanContext {

@@ -1,0 +1,2589 @@
+Reason: Route character economic operations through a durable account-money provider while retaining uint32 mirrors.
+
+--- a/src/server/game/AuctionHouse/AuctionHouseMgr.cpp
++++ b/src/server/game/AuctionHouse/AuctionHouseMgr.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "AuctionHouseMgr.h"
++#include "PlayerEconomy.h"
+ #include "AuctionHouseSearcher.h"
+ #include "Common.h"
+ #include "DBCStores.h"
+@@ -400,7 +401,7 @@ void AuctionHouseMgr::LoadAuctions()
+ 
+     uint32 count = 0;
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     do
+     {
+         Field* fields = result->Fetch();
+@@ -417,7 +418,7 @@ void AuctionHouseMgr::LoadAuctions()
+         count++;
+     } while (result->NextRow());
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     LOG_INFO("server.loading", ">> Loaded {} auctions in {} ms", count, GetMSTimeDiffToNow(oldMSTime));
+     LOG_INFO("server.loading", " ");
+@@ -526,6 +527,7 @@ bool AuctionHouseObject::RemoveAuction(AuctionEntry* auction)
+ 
+ void AuctionHouseObject::Update()
+ {
++    PlayerEconomy::Scope accountOperation;
+     time_t checkTime = GameTime::GetGameTime().count() + 60;
+     ///- Handle expired auctions
+ 
+@@ -533,7 +535,7 @@ void AuctionHouseObject::Update()
+     if (_auctionsMap.empty())
+         return;
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     for (AuctionEntryMap::iterator itr, iter = _auctionsMap.begin(); iter != _auctionsMap.end(); )
+     {
+@@ -542,6 +544,9 @@ void AuctionHouseObject::Update()
+ 
+         if (auction->expire_time > checkTime)
+             continue;
++        // Preserve escrow on an unresolved or cross-mode historical sale.
++        if (auction->bidder && !PlayerEconomy::AllowTransfer(auction->owner.GetCounter(),auction->bidder.GetCounter()))
++            continue;
+ 
+         ///- Either cancel the auction if there was no bidder
+         if (!auction->bidder)
+@@ -563,10 +568,13 @@ void AuctionHouseObject::Update()
+         ///- In any case clear the auction
+         auction->DeleteFromDB(trans);
+ 
+-        sAuctionMgr->RemoveAItem(auction->item_guid);
+-        RemoveAuction(auction);
++        PlayerEconomy::AfterCommit([this,auction]
++        {
++            sAuctionMgr->RemoveAItem(auction->item_guid);
++            RemoveAuction(auction);
++        });
+     }
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+ 
+ AuctionHouseFaction AuctionEntry::GetFactionId() const
+--- a/src/server/game/Entities/Creature/Trainer.cpp
++++ b/src/server/game/Entities/Creature/Trainer.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Trainer.h"
++#include "PlayerEconomy.h"
+ #include "Creature.h"
+ #include "NPCPackets.h"
+ #include "Player.h"
+@@ -82,6 +83,7 @@ namespace Trainer
+ 
+     void Trainer::TeachSpell(Creature* npc, Player* player, uint32 spellId)
+     {
++        PlayerEconomy::Scope accountOperation(player);
+         if (!IsTrainerValidForPlayer(player))
+             return;
+ 
+@@ -106,7 +108,8 @@ namespace Trainer
+             return;
+         }
+ 
+-        player->ModifyMoney(-int64(moneyCost));
++        if (!player->ModifyMoney(-int64(moneyCost)))
++            return;
+ 
+         npc->SendPlaySpellVisual(179); // 53 SpellCastDirected
+         npc->SendPlaySpellImpact(player->GetGUID(), 362); // 113 EmoteSalute
+--- a/src/server/game/Entities/Player/Player.cpp
++++ b/src/server/game/Entities/Player/Player.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Player.h"
++#include "PlayerEconomy.h"
+ #include "AccountMgr.h"
+ #include "AchievementMgr.h"
+ #include "AreaDefines.h"
+@@ -708,7 +709,8 @@ bool Player::Create(ObjectGuid::LowType guidlow, CharacterCreateInfo* createInfo
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_REP_MAIL_SERVER_CHARACTER);
+             stmt->SetData(0, guidlow);
+             stmt->SetData(1, voucherId);
+-            CharacterDatabase.Execute(stmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++            else CharacterDatabase.Execute(stmt);
+         }
+     }
+ 
+@@ -2559,9 +2561,9 @@ void Player::GiveLevel(uint8 level)
+     if (mailReward && sScriptMgr->OnPlayerCanGiveMailRewardAtGiveLevel(this, level))
+     {
+         //- TODO: Poor design of mail system
+-        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++        CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+         MailDraft(mailReward->mailTemplateId).SendMailTo(trans, this, MailSender(MAIL_CREATURE, mailReward->senderEntry));
+-        CharacterDatabase.CommitTransaction(trans);
++        PlayerEconomy::CommitTransaction(trans);
+     }
+ 
+     UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_REACH_LEVEL);
+@@ -3872,6 +3874,7 @@ uint32 Player::resetTalentsCost() const
+ 
+ bool Player::resetTalents(bool noResetCost)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     sScriptMgr->OnPlayerTalentsReset(this, noResetCost);
+ 
+     // xinef: remove at login flag upon talents reset
+@@ -3954,7 +3957,8 @@ bool Player::resetTalents(bool noResetCost)
+ 
+     if (!noResetCost)
+     {
+-        ModifyMoney(-int64(resetCost));
++        if (!ModifyMoney(-int64(resetCost)))
++            return false;
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TALENTS, resetCost);
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_NUMBER_OF_TALENT_RESETS, 1);
+ 
+@@ -4116,7 +4120,7 @@ void Player::DeleteFromDB(ObjectGuid::LowType lowGuid, uint32 accountId, bool up
+         // Completely remove from the database
+         case CHAR_DELETE_REMOVE:
+             {
+-                CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++                CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+                 stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_COD_ITEM_MAIL);
+                 stmt->SetData(0, lowGuid);
+@@ -4390,7 +4394,7 @@ void Player::DeleteFromDB(ObjectGuid::LowType lowGuid, uint32 accountId, bool up
+ 
+                 sScriptMgr->OnPlayerDeleteFromDB(trans, lowGuid);
+ 
+-                CharacterDatabase.CommitTransaction(trans);
++                PlayerEconomy::CommitTransaction(trans);
+                 break;
+             }
+         // The character gets unlinked from the account, the name gets freed up and appears as deleted ingame
+@@ -4400,7 +4404,9 @@ void Player::DeleteFromDB(ObjectGuid::LowType lowGuid, uint32 accountId, bool up
+ 
+                 stmt->SetData(0, lowGuid);
+ 
+-                CharacterDatabase.Execute(stmt);
++                if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++
++                else CharacterDatabase.Execute(stmt);
+                 break;
+             }
+         default:
+@@ -4491,7 +4497,8 @@ void Player::DeleteOldRecoveryItems(uint32 keepDays)
+ 
+             CharacterDatabasePreparedStatement* deleteStmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_RECOVERY_ITEM_BY_GUID);
+             deleteStmt->SetData(0, guid);
+-            CharacterDatabase.Execute(deleteStmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(deleteStmt);
++            else CharacterDatabase.Execute(deleteStmt);
+ 
+             LOG_INFO("server.loading", "Deleted item from recovery_item table where guid {} and item id {}", guid, itemEntry);
+         } while (result->NextRow());
+@@ -4761,9 +4768,9 @@ void Player::RemoveCorpse()
+         GetCorpse()->RemoveFromWorld();
+     }
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     Corpse::DeleteFromDB(GetGUID(), trans);
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     _corpseLocation.WorldRelocate();
+ }
+@@ -4775,7 +4782,7 @@ void Player::SpawnCorpseBones(bool triggerSave /*= true*/)
+         if (triggerSave && !GetSession()->PlayerLogoutWithSave())   // at logout we will already store the player
+         {
+             // prevent loading as ghost without corpse
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+             // pussywizard: update only ghost flag instead of whole character table entry! data integrity is crucial
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHAR_REMOVE_GHOST);
+@@ -4784,7 +4791,7 @@ void Player::SpawnCorpseBones(bool triggerSave /*= true*/)
+ 
+             _SaveAuras(trans, false);
+ 
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+         }
+ }
+ 
+@@ -4906,6 +4913,7 @@ void Player::DurabilityPointLossForEquipSlot(EquipmentSlots slot)
+ 
+ uint32 Player::DurabilityRepairAll(bool cost, float discountMod, bool guildBank)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     uint32 TotalCost = 0;
+     // equipped, backpack, bags itself
+     for (uint8 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; i++)
+@@ -4922,6 +4930,7 @@ uint32 Player::DurabilityRepairAll(bool cost, float discountMod, bool guildBank)
+ 
+ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool guildBank)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     Item* item = GetItemByPos(pos);
+ 
+     uint32 TotalCost = 0;
+@@ -4972,6 +4981,7 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
+ 
+             if (guildBank)
+             {
++                if (PlayerEconomy::Managed()) return TotalCost; // No shared/guild bank money path.
+                 if (GetGuildId() == 0)
+                 {
+                     // LOG_DEBUG("entities.player", "You are not member of a guild");
+@@ -4992,8 +5002,8 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
+                 // LOG_DEBUG("entities.player", "You do not have enough money");
+                 return TotalCost;
+             }
+-            else
+-                ModifyMoney(-int64(costs));
++            else if (!ModifyMoney(-int64(costs)))
++                return TotalCost;
+         }
+     }
+ 
+@@ -6431,6 +6441,14 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, int32 honor, bool awar
+ 
+ void Player::SetHonorPoints(uint32 value)
+ {
++    if (PlayerEconomy::Managed() && isBeingLoaded())
++    {
++        // Preserve the source until login/mode resolution can convert it with
++        // a fully loaded character in the same durable operation.
++        SetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY,value);
++        if (value) AddKnownCurrency(ITEM_HONOR_POINTS_ID);
++        return;
++    }
+     if (value > sWorld->getIntConfig(CONFIG_MAX_HONOR_POINTS))
+     {
+         if (int32 copperPerPoint = sWorld->getIntConfig(CONFIG_MAX_HONOR_POINTS_MONEY_PER_POINT))
+@@ -6549,7 +6567,9 @@ uint32 Player::GetZoneIdFromDB(ObjectGuid guid)
+             stmt->SetData(0, uint16(zone));
+             stmt->SetData(1, guidLow);
+ 
+-            CharacterDatabase.Execute(stmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++
++            else CharacterDatabase.Execute(stmt);
+         }
+     }
+ 
+@@ -10309,17 +10329,19 @@ void Player::RemovePetitionsAndSigns(ObjectGuid guid, uint32 type)
+     {
+         CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_ALL_PETITION_SIGNATURES);
+         stmt->SetData(0, guid.GetCounter());
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+     }
+     else
+     {
+         CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_SIGNATURE);
+         stmt->SetData(0, guid.GetCounter());
+         stmt->SetData(1, uint8(type));
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+     }
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     if (type == 10)
+     {
+         CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_BY_OWNER);
+@@ -10348,7 +10370,7 @@ void Player::RemovePetitionsAndSigns(ObjectGuid guid, uint32 type)
+         // xinef: clear petition store
+         sPetitionMgr->RemovePetitionByOwnerAndType(guid, uint8(type));
+     }
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+ 
+ void Player::LeaveAllArenaTeams(ObjectGuid guid)
+@@ -10410,6 +10432,7 @@ void Player::SetRestBonus(float restBonusNew)
+ 
+ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc /*= nullptr*/, uint32 spellid /*= 1*/)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     if (nodes.size() < 2)
+         return false;
+ 
+@@ -10548,7 +10571,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+         return false;
+     }
+ 
+-    uint32 money = GetMoney();
++    uint64 money = GetAccountMoney();
+ 
+     if (npc)
+     {
+@@ -10580,7 +10603,8 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+     {
+         TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+         m_taxi.ClearTaxiDestinations();
+-        ModifyMoney(-int64(totalcost));
++        if (!ModifyMoney(-int64(totalcost)))
++            return false;
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TRAVELLING, totalcost);
+         TeleportTo(lastPathNode->map_id, lastPathNode->x, lastPathNode->y, lastPathNode->z, GetOrientation());
+         return false;
+@@ -10588,7 +10612,8 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+     else
+     {
+         m_flightSpellActivated = spellid;
+-        ModifyMoney(-int64(firstcost));
++        if (!ModifyMoney(-int64(firstcost)))
++            return false;
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TRAVELLING, firstcost);
+         GetSession()->SendActivateTaxiReply(ERR_TAXIOK);
+         GetSession()->SendDoFlight(mount_display_id, sourcepath);
+@@ -10843,7 +10868,8 @@ inline bool Player::_StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 c
+         return false;
+     }
+ 
+-    ModifyMoney(-int64(price));
++    if (!ModifyMoney(-int64(price)))
++        return false;
+ 
+     if (crItem->ExtendedCost)                            // case for new honor system
+     {
+@@ -11522,7 +11548,8 @@ void Player::LeaveBattleground(Battleground* bg)
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_DESERTER_TRACK);
+             stmt->SetData(0, GetGUID().GetRawValue());
+             stmt->SetData(1, BG_DESERTION_TYPE_LEAVE_BG);
+-            CharacterDatabase.Execute(stmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++            else CharacterDatabase.Execute(stmt);
+         }
+         sScriptMgr->OnPlayerBattlegroundDesertion(this, BG_DESERTION_TYPE_LEAVE_BG);
+     }
+@@ -11695,6 +11722,18 @@ void Player::InitPrimaryProfessions()
+     SetFreePrimaryProfessions(sWorld->getIntConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL));
+ }
+ 
++uint64 Player::GetAccountMoney() const { return PlayerEconomy::Balance(this); }
++
++bool Player::SetMoney(uint64 value)
++{
++    if (PlayerEconomy::Managed())
++        return PlayerEconomy::Change(this, value, false, true);
++    if (value > MAX_MONEY_AMOUNT)
++        return false;
++    SetMoneyMirror(uint32(value));
++    return true;
++}
++
+ bool Player::ModifyMoney(int64 amount, bool sendError /*= true*/)
+ {
+     if (!amount)
+@@ -11710,6 +11749,15 @@ bool Player::ModifyMoney(int64 amount, bool sendError /*= true*/)
+     }
+     sScriptMgr->OnPlayerMoneyChangedWide(this, amount);
+ 
++    if (PlayerEconomy::Managed())
++    {
++        // Magnitude conversion is defined even for INT64_MIN.
++        uint64 magnitude = amount < 0 ? uint64(-(amount + 1)) + 1 : uint64(amount);
++        bool ok = PlayerEconomy::Change(this, magnitude, amount < 0);
++        if (!ok && sendError)
++            SendEquipError(EQUIP_ERR_NOT_ENOUGH_MONEY, nullptr, nullptr);
++        return ok;
++    }
+     if (amount <= 0)
+     {
+         // Compare before adding/negating, including INT64_MIN. Retain saturating debits.
+@@ -12795,14 +12843,14 @@ void Player::AutoUnequipOffhandIfNeed(bool force /*= false*/)
+     else
+     {
+         MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND, true);
+-        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++        CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+         offItem->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+         offItem->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+ 
+         std::string subject = GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+         MailDraft(subject, "There were problems with equipping one or several items").AddItem(offItem).SendMailTo(trans, this, MailSender(this, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+ 
+-        CharacterDatabase.CommitTransaction(trans);
++        PlayerEconomy::CommitTransaction(trans);
+     }
+     UpdateTitansGrip();
+ }
+@@ -14070,7 +14118,9 @@ void Player::_LoadSkills(PreparedQueryResult result)
+                 stmt->SetData(0, GetGUID().GetRawValue());
+                 stmt->SetData(1, skill);
+ 
+-                CharacterDatabase.Execute(stmt);
++                if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++
++                else CharacterDatabase.Execute(stmt);
+ 
+                 continue;
+             }
+@@ -15093,7 +15143,9 @@ void Player::RemoveAtLoginFlag(AtLoginFlags flags, bool persist /*= false*/)
+         stmt->SetData(0, uint16(flags));
+         stmt->SetData(1, GetGUID().GetRawValue());
+ 
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++
++        else CharacterDatabase.Execute(stmt);
+     }
+ }
+ 
+@@ -15528,9 +15580,9 @@ void Player::ActivateSpec(uint8 spec)
+         InterruptNonMeleeSpells(false);
+ 
+     // xinef: save current actions order
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     _SaveActions(trans);
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     // xinef: remove pet, it will be resummoned later
+     if (Pet* pet = GetPet())
+@@ -16064,6 +16116,7 @@ PetStable& Player::GetOrInitPetStable()
+ 
+ void Player::RefundItem(Item* item)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     if (!item->IsRefundable())
+     {
+         LOG_DEBUG("entities.player.items", "Item refund: item not refundable!");
+@@ -16137,7 +16190,7 @@ void Player::RefundItem(Item* item)
+     uint32 moneyRefund = item->GetPaidMoney();  // item-> will be invalidated in DestroyItem
+ 
+     // Save all relevant data to DB to prevent desynchronisation exploits
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     // Delete any references to the refund data
+     item->SetNotRefundable(this, true, &trans);
+@@ -16161,8 +16214,8 @@ void Player::RefundItem(Item* item)
+     }
+ 
+     // Grant back money
+-    if (moneyRefund)
+-        ModifyMoney(moneyRefund); // Saved in SaveInventoryAndGoldToDB
++    if (moneyRefund && !ModifyMoney(moneyRefund))
++        return; // Failed operation reloads the original refundable item.
+ 
+     // Grant back Honor points
+     if (uint32 honorRefund = iece->reqhonorpoints)
+@@ -16174,7 +16227,7 @@ void Player::RefundItem(Item* item)
+ 
+     SaveInventoryAndGoldToDB(trans);
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+ 
+ void Player::SetRandomWinner(bool isWinner)
+@@ -16184,7 +16237,8 @@ void Player::SetRandomWinner(bool isWinner)
+     {
+         CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_BATTLEGROUND_RANDOM);
+         stmt->SetData(0, GetGUID().GetRawValue());
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+     }
+ }
+ 
+@@ -16293,7 +16347,7 @@ void Player::_LoadBrewOfTheMonth(PreparedQueryResult result)
+     if (lastEventId != eventId && IsEventActive(eventId) && HasAchieved(2796 /* Brew of the Month*/))
+     {
+         // Send Mail
+-        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++        CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+         MailSender sender(MAIL_CREATURE, 27487 /*NPC_BREW_OF_THE_MONTH_CLUB*/);
+         MailDraft draft(uint16(212 + month)); // 212 is starting template id
+         draft.SendMailTo(trans, MailReceiver(this, GetGUID().GetCounter()), sender);
+@@ -16304,7 +16358,7 @@ void Player::_LoadBrewOfTheMonth(PreparedQueryResult result)
+         stmt->SetData(1, uint32(eventId));
+         trans->Append(stmt);
+ 
+-        CharacterDatabase.CommitTransaction(trans);
++        PlayerEconomy::CommitTransaction(trans);
+     }
+ }
+ 
+--- a/src/server/game/Entities/Player/Player.h
++++ b/src/server/game/Entities/Player/Player.h
+@@ -1628,17 +1628,15 @@ public:
+     void setRegenTimerCount(uint32 time) {m_regenTimerCount = time;}
+     void setWeaponChangeTimer(uint32 time) {m_weaponChangeTimer = time;}
+ 
++    // Compatibility mirror only. All economic decisions use GetAccountMoney.
+     [[nodiscard]] uint32 GetMoney() const { return GetUInt32Value(PLAYER_FIELD_COINAGE); }
++    [[nodiscard]] uint64 GetAccountMoney() const;
+     bool ModifyMoney(int64 amount, bool sendError = true);
+-    [[nodiscard]] bool HasEnoughMoney(uint32 amount) const { return (GetMoney() >= amount); }
+-    [[nodiscard]] bool HasEnoughMoney(int32 amount) const
+-    {
+-        if (amount > 0)
+-            return (GetMoney() >= (uint32) amount);
+-        return true;
+-    }
+-
+-    void SetMoney(uint32 value)
++    bool SetMoney(uint64 value);
++    [[nodiscard]] bool HasEnoughMoney(uint64 amount) const { return GetAccountMoney() >= amount; }
++    [[nodiscard]] bool HasEnoughMoney(uint32 amount) const { return HasEnoughMoney(uint64(amount)); }
++    [[nodiscard]] bool HasEnoughMoney(int32 amount) const { return amount <= 0 || HasEnoughMoney(uint64(amount)); }
++    void SetMoneyMirror(uint32 value)
+     {
+         SetUInt32Value(PLAYER_FIELD_COINAGE, value);
+         MoneyChanged(value);
+--- /dev/null
++++ b/src/server/game/Entities/Player/PlayerEconomy.cpp
+@@ -0,0 +1,278 @@
++#include "PlayerEconomy.h"
++#include "Player.h"
++#include "WorldSession.h"
++#include "WorldPacket.h"
++#include "Log.h"
++#include "Opcodes.h"
++#include "ScriptMgr.h"
++#include "World.h"
++#include <algorithm>
++#include <exception>
++#include <vector>
++namespace PlayerEconomy
++{
++namespace
++{
++Provider* provider = nullptr;
++struct PendingPacket
++{
++    WorldSession* session;
++    WorldPacket packet;
++};
++struct Active
++{
++    std::unique_ptr<Context> context;
++    std::vector<PendingPacket> packets;
++    std::vector<std::function<void()>> success, rollback;
++    int exceptions = std::uncaught_exceptions();
++};
++thread_local Active* active = nullptr;
++}
++struct Scope::Impl
++{
++    Active state;
++};
++bool FinalizeLoad(Player* player)
++{
++    if (!Managed()) return true;
++    Scope accountOperation(player);
++    uint32 limit=sWorld->getIntConfig(CONFIG_MAX_HONOR_POINTS);
++    uint32 value=player->GetHonorPoints();
++    if (value>limit)
++    {
++        int32 copperPerPoint=sWorld->getIntConfig(CONFIG_MAX_HONOR_POINTS_MONEY_PER_POINT);
++        if (copperPerPoint && !player->ModifyMoney(int64(value-limit)*copperPerPoint)) return false;
++        player->SetHonorPoints(limit);
++    }
++    return accountOperation.Finish();
++}
++void Install(Provider* value) { provider = value; }
++bool Managed() { return provider != nullptr; }
++Context* Current() { return active ? active->context.get() : nullptr; }
++Scope::Scope(Player* actor, bool enabled)
++{
++    if (!enabled || !provider || active)
++        return;
++    impl_ = std::make_unique<Impl>();
++    impl_->state.context = provider->Begin();
++    active = &impl_->state;
++    if (actor)
++        active->context->players[actor->GetSession()] = actor;
++}
++Scope::~Scope()
++{
++    if (impl_)
++        Finish();
++}
++bool Scope::Finish()
++{
++    if (!impl_)
++        return !Current() || !Current()->failed;
++    bool ok = Flush();
++    active = nullptr;
++    impl_.reset();
++    return ok;
++}
++bool Flush()
++{
++    if (!active)
++        return true;
++    auto* frame = active;
++    auto& state = *active;
++    auto& context = *state.context;
++    context.failed |= std::uncaught_exceptions() > state.exceptions;
++    for (auto const& [session,player] : context.players)
++        context.failed |= session->GetPlayer()!=player || session->EconomyAborted();
++    bool changed = context.Dirty() || context.transaction->GetSize() != 0;
++    if (!context.failed && changed)
++    {
++        try
++        {
++            for (auto const& [session,player] : context.players)
++                player->SaveToDB(context.transaction, false, false);
++            context.failed = !context.Commit();
++        }
++        catch (std::exception const& error)
++        {
++            context.failed = true;
++            LOG_ERROR("entities.player", "Account operation exception: {}", error.what());
++        }
++    }
++    bool ok = !context.failed;
++    active = nullptr;
++    if (!ok)
++    {
++        for (auto it = state.rollback.rbegin(); it != state.rollback.rend(); ++it)
++            (*it)();
++        // Staged inventory/quest/skill mutations are discarded by logout without
++        // saving. Reconnect loads the last committed character and account state.
++        for (auto const& [session,player] : context.players)
++            session->AbortEconomy();
++        LOG_ERROR("entities.player", "Account operation failed; affected sessions must reload committed state.");
++    }
++    else
++    {
++        for (auto& callback : state.success)
++            callback();
++        for (auto& pending : state.packets)
++            pending.session->SendPacket(&pending.packet);
++    }
++    state.success.clear();
++    state.rollback.clear();
++    state.packets.clear();
++    if (ok)
++        context.transaction = CharacterDatabase.BeginTransaction();
++    active = frame;
++    return ok;
++}
++void Enlist(Player* player)
++{
++    if (Current() && player)
++        Current()->players[player->GetSession()] = player;
++}
++uint64 Balance(Player const* player)
++{
++    if (!player)
++        return 0;
++    if (!provider)
++        return player->GetMoney();
++    Scope scope;
++    uint64 value = 0;
++    try { return Current()->Read(player, value) ? value : 0; }
++    catch (std::exception const&) { Fail(); return 0; }
++}
++bool BalanceOffline(uint32 guid, uint64& balance)
++{
++    try { return provider && provider->ReadOffline(guid, balance); }
++    catch (std::exception const&) { Fail(); return false; }
++}
++bool Change(Player* player, uint64 amount, bool debit, bool absolute)
++{
++    if (!provider || !player || player->GetSession()->EconomyAborted())
++        return false;
++    Scope scope(player);
++    Enlist(player);
++    bool ok = false;
++    try { ok = !Current()->failed && Current()->Change(player, amount, debit, absolute); }
++    catch (std::exception const&) { Fail(); }
++    if (!ok)
++        Current()->failed = true;
++    return scope.Finish() && ok;
++}
++bool Transfer(Player* from, Player* to, uint32 offered, uint32 received)
++{
++    if (!provider || !from || !to)
++        return false;
++    Scope scope(from);
++    Enlist(to);
++    // Preserve the four native money-hook legs, but apply their net results
++    // atomically so shared principals and near-UINT64_MAX exchanges are valid.
++    auto leg = [](Player* player, int64 delta)
++    {
++        if (!delta) return delta;
++        if (delta >= INT32_MIN && delta <= INT32_MAX)
++        {
++            int32 legacy = int32(delta);
++            sScriptMgr->OnPlayerMoneyChanged(player, legacy);
++            delta = legacy;
++        }
++        sScriptMgr->OnPlayerMoneyChangedWide(player, delta);
++        return delta;
++    };
++    int64 aDebit=leg(from,-int64(offered)),aCredit=leg(from,received);
++    int64 bDebit=leg(to,-int64(received)),bCredit=leg(to,offered);
++    auto sum = [](int64 a, int64 b, int64& out)
++    {
++        if ((b>0 && a>INT64_MAX-b) || (b<0 && a<INT64_MIN-b)) return false;
++        out=a+b; return true;
++    };
++    int64 a=0,b=0;
++    bool ok = false;
++    try
++    {
++        ok = !Current()->failed && from->HasEnoughMoney(offered) && to->HasEnoughMoney(received) &&
++            AllowTransfer(from->GetGUID().GetCounter(), to->GetGUID().GetCounter()) &&
++            sum(aDebit,aCredit,a) && sum(bDebit,bCredit,b) &&
++            Current()->Transfer(from,to,a,b);
++    }
++    catch (std::exception const&) { Fail(); }
++    if (!ok)
++        Current()->failed = true;
++    return scope.Finish() && ok;
++}
++bool AllowTransfer(uint32 from, uint32 to)
++{
++    try { return !provider || provider->AllowTransfer(from, to); }
++    catch (std::exception const&) { Fail(); return false; }
++}
++bool CreditOffline(uint32 guid, uint64 amount)
++{
++    if (!provider) return false;
++    Scope scope;
++    bool ok=false;
++    try { ok=!Current()->failed && Current()->CreditOffline(guid,amount); }
++    catch (std::exception const&) { Fail(); }
++    if (!ok) Fail();
++    return scope.Finish() && ok;
++}
++bool IsEconomicOpcode(uint32 opcode)
++{
++    switch (opcode)
++    {
++        case CMSG_BUY_ITEM: case CMSG_BUY_ITEM_IN_SLOT: case CMSG_SELL_ITEM:
++        case CMSG_BUYBACK_ITEM: case CMSG_BUY_BANK_SLOT: case CMSG_GOSSIP_SELECT_OPTION:
++        case CMSG_TRAINER_BUY_SPELL: case CMSG_REPAIR_ITEM: case CMSG_SET_TRADE_GOLD:
++        case CMSG_ACCEPT_TRADE: case CMSG_SEND_MAIL: case CMSG_MAIL_TAKE_MONEY:
++        case CMSG_MAIL_TAKE_ITEM: case CMSG_MAIL_RETURN_TO_SENDER:
++        case CMSG_AUCTION_SELL_ITEM: case CMSG_AUCTION_PLACE_BID: case CMSG_AUCTION_REMOVE_ITEM:
++        case CMSG_QUESTGIVER_CHOOSE_REWARD: case CMSG_QUESTGIVER_REQUEST_REWARD:
++        case CMSG_QUESTGIVER_COMPLETE_QUEST: case CMSG_ACTIVATETAXI:
++        case CMSG_ACTIVATETAXIEXPRESS: case CMSG_BUY_STABLE_SLOT: case CMSG_PETITION_BUY:
++        case CMSG_ALTER_APPEARANCE: case CMSG_MESSAGECHAT: case CMSG_ITEM_REFUND:
++        case CMSG_LOOT_MONEY: case CMSG_UNLEARN_TALENTS: case MSG_SAVE_GUILD_EMBLEM:
++            return true;
++        default: return false;
++    }
++}
++void AfterCommit(std::function<void()> callback)
++{
++    if (active)
++        active->success.push_back(std::move(callback));
++    else
++        callback();
++}
++void OnRollback(std::function<void()> callback)
++{
++    if (active)
++        active->rollback.push_back(std::move(callback));
++}
++void Fail()
++{
++    if (Current())
++        Current()->failed = true;
++}
++bool DeferPacket(WorldSession* session, WorldPacket const* packet)
++{
++    if (!active || !packet)
++        return false;
++    if (session->EconomyAborted())
++        return true;
++    active->packets.push_back({session, *packet});
++    return true;
++}
++CharacterDatabaseTransaction BeginTransaction()
++{
++    return Current() ? Current()->transaction : CharacterDatabase.BeginTransaction();
++}
++void CommitTransaction(CharacterDatabaseTransaction const& transaction)
++{
++    if (!Current())
++        CharacterDatabase.CommitTransaction(transaction);
++    else if (transaction != Current()->transaction)
++    {
++        // Never silently commit a second transaction beside an account payment.
++        Current()->failed = true;
++        LOG_ERROR("entities.player", "Account operation received an unenlisted transaction.");
++    }
++}
++}
+--- /dev/null
++++ b/src/server/game/Entities/Player/PlayerEconomy.h
+@@ -0,0 +1,71 @@
++/*
++ * Generic account-money provider. Storage and game policy belong to modules.
++ */
++#ifndef PLAYER_ECONOMY_H
++#define PLAYER_ECONOMY_H
++#include "Define.h"
++#include "DatabaseEnv.h"
++#include <functional>
++#include <memory>
++#include <map>
++class Player;
++class WorldSession;
++class WorldPacket;
++namespace PlayerEconomy
++{
++class AC_GAME_API Context
++{
++public:
++    virtual ~Context() = default;
++    CharacterDatabaseTransaction transaction = CharacterDatabase.BeginTransaction();
++    std::map<WorldSession*, Player*> players;
++    bool failed = false;
++    virtual bool Read(Player const*, uint64&) = 0;
++    virtual bool Change(Player*, uint64 amount, bool debit, bool absolute) = 0;
++    virtual bool Transfer(Player*, Player*, int64 fromDelta, int64 toDelta) = 0;
++    virtual bool CreditOffline(uint32 guid, uint64 amount) = 0;
++    virtual bool Dirty() const = 0;
++    // Append ledger changes to transaction, commit durably, update shared cache.
++    virtual bool Commit() = 0;
++};
++class AC_GAME_API Provider
++{
++public:
++    virtual ~Provider() = default;
++    virtual std::unique_ptr<Context> Begin() = 0;
++    virtual bool ReadOffline(uint32 guid, uint64& balance) = 0;
++    virtual bool AllowTransfer(uint32 fromGuid, uint32 toGuid) = 0;
++};
++AC_GAME_API void Install(Provider*);
++AC_GAME_API bool Managed();
++AC_GAME_API bool FinalizeLoad(Player*);
++AC_GAME_API bool IsEconomicOpcode(uint32);
++AC_GAME_API Context* Current();
++class AC_GAME_API Scope
++{
++public:
++    explicit Scope(Player* = nullptr, bool enabled = true);
++    ~Scope();
++    Scope(Scope const&) = delete;
++    Scope& operator=(Scope const&) = delete;
++    bool Finish();
++private:
++    struct Impl;
++    std::unique_ptr<Impl> impl_;
++};
++AC_GAME_API uint64 Balance(Player const*);
++AC_GAME_API bool BalanceOffline(uint32 guid, uint64& balance);
++AC_GAME_API bool CreditOffline(uint32 guid, uint64 amount);
++AC_GAME_API bool Change(Player*, uint64 amount, bool debit, bool absolute = false);
++AC_GAME_API bool Transfer(Player*, Player*, uint32 offered, uint32 received);
++AC_GAME_API bool AllowTransfer(uint32 fromGuid, uint32 toGuid);
++AC_GAME_API void Enlist(Player*);
++AC_GAME_API void AfterCommit(std::function<void()>);
++AC_GAME_API void OnRollback(std::function<void()>);
++AC_GAME_API void Fail();
++AC_GAME_API bool Flush();
++AC_GAME_API bool DeferPacket(WorldSession*, WorldPacket const*);
++AC_GAME_API CharacterDatabaseTransaction BeginTransaction();
++AC_GAME_API void CommitTransaction(CharacterDatabaseTransaction const&);
++}
++#endif
+--- a/src/server/game/Entities/Player/PlayerGossip.cpp
++++ b/src/server/game/Entities/Player/PlayerGossip.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "BattlegroundMgr.h"
++#include "PlayerEconomy.h"
+ #include "Chat.h"
+ #include "GossipDef.h"
+ #include "Language.h"
+@@ -248,6 +249,7 @@ void Player::SendPreparedGossip(WorldObject* source)
+ 
+ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 menuId)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     GossipMenu& gossipMenu = PlayerTalkClass->GetGossipMenu();
+ 
+     // if not same, then something funky is going on
+@@ -298,6 +300,9 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
+         return;
+     }
+ 
++    if (!ModifyMoney(-int64(cost)))
++        return;
++
+     switch (gossipOptionId)
+     {
+         case GOSSIP_OPTION_GOSSIP:
+@@ -386,6 +391,7 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
+ 
+             if (bgTypeId == BATTLEGROUND_TYPE_NONE)
+             {
++                PlayerEconomy::Fail();
+                 LOG_ERROR("entities.player", "A user ({}) requested battlegroundlist from a npc who is no battlemaster", GetGUID().ToString());
+                 return;
+             }
+@@ -395,7 +401,6 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
+         }
+     }
+ 
+-    ModifyMoney(-int64(cost));
+ }
+ 
+ uint32 Player::GetGossipTextId(WorldObject* source)
+--- a/src/server/game/Entities/Player/PlayerQuest.cpp
++++ b/src/server/game/Entities/Player/PlayerQuest.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "CreatureAI.h"
++#include "PlayerEconomy.h"
+ #include "DisableMgr.h"
+ #include "GameEventMgr.h"
+ #include "GameObjectAI.h"
+@@ -600,7 +601,8 @@ void Player::AddQuest(Quest const* quest, Object* questGiver)
+         stmt->SetData(3, GitRevision::GetDate());
+ 
+         // add to Quest Tracker
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+     }
+ 
+     // Xinef: area auras may change on quest accept!
+@@ -651,7 +653,8 @@ void Player::CompleteQuest(uint32 quest_id)
+         stmt->SetData(1, GetGUID().GetCounter());
+ 
+         // add to Quest Tracker
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+     }
+ }
+ 
+@@ -674,6 +677,7 @@ void Player::IncompleteQuest(uint32 quest_id)
+ 
+ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, bool announce, bool isLFGReward)
+ {
++    PlayerEconomy::Scope accountOperation(this);
+     //this THING should be here to protect code from quest, which cast on player far teleport as a reward
+     //should work fine, cause far teleport will be executed in Player::Update()
+     SetMustDelayTeleport(true);
+@@ -791,7 +795,8 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver,
+ 
+     if (moneyRew)
+     {
+-        ModifyMoney(moneyRew);
++        if (!ModifyMoney(moneyRew))
++            return;
+ 
+         if (moneyRew > 0)
+             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_MONEY_FROM_QUEST_REWARD, uint32(std::min<int64>(moneyRew, MAX_MONEY_AMOUNT)));
+@@ -821,12 +826,12 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver,
+     if (uint32 mail_template_id = quest->GetRewMailTemplateId())
+     {
+         //- TODO: Poor design of mail system
+-        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++        CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+         if (quest->GetRewMailSenderEntry() != 0)
+             MailDraft(mail_template_id).SendMailTo(trans, this, quest->GetRewMailSenderEntry(), MAIL_CHECK_MASK_HAS_BODY, quest->GetRewMailDelaySecs());
+         else
+             MailDraft(mail_template_id).SendMailTo(trans, this, questGiver, MAIL_CHECK_MASK_HAS_BODY, quest->GetRewMailDelaySecs());
+-        CharacterDatabase.CommitTransaction(trans);
++        PlayerEconomy::CommitTransaction(trans);
+     }
+ 
+     if (quest->IsDaily() || quest->IsDFQuest())
+@@ -2242,7 +2247,7 @@ void Player::TalkedToCreature(uint32 entry, ObjectGuid guid)
+     }
+ }
+ 
+-void Player::MoneyChanged(uint32 count)
++void Player::MoneyChanged(uint32 /*count*/)
+ {
+     for (uint8 i = 0; i < MAX_QUEST_LOG_SIZE; ++i)
+     {
+@@ -2259,7 +2264,7 @@ void Player::MoneyChanged(uint32 count)
+ 
+                 if (q_status.Status == QUEST_STATUS_INCOMPLETE)
+                 {
+-                    if (int32(count) >= -rewOrReqMoney)
++                    if (HasEnoughMoney(uint64(-int64(rewOrReqMoney))))
+                     {
+                         if (CanCompleteQuest(questid))
+                         {
+@@ -2269,7 +2274,7 @@ void Player::MoneyChanged(uint32 count)
+                 }
+                 else if (q_status.Status == QUEST_STATUS_COMPLETE)
+                 {
+-                    if (int32(count) < -rewOrReqMoney)
++                    if (!HasEnoughMoney(uint64(-int64(rewOrReqMoney))))
+                     {
+                         IncompleteQuest(questid);
+                     }
+--- a/src/server/game/Entities/Player/PlayerStorage.cpp
++++ b/src/server/game/Entities/Player/PlayerStorage.cpp
+@@ -48,6 +48,7 @@
+ #include "OutdoorPvP.h"
+ #include "Pet.h"
+ #include "Player.h"
++#include "PlayerEconomy.h"
+ #include "QueryHolder.h"
+ #include "QuestDef.h"
+ #include "RBAC.h"
+@@ -2679,7 +2680,8 @@ Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_ITEM_BOP_TRADE);
+             stmt->SetData(0, pItem->GetGUID().GetCounter());
+             stmt->SetData(1, ss.str());
+-            CharacterDatabase.Execute(stmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++            else CharacterDatabase.Execute(stmt);
+         }
+ 
+         sScriptMgr->OnPlayerStoreNewItem(this, pItem, count);
+@@ -3145,7 +3147,8 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
+         {
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_GIFT);
+             stmt->SetData(0, pItem->GetGUID().GetCounter());
+-            CharacterDatabase.Execute(stmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++            else CharacterDatabase.Execute(stmt);
+         }
+ 
+         RemoveEnchantmentDurations(pItem);
+@@ -5012,7 +5015,8 @@ void Player::SetHomebind(WorldLocation const& loc, uint32 areaId)
+     stmt->SetData (3, m_homebindY);
+     stmt->SetData (4, m_homebindZ);
+     stmt->SetData(5, GetGUID().GetRawValue());
+-    CharacterDatabase.Execute(stmt);
++    if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++    else CharacterDatabase.Execute(stmt);
+ }
+ 
+ bool Player::isBeingLoaded() const
+@@ -5074,7 +5078,8 @@ bool Player::LoadFromDB(ObjectGuid playerGuid, CharacterDatabaseQueryHolder cons
+         CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+         stmt->SetData(0, uint16(AT_LOGIN_RENAME));
+         stmt->SetData(1, guid);
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+         return false;
+     }
+ 
+@@ -5120,7 +5125,7 @@ bool Player::LoadFromDB(ObjectGuid playerGuid, CharacterDatabaseQueryHolder cons
+     uint32 money = fields[8].Get<uint32>();
+     if (money > MAX_MONEY_AMOUNT)
+         money = MAX_MONEY_AMOUNT;
+-    SetMoney(money);
++    SetMoneyMirror(money); // Persisted coinage is never a ledger contribution on load.
+ 
+     SetByteValue(PLAYER_BYTES, 0, fields[9].Get<uint8>());
+     SetByteValue(PLAYER_BYTES, 1, fields[10].Get<uint8>());
+@@ -6258,7 +6263,8 @@ Item* Player::_LoadMailedItem(ObjectGuid const& playerGuid, Player* player, uint
+ 
+         CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_MAIL_ITEM);
+         stmt->SetData(0, itemGuid);
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+ 
+         item->FSetState(ITEM_REMOVED);
+ 
+@@ -6653,7 +6659,8 @@ void Player::_LoadSpells(PreparedQueryResult result)
+                 CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_SPELL_BY_SPELL);
+                 stmt->SetData(0, GetGUID().GetRawValue());
+                 stmt->SetData(1, spellId);
+-                CharacterDatabase.Execute(stmt);
++                if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++                else CharacterDatabase.Execute(stmt);
+             }
+         } while (result->NextRow());
+     }
+@@ -7197,7 +7204,8 @@ bool Player::_LoadHomeBind(PreparedQueryResult result)
+         {
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PLAYER_HOMEBIND);
+             stmt->SetData(0, GetGUID().GetRawValue());
+-            CharacterDatabase.Execute(stmt);
++            if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++            else CharacterDatabase.Execute(stmt);
+         }
+     }
+ 
+@@ -7216,7 +7224,8 @@ bool Player::_LoadHomeBind(PreparedQueryResult result)
+         stmt->SetData (3, m_homebindX);
+         stmt->SetData (4, m_homebindY);
+         stmt->SetData (5, m_homebindZ);
+-        CharacterDatabase.Execute(stmt);
++        if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++        else CharacterDatabase.Execute(stmt);
+     }
+ 
+     LOG_DEBUG("entities.player", "Setting player home position - mapid: {}, areaid: {}, X: {}, Y: {}, Z: {}",
+@@ -7230,15 +7239,17 @@ bool Player::_LoadHomeBind(PreparedQueryResult result)
+ 
+ void Player::SaveToDB(bool create, bool logout)
+ {
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+-
++    if (GetSession()->EconomyAborted())
++        return;
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     SaveToDB(trans, create, logout);
+-
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+ 
+ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create, bool logout)
+ {
++    if (GetSession()->EconomyAborted())
++        return;
+     // delay auto save at any saves (manual, in code, or autosave)
+     m_nextSave = sWorld->getIntConfig(CONFIG_INTERVAL_SAVE);
+ 
+@@ -7313,12 +7324,17 @@ void Player::AdditionalSavingAddMask(uint8 mask)
+ // fast save function for item/money cheating preventing - save only inventory and money state
+ void Player::SaveInventoryAndGoldToDB(CharacterDatabaseTransaction trans)
+ {
++    if (GetSession()->EconomyAborted())
++        return;
++    PlayerEconomy::Enlist(this);
+     _SaveInventory(trans);
+     SaveGoldToDB(trans);
+ }
+ 
+ void Player::SaveGoldToDB(CharacterDatabaseTransaction trans)
+ {
++    if (GetSession()->EconomyAborted())
++        return;
+     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UDP_CHAR_MONEY);
+     stmt->SetData(0, GetMoney());
+     stmt->SetData(1, GetGUID().GetRawValue());
+--- a/src/server/game/Entities/Player/PlayerUpdates.cpp
++++ b/src/server/game/Entities/Player/PlayerUpdates.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "AchievementMgr.h"
++#include "PlayerEconomy.h"
+ #include "BattlefieldMgr.h"
+ #include "CellImpl.h"
+ #include "Channel.h"
+@@ -2259,7 +2260,7 @@ void Player::UpdateSpecCount(uint8 count)
+     if (m_activeSpec >= count)
+         ActivateSpec(0);
+ 
+-    CharacterDatabaseTransaction        trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction        trans = PlayerEconomy::BeginTransaction();
+     CharacterDatabasePreparedStatement* stmt  = nullptr;
+ 
+     // Copy spec data
+@@ -2292,7 +2293,7 @@ void Player::UpdateSpecCount(uint8 count)
+         m_activeSpec = 0;
+     }
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     SetSpecsCount(count);
+ 
+@@ -2479,7 +2480,7 @@ void Player::UpdateAdditionalSaves(uint32 p_time)
+     m_additionalSaveTimer = 0;
+     m_additionalSaveMask = 0;
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     if (mask & ADDITIONAL_SAVING_INVENTORY_AND_GOLD)
+         SaveInventoryAndGoldToDB(trans);
+@@ -2505,5 +2506,5 @@ void Player::UpdateAdditionalSaves(uint32 p_time)
+         SaveGoldToDB(trans);
+     }
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+--- a/src/server/game/Guilds/Guild.cpp
++++ b/src/server/game/Guilds/Guild.cpp
+@@ -31,6 +31,7 @@
+ #include "ObjectMgr.h"
+ #include "Opcodes.h"
+ #include "Player.h"
++#include "PlayerEconomy.h"
+ #include "RBAC.h"
+ #include "ScriptMgr.h"
+ #include "SocialMgr.h"
+@@ -708,7 +709,10 @@ void EmblemInfo::SaveToDB(uint32 guildId) const
+     stmt->SetData(3, m_borderColor);
+     stmt->SetData(4, m_backgroundColor);
+     stmt->SetData(5, guildId);
+-    CharacterDatabase.Execute(stmt);
++    if (auto* operation=PlayerEconomy::Current())
++        operation->transaction->Append(stmt);
++    else
++        CharacterDatabase.Execute(stmt);
+ }
+ 
+ // MoveItemData
+@@ -1327,6 +1331,7 @@ void Guild::SetInfo(std::string_view info)
+ 
+ void Guild::HandleSetEmblem(WorldSession* session, EmblemInfo const& emblemInfo)
+ {
++    PlayerEconomy::Scope accountOperation(session->GetPlayer());
+     Player* player = session->GetPlayer();
+     if (!_IsLeader(player))
+         SendSaveEmblemResult(session, ERR_GUILDEMBLEM_NOTGUILDMASTER); // "Only guild leaders can create emblems."
+@@ -1334,8 +1339,11 @@ void Guild::HandleSetEmblem(WorldSession* session, EmblemInfo const& emblemInfo)
+         SendSaveEmblemResult(session, ERR_GUILDEMBLEM_NOTENOUGHMONEY); // "You can't afford to do that."
+     else
+     {
+-        player->ModifyMoney(-int64(EMBLEM_PRICE));
++        if (!player->ModifyMoney(-int64(EMBLEM_PRICE)))
++            return;
+ 
++        auto before=m_emblemInfo;
++        PlayerEconomy::OnRollback([this,before] { m_emblemInfo=before; });
+         HandleSetEmblem(emblemInfo);
+ 
+         SendSaveEmblemResult(session, ERR_GUILDEMBLEM_SUCCESS); // "Guild Emblem saved."
+--- a/src/server/game/Handlers/AuctionHouseHandler.cpp
++++ b/src/server/game/Handlers/AuctionHouseHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "AuctionHouseMgr.h"
++#include "PlayerEconomy.h"
+ #include "AuctionHouseSearcher.h"
+ #include "Chat.h"
+ #include "GameTime.h"
+@@ -317,15 +318,21 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recvData)
+                 _player->GetName(), _player->GetGUID().ToString(), item->GetTemplate()->Name1, item->GetEntry(), item->GetGUID().ToString(), item->GetCount(), bid, buyout, auctionTime, AH->GetHouseId());
+             sAuctionMgr->AddAItem(item);
+             auctionHouse->AddAuction(AH);
++            PlayerEconomy::OnRollback([auctionHouse,AH,item]
++            {
++                sAuctionMgr->RemoveAItem(AH->item_guid);
++                auctionHouse->RemoveAuction(AH);
++                delete item;
++            });
+ 
+             _player->MoveItemFromInventory(item->GetBagSlot(), item->GetSlot(), true);
+ 
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             item->DeleteFromInventoryDB(trans);
+             item->SaveToDB(trans);
+             AH->SaveToDB(trans);
+             _player->SaveInventoryAndGoldToDB(trans);
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+ 
+             SendAuctionCommandResult(AH->Id, AUCTION_SELL_ITEM, ERR_AUCTION_OK);
+ 
+@@ -370,6 +377,12 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recvData)
+                 _player->GetName(), _player->GetGUID().ToString(), newItem->GetTemplate()->Name1, newItem->GetEntry(), newItem->GetGUID().ToString(), newItem->GetCount(), bid, buyout, auctionTime, AH->GetHouseId());
+             sAuctionMgr->AddAItem(newItem);
+             auctionHouse->AddAuction(AH);
++            PlayerEconomy::OnRollback([auctionHouse,AH,newItem]
++            {
++                sAuctionMgr->RemoveAItem(AH->item_guid);
++                auctionHouse->RemoveAuction(AH);
++                delete newItem;
++            });
+ 
+             for (uint32 j = 0; j < itemsCount; ++j)
+             {
+@@ -380,10 +393,10 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recvData)
+                 {
+                     _player->MoveItemFromInventory(item2->GetBagSlot(), item2->GetSlot(), true);
+ 
+-                    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++                    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+                     item2->DeleteFromInventoryDB(trans);
+                     item2->DeleteFromDB(trans);
+-                    CharacterDatabase.CommitTransaction(trans);
++                    PlayerEconomy::CommitTransaction(trans);
+                     delete item2;
+                 }
+                 else // Item stack count is bigger than required count, update item stack count and save to database - cloned item will be used for auction
+@@ -395,11 +408,11 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recvData)
+                 }
+             }
+ 
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             newItem->SaveToDB(trans);
+             AH->SaveToDB(trans);
+             _player->SaveInventoryAndGoldToDB(trans);
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+ 
+             SendAuctionCommandResult(AH->Id, AUCTION_SELL_ITEM, ERR_AUCTION_OK);
+ 
+@@ -468,6 +481,13 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
+         return;
+     }
+ 
++    if (!PlayerEconomy::AllowTransfer(player->GetGUID().GetCounter(),auction->owner.GetCounter()))
++    {
++        SendAuctionCommandResult(auctionId, AUCTION_PLACE_BID, ERR_AUCTION_RESTRICTED_ACCOUNT);
++        return;
++    }
++    AuctionEntry beforeAccountBid = *auction;
++    PlayerEconomy::OnRollback([auction,beforeAccountBid] { *auction = beforeAccountBid; });
+     if (auction->owner == player->GetGUID())
+     {
+         //you cannot bid your own auction:
+@@ -503,7 +523,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
+         return;
+     }
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     if (price < auction->buyout || auction->buyout == 0)
+     {
+@@ -583,11 +603,13 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
+ 
+         auction->DeleteFromDB(trans);
+ 
+-        sAuctionMgr->RemoveAItem(auction->item_guid);
+-        auctionHouse->RemoveAuction(auction);
++        PlayerEconomy::AfterCommit([auctionHouse,auction] {
++            sAuctionMgr->RemoveAItem(auction->item_guid);
++            auctionHouse->RemoveAuction(auction);
++        });
+     }
+     player->SaveInventoryAndGoldToDB(trans);
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+ 
+ //this void is called when auction_owner cancels his auction
+@@ -620,7 +642,7 @@ void WorldSession::HandleAuctionRemoveItem(WorldPacket& recvData)
+     AuctionEntry* auction = auctionHouse->GetAuction(auctionId);
+     Player* player = GetPlayer();
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     if (auction && auction->owner == player->GetGUID())
+     {
+         Item* pItem = sAuctionMgr->GetAItem(auction->item_guid);
+@@ -661,10 +683,12 @@ void WorldSession::HandleAuctionRemoveItem(WorldPacket& recvData)
+ 
+     player->SaveInventoryAndGoldToDB(trans);
+     auction->DeleteFromDB(trans);
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+-    sAuctionMgr->RemoveAItem(auction->item_guid);
+-    auctionHouse->RemoveAuction(auction);
++    PlayerEconomy::AfterCommit([auctionHouse,auction] {
++        sAuctionMgr->RemoveAItem(auction->item_guid);
++        auctionHouse->RemoveAuction(auction);
++    });
+ }
+ 
+ //called when player lists his bids
+--- a/src/server/game/Handlers/BankHandler.cpp
++++ b/src/server/game/Handlers/BankHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "BankPackets.h"
++#include "PlayerEconomy.h"
+ #include "DBCStores.h"
+ #include "Item.h"
+ #include "Log.h"
+@@ -174,8 +175,9 @@ void WorldSession::HandleBuyBankSlotOpcode(WorldPackets::Bank::BuyBankSlot& buyB
+         return;
+     }
+ 
++    if (!_player->ModifyMoney(-int64(price)))
++        return;
+     _player->SetBankBagSlotCount(slot);
+-    _player->ModifyMoney(-int64(price));
+ 
+     packet.Result = ERR_BANKSLOT_OK;
+     SendPacket(packet.Write());
+--- a/src/server/game/Handlers/CharacterHandler.cpp
++++ b/src/server/game/Handlers/CharacterHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "AccountMgr.h"
++#include "PlayerEconomy.h"
+ #include "AreaDefines.h"
+ #include "RBAC.h"
+ #include "ArenaTeamMgr.h"
+@@ -569,7 +570,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recvData)
+ 
+             newChar->SetAtLoginFlag(AT_LOGIN_FIRST);              // First login
+ 
+-            CharacterDatabaseTransaction characterTransaction = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction characterTransaction = PlayerEconomy::BeginTransaction();
+             LoginDatabaseTransaction trans = LoginDatabase.BeginTransaction();
+ 
+             // Player created, save it now
+@@ -1505,7 +1506,7 @@ void WorldSession::HandleSetPlayerDeclinedNames(WorldPacket& recvData)
+     for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+         CharacterDatabase.EscapeString(declinedname.name[i]);
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_DECLINED_NAME);
+     stmt->SetData(0, guid.GetCounter());
+@@ -1519,7 +1520,7 @@ void WorldSession::HandleSetPlayerDeclinedNames(WorldPacket& recvData)
+ 
+     trans->Append(stmt);
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     SendSetPlayerDeclinedNamesResult(DECLINED_NAMES_RESULT_SUCCESS, guid);
+ }
+@@ -1582,7 +1583,8 @@ void WorldSession::HandleAlterAppearance(WorldPacket& recvData)
+         SendPacket(&data);
+     }
+ 
+-    _player->ModifyMoney(-int64(cost));                     // it isn't free
++    if (!_player->ModifyMoney(-int64(cost)))
++        return;
+     _player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_AT_BARBER, cost);
+ 
+     _player->SetByteValue(PLAYER_BYTES, 2, uint8(bs_hair->hair_id));
+@@ -1735,7 +1737,7 @@ void WorldSession::HandleCharCustomizeCallback(std::shared_ptr<CharacterCustomiz
+     }
+ 
+     CharacterDatabasePreparedStatement* stmt = nullptr;
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     ObjectGuid::LowType lowGuid = customizeInfo->Guid.GetCounter();
+ 
+@@ -1760,7 +1762,7 @@ void WorldSession::HandleCharCustomizeCallback(std::shared_ptr<CharacterCustomiz
+         }
+     }
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     sCharacterCache->UpdateCharacterData(customizeInfo->Guid, customizeInfo->Name, customizeInfo->Gender);
+ 
+@@ -2015,7 +2017,12 @@ void WorldSession::HandleCharFactionOrRaceChangeCallback(std::shared_ptr<Charact
+     Field* fields = result->Fetch();
+     uint32 atLoginFlags = fields[0].Get<uint16>();
+     std::string knownTitlesStr = fields[1].Get<std::string>();
+-    uint32 money = fields[2].Get<uint32>();
++    uint64 money = fields[2].Get<uint32>();
++    if (PlayerEconomy::Managed() && !PlayerEconomy::BalanceOffline(factionChangeInfo->Guid.GetCounter(),money))
++    {
++        SendCharFactionChange(CHAR_CREATE_ERROR, factionChangeInfo.get());
++        return;
++    }
+ 
+     uint32 usedLoginFlag = (factionChangeInfo->FactionChange ? AT_LOGIN_CHANGE_FACTION : AT_LOGIN_CHANGE_RACE);
+     if (!(atLoginFlags & usedLoginFlag))
+@@ -2137,7 +2144,7 @@ void WorldSession::HandleCharFactionOrRaceChangeCallback(std::shared_ptr<Charact
+     }
+ 
+     CharacterDatabasePreparedStatement* stmt = nullptr;
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     // resurrect the character in case he's dead
+     Player::OfflineResurrect(factionChangeInfo->Guid, trans);
+@@ -2593,7 +2600,7 @@ void WorldSession::HandleCharFactionOrRaceChangeCallback(std::shared_ptr<Charact
+     stmt->SetData(1, lowGuid);
+     trans->Append(stmt);
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     LOG_DEBUG("entities.player", "{} (IP: {}) changed race from {} to {}", GetPlayerInfo(), GetRemoteAddress(), oldRace, factionChangeInfo->Race);
+ 
+--- a/src/server/game/Handlers/ItemHandler.cpp
++++ b/src/server/game/Handlers/ItemHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Common.h"
++#include "PlayerEconomy.h"
+ #include "Item.h"
+ #include "Log.h"
+ #include "ObjectAccessor.h"
+@@ -653,14 +654,14 @@ void WorldSession::HandleSellItemOpcode(WorldPackets::Item::SellItem& packet)
+             if (pProto->SellPrice > 0)
+             {
+                 uint64 totalMoney = uint64(pProto->SellPrice) * packet.Count;
+-                if (totalMoney > uint64(MAX_MONEY_AMOUNT) - _player->GetMoney())               // prevent exceeding gold limit
++                if (totalMoney > UINT32_MAX || totalMoney > (PlayerEconomy::Managed() ? UINT64_MAX : uint64(MAX_MONEY_AMOUNT)) - _player->GetAccountMoney())               // prevent exceeding gold limit
+                 {
+                     _player->SendEquipError(EQUIP_ERR_TOO_MUCH_GOLD, nullptr, nullptr);
+                     _player->SendSellError(SELL_ERR_UNK, creature, packet.ItemGuid, 0);
+                     return;
+                 }
+ 
+-                uint32 money = uint32(totalMoney); // Validated before narrowing.
++                uint32 money = uint32(totalMoney); // Native buyback price width; account balance stays uint64.
+ 
+                 if (sWorld->getBoolConfig(CONFIG_ITEMDELETE_VENDOR))
+                     recoveryItem(pItem);
+@@ -735,7 +736,7 @@ void WorldSession::HandleSellItemOpcode(WorldPackets::Item::SellItem& packet)
+                     _player->UpdateTitansGrip();
+                 }
+ 
+-                _player->ModifyMoney(money);
++                if (!_player->ModifyMoney(int64(money))) return;
+                 _player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_MONEY_FROM_VENDORS, money);
+             }
+             else
+@@ -781,10 +782,12 @@ void WorldSession::HandleBuybackItem(WorldPackets::Item::BuybackItem& packet)
+                 stmt->SetData(0, _player->GetGUID().GetCounter());
+                 stmt->SetData(1, pItem->GetEntry());
+                 stmt->SetData(2, pItem->GetCount());
+-                CharacterDatabase.Execute(stmt);
++                if (auto* operation=PlayerEconomy::Current()) operation->transaction->Append(stmt);
++                else CharacterDatabase.Execute(stmt);
+             }
+ 
+-            _player->ModifyMoney(-int64(price));
++            if (!_player->ModifyMoney(-int64(price)))
++                return;
+             _player->RemoveItemFromBuyBackSlot(packet.Slot, false);
+             _player->ItemAddedQuestCheck(pItem->GetEntry(), pItem->GetCount());
+             _player->StoreItem(dest, pItem, true);
+@@ -1167,7 +1170,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPackets::Item::WrapItem& packet)
+         return;
+     }
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHAR_GIFT);
+     stmt->SetData(0, item->GetOwnerGUID().GetCounter());
+@@ -1206,7 +1209,7 @@ void WorldSession::HandleWrapItemOpcode(WorldPackets::Item::WrapItem& packet)
+     // after save it will be impossible to remove the item from the queue
+     _player->SaveInventoryAndGoldToDB(trans);
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     uint32 count = 1;
+     _player->DestroyItemCount(gift, count, true);
+--- a/src/server/game/Handlers/LootHandler.cpp
++++ b/src/server/game/Handlers/LootHandler.cpp
+@@ -26,6 +26,7 @@
+ #include "ObjectMgr.h"
+ #include "Opcodes.h"
+ #include "Player.h"
++#include "PlayerEconomy.h"
+ #include "ScriptMgr.h"
+ #include "WorldPacket.h"
+ #include "WorldSession.h"
+@@ -121,6 +122,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket& recvData)
+ 
+ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
+ {
++    PlayerEconomy::Scope accountOperation(GetPlayer());
+     LOG_DEBUG("network", "WORLD: CMSG_LOOT_MONEY");
+ 
+     Player* player = GetPlayer();
+@@ -196,6 +198,8 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
+             return;
+         }
+ 
++        uint32 originalGold=loot->gold;
++        PlayerEconomy::OnRollback([loot,originalGold] { loot->gold=originalGold; });
+         sScriptMgr->OnPlayerBeforeLootMoney(player, loot);
+         loot->NotifyMoneyRemoved();
+         if (shareMoney && player->GetGroup())      //item, pickpocket and players can be looted only single player
+@@ -231,7 +235,8 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
+                         continue;
+                 }
+ 
+-                (*i)->ModifyMoney(finalGold);
++                if (!(*i)->ModifyMoney(finalGold))
++                    return;
+                 (*i)->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_MONEY, finalGold);
+ 
+                 WorldPacket data(SMSG_LOOT_MONEY_NOTIFY, 4 + 1);
+@@ -258,7 +263,8 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
+ 
+             if (award)
+             {
+-                player->ModifyMoney(finalGold);
++                if (!player->ModifyMoney(finalGold))
++                    return;
+                 player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_MONEY, finalGold);
+ 
+                 WorldPacket data(SMSG_LOOT_MONEY_NOTIFY, 4 + 1);
+@@ -276,9 +282,26 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
+ 
+         // Delete the money loot record from the DB
+         if (loot->containerGUID)
+-            sLootItemStorage->RemoveStoredLootMoney(loot->containerGUID, loot);
++        {
++            if (PlayerEconomy::Current())
++            {
++                // Delete the durable source with its credit. The post-commit
++                // helper clears the memory store; its repeated DELETE is harmless.
++                auto* stmt=CharacterDatabase.GetPreparedStatement(CHAR_DEL_ITEMCONTAINER_SINGLE_ITEM);
++                stmt->SetData(0,loot->containerGUID.GetCounter());
++                stmt->SetData(1,uint32(0));
++                stmt->SetData(2,originalGold);
++                stmt->SetData(3,uint32(0));
++                PlayerEconomy::Current()->transaction->Append(stmt);
++                PlayerEconomy::AfterCommit([loot] { sLootItemStorage->RemoveStoredLootMoney(loot->containerGUID,loot); });
++            }
++            else
++                sLootItemStorage->RemoveStoredLootMoney(loot->containerGUID, loot);
++        }
+ 
+         // Delete container if empty
++        if (!PlayerEconomy::Flush())
++            return;
+         if (loot->isLooted() && guid.IsItem())
+             DoLootRelease(guid);
+     }
+--- a/src/server/game/Handlers/MailHandler.cpp
++++ b/src/server/game/Handlers/MailHandler.cpp
+@@ -16,6 +16,9 @@
+  */
+ 
+ #include "AccountMgr.h"
++#include "PlayerEconomy.h"
++#include "AuctionHouseMgr.h"
++#include <sstream>
+ #include "Chat.h"
+ #include "RBAC.h"
+ #include "CharacterCache.h"
+@@ -62,6 +65,30 @@ bool WorldSession::CanOpenMailBox(ObjectGuid guid)
+     return true;
+ }
+ 
++namespace
++{
++bool CanClaimAccountMail(Mail const* mail,Player* player)
++{
++    if (!PlayerEconomy::Managed()) return true;
++    if (mail->messageType==MAIL_NORMAL)
++        return PlayerEconomy::AllowTransfer(mail->sender,player->GetGUID().GetCounter());
++    if (mail->messageType==MAIL_AUCTION)
++    {
++        std::istringstream subject(mail->subject);
++        uint32 entry=0,zero=0,answer=0;char one=0,two=0;
++        if (!(subject>>entry>>one>>zero>>two>>answer) || one!=':' || two!=':') return false;
++        // Refunds return the bidder's own escrow, not the seller's assets.
++        if (answer==AUCTION_WON || answer==AUCTION_SUCCESSFUL)
++        {
++            std::istringstream body(mail->body);uint64 raw=0;
++            if (!(body>>std::hex>>raw)) return false;
++            ObjectGuid principal(raw);
++            return principal.IsPlayer() && PlayerEconomy::AllowTransfer(principal.GetCounter(),player->GetGUID().GetCounter());
++        }
++    }
++    return true;
++}
++}
+ void WorldSession::HandleSendMail(WorldPacket& recvData)
+ {
+     ObjectGuid mailbox;
+@@ -165,20 +192,26 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
+     uint64 totalCost = uint64(cost) + money;
+ 
+     // Check for overflow
+-    if (totalCost > MAX_MONEY_AMOUNT)
++    if (!PlayerEconomy::Managed() && totalCost > MAX_MONEY_AMOUNT)
+     {
+         player->SendMailResult(0, MAIL_SEND, MAIL_ERR_NOT_ENOUGH_MONEY);
+         return;
+     }
+ 
+-    uint32 reqmoney = uint32(totalCost);
++    uint64 reqmoney = totalCost;
+     if (!player->HasEnoughMoney(reqmoney))
+     {
+         player->SendMailResult(0, MAIL_SEND, MAIL_ERR_NOT_ENOUGH_MONEY);
+         return;
+     }
+ 
++    if (!PlayerEconomy::AllowTransfer(player->GetGUID().GetCounter(),receiverGuid.GetCounter()))
++    {
++        player->SendMailResult(0, MAIL_SEND, MAIL_ERR_INTERNAL_ERROR);
++        return;
++    }
+     Player* receive = ObjectAccessor::FindConnectedPlayer(receiverGuid);
++    PlayerEconomy::Enlist(receive);
+ 
+     uint32 rc_teamId = TEAM_NEUTRAL;
+     uint16 mails_count = 0;                                  //do not allow to send to one player more than 100 mails
+@@ -321,7 +354,7 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
+ 
+     MailDraft draft(subject, body);
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     std::string itemLogStr = "";
+     if (items_count > 0 || money > 0)
+@@ -373,7 +406,7 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
+     .SendMailTo(trans, MailReceiver(receive, receiverGuid.GetCounter()), MailSender(player), body.empty() ? MAIL_CHECK_MASK_COPIED : MAIL_CHECK_MASK_HAS_BODY, deliver_delay);
+ 
+     player->SaveInventoryAndGoldToDB(trans);
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     LOG_INFO("entities.player.mail", "Mail: Account: {} (IP: {}), Player [{}] ({}) sent mail to Player [{}] ({}): subject='{}', body='{}', {} copper, {} COD copper, sent item(s) [{}]",
+         GetAccountId(), GetRemoteAddress(), player->GetName(), player->GetGUID().GetCounter(),
+@@ -471,9 +504,14 @@ void WorldSession::HandleMailReturnToSender(WorldPacket& recvData)
+         return;
+     }
+ 
++    if (m->messageType==MAIL_NORMAL && m->sender && !PlayerEconomy::AllowTransfer(player->GetGUID().GetCounter(),m->sender))
++    {
++        player->SendMailResult(mailId,MAIL_RETURNED_TO_SENDER,MAIL_ERR_INTERNAL_ERROR);
++        return;
++    }
+     //we can return mail now
+     //so firstly delete the old one
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_MAIL_BY_ID);
+     stmt->SetData(0, mailId);
+@@ -506,7 +544,7 @@ void WorldSession::HandleMailReturnToSender(WorldPacket& recvData)
+         draft.AddMoney(m->money).SendReturnToSender(GetAccountId(), m->receiver, m->sender, trans);
+     }
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     delete m;                                               //we can deallocate old mail
+     player->SendMailResult(mailId, MAIL_RETURNED_TO_SENDER, MAIL_OK);
+@@ -551,6 +589,11 @@ void WorldSession::HandleMailTakeItem(WorldPacket& recvData)
+     }
+ 
+     // prevent cheating with skip client money check
++    if (!CanClaimAccountMail(m,player))
++    {
++        player->SendMailResult(mailId,MAIL_ITEM_TAKEN,MAIL_ERR_INTERNAL_ERROR);
++        return;
++    }
+     if (!player->HasEnoughMoney(m->COD))
+     {
+         player->SendMailResult(mailId, MAIL_ITEM_TAKEN, MAIL_ERR_NOT_ENOUGH_MONEY);
+@@ -563,7 +606,7 @@ void WorldSession::HandleMailTakeItem(WorldPacket& recvData)
+     uint8 msg = _player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, it, false);
+     if (msg == EQUIP_ERR_OK)
+     {
+-        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++        CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+         m->RemoveItem(itemLowGuid);
+         m->removedItems.push_back(itemLowGuid);
+ 
+@@ -624,7 +667,7 @@ void WorldSession::HandleMailTakeItem(WorldPacket& recvData)
+ 
+         player->SaveInventoryAndGoldToDB(trans);
+         player->_SaveMail(trans);
+-        CharacterDatabase.CommitTransaction(trans);
++        PlayerEconomy::CommitTransaction(trans);
+ 
+         player->SendMailResult(mailId, MAIL_ITEM_TAKEN, MAIL_OK, 0, itemLowGuid, count);
+ 
+@@ -653,7 +696,8 @@ void WorldSession::HandleMailTakeMoney(WorldPacket& recvData)
+         return;
+     }
+ 
+-    if (!player->ModifyMoney(m->money, false))
++    if ((!CanClaimAccountMail(m,player)) ||
++        !player->ModifyMoney(m->money, false))
+     {
+         player->SendMailResult(mailId, MAIL_MONEY_TAKEN, MAIL_ERR_EQUIP_ERROR, EQUIP_ERR_TOO_MUCH_GOLD);
+         return;
+@@ -672,10 +716,10 @@ void WorldSession::HandleMailTakeMoney(WorldPacket& recvData)
+     player->SendMailResult(mailId, MAIL_MONEY_TAKEN, MAIL_OK);
+ 
+     // save money and mail to prevent cheating
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+     player->SaveGoldToDB(trans);
+     player->_SaveMail(trans);
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ }
+ 
+ //called when player lists his received mails
+--- a/src/server/game/Handlers/NPCHandler.cpp
++++ b/src/server/game/Handlers/NPCHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Battleground.h"
++#include "PlayerEconomy.h"
+ #include "ConditionMgr.h"
+ #include "BattlegroundMgr.h"
+ #include "Creature.h"
+@@ -627,8 +628,9 @@ void WorldSession::HandleBuyStableSlot(WorldPacket& recvData)
+         StableSlotPricesEntry const* SlotPrice = sStableSlotPricesStore.LookupEntry(petStable.MaxStabledPets + 1);
+         if (_player->HasEnoughMoney(SlotPrice->Price))
+         {
++            if (!_player->ModifyMoney(-int64(SlotPrice->Price)))
++                return;
+             ++petStable.MaxStabledPets;
+-            _player->ModifyMoney(-int64(SlotPrice->Price));
+             SendStableResult(STABLE_SUCCESS_BUY_SLOT);
+         }
+         else
+--- a/src/server/game/Handlers/PetitionsHandler.cpp
++++ b/src/server/game/Handlers/PetitionsHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "ArenaTeam.h"
++#include "PlayerEconomy.h"
+ #include "ArenaTeamMgr.h"
+ #include "Guild.h"
+ #include "GuildMgr.h"
+@@ -184,10 +185,14 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket& recvData)
+         return;
+     }
+ 
+-    _player->ModifyMoney(-int64(cost));
++    if (!_player->ModifyMoney(-int64(cost)))
++        return;
+     Item* charter = _player->StoreNewItem(dest, charterid, true);
+     if (!charter)
++    {
++        PlayerEconomy::Fail();
+         return;
++    }
+ 
+     // Use a 31-bit safe petition id instead of the raw item guid
+     uint32 petitionId = sPetitionMgr->GeneratePetitionId();
+@@ -203,7 +208,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket& recvData)
+     Petition const* petition = sPetitionMgr->GetPetitionByOwnerWithType(_player->GetGUID(), type);
+ 
+     CharacterDatabase.EscapeString(name);
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     if (petition)
+     {
+@@ -213,7 +218,8 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket& recvData)
+         trans->Append("DELETE FROM petition_sign WHERE petitionguid = {}", petition->petitionGuid.GetCounter());
+ 
+         // xinef: clear petition store
+-        sPetitionMgr->RemovePetition(petition->petitionGuid);
++        ObjectGuid oldPetition=petition->petitionGuid;
++        PlayerEconomy::AfterCommit([oldPetition] { sPetitionMgr->RemovePetition(oldPetition); });
+     }
+ 
+     // xinef: petition pointer is invalid from now on
+@@ -227,10 +233,14 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket& recvData)
+     stmt->SetData(4, uint8(type));
+     trans->Append(stmt);
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     // xinef: fill petition store (include petitionId)
+-    sPetitionMgr->AddPetition(charter->GetGUID(), _player->GetGUID(), name, uint8(type), petitionId);
++    ObjectGuid charterGuid=charter->GetGUID(),ownerGuid=_player->GetGUID();
++    PlayerEconomy::AfterCommit([charterGuid,ownerGuid,name,type,petitionId]
++    {
++        sPetitionMgr->AddPetition(charterGuid,ownerGuid,name,uint8(type),petitionId);
++    });
+ }
+ 
+ void WorldSession::HandlePetitionShowSignOpcode(WorldPacket& recvData)
+@@ -812,7 +822,7 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket& recvData)
+             }
+     }
+ 
+-    CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++    CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PETITION_BY_ID);
+     stmt->SetData(0, petition->petitionId);
+@@ -822,7 +832,7 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket& recvData)
+     stmt->SetData(0, petition->petitionId);
+     trans->Append(stmt);
+ 
+-    CharacterDatabase.CommitTransaction(trans);
++    PlayerEconomy::CommitTransaction(trans);
+ 
+     // xinef: clear petition store (petition and signatures)
+     sPetitionMgr->RemovePetition(petitionGuid);
+--- a/src/server/game/Handlers/TradeHandler.cpp
++++ b/src/server/game/Handlers/TradeHandler.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Chat.h"
++#include "PlayerEconomy.h"
+ #include "Item.h"
+ #include "Language.h"
+ #include "Log.h"
+@@ -262,6 +263,11 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+     }
+ 
+     // not accept case incorrect money amount
++    if (!PlayerEconomy::AllowTransfer(_player->GetGUID().GetCounter(),trader->GetGUID().GetCounter()))
++    {
++        _player->TradeCancel(true);
++        return;
++    }
+     if (!_player->HasEnoughMoney(my_trade->GetMoney()))
+     {
+         info.Status = TRADE_STATUS_CLOSE_WINDOW;
+@@ -281,7 +287,8 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         return;
+     }
+ 
+-    if (uint64(_player->GetMoney()) - my_trade->GetMoney() + his_trade->GetMoney() > MAX_MONEY_AMOUNT)
++    if ((!PlayerEconomy::Managed() || GetAccountId() != trader->GetSession()->GetAccountId()) &&
++        his_trade->GetMoney() > (PlayerEconomy::Managed() ? UINT64_MAX : uint64(MAX_MONEY_AMOUNT)) - (_player->GetAccountMoney() - my_trade->GetMoney()))
+     {
+         info.Status = TRADE_STATUS_CLOSE_WINDOW;
+         info.Result = EQUIP_ERR_TOO_MUCH_GOLD;
+@@ -290,7 +297,8 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         return;
+     }
+ 
+-    if (uint64(trader->GetMoney()) - his_trade->GetMoney() + my_trade->GetMoney() > MAX_MONEY_AMOUNT)
++    if ((!PlayerEconomy::Managed() || GetAccountId() != trader->GetSession()->GetAccountId()) &&
++        my_trade->GetMoney() > (PlayerEconomy::Managed() ? UINT64_MAX : uint64(MAX_MONEY_AMOUNT)) - (trader->GetAccountMoney() - his_trade->GetMoney()))
+     {
+         info.Status = TRADE_STATUS_CLOSE_WINDOW;
+         info.Result = EQUIP_ERR_TOO_MUCH_GOLD;
+@@ -491,6 +499,15 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+             }
+         }
+ 
++        if (PlayerEconomy::Managed() &&
++            !PlayerEconomy::Transfer(_player,trader,my_trade->GetMoney(),his_trade->GetMoney()))
++        {
++            clearAcceptTradeMode(my_trade,his_trade);
++            clearAcceptTradeMode(myItems,hisItems);
++            delete my_spell;
++            delete his_spell;
++            return;
++        }
+         // execute trade: 1. remove
+         for (uint8 i = 0; i < TRADE_SLOT_TRADED_COUNT; ++i)
+         {
+@@ -512,7 +529,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         if (needsCrossrealmHandling)
+         {
+             CharacterDatabasePreparedStatement* stmt = nullptr;
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             stmt = CharacterDatabase.GetPreparedStatement(CHAR_NO_OP_PROVIDE_REALM_CONTEXT);
+             stmt->SetData(0, _player->GetGUID().GetRealmID());
+             trans->Append(stmt);
+@@ -542,9 +559,9 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+                     myItems[i] = newItem;
+                 }
+             }
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+ 
+-            trans = CharacterDatabase.BeginTransaction();
++            trans = PlayerEconomy::BeginTransaction();
+ 
+             stmt = CharacterDatabase.GetPreparedStatement(CHAR_NO_OP_PROVIDE_REALM_CONTEXT);
+             stmt->SetData(0, trader->GetGUID().GetRealmID());
+@@ -575,7 +592,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+                     hisItems[i] = newItem;
+                 }
+             }
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+ 
+         }
+ 
+@@ -595,10 +612,13 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         }
+ 
+         // update money
+-        _player->ModifyMoney(-int64(my_trade->GetMoney()));
+-        _player->ModifyMoney(his_trade->GetMoney());
+-        trader->ModifyMoney(-int64(his_trade->GetMoney()));
+-        trader->ModifyMoney(my_trade->GetMoney());
++        if (!PlayerEconomy::Managed())
++        {
++            _player->ModifyMoney(-int64(my_trade->GetMoney()));
++            _player->ModifyMoney(his_trade->GetMoney());
++            trader->ModifyMoney(-int64(his_trade->GetMoney()));
++            trader->ModifyMoney(my_trade->GetMoney());
++        }
+ 
+         if (HasPermission(rbac::RBAC_PERM_LOG_GM_TRADE))
+         {
+@@ -652,21 +672,21 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         // We can't use single transaction with different databases.
+         if (needsCrossrealmHandling)
+         {
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             _player->SaveInventoryAndGoldToDB(trans);
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+ 
+-            trans = CharacterDatabase.BeginTransaction();
++            trans = PlayerEconomy::BeginTransaction();
+             trader->SaveInventoryAndGoldToDB(trans);
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+         }
+         else
+         {
+             // desynchronized with the other saves here (SaveInventoryAndGoldToDB() not have own transaction guards)
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             _player->SaveInventoryAndGoldToDB(trans);
+             trader->SaveInventoryAndGoldToDB(trans);
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+         }
+ 
+         info.Status = TRADE_STATUS_TRADE_COMPLETE;
+--- a/src/server/game/Mails/Mail.cpp
++++ b/src/server/game/Mails/Mail.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Mail.h"
++#include "PlayerEconomy.h"
+ #include "AuctionHouseMgr.h"
+ #include "BattlegroundMgr.h"
+ #include "CalendarMgr.h"
+@@ -259,7 +260,8 @@ void MailDraft::SendMailTo(CharacterDatabaseTransaction trans, MailReceiver cons
+         trans->Append(stmt);
+     }
+ 
+-    sMailMgr->OnMailSent(receiver.GetPlayerGUIDLow());
++    uint32 receiverGuid=receiver.GetPlayerGUIDLow();
++    PlayerEconomy::AfterCommit([receiverGuid] { sMailMgr->OnMailSent(receiverGuid); });
+ 
+     // For online receiver update in game mail status and data
+     if (pReceiver)
+@@ -287,13 +289,20 @@ void MailDraft::SendMailTo(CharacterDatabaseTransaction trans, MailReceiver cons
+         m->checked = checked;
+         m->state = MAIL_STATE_UNCHANGED;
+ 
+-        pReceiver->AddMail(m);                           // to insert new mail to beginning of maillist
++        PlayerEconomy::AfterCommit([pReceiver,m] { pReceiver->AddMail(m); });
++        PlayerEconomy::OnRollback([m] { delete m; });
+ 
+         if (!m_items.empty())
+         {
+             for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+             {
+-                pReceiver->AddMItem(mailItemIter->second);
++                Item* item=mailItemIter->second;
++                PlayerEconomy::AfterCommit([pReceiver,item] { pReceiver->AddMItem(item); });
++                PlayerEconomy::OnRollback([item]
++                {
++                    // Auction sources still own their item after rollback.
++                    if (sAuctionMgr->GetAItem(item->GetGUID())!=item) delete item;
++                });
+             }
+ 
+             // The receiver owns the items now, so drop them from the draft without deleting them.
+@@ -303,10 +312,24 @@ void MailDraft::SendMailTo(CharacterDatabaseTransaction trans, MailReceiver cons
+         }
+ 
+         // Announce last: the notification may push the inbox, which has to contain this mail already
+-        pReceiver->AddNewMailDeliverTime(deliver_time);
++        PlayerEconomy::AfterCommit([pReceiver,deliver_time] { pReceiver->AddNewMailDeliverTime(deliver_time); });
+     }
+     else if (!m_items.empty())
+     {
+-        deleteIncludedItems(CharacterDatabaseTransaction(nullptr));
++        if (PlayerEconomy::Current())
++        {
++            for (auto const& pair:m_items)
++            {
++                Item* item=pair.second;
++                PlayerEconomy::AfterCommit([item] { delete item; });
++                PlayerEconomy::OnRollback([item]
++                {
++                    if (sAuctionMgr->GetAItem(item->GetGUID())!=item) delete item;
++                });
++            }
++            m_items.clear();
++        }
++        else
++            deleteIncludedItems(CharacterDatabaseTransaction(nullptr));
+     }
+ }
+--- a/src/server/game/Movement/MovementGenerators/WaypointMovementGenerator.cpp
++++ b/src/server/game/Movement/MovementGenerators/WaypointMovementGenerator.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "WaypointMovementGenerator.h"
++#include "PlayerEconomy.h"
+ #include "Creature.h"
+ #include "CreatureAI.h"
+ #include "CreatureGroups.h"
+@@ -719,6 +720,7 @@ void FlightPathMovementGenerator::DoReset(Player* player)
+ 
+ bool FlightPathMovementGenerator::DoUpdate(Player* player, uint32 /*diff*/)
+ {
++    PlayerEconomy::Scope accountOperation(player);
+     // skipping the first spline path point because it's our starting point and not a taxi path point
+     uint32 pointId = player->movespline->currentPathIdx() <= 0 ? 0 : player->movespline->currentPathIdx() - 1;
+     if (pointId > i_currentNode && i_currentNode < i_path.size() - 1)
+@@ -736,7 +738,8 @@ bool FlightPathMovementGenerator::DoUpdate(Player* player, uint32 /*diff*/)
+                 if (!_pointsForPathSwitch.empty())
+                 {
+                     player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TRAVELLING, _pointsForPathSwitch.front().Cost);
+-                    player->ModifyMoney(-int64(_pointsForPathSwitch.front().Cost));
++                    if (!player->ModifyMoney(-int64(_pointsForPathSwitch.front().Cost)))
++                        return false;
+                 }
+             }
+ 
+--- a/src/server/game/Server/WorldSession.cpp
++++ b/src/server/game/Server/WorldSession.cpp
+@@ -43,6 +43,7 @@
+ #include "PacketUtilities.h"
+ #include "Pet.h"
+ #include "Player.h"
++#include "PlayerEconomy.h"
+ #include "Realm.h"
+ #include "QueryHolder.h"
+ #include "ScriptMgr.h"
+@@ -307,6 +308,9 @@ ObjectGuid::LowType WorldSession::GetGuidLow() const
+ /// Send a packet to the client
+ void WorldSession::SendPacket(WorldPacket const* packet)
+ {
++    if (PlayerEconomy::DeferPacket(this, packet))
++        return;
++
+     sScriptMgr->OnPacketSent(this, *packet);
+ 
+     if (!m_Socket)
+@@ -458,6 +462,9 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
+                     }
+                     else if (_player->IsInWorld())
+                     {
++                        if (m_economyAborted)
++                            break;
++                        PlayerEconomy::Scope accountOperation(_player, PlayerEconomy::IsEconomicOpcode(packet->GetOpcode()));
+                         if (!sScriptMgr->CanPacketReceive(this, *packet))
+                             break;
+ 
+@@ -683,8 +690,15 @@ void WorldSession::SendPlayTimeWarning(PlayTimeFlag flag, int32 playTimeRemainin
+ }
+ 
+ /// %Log the player out
++void WorldSession::AbortEconomy()
++{
++    m_economyAborted = true;
++    KickPlayer("Account operation failed; reconnect to reload committed state.");
++}
++
+ void WorldSession::LogoutPlayer(bool save, bool redirecting)
+ {
++    save = save && !m_economyAborted;
+     // finish pending transfers before starting the logout
+     while (_player && _player->IsBeingTeleportedFar())
+         HandleMoveWorldportAck();
+--- a/src/server/game/Server/WorldSession.h
++++ b/src/server/game/Server/WorldSession.h
+@@ -463,6 +463,8 @@ public:
+     bool ProcessMovementInfo(MovementInfo& movementInfo, Unit* mover, Player* plrMover, WorldPacket& recvData);
+ 
+     void SendPacket(WorldPacket const* packet);
++    bool EconomyAborted() const { return m_economyAborted; }
++    void AbortEconomy();
+     void SendPetNameInvalid(uint32 error, std::string const& name, DeclinedName* declinedName);
+     void SendPartyResult(PartyOperation operation, std::string const& member, PartyResult res, uint32 val = 0);
+ 
+@@ -1313,6 +1315,7 @@ private:
+     Seconds _previousPlayTime;                          // play time from previous session less than 5 hours ago
+     time_t _logoutTime;
+     bool m_inQueue;                                     // session wait in auth.queue
++    bool m_economyAborted = false;
+     bool m_playerLoading;                               // code processed in LoginPlayer
+     bool m_playerLogout;                                // code processed in LogoutPlayer
+     bool m_playerRecentlyLogout;
+--- a/src/server/game/Tools/PlayerDump.cpp
++++ b/src/server/game/Tools/PlayerDump.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "PlayerDump.h"
++#include "PlayerEconomy.h"
+ #include "AccountMgr.h"
+ #include "CharacterCache.h"
+ #include "Common.h"
+@@ -763,6 +764,11 @@ inline void FixNULLfields(std::string& line)
+ 
+ DumpReturn PlayerDumpReader::LoadDump(std::istream& input, uint32 account, std::string name, ObjectGuid::LowType guid)
+ {
++    if (PlayerEconomy::Managed())
++    {
++        LOG_ERROR("entities.player", "Character dump import requires account-economy provenance review; mirror wealth cannot be imported.");
++        return DUMP_FILE_BROKEN;
++    }
+     uint32 charcount = AccountMgr::GetCharactersCount(account);
+     if (charcount >= 10)
+         return DUMP_TOO_MANY_CHARS;
+--- a/src/server/scripts/Commands/cs_debug.cpp
++++ b/src/server/scripts/Commands/cs_debug.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "ArenaTeamMgr.h"
++#include "PlayerEconomy.h"
+ #include "AuctionHouseMgr.h"
+ #include "Bag.h"
+ #include "BattlegroundMgr.h"
+@@ -1900,7 +1901,9 @@ public:
+ 
+         Field* fields = result->Fetch();
+         uint32 atLoginFlags = fields[0].Get<uint16>();
+-        uint32 money = fields[2].Get<uint32>();
++        uint64 money = fields[2].Get<uint32>();
++        if (PlayerEconomy::Managed() && !PlayerEconomy::BalanceOffline(guid.GetCounter(), money))
++            return false;
+ 
+         // Header
+         handler->PSendSysMessage(LANG_DEBUG_FACTIONCHANGE_HEADER, name, guid.GetCounter());
+--- a/src/server/scripts/Commands/cs_misc.cpp
++++ b/src/server/scripts/Commands/cs_misc.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "AccountMgr.h"
++#include "PlayerEconomy.h"
+ #include "ArenaTeamMgr.h"
+ #include "BattlegroundMgr.h"
+ #include "CellImpl.h"
+@@ -1835,7 +1836,7 @@ public:
+                 return false;
+             }
+ 
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             uint32 remaining = removeCount;
+             for (auto const& [itemGuid, stackCount] : stacks)
+             {
+@@ -1873,7 +1874,7 @@ public:
+                     remaining = 0;
+                 }
+             }
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+ 
+             uint32 removed = removeCount - remaining;
+             SendRemoveItemResult(handler, itemId, removed, nameLink, player->GetGUID().GetCounter(), false, ownedCount - removed);
+@@ -2127,7 +2128,7 @@ public:
+         uint32 totalPlayerTime          = 0;
+         uint8 level                     = 0;
+         std::string alive               = handler->GetAcoreString(LANG_ERROR);
+-        uint32 money                    = 0;
++        uint64 money                    = 0;
+         uint32 xp                       = 0;
+         uint32 xptotal                  = 0;
+ 
+@@ -2156,7 +2157,7 @@ public:
+             }
+ 
+             accId             = playerTarget->GetSession()->GetAccountId();
+-            money             = playerTarget->GetMoney();
++            money             = playerTarget->GetAccountMoney();
+             totalPlayerTime   = playerTarget->GetTotalPlayedTime();
+             level             = playerTarget->GetLevel();
+             latency           = playerTarget->GetSession()->GetLatency();
+@@ -2192,6 +2193,8 @@ public:
+             totalPlayerTime    = fields[0].Get<uint32>();
+             level              = fields[1].Get<uint8>();
+             money              = fields[2].Get<uint32>();
++            if (PlayerEconomy::Managed() && !PlayerEconomy::BalanceOffline(target->GetGUID().GetCounter(),money))
++                return false;
+             accId              = fields[3].Get<uint32>();
+             raceid             = fields[4].Get<uint8>();
+             classid            = fields[5].Get<uint8>();
+@@ -2456,9 +2459,9 @@ public:
+ 
+         // However, as we usually just require a target here, we use target instead.
+         // Output XIV. LANG_PINFO_CHR_MONEY
+-        uint32 gold = money / GOLD;
+-        uint32 silv = (money % GOLD) / SILVER;
+-        uint32 copp = (money % GOLD) % SILVER;
++        uint64 gold = money / GOLD;
++        uint32 silv = uint32((money % GOLD) / SILVER);
++        uint32 copp = uint32((money % GOLD) % SILVER);
+         handler->PSendSysMessage(LANG_PINFO_CHR_MONEY, gold, silv, copp);
+ 
+         // Position data
+--- a/src/server/scripts/Commands/cs_modify.cpp
++++ b/src/server/scripts/Commands/cs_modify.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Chat.h"
++#include "PlayerEconomy.h"
+ #include "CommandScript.h"
+ #include "ObjectMgr.h"
+ #include "Opcodes.h"
+@@ -587,14 +588,14 @@ public:
+             return false;
+         };
+ 
+-        Optional<int32> moneyToAddO = 0;
++        Optional<int64> moneyToAddO = 0;
+         if (IsExistWord(money, { "g", "s", "c" }))
+         {
+             moneyToAddO = MoneyStringToMoney(money);
+         }
+         else
+         {
+-            moneyToAddO = Acore::StringTo<int32>(money);
++            moneyToAddO = Acore::StringTo<int64>(money);
+         }
+ 
+         if (!moneyToAddO)
+@@ -603,48 +604,14 @@ public:
+         }
+ 
+         int64 moneyToAdd = *moneyToAddO;
+-        uint32 targetMoney = target->GetMoney();
+-
+-        if (moneyToAdd < 0)
++        if (!target->ModifyMoney(moneyToAdd))
+         {
+-            int64 newmoney = int64(targetMoney) + moneyToAdd;
+-
+-            LOG_DEBUG("chat.system", handler->GetAcoreString(LANG_CURRENT_MONEY), targetMoney, moneyToAdd, newmoney);
+-            if (newmoney <= 0)
+-            {
+-                handler->PSendSysMessage(LANG_YOU_TAKE_ALL_MONEY, handler->GetNameLink(target));
+-                if (handler->needReportToTarget(target))
+-                    ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_ALL_MONEY_GONE, handler->GetNameLink());
+-
+-                target->SetMoney(0);
+-            }
+-            else
+-            {
+-                if (newmoney > MAX_MONEY_AMOUNT)
+-                    newmoney = MAX_MONEY_AMOUNT;
+-
+-                handler->PSendSysMessage(LANG_YOU_TAKE_MONEY, std::abs(moneyToAdd), handler->GetNameLink(target));
+-                if (handler->needReportToTarget(target))
+-                    ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_MONEY_TAKEN, handler->GetNameLink(), std::abs(moneyToAdd));
+-                target->SetMoney(uint32(newmoney));
+-            }
+-        }
+-        else
+-        {
+-            handler->PSendSysMessage(LANG_YOU_GIVE_MONEY, moneyToAdd, handler->GetNameLink(target));
+-            if (handler->needReportToTarget(target))
+-                ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_MONEY_GIVEN, handler->GetNameLink(), moneyToAdd);
+-
+-            if (moneyToAdd >= MAX_MONEY_AMOUNT)
+-                moneyToAdd = MAX_MONEY_AMOUNT;
+-
+-            if (targetMoney >= uint32(MAX_MONEY_AMOUNT) - moneyToAdd)
+-                moneyToAdd = int64(MAX_MONEY_AMOUNT) - targetMoney;
+-
+-            target->ModifyMoney(moneyToAdd);
++            handler->SendSysMessage("Money change refused; balance unchanged.");
++            return false;
+         }
+-
+-        LOG_DEBUG("chat.system", handler->GetAcoreString(LANG_NEW_MONEY), targetMoney, moneyToAdd, target->GetMoney());
++        if (!PlayerEconomy::Flush())
++            return false;
++        handler->PSendSysMessage("{}: {} copper",target->GetName(),target->GetAccountMoney());
+ 
+         return true;
+     }
+--- a/src/server/scripts/Commands/cs_quest.cpp
++++ b/src/server/scripts/Commands/cs_quest.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "Chat.h"
++#include "PlayerEconomy.h"
+ #include "CommandScript.h"
+ #include "ConditionMgr.h"
+ #include "DisableMgr.h"
+@@ -176,7 +177,7 @@ public:
+         else
+         {
+             ObjectGuid::LowType guid = playerTarget->GetGUID().GetCounter();
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+             CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_QUESTSTATUS_REWARDED_BY_QUEST);
+             stmt->SetData(0, guid);
+@@ -210,7 +211,7 @@ public:
+                 }
+             }
+ 
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+         }
+ 
+         handler->PSendSysMessage(LANG_COMMAND_QUEST_REMOVED, quest->GetTitle(), entry);
+@@ -345,7 +346,7 @@ public:
+                 return false;
+             }
+ 
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+ 
+             typedef std::pair<uint32, uint32> items;
+             std::vector<items> questItems;
+@@ -464,7 +465,7 @@ public:
+                 }
+             }
+ 
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+         }
+ 
+         // check if Quest Tracker is enabled
+@@ -486,6 +487,7 @@ public:
+ 
+     static bool HandleQuestReward(ChatHandler* handler, Quest const* quest, Optional<PlayerIdentifier> playerTarget)
+     {
++        PlayerEconomy::Scope accountOperation;
+         if (!playerTarget)
+         {
+             playerTarget = PlayerIdentifier::FromTargetOrSelf(handler);
+@@ -519,7 +521,7 @@ public:
+ 
+             ObjectGuid::LowType guid = playerTarget->GetGUID().GetCounter();
+             uint8 charLevel = sCharacterCache->GetCharacterLevelByGuid(ObjectGuid(HighGuid::Player, guid));
+-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
++            CharacterDatabaseTransaction trans = PlayerEconomy::BeginTransaction();
+             CharacterDatabasePreparedStatement* stmt;
+ 
+             QueryResult result = CharacterDatabase.Query("SELECT 1 FROM character_queststatus WHERE guid = {} AND quest = {} AND status = 1", guid, entry);
+@@ -681,7 +683,7 @@ public:
+                 trans->Append(stmt);
+             }
+ 
+-            int32 rewMoney = 0;
++            int64 rewMoney = 0;
+ 
+             if (charLevel >= sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
+             {
+@@ -705,10 +707,18 @@ public:
+             // Only reward money, don't subtract, let's not cause an overflow...
+             if (rewMoney > 0)
+             {
+-                CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UDP_CHAR_MONEY_ACCUMULATIVE);
+-                stmt->SetData(0, rewMoney);
+-                stmt->SetData(1, guid);
+-                trans->Append(stmt);
++                if (PlayerEconomy::Managed())
++                {
++                    if (!PlayerEconomy::CreditOffline(guid,uint64(rewMoney)))
++                        return false;
++                }
++                else
++                {
++                    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UDP_CHAR_MONEY_ACCUMULATIVE);
++                    stmt->SetData(0, rewMoney);
++                    stmt->SetData(1, guid);
++                    trans->Append(stmt);
++                }
+             }
+ 
+             stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHAR_QUESTSTATUS_REWARDED);
+@@ -721,7 +731,7 @@ public:
+             stmt->SetData(1, entry);
+             trans->Append(stmt);
+ 
+-            CharacterDatabase.CommitTransaction(trans);
++            PlayerEconomy::CommitTransaction(trans);
+         }
+ 
+         handler->PSendSysMessage(LANG_COMMAND_QUEST_REWARDED, quest->GetTitle(), entry);
+--- a/src/server/scripts/World/npc_professions.cpp
++++ b/src/server/scripts/World/npc_professions.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "CreatureScript.h"
++#include "PlayerEconomy.h"
+ #include "GameObjectScript.h"
+ #include "Player.h"
+ #include "ScriptedCreature.h"
+@@ -413,10 +414,12 @@ void ProfessionUnlearnSpells(Player* player, uint32 type)
+ 
+ void ProcessCastaction(Player* player, Creature* creature, uint32 spellId, uint32 triggeredSpellId, int32 cost)
+ {
++    PlayerEconomy::Scope accountOperation(player);
+     if ((!spellId || !player->HasSpell(spellId)) && player->HasEnoughMoney(cost))
+     {
++        if (!player->ModifyMoney(-int64(cost)))
++            return;
+         player->CastSpell(player, triggeredSpellId, true);
+-        player->ModifyMoney(-int64(cost));
+ 
+         // xinef: save spells!
+         player->SaveToDB(false, false);
+@@ -428,13 +431,15 @@ void ProcessCastaction(Player* player, Creature* creature, uint32 spellId, uint3
+ 
+ void ProcessUnlearnAction(Player* player, Creature* creature, uint32 spellId, uint32 alternativeSpellId, int32 cost)
+ {
++    PlayerEconomy::Scope accountOperation(player);
+     if (EquippedOk(player, spellId))
+     {
+         if (player->HasEnoughMoney(cost))
+         {
++            if (!player->ModifyMoney(-int64(cost)))
++                return;
+             player->CastSpell(player, spellId, true);
+             ProfessionUnlearnSpells(player, spellId);
+-            player->ModifyMoney(-int64(cost));
+             if (alternativeSpellId)
+                 creature->CastSpell(player, alternativeSpellId, true);
+ 
+--- a/src/server/scripts/World/npcs_special.cpp
++++ b/src/server/scripts/World/npcs_special.cpp
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "AreaDefines.h"
++#include "PlayerEconomy.h"
+ #include "CellImpl.h"
+ #include "Chat.h"
+ #include "CombatAI.h"
+@@ -2002,7 +2003,8 @@ public:
+             return true;
+         }
+ 
+-        player->ModifyMoney(-int64(toggleXpCost));
++        if (!player->ModifyMoney(-int64(toggleXpCost)))
++            return false;
+ 
+         switch (action)
+         {

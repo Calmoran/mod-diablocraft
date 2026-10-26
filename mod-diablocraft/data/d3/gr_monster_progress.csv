@@ -1,0 +1,198 @@
+name,progress_points,progress_pct,avg_hp_multiplier,monster_type,damage_types,movable_by_abilities,monster_sets,source_url,patch
+Abomination,1.75,0.2692,2.5,Undead,Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Accursed,0.6,0.0923,0.6,Undead,Physical; Poison,Yes,22; 25,http://warpath.eu/mp.html,2.6.10.71510
+Accursed Hellion,1,0.1538,1.5,Demon,Physical,Yes,16; 19; 22,http://warpath.eu/mp.html,2.6.10.71510
+Anarch,2,0.3077,2,Reaper,Fire; Physical,Yes,15; 24; 27; 29,http://warpath.eu/mp.html,2.6.10.71510
+Arachnid Horror,1.5,0.2308,2,Beast,Poison,Yes,20; 33,http://warpath.eu/mp.html,2.6.10.71510
+Armored Destroyer,1,0.1538,0.88,Demon,Physical,Yes,7; 21; 29,http://warpath.eu/mp.html,2.6.10.71510
+Barbed Lurker,1.7,0.2615,1.88,Ancient Beast,Physical; Poison,Yes,22; 31,http://warpath.eu/mp.html,2.6.10.71510
+Betrayed,0.6,0.0923,0.6,Undead,Physical; Poison,Yes,17,http://warpath.eu/mp.html,2.6.10.71510
+Bile Crawler,0.35,0.0538,0.5,Demon,Physical,Yes,3; 17; 20; 31,http://warpath.eu/mp.html,2.6.10.71510
+Blazing Ghoul,0.32,0.0492,0.6,Undead,Physical,Yes,2; 30,http://warpath.eu/mp.html,2.6.10.71510
+Blazing Guardian,1,0.1538,0.9,Undead,Fire,Yes,31,http://warpath.eu/mp.html,2.6.10.71510
+Blazing Swordwielder,0.56,0.0862,0.85,Undead,Fire,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Bloated Corpse,0.85,0.1308,1.75,Undead,Physical,Yes,none,http://warpath.eu/mp.html,2.6.10.71510
+Blood Clan Impaler,0.45,0.0692,0.63,Beast,Physical,Yes,19; 23,http://warpath.eu/mp.html,2.6.10.71510
+Blood Clan Mauler,1.25,0.1923,1.75,Beast,Physical,Yes,18; 19,http://warpath.eu/mp.html,2.6.10.71510
+Blood Clan Sorcerer,1.25,0.1923,1.75,Beast,Physical,Yes,5; 18,http://warpath.eu/mp.html,2.6.10.71510
+Blood Clan Spearman,0.45,0.0692,0.63,Beast,Physical,Yes,5,http://warpath.eu/mp.html,2.6.10.71510
+Blood Clan Warrior,1.25,0.1923,1.75,Beast,Physical,Yes,5; 29,http://warpath.eu/mp.html,2.6.10.71510
+Bogan Trapper,2.5,0.3846,2.5,Beast,Physical; Poison,Yes,4; 19; 21,http://warpath.eu/mp.html,2.6.10.71510
+Boggit,0.2,0.0308,0.42,Beast,Physical,Yes,4; 21,http://warpath.eu/mp.html,2.6.10.71510
+Bone Warrior,0.56,0.0862,0.87,Undead,Physical,Yes,33,http://warpath.eu/mp.html,2.6.10.71510
+Brood Hatchling,0.12,0.0185,0.2,Beast,Poison,Yes,11; 23; 28,http://warpath.eu/mp.html,2.6.10.71510
+Burrowing Leaper,0.75,0.1154,1.13,Beast,Physical,Yes,27,http://warpath.eu/mp.html,2.6.10.71510
+Canine Bones,0.3,0.0462,0.75,Undead,Physical,Yes,17; 29,http://warpath.eu/mp.html,2.6.10.71510
+Carrion Bat,0.48,0.0738,0.82,Beast,Lightning,Yes,6; 15,http://warpath.eu/mp.html,2.6.10.71510
+Chilling Construct,0.68,0.1046,1.13,Undead,Cold,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Colossal Golgor,3.5,0.5385,4,Demon,Physical,No,5; 7,http://warpath.eu/mp.html,2.6.10.71510
+Copperfang Lurker,1,0.1538,1.5,Beast,Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Corpse Raiser,2.2,0.3385,2.25,Reaper,Cold,Yes,17; 29,http://warpath.eu/mp.html,2.6.10.71510
+Corpse Worm,0.3,0.0462,0.63,Beast,Physical,Yes,2; 13; 18; 25; 26,http://warpath.eu/mp.html,2.6.10.71510
+Corrupted Angel,1.15,0.1769,1,Demon,Arcane; Cold; Fire; Holy; Lightning; Physical; Poison,Yes,3; 7; 17,http://warpath.eu/mp.html,2.6.10.71510
+Crazed Cultist,0.4,0.0615,0.75,Human,Physical,Yes,22,http://warpath.eu/mp.html,2.6.10.71510
+Crazed Summoner,0.8,0.1231,1.13,Human,Fire; Physical,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Dark Berserker,2,0.3077,2.25,Demon,Physical,Yes,1; 10; 31; 33,http://warpath.eu/mp.html,2.6.10.71510
+Dark Conjurer,0.8,0.1231,1.13,Human,Fire; Physical,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Dark Cultist,0.4,0.0615,0.75,Human,Physical,Yes,10; 33,http://warpath.eu/mp.html,2.6.10.71510
+Dark Hellion,1,0.1538,1.5,Demon,Physical,Yes,1; 7; 8; 10; 16; 22; 26,http://warpath.eu/mp.html,2.6.10.71510
+Dark Moon Clan Impaler,0.6,0.0923,0.9,Beast,Physical,Yes,4,http://warpath.eu/mp.html,2.6.10.71510
+Dark Moon Clan Shaman,1.5,0.2308,1.88,Beast,Cold; Physical,Yes,4,http://warpath.eu/mp.html,2.6.10.71510
+Dark Moon Clan Warrior,1.25,0.1923,1.75,Beast,Physical,Yes,4,http://warpath.eu/mp.html,2.6.10.71510
+Dark Skeletal Archer,0.54,0.0831,0.8,Undead,Physical,Yes,1; 2; 9; 27,http://warpath.eu/mp.html,2.6.10.71510
+Dark Summoner,0.75,0.1154,1.13,Human,Fire; Physical,Yes,1; 10; 26,http://warpath.eu/mp.html,2.6.10.71510
+Dark Vessel,0.4,0.0615,0.57,Human,,Yes,10,http://warpath.eu/mp.html,2.6.10.71510
+Dark Zealot,0.4,0.0615,0.75,Human,Physical,Yes,14,http://warpath.eu/mp.html,2.6.10.71510
+Darkmoth,1.05,0.1615,1.5,Beast,Physical,Yes,6; 8; 17; 23,http://warpath.eu/mp.html,2.6.10.71510
+Death Maiden,3.75,0.5769,4.25,Reaper,Physical,Yes,5; 8; 10; 15; 17; 18; 24,http://warpath.eu/mp.html,2.6.10.71510
+Deathly Haunt,0.75,0.1154,1.13,Undead,Cold; Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Decayer,0.5,0.0769,1.13,Undead,Physical,Yes,16,http://warpath.eu/mp.html,2.6.10.71510
+Demon Raider,0.75,0.1154,0.88,Demon,Physical,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Demon Trooper,0.75,0.1154,0.88,Demon,Physical,Yes,16; 21; 24; 29,http://warpath.eu/mp.html,2.6.10.71510
+Demonic Hellflyer,1,0.1538,1.25,Beast,Fire; Physical,Yes,3; 29,http://warpath.eu/mp.html,2.6.10.71510
+Deranged Cultist,0.4,0.0615,0.75,Human,Physical,Yes,2,http://warpath.eu/mp.html,2.6.10.71510
+Disentombed Hulk,3.2,0.4923,4.3,Undead,Physical,Yes,7; 9,http://warpath.eu/mp.html,2.6.10.71510
+Dune Stinger,0.6,0.0923,0.6,Beast,Poison,Yes,23; 25,http://warpath.eu/mp.html,2.6.10.71510
+Dust Biter,0.05,0.0077,0.38,Undead,Physical,Yes,9,http://warpath.eu/mp.html,2.6.10.71510
+Dust Eater,1.48,0.2277,2.35,Undead,Physical,Yes,9,http://warpath.eu/mp.html,2.6.10.71510
+Dust Imp,0.36,0.0554,0.67,Demon,Physical,Yes,2; 9,http://warpath.eu/mp.html,2.6.10.71510
+Enraged Phantom,0.75,0.1154,1.13,Undead,Cold; Physical,Yes,9; 14; 16; 27; 33,http://warpath.eu/mp.html,2.6.10.71510
+Enslaved Nightmare,1.3,0.2000,1.5,Demon,Physical,Yes,7; 21,http://warpath.eu/mp.html,2.6.10.71510
+Exarch,1,0.1538,1.13,Reaper,Lightning,Yes,7; 17; 18; 24,http://warpath.eu/mp.html,2.6.10.71510
+Executioner,5.5,0.8462,5.5,Reaper,Physical,No,24,http://warpath.eu/mp.html,2.6.10.71510
+Exorcist,2.5,0.3846,2.5,Reaper,Lightning; Physical,Yes,12; 17; 20,http://warpath.eu/mp.html,2.6.10.71510
+Fallen,0.28,0.0431,0.52,Demon,Physical,Yes,15; 19; 28,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Conjurer,1.1,0.1692,1.5,Demon,Fire,Yes,25; 33,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Cur,2,0.3077,2.5,Beast,Physical,Yes,25,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Firemage,1.1,0.1692,1.5,Demon,Fire,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Grunt,0.28,0.0431,0.52,Demon,Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Hellhound,2,0.3077,2.5,Beast,Physical,Yes,4,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Hound,2,0.3077,2.5,Beast,Physical,Yes,15,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Master,3,0.4615,3.5,Demon,Physical,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Mongrel,2,0.3077,2.5,Beast,Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Overlord,3,0.4615,3.5,Demon,Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Overseer,3,0.4615,3.5,Demon,Physical,Yes,15; 30,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Peon,0.28,0.0431,0.52,Demon,Physical,Yes,25,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Prophet,1.1,0.1692,1.5,Demon,Fire,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Shaman,1.1,0.1692,1.5,Demon,Fire,Yes,15; 19; 28,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Slavelord,3,0.4615,3.5,Demon,Physical,Yes,4; 28,http://warpath.eu/mp.html,2.6.10.71510
+Fallen Soldier,0.28,0.0431,0.52,Demon,Physical,Yes,5,http://warpath.eu/mp.html,2.6.10.71510
+Fiery Spiderling,0.4,0.0615,0.75,Beast,Lightning,Yes,7,http://warpath.eu/mp.html,2.6.10.71510
+Foul Conjurer,0.75,0.1154,1.13,Human,Fire; Physical,Yes,16; 19; 22,http://warpath.eu/mp.html,2.6.10.71510
+Frenzied Hellion,1,0.1538,1.5,Demon,Physical,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Frost Guardian,0.32,0.0492,0.6,Undead,Cold,Yes,9,http://warpath.eu/mp.html,2.6.10.71510
+Frost Maggot,0.36,0.0554,0.52,Beast,Cold,Yes,32,http://warpath.eu/mp.html,2.6.10.71510
+Ghastly Gravedigger,0.56,0.0862,1.05,Undead,Cold,Yes,14,http://warpath.eu/mp.html,2.6.10.71510
+Ghostly Murderer,0.95,0.1462,0.88,Undead,Physical,Yes,14,http://warpath.eu/mp.html,2.6.10.71510
+Ghoul,0.6,0.0923,0.92,Undead,Physical,Yes,6,http://warpath.eu/mp.html,2.6.10.71510
+Glacial Colossus,4.5,0.6923,5,Beast,Physical,Yes,32,http://warpath.eu/mp.html,2.6.10.71510
+Gloom Wraith,0.08,0.0123,0.22,Demon,Physical,Yes,3,http://warpath.eu/mp.html,2.6.10.71510
+Great Horned Goliath,5,0.7692,5.5,Beast,Physical,Yes,23,http://warpath.eu/mp.html,2.6.10.71510
+Grim Wraith,0.75,0.1154,1.13,Undead,Cold; Physical,Yes,2; 31,http://warpath.eu/mp.html,2.6.10.71510
+Grotesque,1.75,0.2692,2.5,Undead,Physical,Yes,2; 13; 18; 25; 26,http://warpath.eu/mp.html,2.6.10.71510
+Hell Bringer,0,0.0000,1.5,Demon,Fire,No,none,http://warpath.eu/mp.html,2.6.10.71510
+Hell Witch,1.25,0.1923,1.5,Demon,Physical,Yes,3; 18,http://warpath.eu/mp.html,2.6.10.71510
+Hellhide Tremor,3.5,0.5385,4,Demon,Physical,No,17; 23,http://warpath.eu/mp.html,2.6.10.71510
+Herald of Pestilence,1.9,0.2923,2.25,Demon,Poison,Yes,5; 19; 28,http://warpath.eu/mp.html,2.6.10.71510
+Horned Charger,4.75,0.7308,5,Beast,Physical,Yes,14; 33,http://warpath.eu/mp.html,2.6.10.71510
+Horror,1.75,0.2692,2.5,Undead,Physical,Yes,19,http://warpath.eu/mp.html,2.6.10.71510
+Hulking Phasebeast,2,0.3077,2.5,Demon,Physical,Yes,2; 18; 31,http://warpath.eu/mp.html,2.6.10.71510
+Hungering Bones,0.15,0.0231,0.52,Undead,Physical,Yes,17; 29,http://warpath.eu/mp.html,2.6.10.71510
+Hungry Corpse,0.96,0.1477,1.5,Undead,Physical,Yes,13; 26; 27; 31,http://warpath.eu/mp.html,2.6.10.71510
+Hungry Torso,0.05,0.0077,0.38,Undead,Physical,Yes,13; 26; 27; 31,http://warpath.eu/mp.html,2.6.10.71510
+Ice Clan Impaler,0.72,0.1108,1,Beast,Physical,Yes,32,http://warpath.eu/mp.html,2.6.10.71510
+Ice Clan Shaman,1,0.1538,1.38,Beast,Physical,Yes,32,http://warpath.eu/mp.html,2.6.10.71510
+Ice Clan Warrior,1.25,0.1923,1.65,Beast,Physical,Yes,32,http://warpath.eu/mp.html,2.6.10.71510
+Ice Porcupine,1.15,0.1769,1.2,Beast,Cold,Yes,32,http://warpath.eu/mp.html,2.6.10.71510
+Imp,0.2,0.0308,0.5,Demon,Physical,Yes,13; 26,http://warpath.eu/mp.html,2.6.10.71510
+Inferno Zombie,0.68,0.1046,1.05,Undead,Fire,Yes,9; 31,http://warpath.eu/mp.html,2.6.10.71510
+Lacuni Huntress,1.3,0.2000,1.35,Beast,Fire; Physical,Yes,7; 13; 20,http://warpath.eu/mp.html,2.6.10.71510
+Lacuni Slasher,2,0.3077,2.5,Beast,Physical,Yes,4; 19,http://warpath.eu/mp.html,2.6.10.71510
+Lacuni Stalker,1.3,0.2000,1.35,Beast,Fire; Physical,Yes,4; 7; 9,http://warpath.eu/mp.html,2.6.10.71510
+Maggot,0.24,0.0369,0.5,Beast,Physical; Poison,Yes,21,http://warpath.eu/mp.html,2.6.10.71510
+Maggot Brood,5,0.7692,5.5,Beast,Physical,Yes,21,http://warpath.eu/mp.html,2.6.10.71510
+Mallet Lord,5.5,0.8462,5.5,Demon,Physical,No,3; 7; 21,http://warpath.eu/mp.html,2.6.10.71510
+Maniacal Golgor,3.5,0.5385,4,Demon,Physical,No,27,http://warpath.eu/mp.html,2.6.10.71510
+Moon Clan Ghost,1.25,0.1923,1.63,Undead,Physical,Yes,14,http://warpath.eu/mp.html,2.6.10.71510
+Moon Clan Impaler,0.6,0.0923,0.9,Beast,Physical,Yes,6; 20; 21; 30,http://warpath.eu/mp.html,2.6.10.71510
+Moon Clan Shaman,1.12,0.1723,1.63,Beast,Cold; Physical,Yes,6; 8,http://warpath.eu/mp.html,2.6.10.71510
+Moon Clan Warrior,1.25,0.1923,1.75,Beast,Physical,Yes,6; 21,http://warpath.eu/mp.html,2.6.10.71510
+Morlu Incinerator,1.75,0.2692,1.75,Demon,Fire,Yes,3; 29,http://warpath.eu/mp.html,2.6.10.71510
+Morlu Legionnaire,1,0.1538,1.5,Demon,Physical,Yes,3,http://warpath.eu/mp.html,2.6.10.71510
+Murderous Fiend,0.32,0.0492,0.6,Undead,Physical,Yes,9; 31,http://warpath.eu/mp.html,2.6.10.71510
+Noxious Guardian,0.63,0.0969,1.05,Undead,Poison,Yes,11; 25,http://warpath.eu/mp.html,2.6.10.71510
+Oppressor,1.5,0.2308,1.75,Demon,Fire; Physical,Yes,7; 21; 30; 33,http://warpath.eu/mp.html,2.6.10.71510
+Pain Monger,2,0.3077,2.25,Demon,Physical,Yes,14; 22,http://warpath.eu/mp.html,2.6.10.71510
+Plague Carrier,0.32,0.0492,0.6,Beast,Poison,Yes,29,http://warpath.eu/mp.html,2.6.10.71510
+Progression Orb,7.5,1.1538,,,,,none,http://warpath.eu/mp.html,2.6.10.71510
+Punisher,5.5,0.8462,5.5,Reaper,Physical,No,1; 26,http://warpath.eu/mp.html,2.6.10.71510
+Quill Fiend,0.48,0.0738,0.8,Beast,Physical,Yes,2; 10; 16; 28; 33,http://warpath.eu/mp.html,2.6.10.71510
+Ravenous Dead,0.6,0.0923,0.88,Undead,Physical,Yes,9; 13; 26,http://warpath.eu/mp.html,2.6.10.71510
+Retching Cadaver,0.9,0.1385,1.25,Undead,Physical,Yes,9; 13; 26,http://warpath.eu/mp.html,2.6.10.71510
+Returned,0.56,0.0862,0.85,Undead,Physical,Yes,13; 26,http://warpath.eu/mp.html,2.6.10.71510
+Returned Archer,0.54,0.0831,0.8,Undead,Physical,Yes,13; 26; 31,http://warpath.eu/mp.html,2.6.10.71510
+Returned Executioner,1.25,0.1923,1.5,Undead,Physical,Yes,1; 12; 13; 26; 27,http://warpath.eu/mp.html,2.6.10.71510
+Returned Shieldman,0.56,0.0862,0.85,Undead,Physical,Yes,1; 13; 26,http://warpath.eu/mp.html,2.6.10.71510
+Returned Summoner,1,0.1538,1.5,Undead,Arcane,Yes,13; 26,http://warpath.eu/mp.html,2.6.10.71510
+Revenant Archer,0.56,0.0862,1.05,Reaper,Cold,Yes,10,http://warpath.eu/mp.html,2.6.10.71510
+Revenant Shield Guard,1.25,0.1923,1.63,Reaper,Physical,Yes,5; 9; 10,http://warpath.eu/mp.html,2.6.10.71510
+Revenant Soldier,0.85,0.1308,1.27,Reaper,Physical,Yes,1; 7; 10,http://warpath.eu/mp.html,2.6.10.71510
+Reviled,0.6,0.0923,0.6,Undead,Physical; Poison,Yes,12; 25,http://warpath.eu/mp.html,2.6.10.71510
+Risen,0.6,0.0923,1.13,Undead,Physical,Yes,2,http://warpath.eu/mp.html,2.6.10.71510
+Risen Bones,0.15,0.0231,0.52,Undead,Physical,Yes,17; 29,http://warpath.eu/mp.html,2.6.10.71510
+Sand Dweller,3,0.4615,3.5,Beast,Physical,Yes,9,http://warpath.eu/mp.html,2.6.10.71510
+Sand Wasp,0.6,0.0923,0.6,Beast,Poison,Yes,18; 29,http://warpath.eu/mp.html,2.6.10.71510
+Savage Beast,4.75,0.7308,5,Beast,Physical,Yes,33,http://warpath.eu/mp.html,2.6.10.71510
+Savage Fiend,0.32,0.0492,0.6,Undead,Physical,Yes,1; 22,http://warpath.eu/mp.html,2.6.10.71510
+Scarab,0.1,0.0154,0.3,Beast,Lightning,Yes,15; 18; 23,http://warpath.eu/mp.html,2.6.10.71510
+Scavenger,0.4,0.0615,0.65,Beast,Physical,Yes,27; 33,http://warpath.eu/mp.html,2.6.10.71510
+Scorching Creeper,3.8,0.5846,4.3,Beast,Fire,Yes,7,http://warpath.eu/mp.html,2.6.10.71510
+Serpent Magus,1,0.1538,1.25,Demon,Lightning; Physical,Yes,18,http://warpath.eu/mp.html,2.6.10.71510
+Shade Stalker,0.08,0.0123,0.22,Demon,Physical,Yes,29,http://warpath.eu/mp.html,2.6.10.71510
+Shadow Vermin,0.08,0.0123,0.22,Demon,Physical,Yes,14,http://warpath.eu/mp.html,2.6.10.71510
+Shock Guardian,0.4,0.0615,0.75,Undead,Lightning,Yes,27,http://warpath.eu/mp.html,2.6.10.71510
+Shock Tower,1,0.1538,0.45,Ancient Ordnance,Lightning,No,none,http://warpath.eu/mp.html,2.6.10.71510
+Shrieking Terror,1,0.1538,1.5,Beast,Physical,Yes,21,http://warpath.eu/mp.html,2.6.10.71510
+Skeletal Archer,0.54,0.0831,0.8,Undead,Physical,Yes,2; 12; 15; 27,http://warpath.eu/mp.html,2.6.10.71510
+Skeletal Beast,4.15,0.6385,4.5,Beast,Physical,Yes,1; 29,http://warpath.eu/mp.html,2.6.10.71510
+Skeletal Executioner,1.25,0.1923,1.5,Undead,Physical,Yes,2,http://warpath.eu/mp.html,2.6.10.71510
+Skeletal Raider,0.56,0.0862,0.85,Undead,Physical,Yes,12; 19; 31,http://warpath.eu/mp.html,2.6.10.71510
+Skeletal Ranger,0.54,0.0831,0.8,Undead,Physical,Yes,17; 28,http://warpath.eu/mp.html,2.6.10.71510
+Skeletal Shieldbearer,0.56,0.0862,0.85,Undead,Physical,Yes,2,http://warpath.eu/mp.html,2.6.10.71510
+Skeleton,0.56,0.0862,0.85,Undead,Physical,Yes,1; 2; 27; 33,http://warpath.eu/mp.html,2.6.10.71510
+Smoldering Construct,1,0.1538,1.13,Undead,Fire,Yes,9; 16,http://warpath.eu/mp.html,2.6.10.71510
+Soul Lasher,1.05,0.1615,1.25,Demon,Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Soul Ripper,1.05,0.1615,1.25,Demon,Physical,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Spellwinder,1,0.1538,1.25,Demon,Lightning; Physical,Yes,11,http://warpath.eu/mp.html,2.6.10.71510
+Spewing Horror,0.9,0.1385,1.38,Undead,Physical,Yes,16,http://warpath.eu/mp.html,2.6.10.71510
+Spiderling,0.12,0.0185,0.2,Beast,Poison,Yes,20,http://warpath.eu/mp.html,2.6.10.71510
+Spine Lasher,0.35,0.0538,0.5,Demon,Physical,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Spitting Bones,0.15,0.0231,0.52,Undead,Physical,Yes,17; 29,http://warpath.eu/mp.html,2.6.10.71510
+Stinging Swarm,0.56,0.0862,1.05,Beast,Physical,Yes,8,http://warpath.eu/mp.html,2.6.10.71510
+Stygian Crawler,0.4,0.0615,0.75,Demon,Physical,Yes,8; 16; 23,http://warpath.eu/mp.html,2.6.10.71510
+Subjugator,1,0.1538,0.92,Demon,Arcane,Yes,28; 30,http://warpath.eu/mp.html,2.6.10.71510
+Summoned Archer,0.36,0.0554,0.67,Reaper,Cold,Yes,5; 7; 8; 10; 14; 15; 17; 18; 24,http://warpath.eu/mp.html,2.6.10.71510
+Summoned Shield Guard,1,0.1538,1.38,Reaper,Physical,Yes,17,http://warpath.eu/mp.html,2.6.10.71510
+Summoned Soldier,0.48,0.0738,0.9,Reaper,Physical,Yes,13; 15; 24,http://warpath.eu/mp.html,2.6.10.71510
+Terror Demon,1.5,0.2308,1.75,Demon,Fire,Yes,18; 29,http://warpath.eu/mp.html,2.6.10.71510
+Tomb Guardian,1,0.1538,1.5,Undead,Arcane,Yes,1; 2; 27; 33,http://warpath.eu/mp.html,2.6.10.71510
+Tormented Stinger,0.4,0.0615,0.75,Demon,Lightning,Yes,5; 8; 17,http://warpath.eu/mp.html,2.6.10.71510
+Toxic Lurker,2.5,0.3846,3,Beast,Poison,Yes,8,http://warpath.eu/mp.html,2.6.10.71510
+Tusked Bogan,3.5,0.5385,4,Beast,Physical,Yes,4; 21,http://warpath.eu/mp.html,2.6.10.71510
+Unburied,3.2,0.4923,4.3,Undead,Physical,Yes,2; 6; 10; 28,http://warpath.eu/mp.html,2.6.10.71510
+Unholy Thrall,2.5,0.3846,3,Demon,Physical,Yes,10; 13,http://warpath.eu/mp.html,2.6.10.71510
+Vengeful Summoner,1,0.1538,1.5,Undead,Arcane,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Vicious Ghoul,0.32,0.0492,0.6,Undead,Physical,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Vicious Hellion,1,0.1538,1.5,Demon,Physical,Yes,28,http://warpath.eu/mp.html,2.6.10.71510
+Vicious Mangler,2,0.3077,2.25,Demon,Physical,Yes,9,http://warpath.eu/mp.html,2.6.10.71510
+Vile Bat,0.3,0.0462,0.75,Beast,Physical,Yes,17; 21; 29,http://warpath.eu/mp.html,2.6.10.71510
+Vile Revenant,0.75,0.1154,1.13,Undead,Cold; Physical,Yes,12,http://warpath.eu/mp.html,2.6.10.71510
+Vile Swarm,1,0.1538,1.05,Beast,Physical,Yes,23,http://warpath.eu/mp.html,2.6.10.71510
+Vile Temptress,1.25,0.1923,1.5,Demon,Physical,Yes,23; 30,http://warpath.eu/mp.html,2.6.10.71510
+Voracious Torso,0.05,0.0077,0.38,Undead,Physical,Yes,none,http://warpath.eu/mp.html,2.6.10.71510
+Voracious Zombie,0.6,0.0923,1.13,Undead,Physical,Yes,16,http://warpath.eu/mp.html,2.6.10.71510
+Warping Horror,2,0.3077,2.5,Demon,Physical,Yes,13; 14,http://warpath.eu/mp.html,2.6.10.71510
+Webspitter Spider,1,0.1538,1.5,Beast,Poison,Yes,8; 23,http://warpath.eu/mp.html,2.6.10.71510
+Winged Assassin,1.15,0.1769,1.27,Reaper,Physical,Yes,7; 14; 17; 23; 24; 29,http://warpath.eu/mp.html,2.6.10.71510
+Writhing Deceiver,1,0.1538,1.5,Demon,Physical,Yes,18,http://warpath.eu/mp.html,2.6.10.71510
+Zap Worm,0.05,0.0077,0.5,Beast,Lightning,Yes,19,http://warpath.eu/mp.html,2.6.10.71510

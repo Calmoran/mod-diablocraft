@@ -1,0 +1,2 @@
+entry,name,slots,quality,displayid,clone_from,source
+102100,Horadric Satchel,22,4,50459,23162,"tunable 2026-09-12: a 22-slot bag, reduced from 35 the same day. Not a D3 figure. clone_from 23162 is the stock 36-slot generic bag, so every column this file does not set stays a valid container; displayid 50459 is the stock ""Gigantique"" Bag look and is the designer's to change"

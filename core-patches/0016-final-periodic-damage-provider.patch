@@ -1,0 +1,180 @@
+Reason: let opt-in modules supply final periodic damage and crit after the existing tick hook, retaining native delivery and stock fallback.
+
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
+@@ -42,6 +42,24 @@ bool ScriptMgr::ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victi
+     return false;
+ }
+ 
++bool ScriptMgr::ProvideFinalPeriodicDamage(AuraEffect const* aura, Unit* caster, Unit* target,
++    uint32& damage, bool& critical)
++{
++    // A declining provider cannot contaminate either the next provider or stock.
++    for (auto const& script : ScriptRegistry<UnitScript>::EnabledHooks[UNITHOOK_PROVIDE_FINAL_PERIODIC_DAMAGE])
++    {
++        uint32 candidateDamage = damage;
++        bool candidateCritical = critical;
++        if (script->ProvideFinalPeriodicDamage(aura, caster, target, candidateDamage, candidateCritical))
++        {
++            damage = candidateDamage;
++            critical = candidateCritical;
++            return true;
++        }
++    }
++    return false;
++}
++
+ void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)
+ {
+     CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_HEAL, script->OnHeal(healer, reciever, gain));
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.h
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.h
+@@ -47,6 +47,7 @@ enum UnitHook
+     UNITHOOK_ON_UNIT_SET_SHAPESHIFT_FORM,
+     UNITHOOK_CAN_REWARD_RAGE,
+     UNITHOOK_PROVIDE_FINAL_SPELL_DAMAGE,
++    UNITHOOK_PROVIDE_FINAL_PERIODIC_DAMAGE,
+     UNITHOOK_IS_SPELL_DIMINISHING_EXEMPT,
+     UNITHOOK_PROVIDE_SPELL_LINE_GEOMETRY,
+     UNITHOOK_ON_EFFECT_MOVEMENT_FINALIZED,
+@@ -55,6 +56,7 @@ enum UnitHook
+ 
+ enum ReputationRank : uint8;
+ class ByteBuffer;
++class AuraEffect;
+ class Spell;
+ struct BuildValuesCachePosPointers;
+ 
+@@ -90,6 +92,12 @@ public:
+     virtual bool ProvideFinalSpellDamage(Spell* /*cast*/, Unit* /*attacker*/, Unit* /*victim*/,
+         SpellInfo const* /*info*/, uint8 /*effectMask*/, uint32& /*damage*/, bool& /*critical*/) { return false; }
+ 
++    // Opt-in tick formula. The aura is valid only during this tick; caster may be null.
++    // True skips native tick bonuses, armor, crit, AOE reduction and resilience.
++    // Absorb, resist, logging, DOT delivery and periodic procs remain native.
++    virtual bool ProvideFinalPeriodicDamage(AuraEffect const* /*aura*/, Unit* /*caster*/,
++        Unit* /*target*/, uint32& /*damage*/, bool& /*critical*/) { return false; }
++
+     virtual bool IsSpellDiminishingExempt(Spell* /*cast*/, Unit* /*caster*/, Unit* /*target*/, SpellInfo const* /*info*/) { return false; }
+ 
+     // Full width of a finite line; false leaves native cone geometry untouched.
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -573,6 +573,7 @@ public: /* UnitScript */
+     void OnEffectMovementFinalized(Unit* unit, uint32 effectId, uint32 splineId, bool completed);
+     bool IsSpellDiminishingExempt(Spell* cast, Unit* caster, Unit* target, SpellInfo const* info);
+     bool ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim, SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical);
++    bool ProvideFinalPeriodicDamage(AuraEffect const* aura, Unit* caster, Unit* target, uint32& damage, bool& critical);
+     void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* spellInfo);
+     void ModifyHealReceived(Unit* target, Unit* healer, uint32& addHealth, SpellInfo const* spellInfo);
+     uint32 DealDamage(Unit* AttackerUnit, Unit* pVictim, uint32 damage, DamageEffectType damagetype);
+--- a/src/server/game/Spells/Auras/SpellAuraEffects.cpp
++++ b/src/server/game/Spells/Auras/SpellAuraEffects.cpp
+@@ -6344,63 +6344,68 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster) const
+ 
+     // Script Hook For HandlePeriodicDamageAurasTick -- Allow scripts to change the Damage pre class mitigation calculations
+     sScriptMgr->ModifyPeriodicDamageAurasTick(target, caster, damage, GetSpellInfo());
++    bool crit = false;
++    bool const provided = sScriptMgr->ProvideFinalPeriodicDamage(this, caster, target, damage, crit);
+ 
+     if (target->GetAI())
+     {
+         target->GetAI()->OnCalculatePeriodicTickReceived(damage, caster);
+     }
+ 
+-    if (GetAuraType() == SPELL_AURA_PERIODIC_DAMAGE)
++    if (!provided)
+     {
+-        // xinef: leave only target depending bonuses, rest is handled in calculate amount
+-        if (GetBase()->GetType() == DYNOBJ_AURA_TYPE && caster)
+-            damage = caster->SpellDamageBonusDone(target, GetSpellInfo(), damage, DOT, GetEffIndex(), 0.0f, GetBase()->GetStackAmount());
+-        damage = target->SpellDamageBonusTaken(caster, GetSpellInfo(), damage, DOT, GetBase()->GetStackAmount());
+-
+-        // Calculate armor mitigation
+-        if (Unit::IsDamageReducedByArmor(GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), GetEffIndex()))
++        if (GetAuraType() == SPELL_AURA_PERIODIC_DAMAGE)
+         {
+-            uint32 damageReductedArmor = Unit::CalcArmorReducedDamage(caster, target, damage, GetSpellInfo(), GetCasterLevel());
+-            cleanDamage.mitigated_damage += damage - damageReductedArmor;
+-            damage = damageReductedArmor;
++            // xinef: leave only target depending bonuses, rest is handled in calculate amount
++            if (GetBase()->GetType() == DYNOBJ_AURA_TYPE && caster)
++                damage = caster->SpellDamageBonusDone(target, GetSpellInfo(), damage, DOT, GetEffIndex(), 0.0f, GetBase()->GetStackAmount());
++            damage = target->SpellDamageBonusTaken(caster, GetSpellInfo(), damage, DOT, GetBase()->GetStackAmount());
++
++            // Calculate armor mitigation
++            if (Unit::IsDamageReducedByArmor(GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), GetEffIndex()))
++            {
++                uint32 damageReductedArmor = Unit::CalcArmorReducedDamage(caster, target, damage, GetSpellInfo(), GetCasterLevel());
++                cleanDamage.mitigated_damage += damage - damageReductedArmor;
++                damage = damageReductedArmor;
++            }
++
+         }
+ 
+-    }
++        // calculate crit chance
++        if ((crit = roll_chance_f(GetCritChance())))
++            damage = Unit::SpellCriticalDamageBonus(caster, m_spellInfo, damage, target);
+ 
+-    // calculate crit chance
+-    bool crit = false;
+-    if ((crit = roll_chance_f(GetCritChance())))
+-        damage = Unit::SpellCriticalDamageBonus(caster, m_spellInfo, damage, target);
++        // Auras reducing damage from AOE spells
++        if (!GetSpellInfo()->HasAttribute(SPELL_ATTR4_IGNORE_DAMAGE_TAKEN_MODIFIERS))
++        {
++            if (GetSpellInfo()->Effects[GetEffIndex()].IsAreaAuraEffect() ||
++                GetSpellInfo()->Effects[GetEffIndex()].IsTargetingArea() ||
++                GetSpellInfo()->Effects[GetEffIndex()].Effect == SPELL_EFFECT_PERSISTENT_AREA_AURA || // some persistent area auras have targets like A=53 B=28
++                GetSpellInfo()->HasAttribute(SPELL_ATTR5_TREAT_AS_AREA_EFFECT) ||
++                GetSpellInfo()->HasAttribute(SPELL_ATTR7_TREAT_AS_NPC_AOE))
++            {
++                bool npcCaster = (caster && !caster->IsControlledByPlayer()) || GetSpellInfo()->HasAttribute(SPELL_ATTR7_TREAT_AS_NPC_AOE);
++                damage = target->CalculateAOEDamageReduction(damage, GetSpellInfo()->SchoolMask, npcCaster);
++            }
++        }
+ 
+-    // Auras reducing damage from AOE spells
+-    if (!GetSpellInfo()->HasAttribute(SPELL_ATTR4_IGNORE_DAMAGE_TAKEN_MODIFIERS))
+-    {
+-        if (GetSpellInfo()->Effects[GetEffIndex()].IsAreaAuraEffect() ||
+-            GetSpellInfo()->Effects[GetEffIndex()].IsTargetingArea() ||
+-            GetSpellInfo()->Effects[GetEffIndex()].Effect == SPELL_EFFECT_PERSISTENT_AREA_AURA || // some persistent area auras have targets like A=53 B=28
+-            GetSpellInfo()->HasAttribute(SPELL_ATTR5_TREAT_AS_AREA_EFFECT) ||
+-            GetSpellInfo()->HasAttribute(SPELL_ATTR7_TREAT_AS_NPC_AOE))
++        int32 dmg = damage;
++        int32 mitigatedDamage = cleanDamage.mitigated_damage;
++        if (CanApplyResilience())
+         {
+-            bool npcCaster = (caster && !caster->IsControlledByPlayer()) || GetSpellInfo()->HasAttribute(SPELL_ATTR7_TREAT_AS_NPC_AOE);
+-            damage = target->CalculateAOEDamageReduction(damage, GetSpellInfo()->SchoolMask, npcCaster);
++            int32 resilienceReduction = dmg;
++            Unit::ApplyResilience(target, nullptr, &resilienceReduction, crit, CR_CRIT_TAKEN_SPELL);
++
++            resilienceReduction = dmg - resilienceReduction;
++            dmg -= resilienceReduction;
++            mitigatedDamage += resilienceReduction;
+         }
+-    }
+ 
+-    int32 dmg = damage;
+-    int32 mitigatedDamage = cleanDamage.mitigated_damage;
+-    if (CanApplyResilience())
+-    {
+-        int32 resilienceReduction = dmg;
+-        Unit::ApplyResilience(target, nullptr, &resilienceReduction, crit, CR_CRIT_TAKEN_SPELL);
++        damage = std::max(0, dmg);
++        cleanDamage.mitigated_damage = std::max(0, mitigatedDamage);
+ 
+-        resilienceReduction = dmg - resilienceReduction;
+-        dmg -= resilienceReduction;
+-        mitigatedDamage += resilienceReduction;
+     }
+ 
+-    damage = std::max(0, dmg);
+-    cleanDamage.mitigated_damage = std::max(0, mitigatedDamage);
+-
+     DamageInfo dmgInfo(caster, target, damage, GetSpellInfo(), GetSpellInfo()->GetSchoolMask(), DOT, cleanDamage.mitigated_damage);
+     Unit::CalcAbsorbResist(dmgInfo, false, GetCasterLevel());
+ 

@@ -1,0 +1,13 @@
+{
+  "note": "The /bug button icon (diablocraft-sn9c). The 3.3.5a base client has no bug texture, so this is a later client's own Blizzard bug icon, shipped at the designer's ruling q-1003-42 (option a). It is Blizzard art, accepted per decisions.md; it is NOT D3 art and NOT drawn by us.",
+  "source": {
+    "repo": "https://github.com/Gethe/wow-ui-textures",
+    "commit": "d23deaf8f44a7d280dc974a5c9d5321c013db59b",
+    "path": "HELPFRAME/HelpIcon-Bug.PNG",
+    "note": "The PTR/beta bug icon. The designer allowed either this or Buttons/UI-MicroButton-Bug-Up.PNG; this square 64x64 glyph reads better at the 28px button than the micro-button's 32x64 two-state strip."
+  },
+  "texture": "client-patch/art/ui/bug/bug_report.png",
+  "canvas": [64, 64],
+  "blp": "client-patch/addons/Torment/art/bug_report.blp",
+  "built_by": "client-patch/build_ui_art.py (DXT5, power-of-two, no scaling)"
+}

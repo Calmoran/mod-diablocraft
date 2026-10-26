@@ -1,0 +1,49 @@
+map_id,trigger,name,target_map,nearest_dungeon,arrival_yards
+389,2226,Ragefire Chasm - Ogrimmar Instance (Inside),1,Ragefire Chasm,15.5
+34,503,Stockades Instance,0,The Stockade,15.9
+47,242,Razorfen Kraul Instance Start,1,Razorfen Kraul,13.1
+189,608,Scarlet Monastery - Library (Exit),0,Scarlet Monastery - Library,12.6
+189,602,Scarlet Monastery - Graveyard (Exit),0,Scarlet Monastery - Graveyard,13.7
+189,604,Scarlet Monastery - Cathedral (Exit),0,Scarlet Monastery - Graveyard,873.3
+189,606,Scarlet Monastery - Armory (Exit),0,Scarlet Monastery - Library,1357.0
+129,444,Razorfen Downs Instance Start,1,Razorfen Downs,17.9
+429,3194,"Dire Maul, East Wing [West] (Exit)",1,Dire Maul - East,7.0
+429,3197,"Dire Maul, Alzzin the Wildshaper's broken wall [1-Way] (Exit)",1,Dire Maul - East,174.3
+429,3193,"Dire Maul, North Wing (Exit)",1,Dire Maul - East,256.3
+429,3195,"Dire Maul, East Wing [South] (Exit)",1,Dire Maul - East,294.4
+429,3191,"Dire Maul, West Wing [North](Exit)",1,Dire Maul - East,314.9
+429,3190,"Dire Maul, West Wing [South] (Exit)",1,Dire Maul - East,330.3
+429,3196,"Dire Maul, East Wing [East] (Exit)",1,Dire Maul - East,684.1
+543,4297,Hellfire Ramparts (Exit),530,Hellfire Ramparts,10.4
+543,4304,Hellfire Ramparts - Omor Exit Target,530,Hellfire Ramparts,301.2
+542,4147,The Blood Furnace (Exit),530,The Blood Furnace,13.6
+540,4145,The Shattered Halls (Exit),530,The Shattered Halls,12.7
+547,4379,The Slave Pens (Exit),530,The Slave Pens,12.1
+546,4367,The Underbog (Exit),530,The Underbog,9.8
+545,4366,The Steamvault (Exit),530,The Steamvault,15.6
+557,4401,Mana Tombs (Exit),530,Mana-Tombs,13.1
+558,4403,Auchenai Crypts (Exit),530,Auchenai Crypts,12.0
+556,4399,Sethekk Halls (Exit),530,Sethekk Halls,9.7
+555,4397,Shadow Labyrinth (Exit),530,Shadow Labyrinth,12.7
+554,4461,The Arcatraz (Exit),530,The Mechanar,18.3
+554,4614,The Mechanar,530,The Mechanar,178.8
+553,4459,The Botanica (Exit),530,The Botanica,18.0
+553,4612,The Botanica,530,The Botanica,440.1
+585,4885,Magisters' Terrace (Exit),530,Magisters' Terrace,13.0
+574,4741,Utgarde Pinnacle (exit),571,Utgarde Keep,17.5
+575,4743,Utgarde Keep (exit),571,Utgarde Pinnacle,11.5
+576,4981,The Nexus (exit),571,The Nexus,8.0
+601,5115,Azjol-Nerub (exit),571,Azjol-Nerub,10.6
+601,5113,Azjol-Nerub (exit back),571,Azjol-Nerub,941.5
+619,5213,Ahn'Kahet (exit),571,Ahn'kahet: The Old Kingdom,3.2
+619,5235,Ahn'Kahet (exit),571,Ahn'kahet: The Old Kingdom,831.6
+600,5000,Drak'Tharon Keep (exit),571,Drak'Tharon Keep,8.4
+602,5091,"Ulduar, Halls of Lightning (exit)",571,Halls of Lightning,25.1
+604,5231,Gundrak (exit south),571,Gundrak,11.8
+604,5276,Gundrak (exit - 3),571,Gundrak,95.6
+604,5277,Gundrak (exit north),571,Gundrak,173.6
+604,5233,Gundrak (exit - 4),571,Gundrak,191.5
+632,5642,Forge of Souls (Exit),571,The Forge of Souls,12.5
+632,5688,Forge of Souls (Exit),571,The Forge of Souls,846.4
+658,5643,Pit of Saron (Exit),571,Pit of Saron,11.9
+658,5683,Pit of Saron (Exit),571,Pit of Saron,772.7

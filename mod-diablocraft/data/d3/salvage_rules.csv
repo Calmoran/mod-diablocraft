@@ -1,0 +1,19 @@
+rarity_id,crafted,quality_id,material_entry,min_count,max_count,source_rarity
+normal,0,normal,102001,1,10,Normal (Common)
+normal,1,normal,102001,1,10,Normal (Common)
+magic,0,normal,102002,1,5,Magic (Poor)
+magic,1,normal,102002,1,5,Magic (Poor)
+rare,0,normal,102003,1,1,Rare
+rare,1,normal,102003,1,1,Rare
+set,0,normal,102004,1,1,Set
+set,1,normal,102001,1,1,Set
+set,1,normal,102002,1,1,Set
+set,1,normal,102003,1,1,Set
+legendary,0,normal,102004,1,1,Legendary
+legendary,1,normal,102001,1,1,Legendary
+legendary,1,normal,102002,1,1,Legendary
+legendary,1,normal,102003,1,1,Legendary
+set,0,ancient,102004,3,3,Ancient (quality tier of level 70 Legendary/Set)
+set,0,primal,102013,55,55,Primal (quality tier of Ancient)
+legendary,0,ancient,102004,3,3,Ancient (quality tier of level 70 Legendary/Set)
+legendary,0,primal,102013,55,55,Primal (quality tier of Ancient)

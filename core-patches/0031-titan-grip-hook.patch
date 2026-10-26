@@ -1,0 +1,74 @@
+Reason: Let a module decide that a class may wield a two-handed weapon in the main hand with a shield in the off hand (the Crusader with Heavenly Strength), through the core's own Titan's Grip rule: Player::CanTitanGrip() also asks the module, so the equip checks, the off-hand auto-unequip and IsTwoHandUsed all follow it live.
+Target: AzerothCore at core-commit.txt, after patches 0001-0030. Default: stock, only the Titan's Grip talent (and a hook answer of false).
+
+--- a/src/server/game/Entities/Player/Player.cpp
++++ b/src/server/game/Entities/Player/Player.cpp
+@@ -13539,6 +13539,11 @@
+     UpdateBlockPercentage();
+ }
+ 
++bool Player::CanTitanGrip() const
++{
++    return m_canTitanGrip || sScriptMgr->OnPlayerCanTitanGrip(this);
++}
++
+ void Player::SetCanTitanGrip(bool value)
+ {
+     m_canTitanGrip = value;
+--- a/src/server/game/Entities/Player/Player.h
++++ b/src/server/game/Entities/Player/Player.h
+@@ -2213,7 +2213,7 @@
+     void SetCanParry(bool value);
+     [[nodiscard]] bool CanBlock() const { return m_canBlock; }
+     void SetCanBlock(bool value);
+-    [[nodiscard]] bool CanTitanGrip() const { return m_canTitanGrip; }
++    [[nodiscard]] bool CanTitanGrip() const;
+     void SetCanTitanGrip(bool value);
+     [[nodiscard]] bool CanTameExoticPets() const { return IsGameMaster() || HasAuraType(SPELL_AURA_ALLOW_TAME_PET_TYPE); }
+ 
+--- a/src/server/game/Scripting/ScriptDefines/PlayerScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/PlayerScript.cpp
+@@ -737,6 +737,11 @@
+     CALL_ENABLED_BOOLEAN_HOOKS(PlayerScript, PLAYERHOOK_CAN_UNEQUIP_ITEM, !script->OnPlayerCanUnequipItem(player, pos, swap));
+ }
+ 
++bool ScriptMgr::OnPlayerCanTitanGrip(Player const* player)
++{
++    CALL_ENABLED_BOOLEAN_HOOKS_WITH_DEFAULT_FALSE(PlayerScript, PLAYERHOOK_CAN_TITAN_GRIP, script->OnPlayerCanTitanGrip(player));
++}
++
+ bool ScriptMgr::OnPlayerCanUseItem(Player* player, ItemTemplate const* proto, InventoryResult& result)
+ {
+     CALL_ENABLED_BOOLEAN_HOOKS(PlayerScript, PLAYERHOOK_CAN_USE_ITEM, !script->OnPlayerCanUseItem(player, proto, result));
+--- a/src/server/game/Scripting/ScriptDefines/PlayerScript.h
++++ b/src/server/game/Scripting/ScriptDefines/PlayerScript.h
+@@ -238,6 +238,7 @@
+     PLAYERHOOK_ON_UPDATE_CRIT_CHANCE,
+     PLAYERHOOK_ON_UPDATE_SPELL_CRIT_CHANCE,
+     PLAYERHOOK_ON_MONEY_CHANGED_WIDE,
++    PLAYERHOOK_CAN_TITAN_GRIP,
+     PLAYERHOOK_END
+ };
+ 
+@@ -629,6 +630,11 @@
+ 
+     [[nodiscard]] virtual bool OnPlayerCanUnequipItem(Player* /*player*/, uint16 /*pos*/, bool /*swap*/) { return true; }
+ 
++    // Asked by Player::CanTitanGrip() when the player's own flag is not set; true lets the player wield a two-handed weapon
++    // in the main hand with an off-hand item the stock rule would refuse (a shield), until the module answers false again.
++    // The two-handed-weapon-in-each-hand grip still needs dual wield. Default: stock, only the Titan's Grip talent.
++    [[nodiscard]] virtual bool OnPlayerCanTitanGrip(Player const* /*player*/) { return false; }
++
+     [[nodiscard]] virtual bool OnPlayerCanUseItem(Player* /*player*/, ItemTemplate const* /*proto*/, InventoryResult& /*result*/) { return true; }
+ 
+     [[nodiscard]] virtual bool OnPlayerCanSaveEquipNewItem(Player* /*player*/, Item* /*item*/, uint16 /*pos*/, bool /*update*/) { return true; }
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -434,6 +434,7 @@
+     void OnPlayerApplyAmmoBonuses(Player* player, ItemTemplate const* proto, float& currentAmmoDPS);
+     bool OnPlayerCanEquipItem(Player* player, uint8 slot, uint16& dest, Item* pItem, bool swap, bool not_loading);
+     bool OnPlayerCanUnequipItem(Player* player, uint16 pos, bool swap);
++    bool OnPlayerCanTitanGrip(Player const* player);
+     bool OnPlayerCanUseItem(Player* player, ItemTemplate const* proto, InventoryResult& result);
+     bool OnPlayerCanSaveEquipNewItem(Player* player, Item* item, uint16 pos, bool update);
+     bool OnPlayerCanApplyEnchantment(Player* player, Item* item, EnchantmentSlot slot, bool apply, bool apply_dur, bool ignore_condition);

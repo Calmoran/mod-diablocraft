@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(dc_stat_tests LANGUAGES CXX)
+enable_testing()
+add_executable(dc_stat_tests stat_tests.cpp ../../../src/common/dc_common.cpp)
+target_compile_features(dc_stat_tests PRIVATE cxx_std_17)
+add_test(NAME dc_stat_formulas COMMAND dc_stat_tests "${CMAKE_CURRENT_SOURCE_DIR}/../../../data/d3/barbarian_base_stats.csv")

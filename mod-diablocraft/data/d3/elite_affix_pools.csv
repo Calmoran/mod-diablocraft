@@ -1,0 +1,29 @@
+affix_name,pool,level_60_limited,rollable,notes,source_url
+Arcane Enchanted,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Avenger,defensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,offensive,yes,yes,Never rolls alongside Plagued (wiki),https://maxroll.gg/d3/resources/elite-affixes
+Electrified,offensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Fast,offensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,defensive,yes,yes,"Defensive, not Offensive: it therefore never rolls with Shielding, Health Link, Avenger, Illusionist, Horde, Juggernaut or Missile Dampening",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Health Link,defensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Horde,defensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,defensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Jailer,crowd_control,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Juggernaut,defensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Knockback,crowd_control,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Missile Dampening,defensive,no,no,"BACKLOGGED: 3.3.5a has no per-projectile speed control. Excluded from the roll pool rather than left a no-op that eats a Rare pack's one Defensive slot",https://maxroll.gg/d3/resources/elite-affixes
+Molten,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Mortar,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,crowd_control,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Orbiter,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Plagued,offensive,yes,yes,Never rolls alongside Desecrator (wiki),https://maxroll.gg/d3/resources/elite-affixes
+Poison Enchanted,offensive,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Reflects Damage,offensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Shielding,defensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,offensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Thunderstorm,offensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Vortex,crowd_control,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Waller,offensive,no,yes,,https://maxroll.gg/d3/resources/elite-affixes
+Wormhole,crowd_control,yes,yes,,https://maxroll.gg/d3/resources/elite-affixes

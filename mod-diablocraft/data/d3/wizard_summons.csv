@@ -1,0 +1,9 @@
+summon,skill,rune,entry,donor_creature,script,why
+Mirror Image,Mirror Image,,900110,31216,dc_wizard_image,"the stock Mage Mirror Image creature (summoned by 55342 through 58831); the owner's Clone Me! (45204) then draws the Wizard's own model and gear on it, as D3's images copy the Wizard. Teleport - Fracture's decoys use it too"
+Familiar,Familiar,,900111,416,dc_wizard_familiar,"the Imp that the visuals sheet's donor Summon Imp (688) summons (display 4449): a small caster companion that follows its owner"
+Hydra,Hydra,,900112,17778,dc_wizard_hydra,"Outland Hydra, Orange (display 17240): a multi-headed hydra in the base Hydra's fire colour"
+Frost Hydra,Hydra,Frost Hydra,900113,17775,dc_wizard_hydra,"Outland Hydra, Blue (display 17237): the cold hydra"
+Lightning Hydra,Hydra,Lightning Hydra,900114,17776,dc_wizard_hydra,"Outland Hydra, Green (display 17238): no stock hydra is lightning-coloured; green is the one left unused by the other runes"
+Blazing Hydra,Hydra,Blazing Hydra,900115,17778,dc_wizard_hydra,"Outland Hydra, Orange (display 17240): fire, the same as the base Hydra"
+Mammoth Hydra,Hydra,Mammoth Hydra,900116,17774,dc_wizard_hydra,"Outland Hydra, Black (display 16711): the dark river-of-flame hydra, distinct from the plain fire one"
+Arcane Hydra,Hydra,Arcane Hydra,900117,17777,dc_wizard_hydra,"Outland Hydra, Purple (display 17239): the arcane hydra"

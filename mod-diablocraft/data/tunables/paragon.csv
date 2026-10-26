@@ -1,0 +1,5 @@
+name,d3_value,value,unit,notes
+starting_paragon_level,,200,level,ruling 2026-09-28; account-mode floor on character creation; 0 disables the floor.
+respec_cooldown_ms,,1000,milliseconds,security.md G1; brief docs/briefs/claude-combat-security-fixes-brief.md (ruling 2026-09-30) says about 1 second; D3 respec is free so this is the only brake; 0 disables it.
+allocate_gap_ms,,150,milliseconds,security.md G1 gaps; brief docs/briefs/claude-combat-g1-gaps-brief.md (ruling 2026-09-30) says start around 100-250; least time between two Paragon allocate or deallocate requests from one character - each waits for a database commit; 150 still lets a held button repeat about 6 times a second; 0 disables it
+paragon_save_interval_ms,,10000,milliseconds,"ruling 2026-10-09 (diablocraft-7f36; docs/decisions.md 2026-10-09). Most often the Paragon XP of an account is written to the database while it keeps changing; a kill only changes memory. A Paragon level-up, a rift's closing XP, the last logout of the account, the creation floor and shutdown write at once. A server crash loses at most this much Paragon XP. 0 or blank writes at the next server tick"

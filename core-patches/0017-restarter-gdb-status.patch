@@ -1,0 +1,63 @@
+Torment: preserve stock restarter GDB run status and generate missing config.
+Approved: Architect 2026-09-28, diablocraft-server-auto-restart.
+
+--- a/apps/startup-scripts/src/simple-restarter
++++ b/apps/startup-scripts/src/simple-restarter
+@@ -35,6 +35,7 @@ DEFAULT_GDB_FILE="$CURRENT_PATH/gdb.conf"
+ 
+ # Set defaults if not provided
+ GDB_FILE="${GDB_FILE:-$DEFAULT_GDB_FILE}"
++[ -f "$GDB_FILE" ] || GDB_FILE=""
+ 
+ # Counters for crash detection
+ _instant_crash_count=0
+--- a/apps/startup-scripts/src/starter
++++ b/apps/startup-scripts/src/starter
+@@ -234,13 +234,14 @@ if [ "$GDB_ENABLED" -eq 1 ]; then
+     GDB_OUTPUT_FILE="$CRASHES_PATH/gdb-$TIMESTAMP.txt"
+ 
+     # Create GDB configuration file if it is not defined
+-    if [ -z "$GDB_FILE" ]; then
++    if [ ! -f "$GDB_FILE" ]; then
+ 
+         # Create GDB configuration
+         cat > "$GDB_TEMP_FILE" << EOF
+ set logging file $GDB_OUTPUT_FILE
+ set logging enabled on
+ set debug timestamp
++handle SIGINT nostop noprint pass
+ EOF
+ 
+     # Add run command with config if specified
+@@ -250,11 +251,15 @@ EOF
+         echo "run" >> "$GDB_TEMP_FILE"
+     fi
+     
+-    cat >> "$GDB_TEMP_FILE" << EOF
++    cat >> "$GDB_TEMP_FILE" << 'EOF'
++if !$_isvoid($_exitcode)
++    quit $_exitcode
++end
+ bt
+ bt full
+ info thread
+ thread apply all backtrace full
++quit 1
+ EOF
+ 
+ 
+@@ -285,11 +290,14 @@ EOF
+     fi
+ 
+ 
++    run_status=$?
++
+     # clean up temporary GDB file if it exists
+     if [ -n "$GDB_TEMP_FILE" ]; then
+         # Clean up temporary GDB file
+         rm -f "$GDB_TEMP_FILE"
+     fi
++    exit "$run_status"
+ else
+     echo "Starting $BINFILE without GDB"
+     # Determine if PM2 is active

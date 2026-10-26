@@ -1,0 +1,3 @@
+summon,skill,rune,entry,donor_creature,script,why
+Avatar of the Order,Phalanx,,900140,11194,dc_crusader_avatar,"Argent Defender (display of a plate-armoured defender with a shield): a stock holy-order fighter as the Avatar of the Order, the creature Phalanx's tooltip and the visuals sheet's donor (Army of the Dead) name as summoned fighters; the module gives it its AI and no loot"
+Warhorse of the Order,Phalanx,Stampede,900141,16509,dc_crusader_avatar,"Argent Warhorse: the stock holy-order warhorse Stampede's 'warhorses' run the charge as; the same AI as the avatar"

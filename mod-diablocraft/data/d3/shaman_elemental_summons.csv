@@ -1,0 +1,3 @@
+summon,skill,rune,entry,donor_creature,script,why
+Fire Elemental,Fire Elemental,,900190,15438,dc_minion,"the stock Greater Fire Elemental (the creature the Fire Elemental Totem raises): the Fire Elemental's look, which follows the Shaman for the skill's seconds; untargetable, no loot or credit, and it deals nothing itself (the damage is the Shaman's skill damage)"
+Earth Elemental,Earth Elemental,,900191,15352,dc_minion,"the stock Greater Earth Elemental (the creature the Earth Elemental Totem raises): the Earth Elemental's look, which rises at the target location and stands there for the skill's seconds; untargetable, no loot or credit, and it deals nothing itself (the stomps are the Shaman's skill damage)"

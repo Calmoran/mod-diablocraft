@@ -1,0 +1,4 @@
+activity,visible_id,hidden_id,name,min_level,max_level,notes
+bounties,1000,1100,Bounties,70,70,"the designer's ruling docs/decisions.md 2026-10-10 (the Dungeon Finder lists Bounties, Nephalem Rifts and Greater Rifts); level 70 from docs/research/lfg-takeover.md 10.3 (visible row: type 6, level 70); ids are Torment's block (visible 1000-1099, hidden 1100-1199, above the stock maximum 294) (diablocraft-v1sw4)"
+nephalem,1001,1101,Nephalem Rifts,70,70,"the designer's ruling docs/decisions.md 2026-10-10; level 70 from docs/research/lfg-takeover.md 10.3 (diablocraft-v1sw4)"
+greater,1002,1102,Greater Rifts,70,70,"the designer's ruling docs/decisions.md 2026-10-10 (tier only, no level picker); level 70 from docs/research/lfg-takeover.md 10.3 (diablocraft-v1sw4)"

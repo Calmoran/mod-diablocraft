@@ -1,0 +1,51 @@
+source,min_level,max_level,gem_tier,chance_pct,source_url
+normal_monster,15,29,Regular,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+normal_monster,30,39,Flawless,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+normal_monster,40,49,Square,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+normal_monster,50,60,Flawless Square,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+normal_monster,61,70,Marquise,not published,https://diablo.fandom.com/wiki/Gems
+normal_monster (Master+),61,70,Imperial,not published,https://web.archive.org/web/20160401000000/http://us.battle.net/d3/en/game/guide/gameplay/game-difficulty
+normal_monster,1,70,Star,does not drop,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+normal_monster,1,70,Flawless Imperial,does not drop,https://diablo.fandom.com/wiki/Gems
+normal_monster,1,70,Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+normal_monster,1,70,Flawless Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+elite_monster,15,29,Regular,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+elite_monster,30,39,Flawless,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+elite_monster,40,49,Square,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+elite_monster,50,60,Flawless Square,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+elite_monster,61,70,Marquise,not published,https://diablo.fandom.com/wiki/Gems
+elite_monster (Master+),61,70,Imperial,not published,https://web.archive.org/web/20160401000000/http://us.battle.net/d3/en/game/guide/gameplay/game-difficulty
+elite_monster,1,70,Flawless Imperial,does not drop,https://diablo.fandom.com/wiki/Gems
+elite_monster,1,70,Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+elite_monster,1,70,Flawless Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+chest,15,29,Regular,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+chest,30,39,Flawless,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+chest,40,49,Square,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+chest,50,60,Flawless Square,not published,https://web.archive.org/web/20210506193245/https://www.diablowiki.net/Gem
+chest,61,70,Marquise,not published,https://diablo.fandom.com/wiki/Gems
+chest (Master+),61,70,Imperial,not published,https://web.archive.org/web/20160401000000/http://us.battle.net/d3/en/game/guide/gameplay/game-difficulty
+chest,1,70,Flawless Imperial,does not drop,https://diablo.fandom.com/wiki/Gems
+chest,1,70,Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+chest,1,70,Flawless Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+nephalem_rift_guardian,15,29,Regular,not published,https://diablo.fandom.com/wiki/Rift_Guardian
+nephalem_rift_guardian,30,39,Flawless,not published,https://diablo.fandom.com/wiki/Rift_Guardian
+nephalem_rift_guardian,40,49,Square,not published,https://diablo.fandom.com/wiki/Rift_Guardian
+nephalem_rift_guardian,50,60,Flawless Square,not published,https://diablo.fandom.com/wiki/Rift_Guardian
+nephalem_rift_guardian,61,70,Marquise,not published,https://diablo.fandom.com/wiki/Rift_Guardian
+nephalem_rift_guardian (Master+),61,70,Imperial,not published,https://diablo.fandom.com/wiki/Rift_Guardian
+nephalem_rift_guardian,1,70,Flawless Imperial,does not drop,https://diablo.fandom.com/wiki/Gems
+nephalem_rift_guardian,1,70,Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+nephalem_rift_guardian,1,70,Flawless Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+greater_rift_guardian (GR 1+),70,70,Marquise,not published,https://maxroll.gg/d3/resources/greater-rift-explained
+greater_rift_guardian (GR 1+),70,70,Imperial,not published,https://maxroll.gg/d3/resources/greater-rift-explained
+greater_rift_guardian (all GR tiers),70,70,Flawless Imperial,does not drop,https://diablo.fandom.com/wiki/Gems
+greater_rift_guardian (all GR tiers),70,70,Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+greater_rift_guardian (all GR tiers),70,70,Flawless Royal,does not drop,https://diablo.fandom.com/wiki/Gems
+normal_monster (pre-2.3.0),15,20,Chipped,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),21,25,Flawed,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),26,30,Regular,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),31,36,Flawless,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),37,42,Perfect,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),43,48,Radiant,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),49,54,Square,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified
+normal_monster (pre-2.3.0),55,60,Flawless Square,not published,https://web.archive.org/web/20210506133435/https://www.diablowiki.net/Gems_archive#Low_level_gems_simplified

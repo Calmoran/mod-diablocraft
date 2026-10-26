@@ -1,0 +1,45 @@
+{
+  "_comment": "Generated 2026-09-07 from the committed CSV. Columns are exact and ordered; validate_csv.py refuses a header that differs. Edit this file only when the CSV genuinely gains or loses a column, and say so in docs/decisions.md.",
+  "columns": [
+    "tier",
+    "monster_health_multiplier",
+    "monster_damage_multiplier",
+    "xp_bonus_pct",
+    "gold_bonus_pct",
+    "legendary_drop_bonus_pct",
+    "deaths_breath_guaranteed",
+    "deaths_breath_extra_pct",
+    "deaths_breath_bounty_rift_bonus",
+    "unlock_requirement",
+    "notes",
+    "unlock_character_level",
+    "unlock_account_level",
+    "unlock_solo_gr",
+    "deaths_breath_min_monster_level"
+  ],
+  "number_columns": [
+    "deaths_breath_guaranteed",
+    "deaths_breath_extra_pct",
+    "unlock_character_level",
+    "unlock_account_level",
+    "unlock_solo_gr",
+    "deaths_breath_min_monster_level"
+  ],
+  "percent_columns": [
+    "monster_health_multiplier",
+    "monster_damage_multiplier",
+    "xp_bonus_pct",
+    "gold_bonus_pct",
+    "legendary_drop_bonus_pct"
+  ],
+  "notes_columns": [
+    "notes",
+    "deaths_breath_bounty_rift_bonus",
+    "unlock_requirement"
+  ],
+  "allow_empty": [
+    "notes",
+    "deaths_breath_min_monster_level"
+  ],
+  "min_rows": 20
+}

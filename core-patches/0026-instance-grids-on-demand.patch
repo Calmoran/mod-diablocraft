@@ -1,0 +1,67 @@
+Reason: Let a module have a new instance load its grids and navmesh tiles as players reach them, as an open-world map does, instead of all at creation (a rift open loaded every grid on the world thread, over 30 s under load, and the freeze detector killed the server).
+Target: AzerothCore at core-commit.txt, after patches 0001-0024 (0025 shares no file context). Default: stock, every grid of an instance loads when it is created.
+
+--- a/src/server/game/Maps/Map.cpp
++++ b/src/server/game/Maps/Map.cpp
+@@ -97,8 +97,9 @@
+ // Hook called after map is created AND after added to map list
+ void Map::OnCreateMap()
+ {
+-    // Instances load all grids by default (both base map and child maps)
+-    if (GetInstanceId())
++    // Instances load all grids by default (both base map and child maps), unless a module has the instance load each grid
++    // as players reach it, as an open-world map does (a rift's)
++    if (GetInstanceId() && !sScriptMgr->IsInstanceLoadedOnDemand(this))
+         LoadAllGrids();
+ 
+     sScriptMgr->OnCreateMap(this);
+--- a/src/server/game/Scripting/ScriptDefines/AllMapScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/AllMapScript.cpp
+@@ -84,6 +84,11 @@
+     }
+ }
+ 
++bool ScriptMgr::IsInstanceLoadedOnDemand(Map* map)
++{
++    CALL_ENABLED_BOOLEAN_HOOKS_WITH_DEFAULT_FALSE(AllMapScript, ALLMAPHOOK_IS_INSTANCE_LOADED_ON_DEMAND, script->IsInstanceLoadedOnDemand(map));
++}
++
+ void ScriptMgr::OnCreateMap(Map* map)
+ {
+     ASSERT(map);
+--- a/src/server/game/Scripting/ScriptDefines/AllMapScript.h
++++ b/src/server/game/Scripting/ScriptDefines/AllMapScript.h
+@@ -31,6 +31,7 @@
+     ALLMAPHOOK_ON_DESTROY_MAP,
+     ALLMAPHOOK_ON_MAP_UPDATE,
+     ALLMAPHOOK_CAN_SEND_OBJECT_UPDATES_TO_PLAYER,
++    ALLMAPHOOK_IS_INSTANCE_LOADED_ON_DEMAND,
+     ALLMAPHOOK_END
+ };
+ 
+@@ -82,6 +83,15 @@
+      */
+     virtual void OnCreateMap(Map* /*map*/) { }
+ 
++    /**
++     * @brief Asked when a new instance is created, before its grids load; true means it skips the full preload
++     *  (Map::LoadAllGrids) and loads each grid and navmesh tile as players reach it, as an open-world map does.
++     *  Default: stock, every grid of an instance loads when it is created.
++     *
++     * @param map Contains information about the new instance's Map
++     */
++    [[nodiscard]] virtual bool IsInstanceLoadedOnDemand(Map* /*map*/) { return false; }
++
+     /**
+      * @brief This hook called before destroing map
+      *
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -611,6 +611,7 @@
+     void OnBeforeCreateInstanceScript(InstanceMap* instanceMap, InstanceScript** instanceData, bool load, std::string data, uint32 completedEncounterMask);
+     void OnDestroyInstance(MapInstanced* mapInstanced, Map* map);
+     bool CanSendObjectUpdatesToPlayer(Map* map, Player* player);
++    bool IsInstanceLoadedOnDemand(Map* map);
+ 
+ public: /* BattlefieldScript */
+     void OnBattlefieldPlayerEnterZone(Battlefield* bf, Player* player);

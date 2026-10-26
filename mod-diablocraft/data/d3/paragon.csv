@@ -1,0 +1,21 @@
+category,stat,points_per_rank,effect_per_point,max_rank,notes,stat_key,stat_id,category_id,per_point,point_cap,unit,resource_keys
+Core,Primary stat (Strength/Dexterity/Intelligence by class),1,+5,UNCAPPED,,primary,1,0,5,0,,
+Core,Vitality,1,+5,UNCAPPED,,vitality,2,0,5,0,,
+Core,Movement Speed,1,+0.50%,50 (cap +25%),Cap equals max base bonus for most classes; item +Movement Speed affixes useless beyond that,movement,3,0,0.50,50,%,
+Core,Class max resource — Mana,1,+4,50,,,,,,,,mana
+Core,Class max resource — Spirit / Fury / Essence,1,+1,50,,resource,4,0,1,50,,fury;spirit;essence;maelstrom
+Core,Class max resource — Wrath / Arcane Power / Hatred,1,+0.5,50,Demon Hunters do not gain Discipline,,,,,,,wrath;arcane_power;hatred
+Offensive,Attack Speed,1,+0.2%,50 (cap +10%),All Offensive stats capped at 50 points each,ias,5,1,0.2,50,%,
+Offensive,Cooldown Reduction,1,+0.2%,50 (cap +10%),All Offensive stats capped at 50 points each,cdr,6,1,0.2,50,%,
+Offensive,Critical Hit Chance,1,+0.2%,50 (cap +10%),All Offensive stats capped at 50 points each,chc,7,1,0.2,50,%,
+Offensive,Critical Hit Damage,1,+1%,50 (cap +50%),All Offensive stats capped at 50 points each,chd,8,1,1,50,%,
+Defensive,Armor %,1,+0.5%,50 (cap +25%),All Defensive stats capped at 50 points each,armor,9,2,0.5,50,%,
+Defensive,Life %,1,+0.5%,50 (cap +25%),All Defensive stats capped at 50 points each,life,10,2,0.5,50,%,
+Defensive,All Resistances,1,+5,50 (cap +250),All Defensive stats capped at 50 points each,resistance,11,2,5,50,,
+Defensive,Life Regeneration,1,+214.6 Life/sec (level 70 values),"50 (cap +10,730 Life/sec)",Values scale with character level; in classic Diablo III these values are divided by 4,regen,12,2,214.6,50,,
+Utility,Area Damage,1,+1%,50 (cap +50%),All Utility stats capped at 50 points each,area,13,3,1,50,%,
+Utility,Resource Cost Reduction,1,+0.2%,50 (cap +10%),All Utility stats capped at 50 points each,rcr,14,3,0.2,50,%,
+Utility,Life per Hit,1,+160.9 (level 70 values),"50 (cap +8,045)",Values scale with character level; classic D3 values divided by 4,loh,15,3,160.9,50,,
+Utility,Gold Pickup Range,1,+0.1 yards,50 (cap +5 yards),"Before patch 2.6.10 this stat was Gold Find (+1% per point, cap +50%)",pickup,16,3,0.1,50,yards,
+System,Point allocation,1 per paragon level,"Points cycle by category: 1st to Core, 2nd to Offensive, 3rd to Defensive, 4th to Utility, then repeats; after Paragon 800 the Offensive/Defensive/Utility trees are maxed so all further points go to Core","Core: Main Stat and Vitality uncapped, Movement Speed 50, Max Resource 50; Offense/Defense/Utility: every stat 50","No paragon level cap; 1 point earned each level-up past level 70; reset free anytime out of combat (Shift=10, Ctrl=100 points since 2.5.0)",,,,,,,
+System,XP required per paragon level (levels 1–800),see paragon_xp.csv,"linear 7,200,000 + 1,440,000×(L−1) through L50; table beyond",800 (table); uncapped level,"Per-level XP in paragon_xp.csv, derived from maxroll paragon calculator cumulative array — https://maxroll.gg/d3/paragon-calculator",,,,,,,

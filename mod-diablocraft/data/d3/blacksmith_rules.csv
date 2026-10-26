@@ -1,0 +1,12 @@
+recipe_slot,base_slot,base_rarity,output_rarity,source
+head,head,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+shoulders,shoulders,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+torso,torso,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+waist,waist,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+hands,hands,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+wrists,wrists,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+legs,legs,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+feet,feet,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+mainhand,onehand,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+mainhand,twohand,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans
+offhand,offhand,,rare,dc_crafting.cpp Craft and generate_crafting.py launch recipes before Class-keyed artisans

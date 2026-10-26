@@ -1,0 +1,273 @@
+Reason: Expose opt-in creature scaling with cached multipliers, exclusive of normal dungeon scaling.
+Target: mod-autobalance at 73d4ad3c379fbfc35c63b5b9b44fba1f7d9e213d from modules-commit.txt; NOT AzerothCore.
+Apply: git -C azerothcore-wotlk/modules/mod-autobalance apply ../../../core-patches/0003-autobalance-open-world-hook.patch
+
+diff --git a/src/ABModuleScript.h b/src/ABModuleScript.h
+--- a/src/ABModuleScript.h
++++ b/src/ABModuleScript.h
+@@ -19,6 +19,12 @@
+     ABModuleScript(const char* name);
+ 
+ public:
++    // Opt in before level/stat selection, including inside instances. Returning
++    // true owns ALL scaling for this creature and bypasses normal dungeon scaling.
++    // Inputs start at normal AutoBalance stat modifiers (including boss defaults).
++    // Supply total health/damage multipliers; no game-specific policy lives here.
++    // Ownership lasts until recreation; explicit refresh calls this same owner.
++    virtual bool OnModuleCreatureScaling(Creature*, double& /*health*/, double& /*damage*/) { return false; }
+     virtual bool OnBeforeModifyAttributes(Creature* /*creature*/, uint32& /*instancePlayerCount*/) { return true; }
+     virtual bool OnAfterDefaultMultiplier(Creature* /*creature*/, float&  /*defaultMultiplier*/)   { return true; }
+     virtual bool OnBeforeUpdateStats     (Creature* /*creature*/, uint32& /*scaledHealth*/, uint32& /*scaledMana*/, float& /*damageMultiplier*/, uint32& /*newBaseArmor*/) { return true; }
+diff --git a/src/ABCreatureInfo.h b/src/ABCreatureInfo.h
+--- a/src/ABCreatureInfo.h
++++ b/src/ABCreatureInfo.h
+@@ -10,10 +10,17 @@
+ #include "Creature.h"
+ #include "DataMap.h"
+ 
++class ABModuleScript;
++
+ class AutoBalanceCreatureInfo : public DataMap::Base
+ {
+ public:
+     AutoBalanceCreatureInfo() {}
++
++    ABModuleScript* moduleScalingOwner = nullptr;
++    uint32 moduleBaseHealth = 0;
++    double moduleDamageMultiplier = 1.0;
++    bool moduleScalingSelected = false;
+ 
+     uint64_t    mapConfigTime          = 1;       // The last map config time that this creature was updated
+ 
+diff --git a/src/ABScriptMgr.h b/src/ABScriptMgr.h
+--- a/src/ABScriptMgr.h
++++ b/src/ABScriptMgr.h
+@@ -15,6 +15,15 @@
+ 
+     static ABScriptMgr* instance();
+ 
++    // Called by the creature lifecycle before stock level/stat selection.
++    bool SelectModuleCreatureScaling(Creature* creature);
++    bool IsModuleScaled(Creature* creature) const;
++    // Caller must use the owning map thread. Captures stock Life after SelectLevel.
++    bool CaptureModuleCreatureBase(Creature* creature);
++    // Explicit phase/party/config refresh; preserves current health percentage,
++    // always scales the captured baseline, and never changes scaling ownership.
++    bool RefreshCreatureScaling(Creature* creature);
++
+     // Called at the start of ModifyCreatureAttributes method.
+     // It can be used to add some condition to skip autobalancing system for example.
+     bool OnBeforeModifyAttributes(Creature* creature, uint32 & instancePlayerCount);
+diff --git a/src/ABScriptMgr.cpp b/src/ABScriptMgr.cpp
+--- a/src/ABScriptMgr.cpp
++++ b/src/ABScriptMgr.cpp
+@@ -3,6 +3,11 @@
+  */
+ 
+ #include "ABModuleScript.h"
++#include "ABCreatureInfo.h"
++#include "ABConfig.h"
++#include "Log.h"
++#include <cmath>
++#include <limits>
+ #include "ABScriptMgr.h"
+ 
+ #include "ScriptMgr.h"
+@@ -52,3 +57,76 @@
+ 
+     return true;
+ }
++
++namespace
++{
++void ModuleDefaults(Creature* creature, double& health, double& damage)
++{
++    bool boss = creature->IsDungeonBoss() || creature->isWorldBoss();
++    health = boss ? StatModifier_Boss_Global * StatModifier_Boss_Health : StatModifier_Global * StatModifier_Health;
++    damage = boss ? StatModifier_Boss_Global * StatModifier_Boss_Damage : StatModifier_Global * StatModifier_Damage;
++}
++}
++
++bool ABScriptMgr::IsModuleScaled(Creature* creature) const
++{
++    return creature && creature->CustomData.GetDefault<AutoBalanceCreatureInfo>("AutoBalanceCreatureInfo")->moduleScalingOwner;
++}
++
++bool ABScriptMgr::SelectModuleCreatureScaling(Creature* creature)
++{
++    auto* info = creature->CustomData.GetDefault<AutoBalanceCreatureInfo>("AutoBalanceCreatureInfo");
++    if (!info->moduleScalingSelected)
++    {
++        info->moduleScalingSelected = true;
++        for (auto const& [id, script] : ScriptRegistry<ABModuleScript>::ScriptPointerList)
++        {
++            double health, damage;
++            ModuleDefaults(creature, health, damage);
++            if (script->OnModuleCreatureScaling(creature, health, damage))
++            {
++                info->moduleScalingOwner = script;
++                break;
++            }
++        }
++    }
++    return info->moduleScalingOwner != nullptr;
++}
++
++bool ABScriptMgr::CaptureModuleCreatureBase(Creature* creature)
++{
++    if (!IsModuleScaled(creature)) return false;
++    auto* info = creature->CustomData.GetDefault<AutoBalanceCreatureInfo>("AutoBalanceCreatureInfo");
++    info->moduleBaseHealth = creature->GetMaxHealth();
++    return RefreshCreatureScaling(creature);
++}
++
++bool ABScriptMgr::RefreshCreatureScaling(Creature* creature)
++{
++    if (!IsModuleScaled(creature)) return false;
++    auto* info = creature->CustomData.GetDefault<AutoBalanceCreatureInfo>("AutoBalanceCreatureInfo");
++    if (!info->moduleBaseHealth) return false;
++    double health, damage;
++    ModuleDefaults(creature, health, damage);
++    if (!info->moduleScalingOwner->OnModuleCreatureScaling(creature, health, damage))
++    {
++        LOG_ERROR("module.AutoBalance", "Module scaling owner refused refresh for creature {}; ownership cannot change until recreation", creature->GetEntry());
++        return false;
++    }
++    double life = std::floor(info->moduleBaseHealth * health);
++    if (!std::isfinite(life) || life < 1 || life > std::numeric_limits<uint32>::max() ||
++        !std::isfinite(damage) || damage < 0)
++    {
++        LOG_ERROR("module.AutoBalance", "Module scaling overflow/invalid multiplier for creature {}: base {}, health {}, damage {}", creature->GetEntry(), info->moduleBaseHealth, health, damage);
++        return false;
++    }
++    double fraction = creature->GetMaxHealth() ? double(creature->GetHealth()) / creature->GetMaxHealth() : 1;
++    uint32 maximum = static_cast<uint32>(life);
++    creature->SetMaxHealth(maximum);
++    creature->SetCreateHealth(maximum);
++    creature->SetStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, static_cast<float>(maximum));
++    creature->ResetPlayerDamageReq();
++    creature->SetHealth(creature->IsAlive() ? std::max<uint32>(1, static_cast<uint32>(std::floor(maximum * fraction))) : 0);
++    info->moduleDamageMultiplier = damage;
++    return true;
++}
+diff --git a/src/ABAllCreatureScript.cpp b/src/ABAllCreatureScript.cpp
+--- a/src/ABAllCreatureScript.cpp
++++ b/src/ABAllCreatureScript.cpp
+@@ -11,6 +11,7 @@
+ 
+ void AutoBalance_AllCreatureScript::OnBeforeCreatureSelectLevel(const CreatureTemplate* /*creatureTemplate*/, Creature* creature, uint8& level)
+ {
++    if (sABScriptMgr->SelectModuleCreatureScaling(creature)) return;
+     Map* creatureMap = creature->GetMap();
+ 
+     if (creatureMap && creatureMap->IsDungeon())
+@@ -95,6 +96,11 @@
+ 
+ void AutoBalance_AllCreatureScript::OnCreatureSelectLevel(const CreatureTemplate* /* cinfo */, Creature* creature)
+ {
++    if (sABScriptMgr->IsModuleScaled(creature))
++    {
++        sABScriptMgr->CaptureModuleCreatureBase(creature);
++        return;
++    }
+     // ensure we're in a dungeon with a creature
+     if (
+         !creature ||
+@@ -161,6 +167,7 @@
+ 
+ void AutoBalance_AllCreatureScript::OnCreatureAddWorld(Creature* creature)
+ {
++    if (sABScriptMgr->IsModuleScaled(creature)) return;
+     if (creature->GetMap()->IsDungeon())
+     {
+         Map* creatureMap = creature->GetMap();
+@@ -213,6 +220,7 @@
+ 
+ void AutoBalance_AllCreatureScript::OnCreatureRemoveWorld(Creature* creature)
+ {
++    if (sABScriptMgr->IsModuleScaled(creature)) return;
+     if (creature->GetMap()->IsDungeon())
+     {
+         LOG_DEBUG("module.AutoBalance", "AutoBalance:: ------------------------------------------------");
+@@ -245,6 +253,7 @@
+ 
+ void AutoBalance_AllCreatureScript::OnAllCreatureUpdate(Creature* creature, uint32 /*diff*/)
+ {
++    if (sABScriptMgr->IsModuleScaled(creature)) return;
+     // ensure we're in a dungeon with a creature
+     if (
+         !creature ||
+@@ -410,6 +419,7 @@
+ 
+ void AutoBalance_AllCreatureScript::ModifyCreatureAttributes(Creature* creature)
+ {
++    if (sABScriptMgr->IsModuleScaled(creature)) return;
+     // make sure we have a creature
+     if (!creature)
+     {
+diff --git a/src/ABUtils.cpp b/src/ABUtils.cpp
+--- a/src/ABUtils.cpp
++++ b/src/ABUtils.cpp
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include "ABUtils.h"
++#include "ABScriptMgr.h"
+ 
+ #include "ABConfig.h"
+ #include "ABCreatureInfo.h"
+@@ -1688,6 +1689,7 @@
+ 
+ bool isCreatureRelevant(Creature* creature)
+ {
++    if (sABScriptMgr->IsModuleScaled(creature)) return false;
+     // if the creature is gone, return false
+     if (!creature)
+     {
+diff --git a/src/ABUnitScript.cpp b/src/ABUnitScript.cpp
+--- a/src/ABUnitScript.cpp
++++ b/src/ABUnitScript.cpp
+@@ -4,6 +4,8 @@
+ #include "ABCreatureInfo.h"
+ #include "ABMapInfo.h"
+ #include "ABUtils.h"
++#include "ABScriptMgr.h"
++#include <limits>
+ 
+ void AutoBalance_UnitScript::ModifyPeriodicDamageAurasTick(Unit* target, Unit* source, uint32& amount, SpellInfo const* spellInfo)
+ {
+@@ -193,6 +195,16 @@
+     bool _debug_damage_and_healing = ((source && (source->GetTypeId() == TYPEID_PLAYER || source->IsControlledByPlayer())) || (target && target->GetTypeId() == TYPEID_PLAYER));
+     _debug_damage_and_healing = (source && source->GetMap()->GetInstanceId());
+ 
++    // Module-owned creatures never enter the dungeon damage/healing path.
++    // Read cached multipliers only; no policy lookup or recomputation per hit.
++    if (source && source->ToCreature() && sABScriptMgr->IsModuleScaled(source->ToCreature()))
++    {
++        if (amount >= 0) return amount; // damage-only contract
++        double scaled = double(amount) * source->CustomData.GetDefault<AutoBalanceCreatureInfo>("AutoBalanceCreatureInfo")->moduleDamageMultiplier;
++        return static_cast<int32>(std::max(scaled, double(std::numeric_limits<int32>::min()) + 1));
++    }
++    if (target && target->ToCreature() && sABScriptMgr->IsModuleScaled(target->ToCreature())) return amount;
++
+     // check that we're enabled globally, else return the original value
+     if (!EnableGlobal)
+     {
+@@ -211,6 +223,8 @@
+ 
+         source = target;
+     }
++
++    if (!source || !target) return amount;
+ 
+     // make sure the source and target are in an instance, else return the original damage
+     if (!(source->GetMap()->IsDungeon() && target->GetMap()->IsDungeon()))
+@@ -460,6 +474,8 @@
+ 
+ uint32 AutoBalance_UnitScript::_Modifier_CCDuration(Unit* target, Unit* caster, Aura* aura)
+ {
++    if ((target && target->ToCreature() && sABScriptMgr->IsModuleScaled(target->ToCreature())) ||
++        (caster && caster->ToCreature() && sABScriptMgr->IsModuleScaled(caster->ToCreature()))) return aura->GetDuration();
+     // store the original duration of the aura
+     float originalDuration = (float)aura->GetDuration();
+ 

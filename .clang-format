@@ -1,0 +1,35 @@
+# Derived from azerothcore-wotlk/.editorconfig (4 spaces, LF, 120 cols, final
+# newline, no trailing whitespace) plus AzerothCore's coding standards: Allman
+# braces, pointer/reference bound to the type, no single-line functions.
+# Applies to mod-diablocraft only; the core is never reformatted.
+---
+Language: Cpp
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Allman
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 120
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+DerivePointerAlignment: false
+FixNamespaceComments: true
+IndentCaseLabels: true
+IndentPPDirectives: None
+IndentWidth: 4
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
+PointerAlignment: Left
+ReferenceAlignment: Left
+SortIncludes: false
+SpaceAfterCStyleCast: true
+SpaceAfterTemplateKeyword: false
+TabWidth: 4
+UseTab: Never

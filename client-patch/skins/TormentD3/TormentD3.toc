@@ -1,0 +1,13 @@
+## Interface: 30300
+## Title: TormentD3
+## Notes: A Diablo III skin for the Diablocraft UI. Never shipped: install it by hand.
+## Author: Diablocraft
+## Version: 0.1
+## Dependencies: Torment
+## OptionalDeps: ElvUI_Torment
+
+# One file: the skin has no logic, it only fills the Diablocraft.ART slots that
+# ElvUI_Torment reads (Torment/SKINNING.md). Torment must be loaded first, which
+# the dependency above guarantees; ElvUI_Torment reads the slots at its own
+# Initialize, after every addon has loaded, so this never races it.
+TormentD3.lua

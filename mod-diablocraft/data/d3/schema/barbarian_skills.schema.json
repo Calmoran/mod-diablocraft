@@ -1,0 +1,35 @@
+{
+  "_comment": "Generated 2026-09-07 from the committed CSV. Columns are exact and ordered; validate_csv.py refuses a header that differs. Edit this file only when the CSV genuinely gains or loses a column, and say so in docs/decisions.md.",
+  "columns": [
+    "skill_name",
+    "category",
+    "unlock_level",
+    "fury_cost",
+    "fury_generation",
+    "cooldown_seconds",
+    "damage_pct_weapon_damage",
+    "element",
+    "full_tooltip_text",
+    "notes"
+  ],
+  "number_columns": [
+    "unlock_level",
+    "fury_cost",
+    "fury_generation",
+    "cooldown_seconds",
+    "damage_pct_weapon_damage"
+  ],
+  "percent_columns": [],
+  "notes_columns": [
+    "notes",
+    "full_tooltip_text"
+  ],
+  "allow_empty": [
+    "cooldown_seconds",
+    "damage_pct_weapon_damage",
+    "fury_cost",
+    "fury_generation",
+    "notes"
+  ],
+  "min_rows": 23
+}

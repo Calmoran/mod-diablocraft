@@ -1,0 +1,35 @@
+name,value,status,notes
+sprint_tornado_radius_yards,8,SOURCED,d3planner simulator barbarian.js:513-519 (tornado area range 8); docs/research/placeholder-tunables-values.md
+sprint_tornado_interval_seconds,0.333,SOURCED,"d3planner simulator barbarian.js:521 (20 frames at 1.0 aps, 60 frames/s); docs/research/placeholder-tunables-values.md"
+sprint_gangway_radius_yards,8,SOURCED,d3planner simulator barbarian.js:539-543 (area range 8); docs/research/placeholder-tunables-values.md
+sprint_gangway_knockback_yards,10,SOURCED,"D3 game data: Barbarian_Sprint.pow SF_10 (E: Knockback Magnitude); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+ignore_pain_bravado_radius_yards,5,SET,"ruling 2026-09-29, design choice (q-0929-07): body-contact range while running; D3 has no radius"
+ignore_pain_bravado_knockback_yards,10,SOURCED,"D3 game data: Barbarian_IgnorePain.pow SF_18 (E: Knockback Magnitude); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+fury_charge_knockback_yards,0,SOURCED,"D3 game data: Barbarian_FuriousCharge.pow SF_2 and SF_5 = 0 (the data says 0; the designer accepted it, so no knockback); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+avalanche_glacier_freeze_seconds,1,SOURCED,d3planner simulator barbarian.js:704-705 (frozen 60 frames); docs/research/placeholder-tunables-values.md
+overpower_storm_axes_radius_yards,50,SOURCED,"D3 game data: Barbarian_Overpower.pow SF_15 (B: Projectile Search Radius); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+battle_rage_recent_crit_window_seconds,1,SET,"ruling 2026-09-29, design choice (q-0929-07): the 1 s rate in Barbarian_BattleRage.pow SF_18 read as the window"
+ability_knockback_speed_xy,16,SET,"ruling 2026-09-29, design choice (q-0929-07): fits a 10 yd shove at speed_z 6 (docs/research/placeholder-tunables-proposal.md)"
+ability_knockback_speed_z,6,SET,"ruling 2026-09-29, design choice (q-0929-07): low arc, 0.9 yd peak (docs/research/placeholder-tunables-proposal.md)"
+leap_toppling_knockback_yards,20,SOURCED,"D3 game data: Barbarian_Leap.pow SF_17 (B Knockback Magnitude); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+rage_flip_behind_yards,5,SET,"ruling 2026-09-29, design choice (q-0929-07): X1_Barbarian_AncientSpear.pow SF_7 offset is 5; D3 states no flip distance"
+devils_anvil_radius_yards,10,SOURCED,"D3 game data: Barbarian_HammerOfTheAncients.pow SF_7 (C: AOE Radius); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+seismic_shattered_knockup_height_yards,2,SOURCED,"D3 game data: Barbarian_SeismicSlam.pow SF_12 (A: Knockback Height, raw unit unverified); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+rend_mutilate_chill_pct,60,SOURCED,maxroll Crowd Control Explained: current D3 unstated slow is 60% (ruling 2026-09-29); docs/research/placeholder-tunables-values.md
+ancients_life_pct_of_owner,100,SET,"ruling 2026-09-29, design choice (q-0929-07): each Ancient's max Life is this percent of the owner's max Life at summon; replaces the flat ancients_life row"
+ancients_bonus_interval_seconds,4,SOURCED,d3planner simulator barbarian.js:901-903 (240 frames); docs/research/placeholder-tunables-values.md
+ancients_duty_chill_pct,60,SOURCED,maxroll Crowd Control Explained: current D3 unstated slow is 60% (ruling 2026-09-29); docs/research/placeholder-tunables-values.md
+berserker_rage_min_fury_pct,95,SOURCED,d3planner simulator barbarian.js:1018-1021 (fury >= 0.95 max); docs/research/placeholder-tunables-values.md
+superstition_fury_proc_chance_pct,20,SET,"ruling 2026-09-29, design choice (q-0929-07): flat 20; it rolls on hits the Barbarian takes and D3 data has no proc coefficient for ordinary monster attacks (docs/research/proc-coefficients.md section 5, a judgement), so it does not take a skill coefficient"
+juggernaut_heal_proc_chance_pct,30,SET,"ruling 2026-09-29, design choice (q-0929-07): 30, the value DiIiS uses (StatusDebuff.cs); D3 publishes no chance"
+whirlwind_dust_interval_seconds,0.5,SOURCED,"d3planner simulator barbarian.js:353,388-394 (30 frames); docs/research/placeholder-tunables-values.md"
+whirlwind_dust_lifetime_seconds,0.5,SOURCED,d3planner simulator barbarian.js:353 (30 yd line at 1 yd/frame); docs/research/placeholder-tunables-values.md
+whirlwind_dust_speed_yards_per_second,60,SOURCED,d3planner simulator barbarian.js:353 (1 yd/frame at 60 fps); docs/research/placeholder-tunables-values.md
+whirlwind_dust_radius_yards,3,SOURCED,d3planner simulator barbarian.js:353 (radius 3); docs/research/placeholder-tunables-values.md
+throwing_hammer_visual_id,7250,SET,"ruling 2026-09-29, design choice (q-0929-07): SpellVisual 7250, the flying hammer of Hammer of Wrath (spell 24275); client patch 44"
+earthquake_tremor_radius_yards,8,SOURCED,d3planner simulator barbarian.js:861-863 (area range 8); docs/research/placeholder-tunables-values.md
+earthquake_chilling_freeze_seconds,1.5,SOURCED,d3planner simulator barbarian.js:859 (frozen 90 frames); docs/research/placeholder-tunables-values.md
+wizard_chill_slow_pct,60,SOURCED,maxroll Crowd Control Explained: Wizard Cold skills apply a 60% chill (ruling 2026-09-29); docs/research/placeholder-tunables-values.md
+storm_armor_shock_radius_yards,50,SOURCED,"D3 game data: Wizard_StormArmor.pow SF_16 (Search Radius); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+ice_armor_chilling_aura_radius_yards,15,SOURCED,"D3 game data: Wizard_IceArmor.pow SF_7 (B: Radius of Aura); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"
+mirror_image_taunt_radius_yards,8,SOURCED,"D3 game data: Wizard_MirrorImage.pow SF_18 (Taunt Radius); docs/research/placeholder-values-d3-data.md (ruling 2026-09-29, q-0929-07)"

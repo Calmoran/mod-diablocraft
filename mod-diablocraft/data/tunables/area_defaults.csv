@@ -1,0 +1,4 @@
+tag,anchors_min,anchors_max,small,medium,large,notes
+S,1,1,yes,no,no,"monster-spawning.md 3.5.1 step 7 and 4.7 (a), ruled by ruling 2026-10-08: S fills 1 anchor, small clusters"
+M,1,2,yes,yes,no,"M fills 1 or 2, small or medium"
+L,2,3,yes,yes,yes,"L fills 2 or 3, any size"

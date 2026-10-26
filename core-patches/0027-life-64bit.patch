@@ -1,0 +1,2265 @@
+Reason: keep a unit's Life and max Life in 64 bits in the core, so a monster of any size is the number it is (native 64-bit health Part 1, Patch A; plan docs/proposals/core-64bit-health.md section 2.3, changed by the client-half brief of 2026-10-16). The update-field layout grows by two dwords, UNIT_FIELD_HEALTH_HI and UNIT_FIELD_MAXHEALTH_HI, and Unit::WriteHealthFields is the only writer of the four dwords: the real Life, with no projection. Only a rebuilt client reads this layout. Every place the narrowing census (a build whose Life getters refuse each conversion to a type under 64 bits) found a Life cut to 32 bits is fixed by its class; the list is core-patches/tests/life64_census.tsv.
+
+--- a/modules/mod-autobalance/src/ABAllCreatureScript.cpp
++++ b/modules/mod-autobalance/src/ABAllCreatureScript.cpp
+@@ -1196,12 +1196,12 @@ void AutoBalance_AllCreatureScript::ModifyCreatureAttributes(Creature* creature)
+     if (!sABScriptMgr->OnBeforeUpdateStats(creature, newFinalHealth, newFinalMana, damageMultiplier, newFinalArmor))
+         return;
+ 
+-    uint32 prevMaxHealth = creature->GetMaxHealth();
++    uint64 prevMaxHealth = creature->GetMaxHealth();
+     uint32 prevMaxPower = creature->GetMaxPower(Powers::POWER_MANA);
+-    uint32 prevHealth = creature->GetHealth();
++    uint64 prevHealth = creature->GetHealth();
+     uint32 prevPower = creature->GetPower(Powers::POWER_MANA);
+ 
+-    uint32 prevPlayerDamageRequired = creature->GetPlayerDamageReq();
++    uint64 prevPlayerDamageRequired = creature->GetPlayerDamageReq();
+     uint32 prevCreateHealth = creature->GetCreateHealth();
+ 
+     Powers pType = creature->getPowerType();
+@@ -1244,7 +1244,7 @@ void AutoBalance_AllCreatureScript::ModifyCreatureAttributes(Creature* creature)
+ 
+         if (prevHealth && prevMaxHealth)
+         {
+-            scaledCurHealth = prevHealth;
++            scaledCurHealth = LifeToUInt32(prevHealth);
+             LOG_DEBUG("module.AutoBalance_StatGeneration", "AutoBalance_AllCreatureScript::ModifyCreatureAttributes: Creature {} ({}) | scaledCurHealth ({}) = prevHealth ({})",
+                 creature->GetName(),
+                 creatureABInfo->selectedLevel,
+--- a/modules/mod-autobalance/src/ABCreatureInfo.h
++++ b/modules/mod-autobalance/src/ABCreatureInfo.h
+@@ -18,7 +18,7 @@ public:
+     AutoBalanceCreatureInfo() {}
+ 
+     ABModuleScript* moduleScalingOwner = nullptr;
+-    uint32 moduleBaseHealth = 0;
++    uint64 moduleBaseHealth = 0;
+     double moduleDamageMultiplier = 1.0;
+     bool moduleScalingSelected = false;
+ 
+@@ -52,7 +52,7 @@ public:
+     bool        isBrandNew             = false;   // Whether or not the creature is brand new to the map (hasn't been added to the world yet)
+     bool        neverLevelScale        = false;   // Whether or not the creature should never be level scaled (can still be player scaled)
+ 
+-    uint32      initialMaxHealth       = 0;       // Stored max health value to be applied just before being added to the world
++    uint64      initialMaxHealth       = 0;       // Stored max health value to be applied just before being added to the world
+ 
+     // creature->IsSummon()                       // Whether or not the creature is a summon
+     Creature*   summoner               = nullptr; // The creature that summoned this creature
+--- a/modules/mod-autobalance/src/ABScriptMgr.cpp
++++ b/modules/mod-autobalance/src/ABScriptMgr.cpp
+@@ -113,20 +113,20 @@ bool ABScriptMgr::RefreshCreatureScaling(Creature* creature)
+         LOG_ERROR("module.AutoBalance", "Module scaling owner refused refresh for creature {}; ownership cannot change until recreation", creature->GetEntry());
+         return false;
+     }
+-    double life = std::floor(info->moduleBaseHealth * health);
+-    if (!std::isfinite(life) || life < 1 || life > std::numeric_limits<uint32>::max() ||
++    long double life = std::floor(static_cast<long double>(info->moduleBaseHealth) * health);
++    if (!std::isfinite(life) || life < 1 || life > static_cast<long double>(std::numeric_limits<uint64>::max()) ||
+         !std::isfinite(damage) || damage < 0)
+     {
+         LOG_ERROR("module.AutoBalance", "Module scaling overflow/invalid multiplier for creature {}: base {}, health {}, damage {}", creature->GetEntry(), info->moduleBaseHealth, health, damage);
+         return false;
+     }
+-    double fraction = creature->GetMaxHealth() ? double(creature->GetHealth()) / creature->GetMaxHealth() : 1;
+-    uint32 maximum = static_cast<uint32>(life);
++    uint64 const previousHealth = creature->GetHealth();
++    uint64 const previousMaximum = creature->GetMaxHealth();
++    uint64 maximum = static_cast<uint64>(life);
+     creature->SetMaxHealth(maximum);
+-    creature->SetCreateHealth(maximum);
+-    creature->SetStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, static_cast<float>(maximum));
++    creature->SetBaseHealth(maximum);
+     creature->ResetPlayerDamageReq();
+-    creature->SetHealth(creature->IsAlive() ? std::max<uint32>(1, static_cast<uint32>(std::floor(maximum * fraction))) : 0);
++    creature->SetHealth(creature->IsAlive() ? std::max<uint64>(1, previousMaximum ? LifeMulDiv(previousHealth, maximum, previousMaximum) : maximum) : 0);
+     info->moduleDamageMultiplier = damage;
+     return true;
+ }
+--- a/src/server/game/AI/SmartScripts/SmartAI.cpp
++++ b/src/server/game/AI/SmartScripts/SmartAI.cpp
+@@ -1413,7 +1413,7 @@ bool SmartAI::IsMainSpellPrevented(SpellInfo const* spellInfo) const
+     int32 powerCost = spellInfo->CalcPowerCost(me, spellInfo->GetSchoolMask());
+     if (spellInfo->PowerType == POWER_HEALTH)
+     {
+-        if ((int32)me->GetHealth() <= powerCost)
++        if (LifeToInt32(me->GetHealth()) <= powerCost)
+             return true;
+     }
+     else
+--- a/src/server/game/AI/SmartScripts/SmartAI.h
++++ b/src/server/game/AI/SmartScripts/SmartAI.h
+@@ -186,7 +186,7 @@ public:
+     void SetEvadeDisabled(bool disable = true);
+     void SetSuppressEvade(bool suppress) { mSuppressEvade = suppress; }
+ 
+-    void SetInvincibilityHpLevel(uint32 level) { mInvincibilityHpLevel = level; }
++    void SetInvincibilityHpLevel(uint64 level) { mInvincibilityHpLevel = level; }
+ 
+     void sGossipHello(Player* player) override;
+     void sGossipSelect(Player* player, uint32 sender, uint32 action) override;
+@@ -256,7 +256,7 @@ private:
+     bool mSuppressEvade;
+     bool mCanAutoAttack;
+     bool mForcedPaused;
+-    uint32 mInvincibilityHpLevel;
++    uint64 mInvincibilityHpLevel;
+     ForcedMovement mForcedMovement;
+ 
+     bool AssistPlayerInCombatAgainst(Unit* who);
+--- a/src/server/game/ArenaSpectator/ArenaSpectator.cpp
++++ b/src/server/game/ArenaSpectator/ArenaSpectator.cpp
+@@ -246,8 +246,8 @@ void ArenaSpectator::HandleResetCommand(Player* player)
+         // Xinef: addon compatibility
+         SendCommand_UInt32Value(player, itr->first, "TEM", plr->GetBgTeamId() == TEAM_ALLIANCE ? ALLIANCE : HORDE);
+         SendCommand_UInt32Value(player, itr->first, "CLA", plr->getClass());
+-        SendCommand_UInt32Value(player, itr->first, "MHP", plr->GetMaxHealth());
+-        SendCommand_UInt32Value(player, itr->first, "CHP", plr->GetHealth());
++        SendCommand_UInt32Value(player, itr->first, "MHP", LifeToUInt32(plr->GetMaxHealth()));
++        SendCommand_UInt32Value(player, itr->first, "CHP", LifeToUInt32(plr->GetHealth()));
+         SendCommand_UInt32Value(player, itr->first, "STA", plr->IsAlive() ? 1 : 0);
+         Powers ptype = plr->getPowerType();
+         SendCommand_UInt32Value(player, itr->first, "PWT", ptype);
+--- a/src/server/game/Conditions/ConditionMgr.cpp
++++ b/src/server/game/Conditions/ConditionMgr.cpp
+@@ -401,7 +401,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
+     case CONDITION_HP_VAL:
+     {
+         if (Unit* unit = object->ToUnit())
+-            condMeets = CompareValues(static_cast<ComparisionType>(ConditionValue2), unit->GetHealth(), static_cast<uint32>(ConditionValue1));
++            condMeets = CompareValues(static_cast<ComparisionType>(ConditionValue2), unit->GetHealth(), static_cast<uint64>(ConditionValue1));
+         break;
+     }
+     case CONDITION_HP_PCT:
+--- a/src/server/game/DungeonFinding/LFGMgr.cpp
++++ b/src/server/game/DungeonFinding/LFGMgr.cpp
+@@ -1152,7 +1152,7 @@ namespace lfg
+                                                        1, p->GetLevel(), p->getClass(), p->getRace(), p->GetAverageItemLevel(),
+                                                        talents, p->GetAreaId(), p->GetArmor(), (uint32)std::max<int32>(0, spellDamage), (uint32)std::max<int32>(0, spellHeal),
+                                                        p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_CRIT_MELEE)), p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_CRIT_RANGED)), p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_CRIT_SPELL)), std::max<float>(0.0f, mp5), std::max<float>(0.0f, mp5combat),
+-                                                       std::max<uint32>(baseAP, rangedAP), (uint32)p->GetStat(STAT_AGILITY), p->GetMaxHealth(), maxPower, p->GetDefenseSkillValue(),
++                                                       std::max<uint32>(baseAP, rangedAP), (uint32)p->GetStat(STAT_AGILITY), LifeToUInt32(p->GetMaxHealth()), maxPower, p->GetDefenseSkillValue(),
+                                                        p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_DODGE)), p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_BLOCK)), p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_PARRY)), p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_HASTE_SPELL)), p->GetUInt32Value(PLAYER_FIELD_COMBAT_RATING_1 + static_cast<uint16>(CR_EXPERTISE)));
+ 
+                     if (!groupGuid)
+--- a/src/server/game/Entities/Creature/Creature.cpp
++++ b/src/server/game/Entities/Creature/Creature.cpp
+@@ -624,9 +624,9 @@ bool Creature::UpdateEntry(uint32 Entry, CreatureData const* data, bool changele
+     SetAttackTime(OFF_ATTACK,    cInfo->BaseAttackTime);
+     SetAttackTime(RANGED_ATTACK, cInfo->RangeAttackTime);
+ 
+-    uint32 previousHealth = GetHealth();
+-    uint32 previousMaxHealth = GetMaxHealth();
+-    uint32 previousPlayerDamageReq = _playerDamageReq;
++    uint64 previousHealth = GetHealth();
++    uint64 previousMaxHealth = GetMaxHealth();
++    uint64 previousPlayerDamageReq = _playerDamageReq;
+ 
+     SelectLevel(changelevel);
+     if (previousHealth > 0)
+@@ -635,7 +635,7 @@ bool Creature::UpdateEntry(uint32 Entry, CreatureData const* data, bool changele
+ 
+         if (previousMaxHealth && previousMaxHealth > GetMaxHealth())
+         {
+-            _playerDamageReq = (uint32)(previousPlayerDamageReq * GetMaxHealth() / previousMaxHealth);
++            _playerDamageReq = LifeMulDiv(previousPlayerDamageReq, GetMaxHealth(), previousMaxHealth);
+         }
+         else
+         {
+@@ -1056,13 +1056,13 @@ void Creature::RegenerateHealth()
+     if (!isRegeneratingHealth())
+         return;
+ 
+-    uint32 curValue = GetHealth();
+-    uint32 maxValue = GetMaxHealth();
++    uint64 curValue = GetHealth();
++    uint64 maxValue = GetMaxHealth();
+ 
+     if (curValue >= maxValue)
+         return;
+ 
+-    uint32 addvalue = 0;
++    uint64 addvalue = 0;
+ 
+     // Not only pet, but any controlled creature
+     // Xinef: fix polymorph rapid regen
+@@ -1080,7 +1080,8 @@ void Creature::RegenerateHealth()
+     }
+ 
+     // Apply modifiers (if any).
+-    addvalue *= GetTotalAuraMultiplier(SPELL_AURA_MOD_HEALTH_REGEN_PERCENT);
++    if (float const regenMultiplier = GetTotalAuraMultiplier(SPELL_AURA_MOD_HEALTH_REGEN_PERCENT); regenMultiplier != 1.0f)
++        addvalue = static_cast<uint64>(static_cast<double>(addvalue) * regenMultiplier);
+ 
+     addvalue += GetTotalAuraModifier(SPELL_AURA_MOD_REGEN) * CREATURE_REGEN_INTERVAL  / (5 * IN_MILLISECONDS);
+ 
+@@ -1469,7 +1470,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
+     // prevent add data integrity problems
+     data.wander_distance = GetDefaultMovementType() == IDLE_MOTION_TYPE ? 0.0f : m_wanderDistance;
+     data.currentwaypoint = 0;
+-    data.curhealth = GetHealth();
++    data.curhealth = LifeToUInt32(GetHealth());
+     data.curmana = GetPower(POWER_MANA);
+     // prevent add data integrity problems
+     data.movementType = !m_wanderDistance && GetDefaultMovementType() == RANDOM_MOTION_TYPE
+@@ -1502,7 +1503,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
+     stmt->SetData(index++, m_respawnDelay);
+     stmt->SetData(index++, m_wanderDistance);
+     stmt->SetData(index++, 0);
+-    stmt->SetData(index++, GetHealth());
++    stmt->SetData(index++, LifeToUInt32(GetHealth()));
+     stmt->SetData(index++, GetPower(POWER_MANA));
+     stmt->SetData(index++, uint8(GetDefaultMovementType()));
+     stmt->SetData(index++, npcflag);
+@@ -1552,7 +1553,7 @@ void Creature::SelectLevel(bool changelevel)
+ 
+     /// @todo: set UNIT_FIELD_POWER*, for some creature class case (energy, etc)
+ 
+-    SetStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, (float)health);
++    SetBaseHealth(health);
+     SetStatFlatModifier(UNIT_MOD_MANA, BASE_VALUE, (float)mana);
+ 
+     // damage
+@@ -1772,7 +1773,7 @@ bool Creature::LoadCreatureFromDB(ObjectGuid::LowType spawnId, Map* map, bool ad
+         }
+     }
+ 
+-    uint32 curhealth;
++    uint64 curhealth;
+ 
+     if (!m_regenHealth)
+     {
+@@ -3933,7 +3934,7 @@ bool Creature::IsDamageEnoughForLootingAndReward() const
+     return m_creatureInfo->HasFlagsExtra(CREATURE_FLAG_EXTRA_NO_PLAYER_DAMAGE_REQ) || (_playerDamageReq == 0 && _damagedByPlayer);
+ }
+ 
+-void Creature::LowerPlayerDamageReq(uint32 unDamage, bool damagedByPlayer /*= true*/, uint8 attackerLevel /*= 0*/)
++void Creature::LowerPlayerDamageReq(uint64 unDamage, bool damagedByPlayer /*= true*/, uint8 attackerLevel /*= 0*/)
+ {
+     if (_playerDamageReq)
+         _playerDamageReq > unDamage ? _playerDamageReq -= unDamage : _playerDamageReq = 0;
+@@ -3954,11 +3955,24 @@ void Creature::ResetPlayerDamageReq()
+     _highestPlayerAttackerLevel = 0;
+ }
+ 
+-uint32 Creature::GetPlayerDamageReq() const
++uint64 Creature::GetPlayerDamageReq() const
+ {
+     return _playerDamageReq;
+ }
+ 
++void Creature::SetBaseHealth(uint64 baseHealth)
++{
++    uint64 const previous = m_baseHealth64;
++    float const base = static_cast<float>(baseHealth);
++    bool const modifierMoves = GetFlatModifierValue(UNIT_MOD_HEALTH, BASE_VALUE) != base;
++    m_baseHealth64 = baseHealth;
++    SetCreateHealth(LifeToUInt32(baseHealth));
++    // the modifier updates the max when it moves; two bases that round to the same float do not move it
++    SetStatFlatModifier(UNIT_MOD_HEALTH, BASE_VALUE, base);
++    if (!modifierMoves && previous != baseHealth && CanModifyStats())
++        UpdateMaxHealth();
++}
++
+ bool Creature::CanCastSpell(uint32 spellID) const
+ {
+     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellID);
+--- a/src/server/game/Entities/Creature/Creature.h
++++ b/src/server/game/Entities/Creature/Creature.h
+@@ -389,9 +389,14 @@ public:
+     void SetLootRewardDisabled(bool disable) { DisableLootReward = disable; }
+     [[nodiscard]] bool IsLootRewardDisabled() const { return DisableLootReward; }
+     [[nodiscard]] bool IsDamageEnoughForLootingAndReward() const;
+-    void LowerPlayerDamageReq(uint32 unDamage, bool damagedByPlayer = true, uint8 attackerLevel = 0);
++    void LowerPlayerDamageReq(uint64 unDamage, bool damagedByPlayer = true, uint8 attackerLevel = 0);
+     void ResetPlayerDamageReq();
+-    [[nodiscard]] uint32 GetPlayerDamageReq() const;
++    [[nodiscard]] uint64 GetPlayerDamageReq() const;
++
++    // The creature's exact base Life. UpdateMaxHealth builds the max from it, because the UNIT_MOD_HEALTH base modifier
++    // is a float and cannot hold a Life past 16,777,216.
++    void SetBaseHealth(uint64 baseHealth);
++    [[nodiscard]] uint64 GetBaseHealth() const { return m_baseHealth64; }
+     [[nodiscard]] uint8 GetHighestPlayerAttackerLevel() const { return _highestPlayerAttackerLevel; }
+ 
+     [[nodiscard]] uint32 GetOriginalEntry() const { return m_originalEntry; }
+@@ -570,7 +575,8 @@ private:
+ 
+     uint32 m_assistanceTimer;
+ 
+-    uint32 _playerDamageReq;
++    uint64 _playerDamageReq;
++    uint64 m_baseHealth64 = 0;
+     bool _damagedByPlayer;
+     uint8 _highestPlayerAttackerLevel;
+     bool _isCombatMovementAllowed;
+--- a/src/server/game/Entities/Object/Object.cpp
++++ b/src/server/game/Entities/Object/Object.cpp
+@@ -3855,8 +3855,7 @@ void WorldObject::SendSpellNonMeleeDamageLog(Unit* target, SpellInfo const* spel
+     data << GetPackGUID();
+     data << uint32(spellInfo->Id);
+     data << uint32(damage);
+-    int32 overkill = int32(damage) - int32(target->GetHealth());
+-    data << uint32(overkill > 0 ? overkill : 0);
++    data << LifeToUInt32(LifeOverkill(damage, target->GetHealth()));
+     data << uint8(schoolMask);
+     data << uint32(absorb);
+     data << uint32(resist);
+--- a/src/server/game/Entities/Object/Updates/UpdateFieldFlags.cpp
++++ b/src/server/game/Entities/Object/Updates/UpdateFieldFlags.cpp
+@@ -309,6 +309,8 @@ uint32 UnitUpdateFieldFlags[PLAYER_END] =
+     UF_FLAG_PRIVATE | UF_FLAG_OWNER,                        // UNIT_FIELD_MAXHEALTHMODIFIER
+     UF_FLAG_PUBLIC,                                         // UNIT_FIELD_HOVERHEIGHT
+     UF_FLAG_NONE,                                           // UNIT_FIELD_PADDING
++    UF_FLAG_PUBLIC,                                         // UNIT_FIELD_HEALTH_HI
++    UF_FLAG_PUBLIC,                                         // UNIT_FIELD_MAXHEALTH_HI
+     UF_FLAG_PUBLIC,                                         // PLAYER_DUEL_ARBITER
+     UF_FLAG_PUBLIC,                                         // PLAYER_DUEL_ARBITER+1
+     UF_FLAG_PUBLIC,                                         // PLAYER_FLAGS
+--- a/src/server/game/Entities/Object/Updates/UpdateFields.h
++++ b/src/server/game/Entities/Object/Updates/UpdateFields.h
+@@ -172,7 +172,9 @@ enum EUnitFields
+     UNIT_FIELD_MAXHEALTHMODIFIER              = OBJECT_END + 0x008B, // Size: 1, Type: FLOAT, Flags: PRIVATE, OWNER
+     UNIT_FIELD_HOVERHEIGHT                    = OBJECT_END + 0x008C, // Size: 1, Type: FLOAT, Flags: PUBLIC
+     UNIT_FIELD_PADDING                        = OBJECT_END + 0x008D, // Size: 1, Type: INT, Flags: NONE
+-    UNIT_END                                  = OBJECT_END + 0x008E,
++    UNIT_FIELD_HEALTH_HI                      = OBJECT_END + 0x008E, // Size: 1, Type: INT, Flags: PUBLIC (the high 32 bits of Life, core patch 0027)
++    UNIT_FIELD_MAXHEALTH_HI                   = OBJECT_END + 0x008F, // Size: 1, Type: INT, Flags: PUBLIC (the high 32 bits of max Life, core patch 0027)
++    UNIT_END                                  = OBJECT_END + 0x0090,
+ 
+     PLAYER_DUEL_ARBITER                       = UNIT_END + 0x0000, // Size: 2, Type: LONG, Flags: PUBLIC
+     PLAYER_FLAGS                              = UNIT_END + 0x0002, // Size: 1, Type: INT, Flags: PUBLIC
+--- a/src/server/game/Entities/Pet/Pet.cpp
++++ b/src/server/game/Entities/Pet/Pet.cpp
+@@ -470,7 +470,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petEntry, uint32 petnumber, bool c
+             }
+         }
+ 
+-        uint32 curHealth = savedhealth;
++        uint64 curHealth = savedhealth;
+         if (healthPct)
+         {
+             curHealth = CountPctFromMaxHealth(healthPct);
+@@ -528,7 +528,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
+         mode = PET_SAVE_NOT_IN_SLOT;
+     }
+ 
+-    uint32 curhealth = GetHealth();
++    uint32 curhealth = LifeToUInt32(GetHealth());
+     uint32 curmana = GetPower(POWER_MANA);
+ 
+     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+@@ -2487,7 +2487,7 @@ void Pet::FillPetInfo(PetStable::PetInfo* petInfo) const
+     petInfo->ReactState = GetReactState();
+     petInfo->Name = GetName();
+     petInfo->WasRenamed = !HasByteFlag(UNIT_FIELD_BYTES_2, 2, UNIT_CAN_BE_RENAMED);
+-    petInfo->Health = GetHealth();
++    petInfo->Health = LifeToUInt32(GetHealth());
+     petInfo->Mana = GetPower(POWER_MANA);
+     petInfo->Happiness = GetPower(POWER_HAPPINESS);
+     petInfo->ActionBar = GenerateActionBarData();
+--- a/src/server/game/Entities/Player/Player.cpp
++++ b/src/server/game/Entities/Player/Player.cpp
+@@ -919,7 +919,7 @@ void Player::HandleDrowning(uint32 time_diff)
+                 m_MirrorTimer[BREATH_TIMER] += 1 * IN_MILLISECONDS;
+                 // Calculate and deal damage
+                 /// @todo: Check this formula
+-                uint32 damage = GetMaxHealth() / 5 + urand(0, GetLevel() - 1);
++                uint32 damage = LifeToUInt32(GetMaxHealth() / 5) + urand(0, GetLevel() - 1);
+                 EnvironmentalDamage(DAMAGE_DROWNING, damage);
+             }
+             else if (!(m_MirrorTimerFlagsLast & UNDERWATER_INWATER))      // Update time in client if need
+@@ -955,7 +955,7 @@ void Player::HandleDrowning(uint32 time_diff)
+                 m_MirrorTimer[FATIGUE_TIMER] += 1 * IN_MILLISECONDS;
+                 if (IsAlive())                                            // Calculate and deal damage
+                 {
+-                    uint32 damage = GetMaxHealth() / 5 + urand(0, GetLevel() - 1);
++                    uint32 damage = LifeToUInt32(GetMaxHealth() / 5) + urand(0, GetLevel() - 1);
+                     EnvironmentalDamage(DAMAGE_EXHAUSTED, damage);
+                 }
+                 else if (HasPlayerFlag(PLAYER_FLAGS_GHOST))       // Teleport ghost to graveyard
+@@ -2027,8 +2027,8 @@ void Player::Regenerate(Powers power)
+ 
+ void Player::RegenerateHealth()
+ {
+-    uint32 curValue = GetHealth();
+-    uint32 maxValue = GetMaxHealth();
++    uint64 curValue = GetHealth();
++    uint64 maxValue = GetMaxHealth();
+ 
+     if (curValue >= maxValue)
+         return;
+@@ -4587,7 +4587,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
+     // set health/powers (0- will be set in caller)
+     if (restore_percent > 0.0f)
+     {
+-        SetHealth(uint32(GetMaxHealth()*restore_percent));
++        SetHealth(uint64(GetMaxHealth() * restore_percent));
+         SetPower(POWER_MANA, uint32(GetMaxPower(POWER_MANA)*restore_percent));
+         SetPower(POWER_RAGE, 0);
+         SetPower(POWER_ENERGY, uint32(GetMaxPower(POWER_ENERGY)*restore_percent));
+@@ -14282,20 +14282,20 @@ void Player::HandleFall(MovementInfo const& movementInfo)
+         int32 safe_fall = GetTotalAuraModifier(SPELL_AURA_SAFE_FALL);
+ 
+         float damageperc = FALL_DMG_EQU_SLOPE * (z_diff - safe_fall) + FALL_DMG_EQU_INTERCEPT;
+-        uint32 original_health = GetHealth(), final_damage = 0;
++        uint32 original_health = LifeToUInt32(GetHealth()), final_damage = 0;
+ 
+         if (damageperc > 0 && !IsImmunedToDamageOrSchool(SPELL_SCHOOL_MASK_NORMAL))
+         {
+-            uint32 damage = (uint32)(damageperc * GetMaxHealth() * sWorld->getRate(RATE_DAMAGE_FALL));
++            uint32 damage = (uint32)(damageperc * LifeToUInt32(GetMaxHealth()) * sWorld->getRate(RATE_DAMAGE_FALL));
+ 
+             if (damage > 0)
+             {
+                 //Prevent fall damage from being more than the player maximum health
+                 if (damage > GetMaxHealth())
+-                    damage = GetMaxHealth();
++                    damage = LifeToUInt32(GetMaxHealth());
+ 
+                 if (HasAura(SPELL_GUST_OF_WIND))
+-                    damage = GetMaxHealth() / 2;
++                    damage = LifeToUInt32(GetMaxHealth() / 2);
+ 
+                 if (HasAura(SPELL_DIVINE_PROTECTION))
+                     damage /= 2;
+@@ -15271,7 +15271,7 @@ void Player::_SaveCharacter(bool create, CharacterDatabaseTransaction trans)
+         stmt->SetData(index++, GetUInt64Value(PLAYER_FIELD_KNOWN_CURRENCIES));
+         stmt->SetData(index++, GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX));
+         stmt->SetData(index++, GetDrunkValue());
+-        stmt->SetData(index++, GetHealth());
++        stmt->SetData(index++, LifeToUInt32(GetHealth()));
+ 
+         for (uint32 i = 0; i < MAX_POWERS; ++i)
+             stmt->SetData(index++, GetPower(Powers(i)));
+@@ -15411,7 +15411,7 @@ void Player::_SaveCharacter(bool create, CharacterDatabaseTransaction trans)
+         stmt->SetData(index++, GetUInt64Value(PLAYER_FIELD_KNOWN_CURRENCIES));
+         stmt->SetData(index++, GetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX));
+         stmt->SetData(index++, GetDrunkValue());
+-        stmt->SetData(index++, GetHealth());
++        stmt->SetData(index++, LifeToUInt32(GetHealth()));
+ 
+         for (uint32 i = 0; i < MAX_POWERS; ++i)
+             stmt->SetData(index++, GetPower(Powers(i)));
+--- a/src/server/game/Entities/Player/Player.h
++++ b/src/server/game/Entities/Player/Player.h
+@@ -2187,7 +2187,7 @@ public:
+     void SetArenaPoints(uint32 value);
+ 
+     // duel health and mana reset methods
+-    void SaveHealthBeforeDuel()     { healthBeforeDuel = GetHealth(); }
++    void SaveHealthBeforeDuel()     { healthBeforeDuel = LifeToUInt32(GetHealth()); }
+     void SaveManaBeforeDuel()       { manaBeforeDuel = GetPower(POWER_MANA); }
+     void RestoreHealthAfterDuel()   { SetHealth(healthBeforeDuel); }
+     void RestoreManaAfterDuel()     { SetPower(POWER_MANA, manaBeforeDuel); }
+--- a/src/server/game/Entities/Player/PlayerStorage.cpp
++++ b/src/server/game/Entities/Player/PlayerStorage.cpp
+@@ -7963,7 +7963,7 @@ void Player::_SaveStats(CharacterDatabaseTransaction trans)
+ 
+     stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHAR_STATS);
+     stmt->SetData(index++, GetGUID().GetRawValue());
+-    stmt->SetData(index++, GetMaxHealth());
++    stmt->SetData(index++, LifeToUInt32(GetMaxHealth()));
+ 
+     for (uint8 i = 0; i < MAX_POWERS; ++i)
+         stmt->SetData(index++, GetMaxPower(Powers(i)));
+--- a/src/server/game/Entities/Unit/StatSystem.cpp
++++ b/src/server/game/Entities/Unit/StatSystem.cpp
+@@ -1076,8 +1076,28 @@ void Creature::UpdateArmor()
+ 
+ void Creature::UpdateMaxHealth()
+ {
+-    float value = GetTotalAuraModValue(UNIT_MOD_HEALTH);
+-    SetMaxHealth(uint32(value));
++    // the exact base holds while the float modifier is still its copy; a script that set the modifier itself wins
++    if (m_baseHealth64 && static_cast<float>(m_baseHealth64) != GetFlatModifierValue(UNIT_MOD_HEALTH, BASE_VALUE))
++        m_baseHealth64 = 0;
++
++    if (!m_baseHealth64)
++    {
++        float value = GetTotalAuraModValue(UNIT_MOD_HEALTH);
++        SetMaxHealth(uint64(value));
++        return;
++    }
++
++    // GetTotalAuraModValue's sum with the exact base Life: a long double holds every whole number to 2^64
++    if (GetPctModifierValue(UNIT_MOD_HEALTH, TOTAL_PCT) <= 0.0f)
++    {
++        SetMaxHealth(0);
++        return;
++    }
++
++    long double value = static_cast<long double>(m_baseHealth64) * GetPctModifierValue(UNIT_MOD_HEALTH, BASE_PCT);
++    value += GetFlatModifierValue(UNIT_MOD_HEALTH, TOTAL_VALUE);
++    value *= GetPctModifierValue(UNIT_MOD_HEALTH, TOTAL_PCT);
++    SetMaxHealth(value <= 0 ? 0 : value >= 18446744073709551615.0L ? std::numeric_limits<uint64>::max() : static_cast<uint64>(value));
+ }
+ 
+ void Creature::UpdateMaxPower(Powers power)
+--- a/src/server/game/Entities/Unit/Unit.cpp
++++ b/src/server/game/Entities/Unit/Unit.cpp
+@@ -987,24 +987,24 @@ void Unit::DealDamageMods(Unit const* victim, uint32& damage, uint32* absorb)
+     }
+ }
+ 
+-uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage const* cleanDamage, DamageEffectType damagetype, SpellSchoolMask damageSchoolMask, SpellInfo const* spellProto, bool durabilityLoss, bool /*allowGM*/, Spell const* damageSpell /*= nullptr*/)
++uint64 Unit::DealDamage(Unit* attacker, Unit* victim, uint64 damage, CleanDamage const* cleanDamage, DamageEffectType damagetype, SpellSchoolMask damageSchoolMask, SpellInfo const* spellProto, bool durabilityLoss, bool /*allowGM*/, Spell const* damageSpell /*= nullptr*/)
+ {
+-    damage = sScriptMgr->DealDamage(attacker, victim, damage, damagetype);
++    ApplyThroughView(damage, [&](uint32& view) { view = sScriptMgr->DealDamage(attacker, victim, view, damagetype); });
+     // Xinef: initialize damage done for rage calculations
+     // Xinef: its rare to modify damage in hooks, however training dummy's sets damage to 0
+-    uint32 rage_damage = damage + ((cleanDamage != nullptr) ? cleanDamage->absorbed_damage : 0);
++    uint32 rage_damage = LifeToUInt32(damage + ((cleanDamage != nullptr) ? cleanDamage->absorbed_damage : 0));
+ 
+     //if (attacker)
+     {
+         if (victim->IsAIEnabled)
+-            victim->GetAI()->DamageTaken(attacker, damage, damagetype, damageSchoolMask);
++            ApplyThroughView(damage, [&](uint32& view) { victim->GetAI()->DamageTaken(attacker, view, damagetype, damageSchoolMask); });
+ 
+         if (attacker && attacker->IsAIEnabled)
+-            attacker->GetAI()->DamageDealt(victim, damage, damagetype, damageSchoolMask);
++            ApplyThroughView(damage, [&](uint32& view) { attacker->GetAI()->DamageDealt(victim, view, damagetype, damageSchoolMask); });
+     }
+ 
+     // Hook for OnDamage Event
+-    sScriptMgr->OnDamage(attacker, victim, damage);
++    ApplyThroughView(damage, [&](uint32& view) { sScriptMgr->OnDamage(attacker, victim, view); });
+ 
+     // Signal to pets that their owner was attacked - except when DOT.
+     if (attacker != victim && damagetype != DOT)
+@@ -1079,7 +1079,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+                 continue;
+             SpellInfo const* spell = (*i)->GetSpellInfo();
+ 
+-            uint32 shareDamage = CalculatePct(damage, (*i)->GetAmount());
++            uint32 shareDamage = CalculatePct(LifeToUInt32(damage), (*i)->GetAmount());
+             bool const hasSharedDamage = shareDamage != 0;
+ 
+             uint32 shareAbsorb = 0;
+@@ -1152,7 +1152,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+ 
+     LOG_DEBUG("entities.unit", "DealDamageStart");
+ 
+-    uint32 health = victim->GetHealth();
++    uint64 health = victim->GetHealth();
+     LOG_DEBUG("entities.unit", "deal dmg:{} to health:{} ", damage, health);
+ 
+     // duel ends when player has 1 or less hp
+@@ -1198,8 +1198,8 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+ 
+             if (Battleground* bg = killer->GetBattleground())
+             {
+-                bg->UpdatePlayerScore(killer, SCORE_DAMAGE_DONE, damage);
+-                killer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DAMAGE_DONE, damage, 0, victim); // pussywizard: InBattleground() optimization
++                bg->UpdatePlayerScore(killer, SCORE_DAMAGE_DONE, LifeToUInt32(damage));
++                killer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DAMAGE_DONE, LifeToUInt32(damage), 0, victim); // pussywizard: InBattleground() optimization
+             }
+             //killer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_HIT_DEALT, damage); // pussywizard: optimization
+         }
+@@ -1213,7 +1213,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+ 
+         if (!attacker || attacker->IsControlledByPlayer() || attacker->IsCreatedByPlayer())
+         {
+-            uint32 unDamage = health < damage ? health : damage;
++            uint64 unDamage = health < damage ? health : damage;
+             bool damagedByPlayer = unDamage && attacker && (attacker->IsPlayer() || attacker->m_movedByPlayer != nullptr
+                 || attacker->GetCharmerGUID().IsPlayer());
+ 
+@@ -1237,7 +1237,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+         if (damage >= victim->GetHealth())
+             damage = 0;
+ 
+-        uint32 sparringHealth = victim->GetHealth() * (victim->ToCreature()->GetSparringPct() / 100);
++        uint64 sparringHealth = victim->GetHealth() * (victim->ToCreature()->GetSparringPct() / 100);
+         if (victim->GetHealth() - damage <= sparringHealth)
+             damage = 0;
+     }
+@@ -1257,7 +1257,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+         //if (victim->IsPlayer())
+         //    victim->ToPlayer()->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_TOTAL_DAMAGE_RECEIVED, damage); // pussywizard: optimization
+ 
+-        victim->ModifyHealth(- (int32)damage);
++        victim->ModifyHealth(-static_cast<int64>(std::min<uint64>(damage, std::numeric_limits<int64>::max())));
+ 
+         if (damagetype == DIRECT_DAMAGE || damagetype == SPELL_DIRECT_DAMAGE)
+             victim->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_DIRECT_DAMAGE, spellProto ? spellProto->Id : 0);
+@@ -1286,7 +1286,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
+         // Rage from damage received
+         if (attacker != victim && victim->HasActivePowerType(POWER_RAGE))
+         {
+-            uint32 rageDamage = damage + (cleanDamage ? cleanDamage->absorbed_damage : 0);
++            uint32 rageDamage = LifeToUInt32(damage + (cleanDamage ? cleanDamage->absorbed_damage : 0));
+             victim->RewardRage(rageDamage, 0, false);
+         }
+ 
+@@ -2186,8 +2186,7 @@ void Unit::DealDamageShieldDamage(Unit* victim)
+         data << GetGUID();
+         data << uint32(i_spellProto->Id);
+         data << uint32(damage);                  // Damage
+-        int32 overkill = int32(damage) - int32(GetHealth());
+-        data << uint32(overkill > 0 ? overkill : 0); // Overkill
++        data << LifeToUInt32(LifeOverkill(damage, GetHealth())); // Overkill
+         data << uint32(i_spellProto->GetSchoolMask());
+         victim->SendMessageToSet(&data, true);
+ 
+@@ -6471,8 +6470,7 @@ void Unit::SendSpellNonMeleeReflectLog(SpellNonMeleeDamage* log, Unit* attacker)
+     data << attacker->GetPackGUID();
+     data << uint32(log->spellInfo->Id);
+     data << uint32(damage);                                 // damage amount
+-    int32 overkill = damage - log->target->GetHealth();
+-    data << uint32(overkill > 0 ? overkill : 0);            // overkill
++    data << LifeToUInt32(LifeOverkill(damage, log->target->GetHealth())); // overkill
+     data << uint8 (log->schoolMask);                        // damage school
+     data << uint32(absorb);                                 // AbsorbedDamage
+     data << uint32(log->resist);                            // resist
+@@ -6499,8 +6497,7 @@ void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
+     data << log->attacker->GetPackGUID();
+     data << uint32(log->spellInfo->Id);
+     data << uint32(damage);                                 // damage amount
+-    int32 overkill = damage - log->target->GetHealth();
+-    data << uint32(overkill > 0 ? overkill : 0);            // overkill
++    data << LifeToUInt32(LifeOverkill(damage, log->target->GetHealth())); // overkill
+     data << uint8 (log->schoolMask);                        // damage school
+     data << uint32(absorb);                                 // AbsorbedDamage
+     data << uint32(log->resist);                            // resist
+@@ -6691,8 +6688,7 @@ void Unit::SendAttackStateUpdate(CalcDamageInfo* damageInfo)
+     data << damageInfo->attacker->GetPackGUID();
+     data << damageInfo->target->GetPackGUID();
+     data << uint32(tmpDamage[0] + tmpDamage[1]);                    // Full damage
+-    int32 overkill = tmpDamage[0] + tmpDamage[1] - damageInfo->target->GetHealth();
+-    data << uint32(overkill < 0 ? 0 : overkill);                    // Overkill
++    data << LifeToUInt32(LifeOverkill(uint64(tmpDamage[0]) + tmpDamage[1], damageInfo->target->GetHealth())); // Overkill
+     data << uint8(count);                                           // Sub damage count
+ 
+     for (uint32 i = 0; i < count; ++i)
+@@ -7841,24 +7837,28 @@ void Unit::SetCharm(Unit* charm, bool apply)
+     }
+ }
+ 
+-int32 Unit::DealHeal(Unit* healer, Unit* victim, uint32 addhealth)
++int64 Unit::DealHeal(Unit* healer, Unit* victim, uint64 addhealth)
+ {
+-    int32 gain = 0;
++    int64 gain = 0;
+ 
+     if (healer)
+     {
+         if (victim->IsAIEnabled)
+-            victim->GetAI()->HealReceived(healer, addhealth);
++            ApplyThroughView(addhealth, [&](uint32& view) { victim->GetAI()->HealReceived(healer, view); });
+ 
+         if (healer->IsAIEnabled)
+-            healer->GetAI()->HealDone(victim, addhealth);
++            ApplyThroughView(addhealth, [&](uint32& view) { healer->GetAI()->HealDone(victim, view); });
+     }
+ 
+     if (addhealth)
+-        gain = victim->ModifyHealth(int32(addhealth));
++        gain = victim->ModifyHealth(static_cast<int64>(std::min<uint64>(addhealth, std::numeric_limits<int64>::max())));
+ 
+     // Hook for OnHeal Event
+-    sScriptMgr->OnHeal(healer, victim, (uint32&)gain);
++    {
++        uint64 exactGain = static_cast<uint64>(gain);
++        ApplyThroughView(exactGain, [&](uint32& view) { sScriptMgr->OnHeal(healer, victim, view); });
++        gain = static_cast<int64>(exactGain);
++    }
+ 
+     Unit* unit = healer;
+ 
+@@ -7871,11 +7871,11 @@ int32 Unit::DealHeal(Unit* healer, Unit* victim, uint32 addhealth)
+     if (Player* player = unit->ToPlayer())
+     {
+         if (Battleground* bg = player->GetBattleground())
+-            bg->UpdatePlayerScore(player, SCORE_HEALING_DONE, gain);
++            bg->UpdatePlayerScore(player, SCORE_HEALING_DONE, LifeToUInt32(gain));
+ 
+         // use the actual gain, as the overheal shall not be counted, skip gain 0 (it ignored anyway in to criteria)
+         if (gain && player->InBattleground()) // pussywizard: InBattleground() optimization
+-            player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HEALING_DONE, gain, 0, victim);
++            player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HEALING_DONE, LifeToUInt32(gain), 0, victim);
+ 
+         //player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_HEAL_CASTED, addhealth); // pussywizard: optimization
+     }
+@@ -8137,7 +8137,7 @@ void Unit::SendHealSpellLog(HealInfo const& healInfo, bool critical)
+     SendMessageToSet(&data, true);
+ }
+ 
+-int32 Unit::HealBySpell(HealInfo& healInfo, bool critical)
++int64 Unit::HealBySpell(HealInfo& healInfo, bool critical)
+ {
+     uint32 heal = healInfo.GetHeal();
+     sScriptMgr->ModifyHealReceived(this, healInfo.GetTarget(), heal, healInfo.GetSpellInfo());
+@@ -8146,8 +8146,8 @@ int32 Unit::HealBySpell(HealInfo& healInfo, bool critical)
+     // calculate heal absorb and reduce healing
+     CalcHealAbsorb(healInfo);
+ 
+-    int32 gain = Unit::DealHeal(healInfo.GetHealer(), healInfo.GetTarget(), healInfo.GetHeal());
+-    healInfo.SetEffectiveHeal(gain);
++    int64 gain = Unit::DealHeal(healInfo.GetHealer(), healInfo.GetTarget(), healInfo.GetHeal());
++    healInfo.SetEffectiveHeal(LifeToUInt32(gain));
+ 
+     SendHealSpellLog(healInfo, critical);
+     return gain;
+@@ -10723,59 +10723,66 @@ bool Unit::_IsValidAssistTarget(Unit const* target, SpellInfo const* bySpell) co
+     return true;
+ }
+ 
+-int32 Unit::ModifyHealth(int32 dVal)
++int64 Unit::ModifyHealth(int64 dVal)
+ {
+-    int32 gain = 0;
++    int64 gain = 0;
+ 
+     if (dVal == 0)
+         return 0;
+ 
+-    int32 curHealth = (int32)GetHealth();
++    uint64 const curHealth = GetHealth();
++    uint64 const maxHealth = GetMaxHealth();
+ 
+-    int32 val = dVal + curHealth;
+-    if (val <= 0)
++    if (dVal < 0)
+     {
+-        SetHealth(0);
+-        return -curHealth;
+-    }
++        // a loss of the whole Life or more (the magnitude of INT64_MIN included) leaves 0
++        uint64 const loss = static_cast<uint64>(-(dVal + 1)) + 1;
++        if (loss >= curHealth)
++        {
++            SetHealth(0);
++            return -static_cast<int64>(curHealth);
++        }
+ 
+-    int32 maxHealth = (int32)GetMaxHealth();
++        SetHealth(curHealth - loss);
++        return dVal;
++    }
+ 
+-    if (val < maxHealth)
++    uint64 const room = maxHealth > curHealth ? maxHealth - curHealth : 0;
++    if (static_cast<uint64>(dVal) < room)
+     {
+-        SetHealth(val);
+-        gain = val - curHealth;
++        SetHealth(curHealth + static_cast<uint64>(dVal));
++        gain = dVal;
+     }
+     else if (curHealth != maxHealth)
+     {
+         SetHealth(maxHealth);
+-        gain = maxHealth - curHealth;
++        gain = static_cast<int64>(room);
+     }
+ 
+     return gain;
+ }
+ 
+-int32 Unit::GetHealthGain(int32 dVal)
++int64 Unit::GetHealthGain(int64 dVal)
+ {
+-    int32 gain = 0;
++    int64 gain = 0;
+ 
+     if (dVal == 0)
+         return 0;
+ 
+-    int32 curHealth = (int32)GetHealth();
++    uint64 const curHealth = GetHealth();
++    uint64 const maxHealth = GetMaxHealth();
+ 
+-    int32 val = dVal + curHealth;
+-    if (val <= 0)
++    if (dVal < 0)
+     {
+-        return -curHealth;
++        uint64 const loss = static_cast<uint64>(-(dVal + 1)) + 1;
++        return loss >= curHealth ? -static_cast<int64>(curHealth) : dVal;
+     }
+ 
+-    int32 maxHealth = (int32)GetMaxHealth();
+-
+-    if (val < maxHealth)
++    uint64 const room = maxHealth > curHealth ? maxHealth - curHealth : 0;
++    if (static_cast<uint64>(dVal) < room)
+         gain = dVal;
+     else if (curHealth != maxHealth)
+-        gain = maxHealth - curHealth;
++        gain = static_cast<int64>(room);
+ 
+     return gain;
+ }
+@@ -11951,7 +11958,17 @@ void Unit::SetLevel(uint8 lvl, bool showLevelChange)
+     }
+ }
+ 
+-void Unit::SetHealth(uint32 val)
++// The client holds Life in 64 bits, as two update-field dwords each: the low 32 bits in the stock field and the high 32 bits in
++// the field the layout grew by. Players and pets are below 2^32, so their high dword is 0.
++void Unit::WriteHealthFields()
++{
++    SetUInt32Value(UNIT_FIELD_MAXHEALTH, static_cast<uint32>(m_maxHealth64));
++    SetUInt32Value(UNIT_FIELD_MAXHEALTH_HI, static_cast<uint32>(m_maxHealth64 >> 32));
++    SetUInt32Value(UNIT_FIELD_HEALTH, static_cast<uint32>(m_health64));
++    SetUInt32Value(UNIT_FIELD_HEALTH_HI, static_cast<uint32>(m_health64 >> 32));
++}
++
++void Unit::SetHealth(uint64 val)
+ {
+     if (getDeathState() == DeathState::JustDied)
+         val = 0;
+@@ -11959,14 +11976,15 @@ void Unit::SetHealth(uint32 val)
+         val = 1;
+     else
+     {
+-        uint32 maxHealth = GetMaxHealth();
++        uint64 maxHealth = GetMaxHealth();
+         if (maxHealth < val)
+             val = maxHealth;
+     }
+ 
+     float prevHealthPct = GetHealthPct();
+ 
+-    SetUInt32Value(UNIT_FIELD_HEALTH, val);
++    m_health64 = val;
++    WriteHealthFields();
+ 
+     // mobs that are now or were below 30% need to update their speed
+     if (IsCreature() && !(IsPet() && ToPet()->isControlled() && IsControlledByPlayer()) && (prevHealthPct < 30.0 || HealthBelowPct(30)))
+@@ -11979,7 +11997,7 @@ void Unit::SetHealth(uint32 val)
+     {
+         Player* player = ToPlayer();
+         if (player->NeedSendSpectatorData())
+-            ArenaSpectator::SendCommand_UInt32Value(FindMap(), GetGUID(), "CHP", val);
++            ArenaSpectator::SendCommand_UInt32Value(FindMap(), GetGUID(), "CHP", LifeToUInt32(val));
+ 
+         if (player->GetGroup())
+             player->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_CUR_HP);
+@@ -12001,20 +12019,21 @@ void Unit::SetHealth(uint32 val)
+     }
+ }
+ 
+-void Unit::SetMaxHealth(uint32 val)
++void Unit::SetMaxHealth(uint64 val)
+ {
+     if (!val)
+         val = 1;
+ 
+-    uint32 health = GetHealth();
+-    SetUInt32Value(UNIT_FIELD_MAXHEALTH, val);
++    uint64 health = GetHealth();
++    m_maxHealth64 = val;
++    WriteHealthFields();
+ 
+     // group update
+     if (IsPlayer())
+     {
+         Player* player = ToPlayer();
+         if (player->NeedSendSpectatorData())
+-            ArenaSpectator::SendCommand_UInt32Value(FindMap(), GetGUID(), "MHP", val);
++            ArenaSpectator::SendCommand_UInt32Value(FindMap(), GetGUID(), "MHP", LifeToUInt32(val));
+ 
+         if (player->GetGroup())
+             player->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_MAX_HP);
+@@ -16993,6 +17012,7 @@ void Unit::SetUInt32Value(uint16 index, uint32 value)
+         // Invalidating the cache on health change should fix an issue where the client sees dead NPCs when they are not.
+         // We might also need to invalidate the cache for some other fields as well.
+         case UNIT_FIELD_HEALTH:
++        case UNIT_FIELD_HEALTH_HI:
+             InvalidateValuesUpdateCache();
+             break;
+     }
+--- a/src/server/game/Entities/Unit/Unit.h
++++ b/src/server/game/Entities/Unit/Unit.h
+@@ -33,6 +33,7 @@
+ #include "UnitUtils.h"
+ #include <boost/container/flat_map.hpp>
+ #include <functional>
++#include <limits>
+ #include <utility>
+ 
+ #define WORLD_TRIGGER   12999
+@@ -663,6 +664,52 @@ SpeedOpcodePair SetSpeed2Opc_table[MAX_MOVE_TYPE] =
+     {SMSG_FORCE_PITCH_RATE_CHANGE,        SMSG_SPLINE_SET_PITCH_RATE,           MSG_MOVE_SET_PITCH_RATE},
+ };
+ 
++// Native 64-bit Life (core patch 0027): Life and hits are 64 bits. A value that enters a 32-bit field (a spell
++// value, an aura amount, an AI argument, a packet) saturates at that field's maximum instead of wrapping.
++inline uint32 LifeToUInt32(uint64 value)
++{
++    return value > std::numeric_limits<uint32>::max() ? std::numeric_limits<uint32>::max() : static_cast<uint32>(value);
++}
++
++inline int32 LifeToInt32(uint64 value)
++{
++    return value > static_cast<uint64>(std::numeric_limits<int32>::max()) ? std::numeric_limits<int32>::max() : static_cast<int32>(value);
++}
++
++// A 32-bit consumer (a script hook, an AI callback, a proc) sees a 64-bit amount through a view: the amount saturated at
++// 4,294,967,295. A consumer that changes its view replaces the amount with what it set; one that leaves it alone leaves
++// the exact amount as it was.
++template <typename Consumer>
++inline void ApplyThroughView(uint64& amount, Consumer&& consumer)
++{
++    uint32 const before = LifeToUInt32(amount);
++    uint32 after = before;
++    consumer(after);
++    if (after != before)
++        amount = after;
++}
++
++// floor (or ceil, with roundUp) of value * numerator / denominator in 128-bit whole numbers, saturating at 2^64 - 1.
++// denominator must not be 0.
++inline uint64 LifeMulDiv(uint64 value, uint64 numerator, uint64 denominator, bool roundUp = false)
++{
++    unsigned __int128 const scaled = (static_cast<unsigned __int128>(value) * numerator + (roundUp ? denominator - 1 : 0)) / denominator;
++    return scaled > std::numeric_limits<uint64>::max() ? std::numeric_limits<uint64>::max() : static_cast<uint64>(scaled);
++}
++
++// The part of a hit that lies past the Life it lands on.
++inline uint64 LifeOverkill(uint64 damage, uint64 health)
++{
++    return damage > health ? damage - health : 0;
++}
++
++// floor(base * pct / 100) in whole numbers: CalculatePct multiplies in float, which is off by hundreds at 10^12.
++// A pct of 0 or less gives 0.
++inline uint64 CalculateLifePct(uint64 base, int64 pct)
++{
++    return pct <= 0 ? 0 : LifeMulDiv(base, static_cast<uint64>(pct), 100);
++}
++
+ class Unit : public WorldObject
+ {
+ public:
+@@ -1112,27 +1159,28 @@ public:
+     uint8 getLevelForTarget(WorldObject const* /*target*/) const override { return GetLevel(); }
+     void SetLevel(uint8 lvl, bool showLevelChange = true);
+ 
+-    // Health methods
+-    [[nodiscard]] uint32 GetHealth()    const { return GetUInt32Value(UNIT_FIELD_HEALTH); }
+-    [[nodiscard]] uint32 GetMaxHealth() const { return GetUInt32Value(UNIT_FIELD_MAXHEALTH); }
+-    [[nodiscard]] float GetHealthPct() const { return GetMaxHealth() ? 100.f * GetHealth() / GetMaxHealth() : 0.0f; }
+-    int32 GetHealthGain(int32 dVal);
++    // Health methods. Life is kept in 64 bits; the four health update fields (UNIT_FIELD_HEALTH and UNIT_FIELD_MAXHEALTH,
++    // each with a _HI dword) are the client's copy of it, written by WriteHealthFields and nothing else.
++    [[nodiscard]] uint64 GetHealth()    const { return m_health64; }
++    [[nodiscard]] uint64 GetMaxHealth() const { return m_maxHealth64; }
++    [[nodiscard]] float GetHealthPct() const { return m_maxHealth64 ? float(100.0 * double(m_health64) / double(m_maxHealth64)) : 0.0f; }
++    int64 GetHealthGain(int64 dVal);
+     [[nodiscard]] uint32 GetCreateHealth() const { return GetUInt32Value(UNIT_FIELD_BASE_HEALTH); }
+ 
+     [[nodiscard]] bool IsFullHealth() const { return GetHealth() == GetMaxHealth(); }
+ 
+     [[nodiscard]] bool HealthBelowPct(int32 pct) const { return GetHealth() < CountPctFromMaxHealth(pct); }
+-    [[nodiscard]] bool HealthBelowPctDamaged(int32 pct, uint32 damage) const { return int64(GetHealth()) - int64(damage) < int64(CountPctFromMaxHealth(pct)); }
++    [[nodiscard]] bool HealthBelowPctDamaged(int32 pct, uint32 damage) const { return GetHealth() < damage || GetHealth() - damage < CountPctFromMaxHealth(pct); }
+     [[nodiscard]] bool HealthAbovePct(int32 pct) const { return GetHealth() > CountPctFromMaxHealth(pct); }
+-    [[nodiscard]] bool HealthAbovePctHealed(int32 pct, uint32 heal) const { return uint64(GetHealth()) + uint64(heal) > CountPctFromMaxHealth(pct); }
++    [[nodiscard]] bool HealthAbovePctHealed(int32 pct, uint32 heal) const { return GetHealth() > std::numeric_limits<uint64>::max() - heal || GetHealth() + heal > CountPctFromMaxHealth(pct); }
+ 
+-    [[nodiscard]] uint32 CountPctFromMaxHealth(int32 pct) const { return CalculatePct(GetMaxHealth(), pct); }
+-    [[nodiscard]] uint32 CountPctFromCurHealth(int32 pct) const { return CalculatePct(GetHealth(), pct); }
++    [[nodiscard]] uint64 CountPctFromMaxHealth(int32 pct) const { return CalculateLifePct(GetMaxHealth(), pct); }
++    [[nodiscard]] uint64 CountPctFromCurHealth(int32 pct) const { return CalculateLifePct(GetHealth(), pct); }
+ 
+-    void SetHealth(uint32 val);
+-    void SetMaxHealth(uint32 val);
++    void SetHealth(uint64 val);
++    void SetMaxHealth(uint64 val);
+     inline void SetFullHealth() { SetHealth(GetMaxHealth()); }
+-    int32 ModifyHealth(int32 val);
++    int64 ModifyHealth(int64 val);
+     void SetCreateHealth(uint32 val) { SetUInt32Value(UNIT_FIELD_BASE_HEALTH, val); }
+ 
+     // Power methods
+@@ -1232,7 +1280,7 @@ public:
+     /*********************************************************/
+     /***       METHODS RELATED TO DAMAGE CACULATIONS       ***/
+     /*********************************************************/
+-    static uint32 DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage const* cleanDamage = nullptr, DamageEffectType damagetype = DIRECT_DAMAGE, SpellSchoolMask damageSchoolMask = SPELL_SCHOOL_MASK_NORMAL, SpellInfo const* spellProto = nullptr, bool durabilityLoss = true, bool allowGM = false, Spell const* spell = nullptr);
++    static uint64 DealDamage(Unit* attacker, Unit* victim, uint64 damage, CleanDamage const* cleanDamage = nullptr, DamageEffectType damagetype = DIRECT_DAMAGE, SpellSchoolMask damageSchoolMask = SPELL_SCHOOL_MASK_NORMAL, SpellInfo const* spellProto = nullptr, bool durabilityLoss = true, bool allowGM = false, Spell const* spell = nullptr);
+     void DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss);
+     void DealSpellDamage(SpellNonMeleeDamage* damageInfo, bool durabilityLoss, Spell const* spell = nullptr);
+     void DealDamageShieldDamage(Unit* victim);
+@@ -1621,9 +1669,9 @@ public:
+     [[nodiscard]] SpellMissInfo MeleeSpellHitResult(Unit* victim, SpellInfo const* spell) override;
+ 
+     // Healling spells
+-    static int32 DealHeal(Unit* healer, Unit* victim, uint32 addhealth);
++    static int64 DealHeal(Unit* healer, Unit* victim, uint64 addhealth);
+     void SendHealSpellLog(HealInfo const& healInfo, bool critical = false);
+-    int32 HealBySpell(HealInfo& healInfo, bool critical = false);
++    int64 HealBySpell(HealInfo& healInfo, bool critical = false);
+ 
+     int32 SpellBaseHealingBonusDone(SpellSchoolMask schoolMask);
+     float SpellPctHealingModsDone(Unit* victim, SpellInfo const* spellProto, DamageEffectType damagetype, bool includeHealingDonePct = true);
+@@ -2186,6 +2234,8 @@ protected:
+     float m_auraPctModifiersGroup[UNIT_MOD_END][MODIFIER_TYPE_PCT_END];
+     float m_weaponDamage[MAX_ATTACK][MAX_WEAPON_DAMAGE_RANGE][MAX_ITEM_PROTO_DAMAGES];
+     bool m_canModifyStats;
++    uint64 m_health64 = 0;                     // Life; the health update fields are its two dwords (WriteHealthFields)
++    uint64 m_maxHealth64 = 0;
+     VisibleAuraMap m_visibleAuras;
+ 
+     float m_speed_rate[MAX_MOVE_TYPE];
+@@ -2224,6 +2274,9 @@ private:
+     void UpdateSplineMovement(uint32 t_diff);
+     void UpdateSplinePosition();
+ 
++    // The one place that writes the four health update fields, from m_health64 and m_maxHealth64.
++    void WriteHealthFields();
++
+     // player or player's pet
+     [[nodiscard]] float GetCombatRatingReduction(CombatRating cr) const;
+     [[nodiscard]] uint32 GetCombatRatingDamageReduction(CombatRating cr, float rate, float cap, uint32 damage) const;
+@@ -2330,15 +2383,15 @@ namespace Acore
+         {
+             Unit const* a = objA->ToUnit();
+             Unit const* b = objB->ToUnit();
+-            uint32 rA = a ? a->GetHealth() : 0;
+-            uint32 rB = b ? b->GetHealth() : 0;
++            uint64 rA = a ? a->GetHealth() : 0;
++            uint64 rB = b ? b->GetHealth() : 0;
+             return _ascending ? rA < rB : rA > rB;
+         }
+ 
+         bool operator() (Unit const* a, Unit const* b) const
+         {
+-            uint32 rA = a ? a->GetHealth() : 0;
+-            uint32 rB = b ? b->GetHealth() : 0;
++            uint64 rA = a ? a->GetHealth() : 0;
++            uint64 rB = b ? b->GetHealth() : 0;
+             return _ascending ? rA < rB : rA > rB;
+         }
+ 
+--- a/src/server/game/Grids/Notifiers/GridNotifiers.h
++++ b/src/server/game/Grids/Notifiers/GridNotifiers.h
+@@ -810,7 +810,7 @@ namespace Acore
+     private:
+         Unit const* i_obj;
+         float i_range;
+-        uint32 i_hp;
++        uint64 i_hp;
+     };
+ 
+     class MostHPPercentMissingInRange
+@@ -1583,7 +1583,7 @@ namespace Acore
+     private:
+         Unit const* i_obj;
+         float       i_range;
+-        uint32      i_hp;
++        uint64      i_hp;
+     };
+ 
+     class AllDeadCreaturesInRange
+--- a/src/server/game/Handlers/GroupHandler.cpp
++++ b/src/server/game/Handlers/GroupHandler.cpp
+@@ -863,10 +863,10 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
+     }
+ 
+     if (mask & GROUP_UPDATE_FLAG_CUR_HP)
+-        *data << uint32(player->GetHealth());
++        *data << LifeToUInt32(player->GetHealth());
+ 
+     if (mask & GROUP_UPDATE_FLAG_MAX_HP)
+-        *data << uint32(player->GetMaxHealth());
++        *data << LifeToUInt32(player->GetMaxHealth());
+ 
+     Powers powerType = player->getPowerType();
+     if (mask & GROUP_UPDATE_FLAG_POWER_TYPE)
+@@ -933,7 +933,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
+     if (mask & GROUP_UPDATE_FLAG_PET_CUR_HP)
+     {
+         if (pet)
+-            *data << uint32(pet->GetHealth());
++            *data << LifeToUInt32(pet->GetHealth());
+         else
+             *data << uint32(0);
+     }
+@@ -941,7 +941,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
+     if (mask & GROUP_UPDATE_FLAG_PET_MAX_HP)
+     {
+         if (pet)
+-            *data << uint32(pet->GetMaxHealth());
++            *data << LifeToUInt32(pet->GetMaxHealth());
+         else
+             *data << uint32(0);
+     }
+@@ -1062,8 +1062,8 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket& recvData)
+ 
+     data << uint32(updateFlags);
+     data << uint16(playerStatus);                           // GROUP_UPDATE_FLAG_STATUS
+-    data << uint32(player->GetHealth());                    // GROUP_UPDATE_FLAG_CUR_HP
+-    data << uint32(player->GetMaxHealth());                 // GROUP_UPDATE_FLAG_MAX_HP
++    data << LifeToUInt32(player->GetHealth());                    // GROUP_UPDATE_FLAG_CUR_HP
++    data << LifeToUInt32(player->GetMaxHealth());                 // GROUP_UPDATE_FLAG_MAX_HP
+     if (updateFlags & GROUP_UPDATE_FLAG_POWER_TYPE)
+         data << uint8(powerType);
+ 
+@@ -1096,10 +1096,10 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket& recvData)
+     data << uint16(pet ? pet->GetDisplayId() : 0);          // GROUP_UPDATE_FLAG_PET_MODEL_ID
+ 
+     if (pet && (updateFlags & GROUP_UPDATE_FLAG_PET_CUR_HP))
+-        data << uint32(pet->GetHealth());
++        data << LifeToUInt32(pet->GetHealth());
+ 
+     if (pet && (updateFlags & GROUP_UPDATE_FLAG_PET_MAX_HP))
+-        data << uint32(pet->GetMaxHealth());
++        data << LifeToUInt32(pet->GetMaxHealth());
+ 
+     if (pet && (updateFlags & GROUP_UPDATE_FLAG_PET_POWER_TYPE))
+         data << (uint8)pet->getPowerType();
+--- a/src/server/game/Handlers/MovementHandler.cpp
++++ b/src/server/game/Handlers/MovementHandler.cpp
+@@ -514,7 +514,7 @@ void WorldSession::HandleMoverRelocation(MovementInfo& movementInfo, Unit* mover
+                         return;
+ 
+                     plrMover->SetPlayerFlag(PLAYER_FLAGS_IS_OUT_OF_BOUNDS);
+-                    plrMover->EnvironmentalDamage(DAMAGE_FALL_TO_VOID, GetPlayer()->GetMaxHealth());
++                    plrMover->EnvironmentalDamage(DAMAGE_FALL_TO_VOID, LifeToUInt32(GetPlayer()->GetMaxHealth()));
+                     // player can be alive if GM
+                     if (plrMover->IsAlive())
+                         plrMover->KillPlayer();
+--- a/src/server/game/Spells/Auras/SpellAuraEffects.cpp
++++ b/src/server/game/Spells/Auras/SpellAuraEffects.cpp
+@@ -4355,7 +4355,8 @@ void AuraEffect::HandleModTotalPercentStat(AuraApplication const* aurApp, uint8
+     }
+ 
+     // save current health state
+-    float healthPct = target->GetHealthPct();
++    uint64 const oldHealth = target->GetHealth();
++    uint64 const oldMax = target->GetMaxHealth();
+     bool alive = target->IsAlive();
+ 
+     for (int32 i = STAT_STRENGTH; i < MAX_STATS; i++)
+@@ -4378,7 +4379,7 @@ void AuraEffect::HandleModTotalPercentStat(AuraApplication const* aurApp, uint8
+ 
+     // recalculate current HP/MP after applying aura modifications (only for spells with SPELL_ATTR0_UNK4 0x00000010 flag)
+     if (GetMiscValue() == STAT_STAMINA && m_spellInfo->HasAttribute(SPELL_ATTR0_IS_ABILITY))
+-        target->SetHealth(std::max<uint32>(uint32(healthPct * target->GetMaxHealth() * 0.01f), (alive ? 1 : 0)));
++        target->SetHealth(std::max<uint64>(oldMax ? LifeMulDiv(oldHealth, target->GetMaxHealth(), oldMax) : 0, (alive ? 1 : 0)));
+ }
+ 
+ void AuraEffect::HandleAuraModResistenceOfStatPercent(AuraApplication const* aurApp, uint8 mode, bool /*apply*/) const
+@@ -4477,7 +4478,7 @@ void AuraEffect::HandleAuraModIncreaseHealth(AuraApplication const* aurApp, uint
+     {
+         if (target->IsAlive())
+         {
+-            if (int32(target->GetHealth()) > GetAmount())
++            if (GetAmount() < 0 || target->GetHealth() > static_cast<uint64>(GetAmount()))
+                 target->ModifyHealth(-GetAmount());
+             else
+                 target->SetHealth(1);
+@@ -4493,15 +4494,15 @@ void AuraEffect::HandleAuraModIncreaseMaxHealth(AuraApplication const* aurApp, u
+ 
+     Unit* target = aurApp->GetTarget();
+ 
+-    uint32 oldhealth = target->GetHealth();
+-    double healthPercentage = (double)oldhealth / (double)target->GetMaxHealth();
++    uint64 oldhealth = target->GetHealth();
++    uint64 const oldMax = target->GetMaxHealth();
+ 
+     target->HandleStatFlatModifier(UNIT_MOD_HEALTH, TOTAL_VALUE, float(GetAmount()), apply);
+ 
+     // refresh percentage
+     if (oldhealth > 0)
+     {
+-        uint32 newhealth = uint32(std::ceil((double)target->GetMaxHealth() * healthPercentage));
++        uint64 newhealth = LifeMulDiv(oldhealth, target->GetMaxHealth(), oldMax, true);
+         if (newhealth == 0)
+             newhealth = 1;
+ 
+@@ -4566,7 +4567,8 @@ void AuraEffect::HandleAuraModIncreaseHealthPercent(AuraApplication const* aurAp
+     Unit* target = aurApp->GetTarget();
+ 
+     // Unit will keep hp% after MaxHealth being modified if unit is alive.
+-    float percent = target->GetHealthPct();
++    uint64 const oldHealth = target->GetHealth();
++    uint64 const oldMax = target->GetMaxHealth();
+ 
+     if (apply)
+         target->ApplyStatPctModifier(UNIT_MOD_HEALTH, TOTAL_PCT, float(GetAmount()));
+@@ -4578,7 +4580,7 @@ void AuraEffect::HandleAuraModIncreaseHealthPercent(AuraApplication const* aurAp
+ 
+     // Xinef: pct was rounded down and could "kill" creature by setting its health to 0 making npc zombie
+     if (target->IsAlive())
+-        if (uint32 healthAmount = CalculatePct(target->GetMaxHealth(), percent))
++        if (uint64 healthAmount = oldMax ? LifeMulDiv(oldHealth, target->GetMaxHealth(), oldMax) : 0)
+             target->SetHealth(healthAmount);
+ }
+ 
+@@ -5984,7 +5986,7 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster) const
+             switch (GetId())
+             {
+                 case 49016: // Hysteria
+-                    uint32 damage = uint32(target->CountPctFromMaxHealth(1));
++                    uint64 damage = target->CountPctFromMaxHealth(1);
+                     Unit::DealDamage(target, target, damage, nullptr, NODAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                     break;
+             }
+@@ -6045,7 +6047,7 @@ void AuraEffect::HandlePeriodicTriggerSpellAuraTick(Unit* target, Unit* caster)
+                             {
+                                 if (caster)
+                                 {
+-                                    int32 heal = caster->CountPctFromMaxHealth(10);
++                                    int32 heal = LifeToInt32(caster->CountPctFromMaxHealth(10));
+                                     HealInfo healInfo(caster, target, heal, auraSpellInfo, auraSpellInfo->GetSchoolMask());
+                                     caster->HealBySpell(healInfo);
+ 
+@@ -6139,7 +6141,7 @@ void AuraEffect::HandlePeriodicTriggerSpellAuraTick(Unit* target, Unit* caster)
+                         case 51121:
+                         case 59376:
+                             {
+-                                const int32 dmg = target->GetMaxHealth() - target->GetHealth();
++                                const int32 dmg = LifeToInt32(target->GetMaxHealth() - target->GetHealth());
+                                 target->CastCustomSpell(target, 51132, &dmg, 0, 0, true);
+                                 return;
+                             }
+@@ -6180,7 +6182,7 @@ void AuraEffect::HandlePeriodicTriggerSpellAuraTick(Unit* target, Unit* caster)
+             // Trial of the Crusader, Jaraxxus, Spinning Pain Spike
+             case 66283:
+                 {
+-                    const int32 dmg = target->GetMaxHealth() / 2;
++                    const int32 dmg = LifeToInt32(target->GetMaxHealth() / 2);
+                     target->CastCustomSpell(target, 66316, &dmg, nullptr, nullptr, true);
+                     return;
+                 }
+@@ -6339,7 +6341,7 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster) const
+     if (GetAuraType() == SPELL_AURA_PERIODIC_DAMAGE_PERCENT)
+     {
+         // xinef: ceil obtained value, it may happen that 10 ticks for 10% damage may not kill owner
+-        damage = uint32(std::ceil(CalculatePct<float, float>(target->GetMaxHealth(), damage)));
++        damage = LifeToUInt32(LifeMulDiv(target->GetMaxHealth(), damage, 100, true));
+     }
+ 
+     // Script Hook For HandlePeriodicDamageAurasTick -- Allow scripts to change the Damage pre class mitigation calculations
+@@ -6429,9 +6431,7 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster) const
+     if (damage)
+         procVictim |= PROC_FLAG_TAKEN_DAMAGE;
+ 
+-    int32 overkill = damage - target->GetHealth();
+-    if (overkill < 0)
+-        overkill = 0;
++    uint32 overkill = LifeToUInt32(LifeOverkill(damage, target->GetHealth()));
+ 
+     SpellPeriodicAuraLogInfo pInfo(this, damage, overkill, absorb, resist, 0.0f, crit);
+     target->SendPeriodicAuraLog(&pInfo);
+@@ -6642,7 +6642,7 @@ void AuraEffect::HandlePeriodicHealAurasTick(Unit* target, Unit* caster) const
+             if (AuraEffect* aurEff = caster->GetAuraEffect(SPELL_AURA_ADD_PCT_MODIFIER, SPELLFAMILY_WARLOCK, 89, 0))
+                 AddPct(TakenTotalMod, aurEff->GetAmount());
+ 
+-        damage = uint32(target->CountPctFromMaxHealth(damage));
++        damage = LifeToInt32(target->CountPctFromMaxHealth(damage));
+         damage = uint32(damage * TakenTotalMod);
+     }
+     else
+--- a/src/server/game/Spells/Auras/SpellAuras.cpp
++++ b/src/server/game/Spells/Auras/SpellAuras.cpp
+@@ -852,7 +852,7 @@ void Aura::Update(uint32 diff, Unit* caster)
+                     Powers powertype = Powers(m_spellInfo->PowerType);
+                     if (powertype == POWER_HEALTH)
+                     {
+-                        if (int32(caster->GetHealth()) > ManaPerSecond)
++                        if (LifeToInt32(caster->GetHealth()) > ManaPerSecond)
+                             caster->ModifyHealth(-ManaPerSecond);
+                         else
+                         {
+--- a/src/server/game/Spells/Spell.cpp
++++ b/src/server/game/Spells/Spell.cpp
+@@ -2276,12 +2276,12 @@ void Spell::SearchChainTargets(std::list<WorldObject*>& targets, uint32 chainTar
+         // get unit with highest hp deficit in dist
+         if (isChainHeal)
+         {
+-            uint32 maxHPDeficit = 0;
++            uint64 maxHPDeficit = 0;
+             for (std::list<WorldObject*>::iterator itr = tempTargets.begin(); itr != tempTargets.end(); ++itr)
+             {
+                 if (Unit* unit = (*itr)->ToUnit())
+                 {
+-                    uint32 deficit = unit->GetMaxHealth() - unit->GetHealth();
++                    uint64 deficit = unit->GetMaxHealth() - unit->GetHealth();
+                     if (deficit > maxHPDeficit && chainSource->IsWithinDist(unit, jumpRadius) && chainSource->IsWithinLOSInMap(unit, VMAP::ModelIgnoreFlags::M2))
+                     {
+                         foundItr = itr;
+@@ -7481,7 +7481,7 @@ SpellCastResult Spell::CheckPower()
+     // health as power used - need check health amount
+     if (m_spellInfo->PowerType == POWER_HEALTH)
+     {
+-        if (int32(unitCaster->GetHealth()) <= m_powerCost)
++        if (LifeToInt32(unitCaster->GetHealth()) <= m_powerCost)
+             return SPELL_FAILED_CASTER_AURASTATE;
+         return SPELL_CAST_OK;
+     }
+--- a/src/server/game/Spells/SpellEffects.cpp
++++ b/src/server/game/Spells/SpellEffects.cpp
+@@ -1640,7 +1640,7 @@ void Spell::EffectHeal(SpellEffIndex effIndex)
+         // Death Pact - return pct of max health to caster
+         else if (m_spellInfo->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && m_spellInfo->SpellFamilyFlags[0] & 0x00080000)
+         {
+-            addhealth = caster->SpellHealingBonusDone(unitTarget, m_spellInfo, int32(caster->CountPctFromMaxHealth(damage)), HEAL, effIndex);
++            addhealth = caster->SpellHealingBonusDone(unitTarget, m_spellInfo, LifeToInt32(caster->CountPctFromMaxHealth(damage)), HEAL, effIndex);
+             m_damageBeforeTakenMods -= addhealth;
+             addhealth = unitTarget->SpellHealingBonusTaken(caster, m_spellInfo, addhealth, HEAL);
+         }
+@@ -1678,7 +1678,7 @@ void Spell::EffectHealPct(SpellEffIndex effIndex)
+     if (!m_originalCaster)
+         return;
+ 
+-    uint32 heal = m_originalCaster->SpellHealingBonusDone(unitTarget, m_spellInfo, unitTarget->CountPctFromMaxHealth(damage), HEAL, effIndex);
++    uint32 heal = m_originalCaster->SpellHealingBonusDone(unitTarget, m_spellInfo, LifeToInt32(unitTarget->CountPctFromMaxHealth(damage)), HEAL, effIndex);
+     m_damageBeforeTakenMods -= heal;
+     heal = unitTarget->SpellHealingBonusTaken(m_originalCaster, m_spellInfo, heal, HEAL);
+ 
+@@ -2541,7 +2541,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
+ 
+                         // Mana Tide Totem
+                         if (m_spellInfo->Id == 16190)
+-                            damage = m_caster->ToUnit()->CountPctFromMaxHealth(10);
++                            damage = LifeToInt32(m_caster->ToUnit()->CountPctFromMaxHealth(10));
+ 
+                         if (damage && properties->Type != SUMMON_TYPE_LIGHTWELL) // Health set in script for lightwell
+                         {
+@@ -3908,9 +3908,9 @@ void Spell::EffectHealMaxHealth(SpellEffIndex /*effIndex*/)
+ 
+     // damage == 0 - heal for caster max health
+     if (damage == 0)
+-        addhealth = unitCaster->GetMaxHealth();
++        addhealth = LifeToInt32(unitCaster->GetMaxHealth());
+     else
+-        addhealth = unitTarget->GetMaxHealth() - unitTarget->GetHealth();
++        addhealth = LifeToInt32(unitTarget->GetMaxHealth() - unitTarget->GetHealth());
+ 
+     m_healing += addhealth;
+ }
+@@ -4868,7 +4868,7 @@ void Spell::EffectResurrect(SpellEffIndex effIndex)
+     if (target->isResurrectRequested())       // already have one active request
+         return;
+ 
+-    uint32 health = target->CountPctFromMaxHealth(damage);
++    uint32 health = LifeToUInt32(target->CountPctFromMaxHealth(damage));
+     uint32 mana   = CalculatePct(target->GetMaxPower(POWER_MANA), damage);
+ 
+     ExecuteLogEffectResurrect(effIndex, target);
+@@ -5095,7 +5095,7 @@ void Spell::EffectSelfResurrect(SpellEffIndex effIndex)
+     // percent case
+     else
+     {
+-        health = unitCaster->CountPctFromMaxHealth(damage);
++        health = LifeToUInt32(unitCaster->CountPctFromMaxHealth(damage));
+         if (unitCaster->GetMaxPower(POWER_MANA) > 0)
+             mana = CalculatePct(unitCaster->GetMaxPower(POWER_MANA), damage);
+     }
+--- a/src/server/game/Spells/SpellInfo.cpp
++++ b/src/server/game/Spells/SpellInfo.cpp
+@@ -2838,7 +2838,7 @@ int32 SpellInfo::CalcPowerCost(WorldObject const* caster, SpellSchoolMask school
+     {
+         // If power type - health drain all
+         if (PowerType == POWER_HEALTH)
+-            return unitCaster->GetHealth();
++            return LifeToInt32(unitCaster->GetHealth());
+         // Else drain all power
+         if (PowerType < MAX_POWERS)
+             return unitCaster->GetPower(Powers(PowerType));
+--- a/src/server/scripts/Commands/cs_misc.cpp
++++ b/src/server/scripts/Commands/cs_misc.cpp
+@@ -3266,7 +3266,7 @@ public:
+         if (percent)
+             if (StringStartsWith("pct", *percent))
+                 if (damage <= 100)
+-                    damage = target->CountPctFromMaxHealth(damage);
++                    damage = LifeToUInt32(target->CountPctFromMaxHealth(damage));
+ 
+         Unit::DealDamage(handler->GetSession()->GetPlayer(), target, damage, nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false, true);
+ 
+--- a/src/server/scripts/EasternKingdoms/Karazhan/boss_chess_event.cpp
++++ b/src/server/scripts/EasternKingdoms/Karazhan/boss_chess_event.cpp
+@@ -1298,7 +1298,7 @@ struct npc_echo_of_medivh : public ScriptedAI
+                             continue;
+                         }
+ 
+-                        minHPDiff = piece->GetMaxHealth() - piece->GetHealth();
++                        minHPDiff = LifeToUInt32(piece->GetMaxHealth() - piece->GetHealth());
+                     }
+ 
+                     float dist = sourcePiece->GetExactDist2d(piece);
+--- a/src/server/scripts/EasternKingdoms/Karazhan/boss_prince_malchezaar.cpp
++++ b/src/server/scripts/EasternKingdoms/Karazhan/boss_prince_malchezaar.cpp
+@@ -267,7 +267,7 @@ struct boss_malchezaar : public BossAI
+ 
+     private:
+         uint32 _phase;
+-        std::map<ObjectGuid, uint32> _enfeebleTargets;
++        std::map<ObjectGuid, uint64> _enfeebleTargets;
+ };
+ 
+ struct npc_netherspite_infernal : public ScriptedAI
+--- a/src/server/scripts/EasternKingdoms/Karazhan/boss_tenris_mirkblood.cpp
++++ b/src/server/scripts/EasternKingdoms/Karazhan/boss_tenris_mirkblood.cpp
+@@ -268,7 +268,7 @@ class spell_mirkblood_exsanguinate : public SpellScript
+         if (!GetHitUnit())
+             return;
+ 
+-        SetHitDamage(std::max((GetHitUnit()->GetHealth() * 0.66f), 2000.0f));
++        SetHitDamage(LifeToInt32(static_cast<uint64>(std::max((GetHitUnit()->GetHealth() * 0.66f), 2000.0f))));
+     }
+ 
+     void Register() override
+--- a/src/server/scripts/EasternKingdoms/MagistersTerrace/boss_felblood_kaelthas.cpp
++++ b/src/server/scripts/EasternKingdoms/MagistersTerrace/boss_felblood_kaelthas.cpp
+@@ -255,7 +255,7 @@ class spell_mt_phoenix_burn : public SpellScript
+ 
+     void HandleAfterCast()
+     {
+-        uint32 damage = CalculatePct(GetCaster()->GetMaxHealth(), 5);
++        uint64 damage = GetCaster()->CountPctFromMaxHealth(5);
+         Unit::DealDamage(GetCaster(), GetCaster(), damage);
+     }
+ 
+--- a/src/server/scripts/EasternKingdoms/MagistersTerrace/boss_priestess_delrissa.cpp
++++ b/src/server/scripts/EasternKingdoms/MagistersTerrace/boss_priestess_delrissa.cpp
+@@ -244,7 +244,7 @@ struct boss_priestess_lackey_commonAI : public ScriptedAI
+             Unit* pUnit = ref->GetVictim();
+             if (pUnit && pUnit->IsPlayer() && me->GetThreatMgr().GetThreat(pUnit))
+             {
+-                float threatMod = GetThreatMod(me->GetDistance2d(pUnit), (float)pUnit->GetArmor(), pUnit->GetHealth(), pUnit->GetMaxHealth(), pUnit);
++                float threatMod = GetThreatMod(me->GetDistance2d(pUnit), (float)pUnit->GetArmor(), LifeToUInt32(pUnit->GetHealth()), LifeToUInt32(pUnit->GetMaxHealth()), pUnit);
+                 me->GetThreatMgr().ResetThreat(pUnit);
+                 me->GetThreatMgr().AddThreat(pUnit, 10000000.0f * threatMod, nullptr, true, true);
+             }
+--- a/src/server/scripts/Events/hallows_end.cpp
++++ b/src/server/scripts/Events/hallows_end.cpp
+@@ -1293,7 +1293,7 @@ struct boss_headless_horseman_head : public ScriptedAI
+         if (spellInfo->Id == SPELL_THROW_HEAD_BACK)
+         {
+             if (Unit* owner = GetOwner())
+-                owner->ToCreature()->AI()->DoAction(me->GetHealth());
++                owner->ToCreature()->AI()->DoAction(LifeToInt32(me->GetHealth()));
+ 
+             me->DespawnOrUnsummon();
+         }
+--- a/src/server/scripts/Events/pilgrims_bounty.cpp
++++ b/src/server/scripts/Events/pilgrims_bounty.cpp
+@@ -600,7 +600,7 @@ class spell_pilgrims_bounty_food_aura : public AuraScript
+             if (GetId() == 66041)
+                 amount = CalculatePct(GetCaster()->GetMaxPower(POWER_MANA), 20);
+             else
+-                amount = CalculatePct(GetCaster()->GetMaxHealth(), 15);
++                amount = LifeToInt32(GetCaster()->CountPctFromMaxHealth(15));
+         }
+         canBeRecalculated = true;
+     }
+--- a/src/server/scripts/Kalimdor/CavernsOfTime/BattleForMountHyjal/hyjal.cpp
++++ b/src/server/scripts/Kalimdor/CavernsOfTime/BattleForMountHyjal/hyjal.cpp
+@@ -338,7 +338,7 @@ class spell_cannibalize_heal : public SpellScript
+     {
+         if (Unit* caster = GetCaster())
+         {
+-            uint32 heal = caster->CountPctFromMaxHealth(7);
++            uint32 heal = LifeToInt32(caster->CountPctFromMaxHealth(7));
+             SetHitHeal(heal);
+         }
+     }
+--- a/src/server/scripts/Kalimdor/RuinsOfAhnQiraj/boss_buru.cpp
++++ b/src/server/scripts/Kalimdor/RuinsOfAhnQiraj/boss_buru.cpp
+@@ -252,7 +252,7 @@ class spell_egg_explosion : public SpellScript
+             if (target->IsPlayer())
+                 damage = -16 * GetCaster()->GetDistance(target) + 500;
+             else if (target->GetEntry() == NPC_BURU && target->HasAura(SPELL_THORNS))
+-                damage = target->GetMaxHealth() * 7.f / 100;
++                damage = LifeToInt32(target->CountPctFromMaxHealth(7));
+ 
+             GetCaster()->CastCustomSpell(target, SPELL_EXPLODE_2, &damage, nullptr, nullptr, true);
+         }
+--- a/src/server/scripts/Kalimdor/RuinsOfAhnQiraj/boss_rajaxx.cpp
++++ b/src/server/scripts/Kalimdor/RuinsOfAhnQiraj/boss_rajaxx.cpp
+@@ -132,7 +132,7 @@ class spell_rajaxx_thundercrash : public SpellScript
+ 
+     void HandleDamageCalc(SpellEffIndex /*effIndex*/)
+     {
+-        int32 damage = GetHitUnit()->GetHealth() / 2;
++        int32 damage = LifeToInt32(GetHitUnit()->GetHealth() / 2);
+         if (damage < 100)
+         {
+             damage = 100;
+--- a/src/server/scripts/Kalimdor/TempleOfAhnQiraj/boss_ouro.cpp
++++ b/src/server/scripts/Kalimdor/TempleOfAhnQiraj/boss_ouro.cpp
+@@ -166,7 +166,7 @@ struct boss_ouro : public BossAI
+             if (Creature* mound = Acore::Containers::SelectRandomContainerElement(ouroMounds))
+             {
+                 mound->AddAura(SPELL_SUMMON_OURO_AURA, mound);
+-                mound->AI()->SetData(DATA_OURO_HEALTH, me->GetHealth());
++                mound->AI()->SetData(DATA_OURO_HEALTH, LifeToUInt32(me->GetHealth()));
+             }
+         }
+ 
+--- a/src/server/scripts/Kalimdor/TempleOfAhnQiraj/boss_twinemperors.cpp
++++ b/src/server/scripts/Kalimdor/TempleOfAhnQiraj/boss_twinemperors.cpp
+@@ -109,7 +109,7 @@ struct boss_twinemperorsAI : public BossAI
+             if (Creature* twin = GetTwin())
+             {
+                 float dmgPct = damage / (float)me->GetMaxHealth();
+-                int32 actualDmg = dmgPct * twin->GetMaxHealth();
++                int32 actualDmg = LifeToInt32(static_cast<uint64>(dmgPct * twin->GetMaxHealth()));
+                 twin->CastCustomSpell(twin, SPELL_TWIN_EMPATHY, &actualDmg, nullptr, nullptr, true);
+             }
+         }
+--- a/src/server/scripts/Kalimdor/TempleOfAhnQiraj/boss_viscidus.cpp
++++ b/src/server/scripts/Kalimdor/TempleOfAhnQiraj/boss_viscidus.cpp
+@@ -250,7 +250,7 @@ struct boss_viscidus : public BossAI
+                 me->RemoveAurasDueToSpell(SPELL_INVIS_SELF);
+             }
+ 
+-            int32 heal = me->GetMaxHealth() * 0.05f;
++            int32 heal = LifeToInt32(me->CountPctFromMaxHealth(5));
+             me->CastCustomSpell(me, SPELL_VISCIDUS_GROWS, &heal, nullptr, nullptr, true);
+         }
+ 
+--- a/src/server/scripts/Northrend/AzjolNerub/AzjolNerub/boss_hadronox.cpp
++++ b/src/server/scripts/Northrend/AzjolNerub/AzjolNerub/boss_hadronox.cpp
+@@ -220,7 +220,7 @@ struct boss_hadronox : public BossAI
+         if (!me->IsAlive() || !victim->HasAura(SPELL_LEECH_POISON))
+             return;
+ 
+-        me->ModifyHealth(static_cast<int32>(me->CountPctFromMaxHealth(10)));
++        me->ModifyHealth(me->CountPctFromMaxHealth(10));
+     }
+ 
+     void JustEngagedWith(Unit* /*who*/) override
+--- a/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_anubarak_trial.cpp
++++ b/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_anubarak_trial.cpp
+@@ -882,7 +882,7 @@ class spell_gen_leeching_swarm_aura : public AuraScript
+     {
+         if (Unit* caster = GetCaster())
+         {
+-            int32 lifeLeeched = GetTarget()->CountPctFromCurHealth(aurEff->GetAmount());
++            int32 lifeLeeched = LifeToInt32(GetTarget()->CountPctFromCurHealth(aurEff->GetAmount()));
+             if (lifeLeeched < 250)
+                 lifeLeeched = 250;
+             // Damage
+--- a/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_faction_champions.cpp
++++ b/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_faction_champions.cpp
+@@ -108,7 +108,7 @@ struct boss_faction_championsAI : public ScriptedAI
+             Unit* pUnit = ref->GetVictim();
+             if (pUnit && pUnit->IsPlayer() && me->GetThreatMgr().GetThreat(pUnit))
+             {
+-                float threatMod = GetThreatMod(me->GetDistance2d(pUnit), (float)pUnit->GetArmor(), pUnit->GetHealth(), pUnit->GetMaxHealth(), pUnit);
++                float threatMod = GetThreatMod(me->GetDistance2d(pUnit), (float)pUnit->GetArmor(), LifeToUInt32(pUnit->GetHealth()), LifeToUInt32(pUnit->GetMaxHealth()), pUnit);
+                 me->GetThreatMgr().ResetThreat(pUnit);
+                 me->GetThreatMgr().AddThreat(pUnit, 10000000.0f * threatMod, nullptr, true, true);
+             }
+@@ -164,7 +164,7 @@ struct boss_faction_championsAI : public ScriptedAI
+         if (lst.empty())
+             return nullptr;
+         std::list<Creature*>::const_iterator iter = lst.begin();
+-        uint32 lowestHP = (*iter)->GetMaxHealth() - (*iter)->GetHealth();
++        uint64 lowestHP = (*iter)->GetMaxHealth() - (*iter)->GetHealth();
+         for( std::list<Creature*>::const_iterator itr = lst.begin(); itr != lst.end(); ++itr )
+             if (((*itr)->GetMaxHealth() - (*itr)->GetHealth()) > lowestHP )
+             {
+--- a/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_twin_valkyr.cpp
++++ b/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_twin_valkyr.cpp
+@@ -111,7 +111,7 @@ struct boss_twin_valkyrAI : public ScriptedAI
+         me->SetReactState(REACT_PASSIVE);
+         me->SetStatPctModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_PCT, 1.0f);
+         me->UpdateDamagePhysical(OFF_ATTACK);
+-        LastSynchroHP = (int32)me->GetMaxHealth();
++        LastSynchroHP = static_cast<int64>(me->GetMaxHealth());
+         SpecialMask = 0;
+         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
+ 
+@@ -137,7 +137,7 @@ struct boss_twin_valkyrAI : public ScriptedAI
+     InstanceScript* pInstance;
+     SummonList summons;
+     EventMap events;
+-    int32 LastSynchroHP;
++    int64 LastSynchroHP;
+     uint8 SpecialMask;
+ 
+     void DoAction(int32 a) override
+@@ -269,13 +269,13 @@ struct boss_twin_valkyrAI : public ScriptedAI
+             if (Creature* twin = GetSister())
+                 if (twin->IsAlive() && me->IsAlive())
+                 {
+-                    int32 d = CAST_AI(boss_twin_valkyrAI, twin->AI())->LastSynchroHP - (int32)twin->GetHealth();
+-                    int32 newhealth = (int32)me->GetHealth() - d;
++                    int64 d = CAST_AI(boss_twin_valkyrAI, twin->AI())->LastSynchroHP - static_cast<int64>(twin->GetHealth());
++                    int64 newhealth = static_cast<int64>(me->GetHealth()) - d;
+                     if (newhealth <= 0)
+                         newhealth = 1;
+-                    me->SetHealth( (uint32)newhealth );
++                    me->SetHealth( (uint64)newhealth );
+                     twin->SetHealth(me->GetHealth());
+-                    CAST_AI(boss_twin_valkyrAI, twin->AI())->LastSynchroHP = (int32)twin->GetHealth();
++                    CAST_AI(boss_twin_valkyrAI, twin->AI())->LastSynchroHP = static_cast<int64>(twin->GetHealth());
+                 }
+     }
+ 
+@@ -847,9 +847,7 @@ class spell_valkyr_touch_aura : public AuraScript
+                         DamageInfo dmgInfo(caster, plr, damage, GetSpellInfo(), GetSpellInfo()->GetSchoolMask(), DOT, mitigated_damage);
+                         Unit::CalcAbsorbResist(dmgInfo);
+                         Unit::DealDamageMods(plr, damage, &absorb);
+-                        int32 overkill = damage - plr->GetHealth();
+-                        if (overkill < 0)
+-                            overkill = 0;
++                        uint32 overkill = LifeToUInt32(LifeOverkill(damage, plr->GetHealth()));
+                         SpellPeriodicAuraLogInfo pInfo(aurEff, damage, overkill, absorb, resist, 0.0f, false);
+                         plr->SendPeriodicAuraLog(&pInfo);
+                         Unit::DealDamage(caster, plr, damage, 0, DOT, GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), true);
+--- a/src/server/scripts/Northrend/IcecrownCitadel/boss_lady_deathwhisper.cpp
++++ b/src/server/scripts/Northrend/IcecrownCitadel/boss_lady_deathwhisper.cpp
+@@ -1129,7 +1129,7 @@ class spell_deathwhisper_mana_barrier_aura : public AuraScript
+         PreventDefaultAction();
+         if (Unit* caster = GetCaster())
+         {
+-            int32 missingHealth = int32(caster->GetMaxHealth() - caster->GetHealth());
++            int32 missingHealth = LifeToInt32(caster->GetMaxHealth() - caster->GetHealth());
+             caster->ModifyHealth(missingHealth);
+             caster->ModifyPower(POWER_MANA, -missingHealth);
+         }
+--- a/src/server/scripts/Northrend/IcecrownCitadel/icecrown_citadel.cpp
++++ b/src/server/scripts/Northrend/IcecrownCitadel/icecrown_citadel.cpp
+@@ -3078,7 +3078,7 @@ class spell_stinky_precious_decimate : public SpellScript
+     {
+         if (GetHitUnit()->GetHealthPct() > float(GetEffectValue()))
+         {
+-            uint32 newHealth = GetHitUnit()->GetMaxHealth() * uint32(GetEffectValue()) / 100;
++            uint64 newHealth = GetHitUnit()->CountPctFromMaxHealth(GetEffectValue());
+             GetHitUnit()->SetHealth(newHealth);
+         }
+     }
+--- a/src/server/scripts/Northrend/Naxxramas/boss_gluth.cpp
++++ b/src/server/scripts/Northrend/Naxxramas/boss_gluth.cpp
+@@ -128,7 +128,7 @@ public:
+         void KilledUnit(Unit* who) override
+         {
+             if (me->IsAlive() && who->GetEntry() == NPC_ZOMBIE_CHOW)
+-                me->ModifyHealth(int32(me->GetMaxHealth() * 0.05f));
++                me->ModifyHealth(me->CountPctFromMaxHealth(5));
+ 
+             if (who->IsPlayer())
+                 instance->StorePersistentData(PERSISTENT_DATA_IMMORTAL_FAIL, 1);
+@@ -231,7 +231,7 @@ class spell_gluth_decimate : public SpellScript
+     {
+         if (Unit* unitTarget = GetHitUnit())
+         {
+-            int32 damage = int32(unitTarget->GetHealth()) - int32(unitTarget->CountPctFromMaxHealth(5));
++            int32 damage = LifeToInt32(unitTarget->GetHealth() > unitTarget->CountPctFromMaxHealth(5) ? unitTarget->GetHealth() - unitTarget->CountPctFromMaxHealth(5) : 0);
+             if (damage <= 0)
+                 return;
+ 
+@@ -265,8 +265,8 @@ class spell_gluth_decimate_damage : public SpellScript
+         if (!target)
+             return;
+ 
+-        int32 targetHealth = int32(target->GetHealth());
+-        int32 fivePctHealth = int32(target->CountPctFromMaxHealth(5));
++        int32 targetHealth = LifeToInt32(target->GetHealth());
++        int32 fivePctHealth = LifeToInt32(target->CountPctFromMaxHealth(5));
+ 
+         // Damage needed to leave the target at exactly 5%
+         int32 damage = targetHealth - fivePctHealth;
+--- a/src/server/scripts/Northrend/Nexus/Oculus/boss_eregos.cpp
++++ b/src/server/scripts/Northrend/Nexus/Oculus/boss_eregos.cpp
+@@ -146,7 +146,7 @@ public:
+             if (!me->GetMap()->IsHeroic())
+                 return;
+ 
+-            if (shiftNumber <= uint32(1) && uint32(me->GetHealth() * 100 / me->GetMaxHealth()) <= uint32(60 - shiftNumber * 40))
++            if (shiftNumber <= uint32(1) && uint32(LifeMulDiv(me->GetHealth(), 100, me->GetMaxHealth())) <= uint32(60 - shiftNumber * 40))
+             {
+                 ++shiftNumber;
+                 events.RescheduleEvent(EVENT_SPELL_PLANAR_SHIFT, 0ms);
+--- a/src/server/scripts/Northrend/Nexus/Oculus/oculus.cpp
++++ b/src/server/scripts/Northrend/Nexus/Oculus/oculus.cpp
+@@ -643,7 +643,7 @@ class spell_oculus_touch_the_nightmare : public SpellScript
+ 
+     void HandleDamageCalc(SpellEffIndex /*effIndex*/)
+     {
+-        SetHitDamage(int32(GetCaster()->CountPctFromMaxHealth(30)));
++        SetHitDamage(LifeToInt32(GetCaster()->CountPctFromMaxHealth(30)));
+     }
+ 
+     void Register() override
+@@ -660,7 +660,7 @@ class spell_oculus_dream_funnel_aura : public AuraScript
+     void HandleEffectCalcAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& canBeRecalculated)
+     {
+         if (Unit* caster = GetCaster())
+-            amount = int32(caster->CountPctFromMaxHealth(5));
++            amount = LifeToInt32(caster->CountPctFromMaxHealth(5));
+ 
+         canBeRecalculated = false;
+     }
+@@ -768,7 +768,7 @@ class spell_oculus_soar_aura : public AuraScript
+ 
+         // We handle the health regen here, normal heal regen isn't working....
+         if (caster->GetHealth() < caster->GetMaxHealth())
+-            caster->SetHealth(caster->GetHealth() + (uint32)((double)caster->GetMaxHealth() * 0.2));
++            caster->SetHealth(caster->GetHealth() + caster->CountPctFromMaxHealth(20));
+     }
+ 
+     void HandleOnEffectApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+--- a/src/server/scripts/Northrend/Ulduar/Ulduar/boss_kologarn.cpp
++++ b/src/server/scripts/Northrend/Ulduar/Ulduar/boss_kologarn.cpp
+@@ -295,7 +295,7 @@ struct boss_kologarn : public BossAI
+         {
+             if (who && who->GetEntry() == me->GetEntry() && me->GetHealth())
+             {
+-                damage = std::min(damage, me->GetHealth() - 1);
++                damage = std::min<uint64>(damage, me->GetHealth() - 1);
+                 me->LowerPlayerDamageReq(damage);
+             }
+         }
+--- a/src/server/scripts/Northrend/Ulduar/Ulduar/boss_razorscale.cpp
++++ b/src/server/scripts/Northrend/Ulduar/Ulduar/boss_razorscale.cpp
+@@ -1379,7 +1379,7 @@ class spell_razorscale_flame_breath : public SpellScript
+         if (!target || target->GetEntry() != NPC_DARK_RUNE_GUARDIAN || !target->IsAlive())
+             return;
+ 
+-        if (GetHitDamage() >= int32(target->GetHealth()))
++        if (static_cast<uint64>(std::max(GetHitDamage(), 0)) >= target->GetHealth())
+             target->AI()->SetData(DATA_IRON_DWARF_ID, 1);
+     }
+ 
+--- a/src/server/scripts/Northrend/Ulduar/Ulduar/boss_xt002.cpp
++++ b/src/server/scripts/Northrend/Ulduar/Ulduar/boss_xt002.cpp
+@@ -335,7 +335,7 @@ struct boss_xt002 : public BossAI
+                 if (!_hardMode)
+                 {
+                     uint32 transferHealth = data;
+-                    uint32 currentHealth = me->GetHealth();
++                    uint64 currentHealth = me->GetHealth();
+                     if (transferHealth >= currentHealth)
+                     {
+                         me->LowerPlayerDamageReq(currentHealth);
+@@ -786,7 +786,7 @@ class spell_xt002_gravity_bomb_aura : public AuraScript
+         if (!xt002)
+             return;
+ 
+-        if (aurEff->GetAmount() >= int32(owner->GetHealth()))
++        if (static_cast<uint64>(std::max(aurEff->GetAmount(), 0)) >= owner->GetHealth())
+             xt002->GetAI()->SetData(DATA_GRAVITY_BOMB_CASUALTY, 1);
+     }
+ 
+@@ -804,7 +804,7 @@ class spell_xt002_gravity_bomb_damage : public SpellScript
+ 
+     void HandleScript(SpellEffIndex /*effIndex*/)
+     {
+-        if (GetHitDamage() >= int32(GetHitUnit()->GetHealth()))
++        if (static_cast<uint64>(std::max(GetHitDamage(), 0)) >= GetHitUnit()->GetHealth())
+             if (InstanceScript* instance = GetCaster()->GetInstanceScript())
+                 if (Creature* xt002 = instance->GetCreature(BOSS_XT002))
+                     xt002->AI()->SetData(DATA_GRAVITY_BOMB_CASUALTY, 1);
+@@ -917,7 +917,7 @@ class spell_xt002_tympanic_tantrum : public SpellScript
+ 
+     void RecalculateDamage()
+     {
+-        SetHitDamage(GetHitUnit()->CountPctFromMaxHealth(GetHitDamage()));
++        SetHitDamage(LifeToInt32(GetHitUnit()->CountPctFromMaxHealth(GetHitDamage())));
+     }
+ 
+     void Register() override
+--- a/src/server/scripts/Northrend/UtgardeKeep/UtgardePinnacle/boss_skadi.cpp
++++ b/src/server/scripts/Northrend/UtgardeKeep/UtgardePinnacle/boss_skadi.cpp
+@@ -501,7 +501,7 @@ class spell_skadi_launch_harpoon : public SpellScript
+     void HandleDamageCalc()
+     {
+         if (Unit* target = GetHitUnit())
+-            SetHitDamage(target->CountPctFromMaxHealth(35));
++            SetHitDamage(LifeToInt32(target->CountPctFromMaxHealth(35)));
+     }
+ 
+     void Register() override
+--- a/src/server/scripts/Northrend/UtgardeKeep/UtgardePinnacle/boss_ymiron.cpp
++++ b/src/server/scripts/Northrend/UtgardeKeep/UtgardePinnacle/boss_ymiron.cpp
+@@ -249,7 +249,7 @@ public:
+                     }
+                 case EVENT_YMIRON_DARK_SLASH:
+                     {
+-                        int32 dmg = me->GetVictim()->GetHealth() / 2;
++                        int32 dmg = LifeToInt32(me->GetVictim()->GetHealth() / 2);
+                         me->CastCustomSpell(me->GetVictim(), SPELL_DARK_SLASH, &dmg, 0, 0, false);
+                         events.Repeat(30s, 35s);
+                         break;
+--- a/src/server/scripts/Northrend/VioletHold/boss_ichoron.cpp
++++ b/src/server/scripts/Northrend/VioletHold/boss_ichoron.cpp
+@@ -91,14 +91,14 @@ struct boss_ichoron : public BossAI
+         {
+             case ACTION_WATER_ELEMENT_HIT:
+                 instance->SetData(DATA_ACHIEV, 0);
+-                me->ModifyHealth(int32(me->CountPctFromMaxHealth(1)));
++                me->ModifyHealth(me->CountPctFromMaxHealth(1));
+                 if (_isExploded)
+                     DoExplodeCompleted();
+                 break;
+             case ACTION_WATER_ELEMENT_KILLED:
+-                uint32 damage = me->CountPctFromMaxHealth(3);
++                uint64 damage = me->CountPctFromMaxHealth(3);
+                 damage = std::min(damage, me->GetHealth() - 1);
+-                me->ModifyHealth(-int32(damage));
++                me->ModifyHealth(-static_cast<int64>(damage));
+                 me->LowerPlayerDamageReq(damage);
+                 break;
+         }
+--- a/src/server/scripts/Northrend/zone_storm_peaks.cpp
++++ b/src/server/scripts/Northrend/zone_storm_peaks.cpp
+@@ -1155,7 +1155,7 @@ class spell_jaws_of_death_claw_swipe_pct_damage : public SpellScript
+ 
+     void HandleDamage(SpellEffIndex /*effIndex*/)
+     {
+-        SetEffectValue(static_cast<int32>(GetHitUnit()->CountPctFromMaxHealth(GetEffectValue())));
++        SetEffectValue(LifeToInt32(GetHitUnit()->CountPctFromMaxHealth(GetEffectValue())));
+     }
+ 
+     void Register() override
+--- a/src/server/scripts/Outland/Auchindoun/ShadowLabyrinth/boss_grandmaster_vorpil.cpp
++++ b/src/server/scripts/Outland/Auchindoun/ShadowLabyrinth/boss_grandmaster_vorpil.cpp
+@@ -227,7 +227,7 @@ struct npc_voidtraveler : public ScriptedAI
+                                 {
+                                     DoCastAOE(SPELL_SHADOW_NOVA, true);
+                                     me->CastSpell(vorpil, SPELL_EMPOWERING_SHADOWS, true, nullptr, nullptr, vorpil->GetGUID());
+-                                    vorpil->ModifyHealth(int32(vorpil->CountPctFromMaxHealth(4)));
++                                    vorpil->ModifyHealth(vorpil->CountPctFromMaxHealth(4));
+                                 }
+                             }
+ 
+--- a/src/server/scripts/Outland/Auchindoun/ShadowLabyrinth/boss_murmur.cpp
++++ b/src/server/scripts/Outland/Auchindoun/ShadowLabyrinth/boss_murmur.cpp
+@@ -240,7 +240,7 @@ public:
+ 
+     void RecalculateDamage()
+     {
+-        SetHitDamage(GetHitUnit()->CountPctFromCurHealth(80));
++        SetHitDamage(LifeToInt32(GetHitUnit()->CountPctFromCurHealth(80)));
+     }
+ 
+     void Register() override
+--- a/src/server/scripts/Outland/BlackTemple/instance_black_temple.cpp
++++ b/src/server/scripts/Outland/BlackTemple/instance_black_temple.cpp
+@@ -478,7 +478,7 @@ class spell_black_temple_l5_arcane_charge : public SpellScript
+ 
+     void RecalculateDamage()
+     {
+-        uint32 damage = GetHitUnit()->SpellDamageBonusTaken(GetCaster(), GetSpellInfo(), GetHitUnit()->CountPctFromMaxHealth(100), SPELL_DIRECT_DAMAGE);
++        uint32 damage = GetHitUnit()->SpellDamageBonusTaken(GetCaster(), GetSpellInfo(), LifeToInt32(GetHitUnit()->CountPctFromMaxHealth(100)), SPELL_DIRECT_DAMAGE);
+         SetHitDamage(int32(damage));
+     }
+ 
+--- a/src/server/scripts/Outland/zone_blades_edge_mountains.cpp
++++ b/src/server/scripts/Outland/zone_blades_edge_mountains.cpp
+@@ -965,7 +965,7 @@ public:
+             // so player gets damage equal to calculated damage  dbc basepoints for SPELL_BAD_PRESS_DAMAGE (~50)
+             if (spell->Id == SPELL_BAD_PRESS_TRIGGER)
+             {
+-                int32 bp = (int32)((float)(fails) * 0.33f * target->GetMaxHealth());
++                int32 bp = LifeToInt32(static_cast<uint64>((float)(fails) * 0.33f * target->GetMaxHealth()));
+                 target->CastCustomSpell(target, SPELL_BAD_PRESS_DAMAGE, &bp, nullptr, nullptr, true);
+             }
+         }
+--- a/src/server/scripts/Pet/pet_priest.cpp
++++ b/src/server/scripts/Pet/pet_priest.cpp
+@@ -40,7 +40,7 @@ struct npc_pet_pri_lightwell : public TotemAI
+         {
+             if (Unit* owner = tempSummon->GetSummonerUnit())
+             {
+-                uint32 hp = uint32(owner->GetMaxHealth() * 0.3f);
++                uint64 hp = uint64(owner->GetMaxHealth() * 0.3f);
+                 me->SetMaxHealth(hp);
+                 me->SetHealth(hp);
+                 me->SetLevel(owner->GetLevel());
+--- a/src/server/scripts/Spells/spell_dk.cpp
++++ b/src/server/scripts/Spells/spell_dk.cpp
+@@ -892,9 +892,9 @@ class spell_dk_pet_scaling : public AuraScript
+             {
+                 if (aurEff->GetMiscValue() == STAT_STAMINA)
+                 {
+-                    uint32 actStat = GetUnitOwner()->GetHealth();
++                    uint64 actStat = GetUnitOwner()->GetHealth();
+                     GetEffect(aurEff->GetEffIndex())->ChangeAmount(newAmount, false);
+-                    GetUnitOwner()->SetHealth(std::min<uint32>(GetUnitOwner()->GetMaxHealth(), actStat));
++                    GetUnitOwner()->SetHealth(std::min<uint64>(GetUnitOwner()->GetMaxHealth(), actStat));
+                 }
+                 else
+                 {
+@@ -1089,12 +1089,12 @@ class spell_dk_anti_magic_shell_self : public AuraScript
+ 
+     void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+     {
+-        amount = GetCaster()->CountPctFromMaxHealth(hpPct);
++        amount = LifeToInt32(GetCaster()->CountPctFromMaxHealth(hpPct));
+     }
+ 
+     void Absorb(AuraEffect* /*aurEff*/, DamageInfo& dmgInfo, uint32& absorbAmount)
+     {
+-        absorbAmount = std::min(CalculatePct(dmgInfo.GetDamage(), absorbPct), GetTarget()->CountPctFromMaxHealth(hpPct));
++        absorbAmount = std::min<uint64>(CalculatePct(dmgInfo.GetDamage(), absorbPct), GetTarget()->CountPctFromMaxHealth(hpPct));
+     }
+ 
+     void Trigger(AuraEffect* aurEff, DamageInfo& /*dmgInfo*/, uint32& absorbAmount)
+@@ -1648,7 +1648,7 @@ class spell_dk_death_strike : public SpellScript
+         if (Unit* target = GetHitUnit())
+         {
+             uint32 count = target->GetDiseasesByCaster(caster->GetGUID());
+-            int32 bp = int32(count * caster->CountPctFromMaxHealth(int32(GetSpellInfo()->Effects[EFFECT_0].DamageMultiplier)));
++            int32 bp = LifeToInt32(count * caster->CountPctFromMaxHealth(int32(GetSpellInfo()->Effects[EFFECT_0].DamageMultiplier)));
+             // Improved Death Strike
+             if (AuraEffect const* aurEff = caster->GetAuraEffect(SPELL_AURA_ADD_PCT_MODIFIER, SPELLFAMILY_DEATHKNIGHT, DK_ICON_ID_IMPROVED_DEATH_STRIKE, 0))
+                 AddPct(bp, caster->CalculateSpellDamage(caster, aurEff->GetSpellInfo(), 2));
+@@ -1674,7 +1674,7 @@ class spell_dk_ghoul_explode : public SpellScript
+ 
+     void HandleDamage(SpellEffIndex /*effIndex*/)
+     {
+-        int32 value = int32(GetCaster()->CountPctFromMaxHealth(GetSpellInfo()->Effects[EFFECT_2].CalcValue(GetCaster())));
++        int32 value = LifeToInt32(GetCaster()->CountPctFromMaxHealth(GetSpellInfo()->Effects[EFFECT_2].CalcValue(GetCaster())));
+         SetEffectValue(value);
+     }
+ 
+@@ -2347,7 +2347,7 @@ class spell_dk_vampiric_blood : public AuraScript
+ 
+     void CalculateAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+     {
+-        amount = GetUnitOwner()->CountPctFromMaxHealth(amount);
++        amount = LifeToInt32(GetUnitOwner()->CountPctFromMaxHealth(amount));
+     }
+ 
+     void Register() override
+@@ -2398,8 +2398,8 @@ class spell_dk_will_of_the_necropolis : public AuraScript
+         uint8 rank = GetSpellInfo()->GetRank();
+         SpellInfo const* talentProto = sSpellMgr->AssertSpellInfo(sSpellMgr->GetSpellWithRank(SPELL_DK_WILL_OF_THE_NECROPOLIS_TALENT_R1, rank));
+ 
+-        int32 remainingHp = int32(GetTarget()->GetHealth() - dmgInfo.GetDamage());
+-        int32 minHp = int32(GetTarget()->CountPctFromMaxHealth(talentProto->Effects[EFFECT_0].CalcValue(GetCaster())));
++        int32 remainingHp = GetTarget()->GetHealth() > dmgInfo.GetDamage() ? LifeToInt32(GetTarget()->GetHealth() - dmgInfo.GetDamage()) : -LifeToInt32(dmgInfo.GetDamage() - GetTarget()->GetHealth());
++        int32 minHp = LifeToInt32(GetTarget()->CountPctFromMaxHealth(talentProto->Effects[EFFECT_0].CalcValue(GetCaster())));
+ 
+         // Damage that would take you below [effect0] health or taken while you are at [effect0]
+         if (remainingHp < minHp)
+@@ -2429,7 +2429,7 @@ class spell_dk_army_of_the_dead_passive : public AuraScript
+     {
+         // army ghoul inherits 20% of health
+         if (Unit* owner = GetUnitOwner()->GetOwner())
+-            amount = owner->CountPctFromMaxHealth(20);
++            amount = LifeToInt32(owner->CountPctFromMaxHealth(20));
+     }
+ 
+     void CalculateSPAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+@@ -2583,7 +2583,7 @@ class spell_dk_vendetta : public AuraScript
+     {
+         PreventDefaultAction();
+         Unit* target = GetTarget();
+-        int32 bp = target->CountPctFromMaxHealth(aurEff->GetAmount());
++        int32 bp = LifeToInt32(target->CountPctFromMaxHealth(aurEff->GetAmount()));
+         target->CastCustomSpell(SPELL_DK_VENDETTA_HEAL, SPELLVALUE_BASE_POINT0, bp, target, true, nullptr, aurEff);
+     }
+ 
+--- a/src/server/scripts/Spells/spell_druid.cpp
++++ b/src/server/scripts/Spells/spell_druid.cpp
+@@ -1062,7 +1062,7 @@ class spell_dru_survival_instincts_aura : public AuraScript
+     void AfterApply(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+     {
+         Unit* target = GetTarget();
+-        int32 bp0 = target->CountPctFromMaxHealth(aurEff->GetAmount());
++        int32 bp0 = LifeToInt32(target->CountPctFromMaxHealth(aurEff->GetAmount()));
+         target->CastCustomSpell(target, SPELL_DRUID_SURVIVAL_INSTINCTS, &bp0, nullptr, nullptr, true);
+     }
+ 
+@@ -1419,7 +1419,7 @@ class spell_dru_leader_of_the_pack : public AuraScript
+         if (target->IsPlayer() && target->ToPlayer()->HasSpellCooldown(SPELL_DRUID_LEADER_OF_THE_PACK_HEAL))
+             return;
+ 
+-        int32 bp = target->CountPctFromMaxHealth(healAmount);
++        int32 bp = LifeToInt32(target->CountPctFromMaxHealth(healAmount));
+         target->CastCustomSpell(SPELL_DRUID_LEADER_OF_THE_PACK_HEAL, SPELLVALUE_BASE_POINT0, bp, target, true, nullptr, aurEff);
+ 
+         if (target->IsPlayer())
+@@ -1989,7 +1989,7 @@ class spell_dru_frenzied_regeneration : public AuraScript
+ 
+         int32 const mod = std::min(static_cast<int32>(rage), 100);
+         int32 const points = GetSpellInfo()->Effects[EFFECT_1].CalcValue(target);
+-        int32 const regen = CalculatePct(target->GetMaxHealth(), points * mod / 100.f);
++        int32 const regen = LifeToInt32(CalculatePct(target->GetMaxHealth(), points * mod / 100.f));
+         target->CastCustomSpell(SPELL_DRUID_FRENZIED_REGENERATION_HEAL, SPELLVALUE_BASE_POINT0, regen, target, true, nullptr, aurEff);
+         target->SetPower(POWER_RAGE, rage - mod);
+     }
+--- a/src/server/scripts/Spells/spell_generic.cpp
++++ b/src/server/scripts/Spells/spell_generic.cpp
+@@ -2522,7 +2522,7 @@ class spell_gen_lifeblood : public AuraScript
+     void CalculateAmount(AuraEffect const* aurEff, int32& amount, bool& /*canBeRecalculated*/)
+     {
+         if (Unit* owner = GetUnitOwner())
+-            amount += int32(CalculatePct(owner->GetMaxHealth(), 1.5f / aurEff->GetTotalTicks()));
++            amount += LifeToInt32(CalculatePct(owner->GetMaxHealth(), 1.5f / aurEff->GetTotalTicks()));
+     }
+ 
+     void Register() override
+@@ -3794,7 +3794,7 @@ public:
+         if (!_damagePct)
+             _damagePct = GetHitDamage();
+ 
+-        SetHitDamage(GetHitUnit()->CountPctFromMaxHealth(_damagePct));
++        SetHitDamage(LifeToInt32(GetHitUnit()->CountPctFromMaxHealth(_damagePct)));
+     }
+ 
+     void Register() override
+--- a/src/server/scripts/Spells/spell_hunter.cpp
++++ b/src/server/scripts/Spells/spell_hunter.cpp
+@@ -269,9 +269,9 @@ class spell_hun_generic_scaling : public AuraScript
+             {
+                 if (aurEff->GetMiscValue() == STAT_STAMINA)
+                 {
+-                    uint32 actStat = GetUnitOwner()->GetHealth();
++                    uint64 actStat = GetUnitOwner()->GetHealth();
+                     GetEffect(aurEff->GetEffIndex())->ChangeAmount(newAmount, false);
+-                    GetUnitOwner()->SetHealth(std::min<uint32>(GetUnitOwner()->GetMaxHealth(), actStat));
++                    GetUnitOwner()->SetHealth(std::min<uint64>(GetUnitOwner()->GetMaxHealth(), actStat));
+                 }
+                 else
+                 {
+@@ -595,7 +595,7 @@ class spell_hun_last_stand_pet : public SpellScript
+     void HandleDummy(SpellEffIndex /*effIndex*/)
+     {
+         Unit* caster = GetCaster();
+-        int32 healthModSpellBasePoints0 = int32(caster->CountPctFromMaxHealth(30));
++        int32 healthModSpellBasePoints0 = LifeToInt32(caster->CountPctFromMaxHealth(30));
+         caster->CastCustomSpell(caster, SPELL_HUNTER_PET_LAST_STAND_TRIGGERED, &healthModSpellBasePoints0, nullptr, nullptr, true, nullptr);
+     }
+ 
+--- a/src/server/scripts/Spells/spell_item.cpp
++++ b/src/server/scripts/Spells/spell_item.cpp
+@@ -786,7 +786,7 @@ class spell_item_skull_of_impeding_doom : public AuraScript
+         if (!GetCaster())
+             return;
+ 
+-        amount = GetCaster()->GetMaxHealth() * 0.12f; // 5 ticks which reduce health by 60%
++        amount = LifeToInt32(GetCaster()->CountPctFromMaxHealth(12)); // 5 ticks which reduce health by 60%
+     }
+ 
+     void CalculateManaLeechAmount(AuraEffect const* /*aurEff*/, int32& amount, bool& /*canBeRecalculated*/)
+@@ -5837,7 +5837,7 @@ class spell_item_swift_hand_justice_dummy : public AuraScript
+         PreventDefaultAction();
+ 
+         Unit* caster = eventInfo.GetActor();
+-        int32 bp0 = static_cast<int32>(caster->CountPctFromMaxHealth(aurEff->GetAmount()));
++        int32 bp0 = LifeToInt32(caster->CountPctFromMaxHealth(aurEff->GetAmount()));
+         caster->CastCustomSpell(SPELL_SWIFT_HAND_OF_JUSTICE_HEAL, SPELLVALUE_BASE_POINT0, bp0, nullptr, true, nullptr, aurEff);
+     }
+ 
+--- a/src/server/scripts/Spells/spell_mage.cpp
++++ b/src/server/scripts/Spells/spell_mage.cpp
+@@ -333,9 +333,9 @@ class spell_mage_pet_scaling : public AuraScript
+             {
+                 if (aurEff->GetMiscValue() == STAT_STAMINA)
+                 {
+-                    uint32 actStat = GetUnitOwner()->GetHealth();
++                    uint64 actStat = GetUnitOwner()->GetHealth();
+                     GetEffect(aurEff->GetEffIndex())->ChangeAmount(newAmount, false);
+-                    GetUnitOwner()->SetHealth(std::min<uint32>(GetUnitOwner()->GetMaxHealth(), actStat));
++                    GetUnitOwner()->SetHealth(std::min<uint64>(GetUnitOwner()->GetMaxHealth(), actStat));
+                 }
+                 else
+                 {
+--- a/src/server/scripts/Spells/spell_paladin.cpp
++++ b/src/server/scripts/Spells/spell_paladin.cpp
+@@ -359,8 +359,8 @@ private:
+     void Absorb(AuraEffect* aurEff, DamageInfo& dmgInfo, uint32& absorbAmount)
+     {
+         Unit* victim = GetTarget();
+-        int32 remainingHealth = victim->GetHealth() - dmgInfo.GetDamage();
+-        uint32 allowedHealth = victim->CountPctFromMaxHealth(35);
++        int64 remainingHealth = static_cast<int64>(victim->GetHealth()) - dmgInfo.GetDamage();
++        uint64 allowedHealth = victim->CountPctFromMaxHealth(35);
+         // If damage kills us
+         if (remainingHealth <= 0 && !victim->ToPlayer()->HasAura(PAL_SPELL_ARDENT_DEFENDER_DEBUFF))
+         {
+@@ -375,7 +375,7 @@ private:
+                                     ? 1.0f
+                                     : float(defenseSkillValue) / float(reqDefForMaxHeal);
+ 
+-            int32 healAmount = int32(victim->CountPctFromMaxHealth(uint32(healPct * pctFromDefense)));
++            int32 healAmount = LifeToInt32(victim->CountPctFromMaxHealth(uint32(healPct * pctFromDefense)));
+             victim->CastCustomSpell(PAL_SPELL_ARDENT_DEFENDER_HEAL, SPELLVALUE_BASE_POINT0, healAmount, victim, true, nullptr, aurEff);
+         }
+         else if (remainingHealth < int32(allowedHealth))
+@@ -623,7 +623,7 @@ class spell_pal_divine_sacrifice : public AuraScript
+             else
+                 return false;
+ 
+-            remainingAmount = (caster->CountPctFromMaxHealth(GetSpellInfo()->Effects[EFFECT_2].CalcValue(caster)) * groupSize);
++            remainingAmount = LifeToInt32(caster->CountPctFromMaxHealth(GetSpellInfo()->Effects[EFFECT_2].CalcValue(caster)) * groupSize);
+             minHpPct = GetSpellInfo()->Effects[EFFECT_1].CalcValue(caster);
+             return true;
+         }
+@@ -757,7 +757,7 @@ class spell_pal_eye_for_an_eye : public AuraScript
+         }
+ 
+         // return damage % to attacker but < 50% own total health
+-        int32 damage = std::min(CalculatePct(static_cast<int32>(damageInfo->GetDamage()), aurEff->GetAmount()), static_cast<int32>(GetTarget()->GetMaxHealth()) / 2);
++        int32 damage = std::min(CalculatePct(static_cast<int32>(damageInfo->GetDamage()), aurEff->GetAmount()), LifeToInt32(GetTarget()->GetMaxHealth()) / 2);
+         GetTarget()->CastCustomSpell(SPELL_PALADIN_EYE_FOR_AN_EYE_DAMAGE, SPELLVALUE_BASE_POINT0, damage, eventInfo.GetProcTarget(), true, nullptr, aurEff);
+     }
+ 
+@@ -824,7 +824,7 @@ class spell_pal_hand_of_sacrifice_aura : public AuraScript
+     {
+         if (Unit* caster = GetCaster())
+         {
+-            remainingAmount = caster->GetMaxHealth();
++            remainingAmount = LifeToInt32(caster->GetMaxHealth());
+             return true;
+         }
+         return false;
+@@ -1067,7 +1067,7 @@ class spell_pal_lay_on_hands : public SpellScript
+         if (!target || !caster)
+             return;
+ 
+-        uint32 baseHeal = caster->GetMaxHealth();
++        uint32 baseHeal = LifeToInt32(caster->GetMaxHealth());
+         uint32 modifiedHeal = target->SpellHealingBonusTaken(caster, GetSpellInfo(), baseHeal, HEAL);
+ 
+         // EffectHealMaxHealth() ignores healing modifiers, so we pre-apply the
+@@ -1352,7 +1352,7 @@ class spell_pal_judgement_of_light_heal : public AuraScript
+         if (!attacker)
+             return;
+ 
+-        int32 bp = int32(attacker->CountPctFromMaxHealth(aurEff->GetAmount()));
++        int32 bp = LifeToInt32(attacker->CountPctFromMaxHealth(aurEff->GetAmount()));
+         attacker->CastCustomSpell(attacker, SPELL_PALADIN_JUDGEMENT_OF_LIGHT_HEAL, &bp, nullptr, nullptr, true, nullptr, aurEff, GetCasterGUID());
+     }
+ 
+@@ -2258,7 +2258,7 @@ class spell_pal_light_s_beacon : public AuraScript
+ 
+         // Lay on Hands applies target modifiers before HealInfo is built, so use its unmodified base heal.
+         uint32 healAmount = procSpell->IsRankOf(sSpellMgr->AssertSpellInfo(SPELL_PALADIN_LAY_ON_HANDS_R1)) ?
+-            eventInfo.GetActor()->GetMaxHealth() : healInfo->GetHealBeforeTakenMods();
++            LifeToInt32(eventInfo.GetActor()->GetMaxHealth()) : healInfo->GetHealBeforeTakenMods();
+         int32 heal = CalculatePct(healAmount, aurEff->GetAmount());
+ 
+         Unit* beaconTarget = GetCaster();
+--- a/src/server/scripts/Spells/spell_priest.cpp
++++ b/src/server/scripts/Spells/spell_priest.cpp
+@@ -320,7 +320,7 @@ class spell_pri_guardian_spirit : public AuraScript
+         if (dmgInfo.GetDamage() < target->GetHealth())
+             return;
+ 
+-        int32 healAmount = int32(target->CountPctFromMaxHealth(healPct));
++        int32 healAmount = LifeToInt32(target->CountPctFromMaxHealth(healPct));
+         // remove the aura now, we don't want 40% healing bonus
+         Remove(AURA_REMOVE_BY_ENEMY_SPELL);
+         target->CastCustomSpell(target, SPELL_PRIEST_GUARDIAN_SPIRIT_HEAL, &healAmount, nullptr, nullptr, true);
+@@ -436,7 +436,7 @@ class spell_pri_lightwell_renew : public AuraScript
+     void InitializeAmount(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+     {
+         // Attacks done to you equal to 30% of your total health will cancel the effect
+-        _remainingAmount = GetTarget()->CountPctFromMaxHealth(30);
++        _remainingAmount = LifeToUInt32(GetTarget()->CountPctFromMaxHealth(30));
+     }
+ 
+     void CheckDropCharge(ProcEventInfo& eventInfo)
+@@ -1093,7 +1093,7 @@ class spell_pri_glyph_of_dispel_magic : public AuraScript
+         if (!target)
+             return;
+ 
+-        int32 bp = int32(target->CountPctFromMaxHealth(aurEff->GetAmount()));
++        int32 bp = LifeToInt32(target->CountPctFromMaxHealth(aurEff->GetAmount()));
+         GetTarget()->CastCustomSpell(SPELL_PRIEST_GLYPH_OF_DISPEL_MAGIC_HEAL, SPELLVALUE_BASE_POINT0, bp, target, true, nullptr, aurEff);
+     }
+ 
+--- a/src/server/scripts/Spells/spell_rogue.cpp
++++ b/src/server/scripts/Spells/spell_rogue.cpp
+@@ -196,7 +196,7 @@ class spell_rog_cheat_death : public AuraScript
+         target->CastSpell(target, SPELL_ROGUE_CHEATING_DEATH, true);
+         target->AddSpellCooldown(SPELL_ROGUE_CHEAT_DEATH_COOLDOWN, 0, MINUTE * IN_MILLISECONDS);
+ 
+-        uint32 health10 = target->CountPctFromMaxHealth(10);
++        uint64 health10 = target->CountPctFromMaxHealth(10);
+ 
+         // hp > 10% - absorb hp till 10%
+         if (target->GetHealth() > health10)
+--- a/src/server/scripts/Spells/spell_shaman.cpp
++++ b/src/server/scripts/Spells/spell_shaman.cpp
+@@ -285,9 +285,9 @@ class spell_sha_feral_spirit_scaling : public AuraScript
+             {
+                 if (aurEff->GetMiscValue() == STAT_STAMINA)
+                 {
+-                    uint32 actStat = GetUnitOwner()->GetHealth();
++                    uint64 actStat = GetUnitOwner()->GetHealth();
+                     GetEffect(aurEff->GetEffIndex())->ChangeAmount(newAmount, false);
+-                    GetUnitOwner()->SetHealth(std::min<uint32>(GetUnitOwner()->GetMaxHealth(), actStat));
++                    GetUnitOwner()->SetHealth(std::min<uint64>(GetUnitOwner()->GetMaxHealth(), actStat));
+                 }
+                 else
+                 {
+@@ -1177,7 +1177,7 @@ class spell_sha_nature_guardian : public AuraScript
+         PreventDefaultAction();
+ 
+         Unit* target = eventInfo.GetActionTarget();
+-        int32 bp = CalculatePct(target->GetMaxHealth(), aurEff->GetAmount());
++        int32 bp = LifeToInt32(CalculatePct(target->GetMaxHealth(), aurEff->GetAmount()));
+         target->CastCustomSpell(SPELL_SHAMAN_NATURE_GUARDIAN, SPELLVALUE_BASE_POINT0, bp, target, true, nullptr, aurEff);
+         if (Unit* attacker = eventInfo.GetActor())
+             target->CastSpell(attacker, SPELL_SHAMAN_NATURE_GUARDIAN_THREAT, true);
+--- a/src/server/scripts/Spells/spell_warlock.cpp
++++ b/src/server/scripts/Spells/spell_warlock.cpp
+@@ -391,9 +391,9 @@ class spell_warl_generic_scaling : public AuraScript
+             {
+                 if (aurEff->GetMiscValue() == STAT_STAMINA)
+                 {
+-                    uint32 actStat = GetUnitOwner()->GetHealth();
++                    uint64 actStat = GetUnitOwner()->GetHealth();
+                     GetEffect(aurEff->GetEffIndex())->ChangeAmount(newAmount, false);
+-                    GetUnitOwner()->SetHealth(std::min<uint32>(GetUnitOwner()->GetMaxHealth(), actStat));
++                    GetUnitOwner()->SetHealth(std::min<uint64>(GetUnitOwner()->GetMaxHealth(), actStat));
+                 }
+                 else
+                 {
+@@ -572,7 +572,7 @@ class spell_warl_demonic_empowerment : public SpellScript
+                     case CREATURE_FAMILY_VOIDWALKER:
+                         {
+                             SpellInfo const* spellInfo = sSpellMgr->AssertSpellInfo(SPELL_WARLOCK_DEMONIC_EMPOWERMENT_VOIDWALKER);
+-                            int32 hp = int32(targetCreature->CountPctFromMaxHealth(GetCaster()->CalculateSpellDamage(targetCreature, spellInfo, 0)));
++                            int32 hp = LifeToInt32(targetCreature->CountPctFromMaxHealth(GetCaster()->CalculateSpellDamage(targetCreature, spellInfo, 0)));
+                             targetCreature->CastCustomSpell(targetCreature, SPELL_WARLOCK_DEMONIC_EMPOWERMENT_VOIDWALKER, &hp, nullptr, nullptr, true);
+                             //unitTarget->CastSpell(unitTarget, 54441, true);
+                             break;
+@@ -853,7 +853,7 @@ class spell_warl_life_tap : public SpellScript
+ 
+     SpellCastResult CheckCast()
+     {
+-        if ((int32(GetCaster()->GetHealth()) > int32(GetSpellInfo()->Effects[EFFECT_0].CalcValue())))
++        if ((LifeToInt32(GetCaster()->GetHealth()) > int32(GetSpellInfo()->Effects[EFFECT_0].CalcValue())))
+             return SPELL_CAST_OK;
+         return SPELL_FAILED_FIZZLE;
+     }
+--- a/src/server/scripts/Spells/spell_warrior.cpp
++++ b/src/server/scripts/Spells/spell_warrior.cpp
+@@ -241,7 +241,7 @@ class spell_warr_last_stand : public SpellScript
+     void HandleDummy(SpellEffIndex /*effIndex*/)
+     {
+         Unit* caster = GetCaster();
+-        int32 healthModSpellBasePoints0 = int32(caster->CountPctFromMaxHealth(GetEffectValue()));
++        int32 healthModSpellBasePoints0 = LifeToInt32(caster->CountPctFromMaxHealth(GetEffectValue()));
+         caster->CastCustomSpell(caster, SPELL_WARRIOR_LAST_STAND_TRIGGERED, &healthModSpellBasePoints0, nullptr, nullptr, true, nullptr);
+     }
+ 
+@@ -494,7 +494,7 @@ class spell_warr_bloodthirst_heal : public SpellScript
+     void HandleHeal(SpellEffIndex /*effIndex*/)
+     {
+         if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(SPELL_WARRIOR_BLOODTHIRST_DAMAGE))
+-            SetEffectValue(GetCaster()->CountPctFromMaxHealth(spellInfo->Effects[EFFECT_1].CalcValue(GetCaster())));
++            SetEffectValue(LifeToInt32(GetCaster()->CountPctFromMaxHealth(spellInfo->Effects[EFFECT_1].CalcValue(GetCaster()))));
+     }
+ 
+     void Register() override
+@@ -1205,7 +1205,7 @@ class spell_warr_item_t10_prot_4p_bonus : public AuraScript
+         PreventDefaultAction();
+ 
+         Unit* caster = GetTarget();
+-        int32 basepoints = CalculatePct(static_cast<int32>(caster->GetMaxHealth()), GetSpellInfo()->Effects[EFFECT_1].CalcValue());
++        int32 basepoints = CalculatePct(LifeToInt32(caster->GetMaxHealth()), GetSpellInfo()->Effects[EFFECT_1].CalcValue());
+         caster->CastCustomSpell(caster, SPELL_WARRIOR_T10_PROT_4P_ABSORB, &basepoints, nullptr, nullptr, true, nullptr, GetEffect(EFFECT_0));
+     }
+ 

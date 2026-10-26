@@ -1,0 +1,71 @@
+dungeon,x,y,z,o,walk_yards,source
+Ragefire Chasm,-381.6,128.6222,7.9697,0,1178.0,survey
+The Stockade,81.0,-137.5333,-33.5845,0,260.7,survey
+Razorfen Kraul,2061.5465,1832.5866,92.9282,0,1437.5,survey
+Scarlet Monastery - Graveyard,1822.5333,1416.8,-7.8543,0,583.8,survey
+Scarlet Monastery - Library,129.0,-429.2,18.6999,0,538.2,survey
+Razorfen Downs,2396.0444,948.2222,60.8661,0,1022.6,survey
+Dire Maul - East,296.7111,-333.8667,-58.0951,0,2602.0,survey
+Hellfire Ramparts,-1102.6667,1767.1111,91.4515,0,937.3,survey
+The Blood Furnace,327.06287,-34.36194,-25.389336,4.717939,,alex
+The Shattered Halls,263.4,-95.3333,-1.5136,0,1703.5,survey
+The Slave Pens,-215.0,-712.6,34.4919,0,1555.3,survey
+The Underbog,-108.8667,-198.6,32.3157,0,2338.8,survey
+The Steamvault,-385.0667,-131.9111,12.4428,0,821.4,survey
+Mana-Tombs,-92.0,-49.6,16.8664,0,1156.5,survey
+Auchenai Crypts,97.0667,-381.6,32.4263,0,1485.9,survey
+Sethekk Halls,-249.3333,196.4,31.7689,0,747.9,survey
+Shadow Labyrinth,-149.6,-545.7778,21.5774,0,1391.1,survey
+The Mechanar,262.2666,-40.7334,29.9018,0,900.6,survey
+The Botanica,37.8667,407.2889,-66.4644,0,1663.8,survey
+Magisters' Terrace,147.2,195.5555,-10.6667,0,1293.5,survey
+Utgarde Keep,256.6222,-307.2,176.6774,0,2106.7,survey
+Utgarde Pinnacle,330.0,-438.6667,105.0665,0,789.1,survey
+The Nexus,647.2,-334.4,-5.3635,0,855.5,survey
+Azjol-Nerub,571.0,513.8666,654.4215,0,1119.9,survey
+Ahn'kahet: The Old Kingdom,547.0666,-408.3333,25.5662,0,1570.4,survey
+Drak'Tharon Keep,-237.11623,-623.4999,116.486435,4.694324,,alex
+Halls of Lightning,1226.4001,12.2667,63.3223,0,1496.9,survey
+Gundrak,1512.9779,577.8667,151.5584,0,1141.9,survey
+The Forge of Souls,5677.5107,2524.1777,715.1149,0,1560.3,survey
+Pit of Saron,1179.4904,335.89462,627.6211,0.84897125,,alex
+Un'Goro Crater,-6112.5,-712.5,44.4172,0,3389.9,survey
+Tanaris,-8752.5,-1912.5,129.0111,0,5002.5,survey
+Thousand Needles,-6832.5,-3872.5,165.8825,0,7116.8,survey
+Azshara,5947.5,-5572.5,397.2278,0,6721.3,survey
+Moonglade,7067.5,-1972.5,615.2645,0,1746.1,survey
+Darkshore,7667.5,-1652.5,309.4696,0,5300.5,survey
+Winterspring,4667.5,-4092.5,967.1365,0,4705.5,survey
+Felwood,5867.5,-1932.5,688.6073,0,4625.6,survey
+Ashenvale,2967.5,1967.5,406.457,0,8116.6,survey
+Durotar,2167.5,-4912.5,112.6691,0,3244.1,survey
+Stonetalon Mountains,-32.5,107.5,186.994,0,4241.8,survey
+Silithus,-10752.5,1087.5,18.2397,0,5642.8,survey
+Feralas,-4192.5,1447.5,91.7065,0,7002.8,survey
+Desolace,1627.5,2427.5,15.8384,0,3222.3,survey
+Dustwallow Marsh,-4532.5,-2572.5,148.2991,0,3915.2,survey
+The Barrens,-5072.5,-3032.5,208.2546,0,7710.3,survey
+Western Plaguelands,947.5,-2912.5,123.4896,0,2504.1,survey
+Eastern Plaguelands,787.5,-2532.5,232.5757,0,3673.6,survey
+Tirisfal Glades,2407.5,2447.5,83.3388,0,4590.0,survey
+Silverpine Forest,-852.5,1007.5,130.3349,0,3176.1,survey
+Alterac Mountains,467.5,-1692.5,172.3195,0,2770.2,survey
+Hillsbrad Foothills,-1332.5,1367.5,153.0775,0,4257.5,survey
+The Hinterlands,967.5,-5292.5,49.8888,0,4678.9,survey
+Wetlands,-7492.5,-4472.5,241.7836,0,7345.1,survey
+Loch Modan,-4292.5,-3792.5,371.0795,0,2271.3,survey
+Dun Morogh,-4432.5,-712.5,210.1094,0,3595.7,survey
+Badlands,-7212.5,-2832.5,369.0674,0,5367.7,survey
+Burning Steppes,-7452.5,-3252.5,390.2697,0,4400.3,survey
+Redridge Mountains,-9552.5,-3832.5,24.6847,0,3404.8,survey
+Elwynn Forest,-8232.5,-292.5,238.2642,0,2908.3,survey
+Swamp of Sorrows,-12752.5,-2672.5,69.8145,0,4101.9,survey
+Westfall,-11652.5,1407.5,29.1998,0,1851.6,survey
+Stranglethorn Vale,-11852.5,-1932.5,75.8654,0,3878.9,survey
+Hellfire Peninsula,-972.5,787.5,-6.2006,0,4055.1,survey
+Zangarmarsh,1860.04,8431.1201,-11.8835,0,3916.5,survey
+Nagrand,-1412.5,6107.5,205.6565,0,4015.1,survey
+Terokkar Forest,-3883.3101,3660.3899,336.015,0,4007.7,survey
+Shadowmoon Valley,-3712.5,2827.5,311.5108,0,3868.5,survey
+Netherstorm,4187.5,1387.5,-147.3331,0,3132.8,survey
+Blade's Edge Mountains,1647.5,7707.5,334.1141,0,5053.4,survey

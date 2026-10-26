@@ -1,0 +1,98 @@
+Reason: let the addon read the item in an inbox attachment and in a trade slot, for the caller's own mailbox and trade only, so rolled stats draw in mail and trade tooltips.
+Approved: ruling 2026-09-29 (Decision Queue q-0929-12), diablocraft-mail-trade-tooltip-accessors.
+
+--- a/modules/mod-ale/src/LuaEngine/LuaFunctions.cpp
++++ b/modules/mod-ale/src/LuaEngine/LuaFunctions.cpp
+@@ -521,6 +521,7 @@
+     { "GetItemByGUID", &LuaPlayer::GetItemByGUID },
+     { "GetMailCount", &LuaPlayer::GetMailCount },
+     { "GetMailItem", &LuaPlayer::GetMailItem },
++    { "GetMailAttachment", &LuaPlayer::GetMailAttachment },
+     { "GetReputation", &LuaPlayer::GetReputation },
+     { "GetEquippedItemBySlot", &LuaPlayer::GetEquippedItemBySlot },
+     { "GetQuestLevel", &LuaPlayer::GetQuestLevel },
+@@ -572,6 +573,7 @@
+     { "GetShieldBlockValue", &LuaPlayer::GetShieldBlockValue },
+     { "GetPlayerSettingValue", &LuaPlayer::GetPlayerSettingValue },
+     { "GetTrader", &LuaPlayer::GetTrader },
++    { "GetTradeItem", &LuaPlayer::GetTradeItem },
+     { "GetBonusTalentCount", &LuaPlayer::GetBonusTalentCount },
+     { "GetKnownTaxiNodes", &LuaPlayer::GetKnownTaxiNodes },
+     { "GetPet", &LuaPlayer::GetPet },
+--- a/modules/mod-ale/src/LuaEngine/methods/PlayerMethods.h
++++ b/modules/mod-ale/src/LuaEngine/methods/PlayerMethods.h
+@@ -1474,6 +1474,74 @@
+     }
+ 
+     /**
++     * Returns the [Item] in one attachment of the player's own inbox, or nil.
++     *
++     * `index` and `attach` are the numbers the client's `GetInboxItem` and
++     * `SetInboxItem` take, both starting at 1. `index` counts the mails the
++     * server lists in SMSG_MAIL_LIST_RESULT (MailHandler.cpp): deleted, not yet
++     * delivered and expired mails are skipped, and the list stops at 50. This
++     * player's mailbox is the only one it reads.
++     *
++     * @param uint32 index : the inbox row, 1 to 50
++     * @param uint32 attach = 1 : the attachment inside that mail, 1 to 12
++     * @return [Item] item : [Item] or nil
++     */
++    int GetMailAttachment(lua_State* L, Player* player)
++    {
++        uint32 index = ALE::CHECKVAL<uint32>(L, 2);
++        uint32 attach = ALE::CHECKVAL<uint32>(L, 3, 1);
++        // MAX_INBOX_CLIENT_CAPACITY in MailHandler.cpp, a stock WoW constant
++        static constexpr uint32 INBOX_LIST_CAPACITY = 50;
++
++        Item* item = nullptr;
++        if (index && attach)
++        {
++            time_t now = GameTime::GetGameTime().count();
++            uint32 listed = 0;
++            for (Mail const* mail : player->GetMails())
++            {
++                if (listed >= INBOX_LIST_CAPACITY)
++                    break;
++                if (mail->state == MAIL_STATE_DELETED || now < mail->deliver_time || now > mail->expire_time)
++                    continue;
++                if (++listed != index)
++                    continue;
++                if (attach <= mail->items.size())
++                    item = player->GetMItem(mail->items[attach - 1].item_guid);
++                break;
++            }
++        }
++
++        ALE::Push(L, item);
++        return 1;
++    }
++
++    /**
++     * Returns the [Item] in one slot of the trade window the player is in, or nil.
++     *
++     * With `partner` false it is what this player offered; with `partner` true
++     * it is what the other side offered, read through this player's own trade.
++     * A player who is not trading gets nil for both, and no argument can name a
++     * trade the player is not in.
++     *
++     * @param uint8 slot : 0 to 6; the client's index minus one, and 6 is the "will not be traded" slot
++     * @param bool partner = false
++     * @return [Item] item : [Item] or nil
++     */
++    int GetTradeItem(lua_State* L, Player* player)
++    {
++        uint8 slot = ALE::CHECKVAL<uint8>(L, 2);
++        bool partner = ALE::CHECKVAL<bool>(L, 3, false);
++
++        TradeData* data = player->GetTradeData();
++        if (data && partner)
++            data = data->GetTraderData();
++
++        ALE::Push(L, data && slot < TRADE_SLOT_COUNT ? data->GetItem(TradeSlots(slot)) : nullptr);
++        return 1;
++    }
++
++    /**
+      * Returns an [Item] from the player by entry.
+      *
+      * The item can be equipped, in bags or in bank.

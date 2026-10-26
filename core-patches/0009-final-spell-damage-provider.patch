@@ -1,0 +1,106 @@
+Reason: let opt-in modules supply final per-target direct damage and crit with live cast identity, preserving stock fallback.
+
+Constant (audit 250, 27893): Native special-case creature identity; Existing special case becomes else-if after provider path.
+
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
+@@ -24,6 +24,24 @@ bool ScriptMgr::CanRewardRage(Unit* unit, uint32 damage, uint32 weaponSpeedHitFa
+     CALL_ENABLED_BOOLEAN_HOOKS(UnitScript, UNITHOOK_CAN_REWARD_RAGE, !script->CanRewardRage(unit, damage, weaponSpeedHitFactor, attacker, rage));
+ }
+ 
++bool ScriptMgr::ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim,
++    SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical)
++{
++    // A declining provider cannot contaminate either the next provider or stock.
++    for (auto const& script : ScriptRegistry<UnitScript>::EnabledHooks[UNITHOOK_PROVIDE_FINAL_SPELL_DAMAGE])
++    {
++        uint32 candidateDamage = damage;
++        bool candidateCritical = critical;
++        if (script->ProvideFinalSpellDamage(cast, attacker, victim, info, effectMask, candidateDamage, candidateCritical))
++        {
++            damage = candidateDamage;
++            critical = candidateCritical;
++            return true;
++        }
++    }
++    return false;
++}
++
+ void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)
+ {
+     CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_HEAL, script->OnHeal(healer, reciever, gain));
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.h
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.h
+@@ -45,11 +45,13 @@ enum UnitHook
+     UNITHOOK_ON_UNIT_DEATH,
+     UNITHOOK_ON_UNIT_SET_SHAPESHIFT_FORM,
+     UNITHOOK_CAN_REWARD_RAGE,
++    UNITHOOK_PROVIDE_FINAL_SPELL_DAMAGE,
+     UNITHOOK_END
+ };
+ 
+ enum ReputationRank : uint8;
+ class ByteBuffer;
++class Spell;
+ struct BuildValuesCachePosPointers;
+ 
+ class UnitScript : public ScriptObject
+@@ -78,6 +80,12 @@ public:
+     // Called when Spell Damage is being Dealt
+     virtual void ModifySpellDamageTaken(Unit* /*target*/, Unit* /*attacker*/, int32& /*damage*/, SpellInfo const* /*spellInfo*/) { }
+ 
++    // Opt-in final direct damage, after immunity checks. The Spell pointer is
++    // the identity of this live cast; do not retain it past the cast lifetime.
++    // True replaces native crit/armor/resist/absorb calculation for this target.
++    virtual bool ProvideFinalSpellDamage(Spell* /*cast*/, Unit* /*attacker*/, Unit* /*victim*/,
++        SpellInfo const* /*info*/, uint8 /*effectMask*/, uint32& /*damage*/, bool& /*critical*/) { return false; }
++
+     // Called when Heal is Recieved
+     virtual void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*heal*/, SpellInfo const* /*spellInfo*/) { }
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -569,6 +569,7 @@ public: /* UnitScript */
+     void OnDamage(Unit* attacker, Unit* victim, uint32& damage);
+     void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage, SpellInfo const* spellInfo);
+     void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
++    bool ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim, SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical);
+     void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* spellInfo);
+     void ModifyHealReceived(Unit* target, Unit* healer, uint32& addHealth, SpellInfo const* spellInfo);
+     uint32 DealDamage(Unit* AttackerUnit, Unit* pVictim, uint32 damage, DamageEffectType damagetype);
+--- a/src/server/game/Spells/Spell.cpp
++++ b/src/server/game/Spells/Spell.cpp
+@@ -2895,9 +2895,22 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
+             }
+             else
+             {
+-                // Add bonuses and fill damageInfo struct
++                uint32 providedDamage = 0;
++                bool providedCritical = target->crit;
++                bool const provided = sScriptMgr->ProvideFinalSpellDamage(this, caster, unitTarget,
++                    m_spellInfo, mask, providedDamage, providedCritical);
++                if (provided)
++                {
++                    damageInfo.damage = providedDamage;
++                    damageInfo.cleanDamage = 0;
++                    damageInfo.physicalLog = m_spellSchoolMask == SPELL_SCHOOL_MASK_NORMAL;
++                    target->crit = providedCritical;
++                    if (providedCritical)
++                        damageInfo.HitInfo |= SPELL_HIT_TYPE_CRIT;
++                }
++                // Add bonuses and fill damageInfo struct. Unhandled is stock.
+                 // Dancing Rune Weapon...
+-                if (unitCaster && unitCaster->GetEntry() == 27893)
++                else if (unitCaster && unitCaster->GetEntry() == 27893)
+                 {
+                     if (Unit* owner = unitCaster->GetOwner())
+                         owner->CalculateSpellDamageTaken(&damageInfo, m_damage, m_spellInfo, m_attackType,  target->crit);
+@@ -2915,7 +2928,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
+                 }
+ 
+                 // Xinef: override with forced crit, only visual result
+-                if (GetSpellValue()->ForcedCritResult)
++                if (!provided && GetSpellValue()->ForcedCritResult)
+                 {
+                     damageInfo.HitInfo |= SPELL_HIT_TYPE_CRIT;
+                 }

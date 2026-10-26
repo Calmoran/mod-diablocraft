@@ -1,0 +1,5 @@
+summon,skill,rune,entry,donor_creature,script,why
+Zombie Dog,Summon Zombie Dogs,,900170,8599,dc_minion,Plaguehound Mastiff (a diseased undead-looking hound): the Zombie Dog; the module gives it its AI and no loot
+Gargantuan,Gargantuan,,900171,27605,dc_minion,Colossal Abomination (a hulking zombie): the Gargantuan zombie; the module gives it its AI and no loot
+Fetish,Fetish Army,,900172,416,dc_minion,Imp (the stock small masked creature; the stock creatures have no fetish): a dagger-wielding Fetish of the Army; the module gives it its AI and no loot
+Fetish Sycophant,Fetish Sycophants,,900173,416,dc_minion,Imp (as the Fetish): a Fetish the passive summons; the module gives it its AI and no loot

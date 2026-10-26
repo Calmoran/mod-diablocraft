@@ -1,0 +1,17 @@
+rule,value,notes,numeric_count
+enchant_provider,The Mystic (artisan),"Can enchant Rare, Set, and Legendary items",
+enchant_one_affix_rule,Exactly ONE affix per item may ever be re-rolled; the enchanted affix may itself be re-rolled at any time (repeatedly),"Once one affix is enchanted, all other affixes are locked permanently",
+enchant_max_affixes,"Up to 5 affixes are available for re-rolling; items that roll 6 affixes have 1 unalterable affix (often item-type specific, e.g. Demon Hunter Quiver attack speed)",,
+enchant_which_affixes,"Any primary or secondary affix EXCEPT the orange (special legendary) affix, which can never be re-rolled","Rerolls stay within the same type (primary→primary only, secondary→secondary only); generally cannot duplicate an existing affix; allowed-but-not-normal slot affixes re-enter the pool when you select that affix (e.g. elemental on Stone of Jordan since 2.0.5)",
+enchant_result_options,"Choose 1 of 2 new affixes, or keep the current one",New affix not guaranteed better; one of the two options may equal the current affix (since 2.0.5 both cannot); affix roll chances are not evenly distributed (some affixes rarer); numeric_count transcribed from value prose; Codex audit 90–92.,2
+enchant_cost_rare,"Gold (base amount NOT PUBLISHED on cited page) + normal crafting materials (e.g. Veiled Crystal, Death's Breath)","Gold cost per enchant on the SAME item increases multiplicatively, stacking infinitely; materials stay constant",
+enchant_cost_legendary_set,Gold (same multiplicative per-item scaling) + Fiery Brimstone or Forgotten Soul,,
+enchant_cost_legendary_set_jewelry,No gold; 1 Imperial-quality gem (level 70),Cost is fixed — never scales (even the gem count); jewelry rolls more affixes; numeric_count transcribed from value prose; Codex audit 90–92.,1
+enchant_binding,Enchanting immediately binds the item to your account (no longer tradeable),Pre-2.0 (pre-Loot 2.0) items cannot be enchanted at all,
+enchant_mystic_training_ranks,"Rank 1: 0 gold (nothing unlocked); Rank 2: 1,000 gold → Weapon; Rank 3: 5,000 → Shield; Rank 4: 10,000 → Feet; Rank 5: 10,000 → Shoulders; Rank 6: 10,000 → Bracers; Rank 7: 10,000 → Hands; Rank 8: 20,000 → Belt; Rank 9: 30,000 → Neck; Rank 10: 40,000 → Chest; Rank 11: 40,000 → Ring; Rank 12: 50,000 → Pants & Head","Wiki's 'Training Ranks' table (total 226,000 gold for all slots); the per-enchant base gold cost itself is not separately stated on the page → NOT PUBLISHED for exact per-use base values",
+transmog_provider,The Mystic (artisan),Cosmetic only — no power change,
+transmog_cost_standard,500 gold,,
+transmog_cost_legendary_appearance,"50,000 gold",,
+transmog_cost_weapon_appearance,"Scales up with the level of the weapon appearance desired, up to 50,000 gold",,
+transmog_repeat_rule,Repeated transmogrification of the same item does NOT raise the price; reverting to the original appearance is always free,,
+transmog_restrictions,"Jewelry, belts and bracers cannot be transmogrified (not visible on character); Legendary/Set appearances must be found or crafted AND identified first to unlock; class-restricted appearances (e.g. level 70 class sets) usable only by that class; weapon transmog requires the same animation set (e.g. Daggers↔Spears); class-specific items without direct equivalents (Wands, Hand Crossbows, Fist Weapons) only within their own type",Transmogrified items can be dyed like normal items and keep dye already applied,

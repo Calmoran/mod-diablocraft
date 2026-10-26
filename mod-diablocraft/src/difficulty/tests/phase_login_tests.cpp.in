@@ -1,0 +1,156 @@
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+using uint32 = std::uint32_t;
+
+// Small core surface. Hook effects model TierPhase; comparison and Unit's
+// early return below are extracted verbatim from the installed core.
+struct WorldObject
+{
+    uint32 m_phaseMask = 1;
+    bool m_useCombinedPhases = true;
+    bool openWorld = true;
+    unsigned hooks = 0, visibility = 0;
+    virtual ~WorldObject() = default;
+    uint32 GetPhaseMask() const { return m_phaseMask; }
+    @PHASE_COMPARISON@
+    virtual void SetPhaseMask(uint32 phase, bool update)
+    {
+        ++hooks;
+        if (openWorld && phase >= 1 && phase <= 10) m_useCombinedPhases = false;
+        m_phaseMask = phase;
+        if (update) ++visibility;
+    }
+};
+struct Unit : WorldObject
+{
+    unsigned transitions = 0, controlledUpdates = 0;
+    bool veto = false;
+    void SetPhaseMask(uint32 newPhaseMask, bool update) override
+    {
+        @UNIT_EARLY_RETURN@
+        ++transitions;
+        if (veto) return;
+        WorldObject::SetPhaseMask(newPhaseMask, false);
+        ++controlledUpdates;
+        if (update) ++visibility;
+    }
+};
+
+@PHASE_HELPER@
+
+// The player's phase rule from production, with doubles for the hub test, the saved tier and the
+// tier table (production validates tier == open-world phase at load, so the double does the same).
+struct Group { unsigned leaderTier = 1; };
+struct Player
+{
+    bool inHub = false; unsigned tier = 1;
+    Group* group = nullptr; unsigned savedRow = 1; // the dc_character_tier row SavedTier would read
+    Group* GetGroup() const { return group; }
+    unsigned GetGUID() const { return savedRow; }
+};
+namespace DC::World { @SANCTUM_PHASE@ bool IsInHub(Player const* player) { return player->inHub; } }
+namespace DC::Difficulty
+{
+struct TierRow { unsigned phase; };
+std::vector<TierRow> tiers = [] { std::vector<TierRow> rows; for (unsigned id = 0; id <= 10; ++id) rows.push_back({id}); return rows; }();
+unsigned CurrentTier(Player const* player) { return player->tier; }
+unsigned LeaderTier(Group* group) { return group->leaderTier; }
+unsigned SavedTier(unsigned row) { return row; }
+// OnPlayerLogin's choice of tier, cut out of production.
+unsigned LoginTier(Player const* player) { @LOGIN_TIER@ return tier; }
+@PLAYER_PHASE@
+}
+
+void require(bool ok, char const* description)
+{
+    if (!ok) { std::cerr << "FAIL: " << description << '\n'; std::exit(1); }
+}
+unsigned visibleCopies(WorldObject const& observer)
+{
+    unsigned count = 0;
+    for (uint32 tier = 1; tier <= 10; ++tier) if (observer.InSamePhase(tier)) ++count;
+    return count;
+}
+int main()
+{
+    Unit before;
+    before.SetPhaseMask(1, true);
+    require(before.hooks == 0 && before.visibility == 0, "old Normal login skips policy and visibility");
+    require(visibleCopies(before) == 5, "old Normal bit mask sees tier 1/3/5/7/9 copies");
+    for (uint32 tier = 1; tier <= 10; ++tier)
+    {
+        Unit login;
+        ApplyPhase(&login, 1, true); // map entry before saved tier is loaded
+        ApplyPhase(&login, tier, true); // login's saved/leader tier
+        require(login.GetPhaseMask() == tier && !login.m_useCombinedPhases, "cold login has one literal tier");
+        require(visibleCopies(login) == 1 && login.InSamePhase(tier), "one hub service/monster copy is visible");
+        unsigned transitions = login.transitions;
+        ApplyPhase(&login, tier, true); // same-tier map change/reapply
+        require(login.transitions == transitions && login.visibility == 3, "same-tier visibility refresh without Unit transition");
+        Unit creature;
+        creature.m_phaseMask = tier; // OnCreatureAddWorld on an already-assigned ID
+        ApplyPhase(&creature, tier, false);
+        require(!creature.m_useCombinedPhases && visibleCopies(creature) == 1, "monster copies use literal phases too");
+        require(creature.visibility == 0, "spawn initialization does not force visibility");
+        WorldObject object;
+        object.m_phaseMask = tier;
+        ApplyPhase(&object, tier, false);
+        require(visibleCopies(object) == 1, "gameobject copy remains literal");
+    }
+    // The Sanctum is one phase for every tier: ten characters on ten tiers all land in S, one literal phase,
+    // and see each other and the one copy of every object there; outside the hub each keeps its tier's phase.
+    Unit hubTiers[11];
+    for (uint32 tier = 1; tier <= 10; ++tier)
+    {
+        Player saved{true, tier};
+        require(DC::Difficulty::PlayerPhase(&saved) == DC::World::SanctumPhase, "hub phase is S for every tier");
+        saved.inHub = false;
+        require(DC::Difficulty::PlayerPhase(&saved) == tier, "open-world phase is the tier's own");
+        saved.inHub = true;
+        ApplyPhase(&hubTiers[tier], 1, true); // map entry, then login's/picker's apply
+        ApplyPhase(&hubTiers[tier], DC::Difficulty::PlayerPhase(&saved), true);
+        require(hubTiers[tier].GetPhaseMask() == DC::World::SanctumPhase && !hubTiers[tier].m_useCombinedPhases, "hub login is one literal S");
+    }
+    for (uint32 tier = 1; tier <= 10; ++tier)
+        for (uint32 other = 1; other <= 10; ++other)
+            require(hubTiers[tier].InSamePhase(hubTiers[other].GetPhaseMask()), "every tier sees every tier in the Sanctum");
+    // Login in the hub, on every tier: phase S, and the saved tier is the one the character logs in with (the Sanctum never changes it).
+    for (unsigned saved = 1; saved <= 10; ++saved)
+    {
+        Player solo{true, 1, nullptr, saved};
+        solo.tier = DC::Difficulty::LoginTier(&solo); // Apply(): the saved tier becomes the player's tier
+        Unit unit;
+        ApplyPhase(&unit, DC::Difficulty::PlayerPhase(&solo), true);
+        require(solo.tier == saved, "a solo login in the hub keeps the saved tier");
+        require(unit.GetPhaseMask() == DC::World::SanctumPhase, "a solo login in the hub lands in phase S");
+        solo.inHub = false;
+        require(DC::Difficulty::PlayerPhase(&solo) == saved, "the same character outside the hub is in its tier's phase");
+    }
+    // A party login takes the leader's tier, in the hub too, and every member lands in S.
+    for (unsigned leader = 1; leader <= 10; ++leader)
+    {
+        Group party{leader};
+        for (unsigned saved = 1; saved <= 10; ++saved)
+        {
+            Player member{true, 1, &party, saved};
+            member.tier = DC::Difficulty::LoginTier(&member);
+            require(member.tier == leader, "a party login takes the leader's tier, not its own saved one");
+            require(DC::Difficulty::PlayerPhase(&member) == DC::World::SanctumPhase, "a party login in the hub lands in phase S");
+            member.inHub = false;
+            require(DC::Difficulty::PlayerPhase(&member) == leader, "a party login outside the hub is in the leader's tier phase");
+        }
+    }
+    Unit changing;
+    ApplyPhase(&changing, 10, true);
+    require(changing.transitions == 1 && changing.controlledUpdates == 1, "real tier changes retain Unit side effects");
+    changing.veto = true;
+    ApplyPhase(&changing, 2, true);
+    require(changing.GetPhaseMask() == 10 && changing.controlledUpdates == 1, "real phase-change veto preserved");
+    Unit instance;
+    instance.openWorld = false;
+    ApplyPhase(&instance, 1, true);
+    require(instance.m_useCombinedPhases, "stock instance phase behavior retained");
+    std::cout << "PASS: Sanctum shared phase for all tiers; reproduced same-ID login failure; all ten tiers, monster/object copies, visibility refresh, Unit propagation/veto and instance policy\n";
+}

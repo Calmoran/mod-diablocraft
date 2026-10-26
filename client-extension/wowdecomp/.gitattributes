@@ -1,0 +1,2 @@
+# Patches are applied byte for byte by git apply: never convert their line endings on checkout.
+*.patch -text

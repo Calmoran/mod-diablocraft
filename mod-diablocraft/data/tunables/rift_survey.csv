@@ -1,0 +1,11 @@
+name,value,unit,notes
+pack_link_yards,10,yards,"monster-spawning.md 3.5.1 step 4 (ruling 2026-10-08, card q-1008-06 4.7): natives within this distance on one floor, or in one stock formation, are one pack. The Planner's measurement (packs.py) used 10"
+floor_tolerance_yards,8,yards,"3.5.1 step 4: two natives are on one floor when their heights differ by less than this; the Planner's packs.py used 8. Also picks the anchor a patrol path ties to"
+area_max_yards,40,yards,"3.5.1 step 5: an area is at most this far across by walking distance (complete linkage)"
+tag_medium_min_natives,4,count,"3.5.1 step 6: an area with this many natives or more is M (WoW's own room sizes: 1 to 3 is S)"
+tag_large_min_natives,8,count,"3.5.1 step 6: an area with this many natives or more is L"
+snap_xy_yards,3,yards,"A native or the entry point is on the navmesh polygon within this distance sideways: the core's own search box, PathGenerator.cpp:234 extents {3, 5, 3} at pin 95068403"
+snap_z_yards,5,yards,"The same box, vertically (PathGenerator.cpp:234)"
+snap_z_far_yards,50,yards,"The core's second try for a point it cannot find (PathGenerator.cpp:245, extents[1] = 50): a flying or hovering native is still in the room below it"
+fragment_bridge_yards,6,yards,"Ours (measured, diablocraft-7vhj): the mmaps leave stairs, ledges and thin steps as separate fragments a few yards from the floor they belong to. A fragment smaller than the dungeon's part, with no other dungeon's entry in it, joins when its nearest vertex is within this distance. At 6 yards The Mechanar and The Slave Pens come out whole and Dire Maul East stays apart from its other wings; at 3 Dire Maul's wings merge"
+max_slope_degrees,45,degrees,"3.5.2: ground steeper than this is not walkable for an exit point; the open-world exits research (diablocraft-oziy) used 45"

@@ -1,0 +1,38 @@
+-- Generated from data/d3/difficulty_tiers.csv; edit the CSV and rerun generate_sql.py.
+-- Apply to the world database.
+SET NAMES utf8mb4;
+DROP TABLE IF EXISTS `dc_difficulty_tiers`;
+CREATE TABLE `dc_difficulty_tiers` (
+  `tier` LONGTEXT NOT NULL,
+  `monster_health_multiplier_pct` BIGINT NULL,
+  `monster_damage_multiplier_pct` BIGINT NULL,
+  `xp_bonus_pct` BIGINT NULL,
+  `gold_bonus_pct` BIGINT NULL,
+  `legendary_drop_bonus_pct` BIGINT NULL,
+  `deaths_breath_guaranteed` BIGINT NULL,
+  `deaths_breath_extra_pct` BIGINT NULL,
+  `deaths_breath_bounty_rift_bonus` LONGTEXT NOT NULL,
+  `unlock_requirement` LONGTEXT NOT NULL,
+  `notes` LONGTEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `dc_difficulty_tiers` (`tier`, `monster_health_multiplier_pct`, `monster_damage_multiplier_pct`, `xp_bonus_pct`, `gold_bonus_pct`, `legendary_drop_bonus_pct`, `deaths_breath_guaranteed`, `deaths_breath_extra_pct`, `deaths_breath_bounty_rift_bonus`, `unlock_requirement`, `notes`) VALUES
+('Normal', 100, 100, 0, 0, 0, 0, 15, 'Death''s Breath: 15% drop from level 61+ elites; Bounties: 1x Blood Shards; Nephalem Rift legendary bonus: +25% (lowest-difficulty base)', 'none (default difficulty)', 'All multipliers relative to Normal per wiki (sourced from Blizzard game-difficulty guide)'),
+('Hard', 200, 130, 75, 75, 0, 0, 18, 'Death''s Breath: 18% per elite; Bounties: 1x Blood Shards; Nephalem Rift legendary bonus: NOT PUBLISHED (between 25% base and 44% at T1)', 'none (available at start)', 'Legendary drop bonus for Hard not stated on cited pages; Legendary bonus 0%: official game guide lists bonus for Torment only; Lylirra blue post 2014-04-04 (docs/research/loot-rates-community.md Q2)'),
+('Expert', 312, 189, 100, 100, 0, 0, 21, 'Death''s Breath: 21% per elite; Bounties: 2x Blood Shards; Nephalem Rift legendary bonus: NOT PUBLISHED', 'none (available at start)', 'Legendary drop bonus for Expert not stated on cited pages; Legendary bonus 0%: official game guide lists bonus for Torment only; Lylirra blue post 2014-04-04 (docs/research/loot-rates-community.md Q2)'),
+('Master', 512, 273, 200, 200, 0, 0, 25, 'Death''s Breath: 25% per elite; Bounties: 2x Blood Shards; Imperial-quality gems can drop from level 61+ monsters; Nephalem Rift legendary bonus: NOT PUBLISHED', 'any character on the account reaches level 60 or completes Act IV (destroys Diablo)', 'Legendary drop bonus for Master not stated on cited pages; Legendary bonus 0%: official game guide lists bonus for Torment only; Lylirra blue post 2014-04-04 (docs/research/loot-rates-community.md Q2)'),
+('Torment I', 819, 396, 300, 300, 15, 0, 31, 'Death''s Breath: 31% per elite; Bounties: 2x Blood Shards; Imperial gems; level-70 legendaries now eligible to drop; Nephalem Rift legendary bonus: +44%', 'level 60 hero', 'Wiki also cites formula legendary bonus = 1.15^N per Torment level; matches official table through ~T8 then diverges (T16: table 1221% vs 1.15^16 ≈ 836%) — official table values used here'),
+('Torment II', 1311, 575, 400, 400, 32, 0, 37, 'Death''s Breath: 37% per elite; Bounties: 2x; Imperial gems', 'level 60 hero', ''),
+('Torment III', 2097, 833, 550, 550, 52, 0, 44, 'Death''s Breath: 44% per elite; Bounties: 2x; Imperial gems', 'level 60 hero', ''),
+('Torment IV', 3355, 1208, 800, 800, 75, 0, 53, 'Death''s Breath: 53% per elite; Bounties: 2x; Imperial gems', 'level 60 hero', ''),
+('Torment V', 5369, 1752, 1150, 1150, 101, 0, 64, 'Death''s Breath: 64% per elite; Bounties: 2x; Imperial gems', 'level 60 hero', ''),
+('Torment VI', 8590, 2540, 1600, 1600, 131, 0, 77, 'Death''s Breath: 77% per elite; Bounties: 2x; Imperial gems', 'level 60 hero', 'Up to Torment VI available any time after level 60; VII+ need level 70'),
+('Torment VII', 18985, 3604, 1900, 1850, 164, 0, 90, 'Death''s Breath: 90% per elite; Bounties: 2x; Rift Guardians guaranteed to drop 1 Forgotten Soul with increasing chance of a 2nd', 'level 70 + solo Greater Rift 30', 'Wiki: T7–T16 required solo GR 30–75 ''distributed linearly'' (= +5 GR per tier)'),
+('Torment VIII', 41625, 5097, 2425, 2150, 205, 1, 15, 'Death''s Breath: 100% per elite + 15% chance of an extra; Bounties: 2x; Rift Guardian Forgotten Soul rule as T7', 'level 70 + solo Greater Rift 35', ''),
+('Torment IX', 91260, 7208, 3100, 2500, 256, 1, 25, 'Death''s Breath: 100% per elite + 25% chance of an extra; Bounties: 2x', 'level 70 + solo Greater Rift 40', ''),
+('Torment X', 200082, 10194, 4000, 2900, 320, 1, 50, 'Death''s Breath: 100% per elite + 50% chance of an extra; Bounties: 2x', 'level 70 + solo Greater Rift 45', 'Ancient drop chance is roughly 10% at Torment X per Legendary Items page'),
+('Torment XI', 438669, 14416, 5000, 3350, 400, 1, 75, 'Death''s Breath: 100% per elite + 75% chance of an extra; Bounties: 2x', 'level 70 + solo Greater Rift 50', ''),
+('Torment XII', 961759, 20387, 6400, 3900, 500, 2, 0, 'Death''s Breath: 100% per elite to drop 2; Bounties: 2x', 'level 70 + solo Greater Rift 55', ''),
+('Torment XIII', 2108607, 28832, 8200, 4500, 625, 2, 25, 'Death''s Breath: 100% per elite to drop 2 + 25% chance of a 3rd; Bounties: 2x; Nephalem Rift legendary bonus: +901% (10x) per Nephalem Rift page', 'level 70 + solo Greater Rift 60', ''),
+('Torment XIV', 2889383, 40775, 10500, 5200, 781, 3, 25, 'Death''s Breath: 100% per elite to drop 3 + 25% chance of a 4th; Bounties: 2x', 'level 70 + solo Greater Rift 65', ''),
+('Torment XV', 6334823, 57664, 13400, 6050, 977, 3, 50, 'Death''s Breath: 100% per elite to drop 3 + 50% chance of a 4th; Bounties: 2x', 'level 70 + solo Greater Rift 70', ''),
+('Torment XVI', 13888770, 64725, 17000, 7000, 1221, 3, 75, 'Death''s Breath: 100% per elite to drop 3 + 75% chance of a 4th; Bounties: 2x', 'level 70 + solo Greater Rift 75', 'Torment XIV–XVI added in patch 2.6.5');

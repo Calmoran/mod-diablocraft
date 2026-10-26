@@ -1,0 +1,717 @@
+Reason: Support unsigned 32-bit coinage without signed wraparound in native money transactions.
+
+Constant (audit 233, 3): Native auction deposit percentage factor; auction house is not a Torment feature; revisit only if it ever is
+Constant (audit 234, 12): Native auction deposit time block hours; auction house is not a Torment feature; revisit only if it ever is
+Constant (audit 235, 3): Native auction deposit arithmetic factors; Same factor divides and multiplies; conversion to double retained by patch.
+Constant (audit 236, 2): Native summon acceptance duration minutes; Unchanged upstream macro in hunk context; not DC runtime tuning.
+Constant (audit 237, 0xFFFFFFFFu): New native money mirror ceiling; Unsigned field width; account ledger is wider.
+Constant (audit 238, 0x7FFFFFFF): Retired signed native money ceiling; Historical removed value, not an active tuning target.
+Constant (audit 239, 30): Native mail cost per item and empty-mail minimum; Client contract; two occurrences. Changing server alone changes quoted cost.
+Constant (audit 242, 179): Native NPC visual ID; Unchanged context, not a gameplay coefficient.
+Constant (audit 243, 362): Native NPC impact ID; Unchanged context, not a gameplay coefficient.
+
+--- a/src/server/game/AuctionHouse/AuctionHouseMgr.cpp
++++ b/src/server/game/AuctionHouse/AuctionHouseMgr.cpp
+@@ -98,7 +98,7 @@ uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32
+ 
+     float multiplier = CalculatePct(float(entry->depositPercent), 3);
+     uint32 timeHr = (((time / 60) / 60) / 12);
+-    uint32 deposit = uint32(((multiplier * MSV * count / 3) * timeHr * 3) * sWorld->getRate(RATE_AUCTION_DEPOSIT));
++    uint32 deposit = uint32(std::min(double(MAX_MONEY_AMOUNT), ((double(multiplier) * MSV * count / 3) * timeHr * 3) * sWorld->getRate(RATE_AUCTION_DEPOSIT)));
+ 
+     LOG_DEBUG("auctionHouse", "MSV:        {}", MSV);
+     LOG_DEBUG("auctionHouse", "Items:      {}", count);
+@@ -191,7 +191,11 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry* auction, Character
+     // owner exist
+     if (owner || owner_accId)
+     {
+-        uint32 profit = auction->bid + auction->deposit - auction->GetAuctionCut();
++        // Each mail and the legacy auction hook carry uint32. Preserve excess proceeds
++        // in a second mail in the same transaction instead of wrapping or discarding them.
++        uint64 totalProfit = uint64(auction->bid) + auction->deposit - auction->GetAuctionCut();
++        uint32 profit = uint32(std::min<uint64>(totalProfit, MAX_MONEY_AMOUNT));
++        uint32 extraProfit = uint32(totalProfit - profit);
+         sScriptMgr->OnBeforeAuctionHouseMgrSendAuctionSuccessfulMail(this, auction, owner, owner_accId, profit, sendNotification, updateAchievementCriteria, sendMail);
+ 
+         if (owner)
+@@ -216,6 +220,11 @@ void AuctionHouseMgr::SendAuctionSuccessfulMail(AuctionEntry* auction, Character
+             .AddMoney(profit)
+             .SendMailTo(trans, MailReceiver(owner, auction->owner.GetCounter()), auction, MAIL_CHECK_MASK_COPIED, sWorld->getIntConfig(CONFIG_MAIL_DELIVERY_DELAY));
+ 
++        if (sendMail && extraProfit)
++            MailDraft(auction->BuildAuctionMailSubject(AUCTION_SUCCESSFUL), AuctionEntry::BuildAuctionMailBody(auction->bidder, auction->bid, auction->buyout, auction->deposit, auction->GetAuctionCut()))
++                .AddMoney(extraProfit)
++                .SendMailTo(trans, MailReceiver(owner, auction->owner.GetCounter()), auction, MAIL_CHECK_MASK_COPIED, sWorld->getIntConfig(CONFIG_MAIL_DELIVERY_DELAY));
++
+         CharacterCacheEntry const* sellerCache = sCharacterCache->GetCharacterCacheByGuid(auction->owner);
+         CharacterCacheEntry const* bidderCache = sCharacterCache->GetCharacterCacheByGuid(auction->bidder);
+         LOG_INFO("entities.player.auctionhouse", "AuctionHouse: Auction #{} sold: Seller {} (AccountID: {}, GUID: {}), Buyer: {} (AccountID: {}, GUID: {}), Item (Entry: {}) x{}, Sale Price: {} copper, Profit: {} copper (cut: {} copper)",
+@@ -567,8 +576,8 @@ AuctionHouseFaction AuctionEntry::GetFactionId() const
+ 
+ uint32 AuctionEntry::GetAuctionCut() const
+ {
+-    int32 cut = int32(CalculatePct(bid, auctionHouseEntry->cutPercent) * sWorld->getRate(RATE_AUCTION_CUT));
+-    return std::max(cut, 0);
++    double cut = double(bid) * auctionHouseEntry->cutPercent / 100.0 * sWorld->getRate(RATE_AUCTION_CUT);
++    return uint32(std::clamp(cut, 0.0, double(bid)));
+ }
+ 
+ uint32 AuctionEntry::GetAuctionOutBid() const
+--- a/src/server/game/Entities/Creature/Trainer.cpp
++++ b/src/server/game/Entities/Creature/Trainer.cpp
+@@ -99,14 +99,14 @@ namespace Trainer
+         }
+ 
+         float reputationDiscount = player->GetReputationPriceDiscount(npc);
+-        int32 moneyCost = int32(trainerSpell->MoneyCost * reputationDiscount);
++        uint32 moneyCost = uint32(std::min(double(MAX_MONEY_AMOUNT), double(trainerSpell->MoneyCost) * reputationDiscount));
+         if (!player->HasEnoughMoney(moneyCost))
+         {
+             SendTeachFailure(npc, player, spellId, FailReason::NotEnoughMoney);
+             return;
+         }
+ 
+-        player->ModifyMoney(-moneyCost);
++        player->ModifyMoney(-int64(moneyCost));
+ 
+         npc->SendPlaySpellVisual(179); // 53 SpellCastDirected
+         npc->SendPlaySpellImpact(player->GetGUID(), 362); // 113 EmoteSalute
+--- a/src/server/game/Entities/Player/Player.cpp
++++ b/src/server/game/Entities/Player/Player.cpp
+@@ -3954,7 +3954,7 @@ bool Player::resetTalents(bool noResetCost)
+ 
+     if (!noResetCost)
+     {
+-        ModifyMoney(-(int32)resetCost);
++        ModifyMoney(-int64(resetCost));
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TALENTS, resetCost);
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_NUMBER_OF_TALENT_RESETS, 1);
+ 
+@@ -4957,9 +4957,15 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
+             }
+ 
+             uint32 dmultiplier = dcost->multiplier[ItemSubClassToDurabilityMultiplierId(ditemProto->Class, ditemProto->SubClass)];
+-            uint32 costs = uint32(LostDurability * dmultiplier * double(dQualitymodEntry->quality_mod));
++            double baseCost = double(LostDurability) * dmultiplier * dQualitymodEntry->quality_mod;
++            if (baseCost > MAX_MONEY_AMOUNT)
++                return TotalCost;
++            uint32 costs = uint32(baseCost);
+ 
+-            costs = uint32(costs * discountMod * sWorld->getRate(RATE_REPAIRCOST));
++            double adjustedCost = double(costs) * discountMod * sWorld->getRate(RATE_REPAIRCOST);
++            if (adjustedCost > MAX_MONEY_AMOUNT)
++                return TotalCost;
++            costs = uint32(adjustedCost);
+ 
+             if (costs == 0)                                   //fix for ITEM_QUALITY_ARTIFACT
+                 costs = 1;
+@@ -4987,7 +4993,7 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
+                 return TotalCost;
+             }
+             else
+-                ModifyMoney(-int32(costs));
++                ModifyMoney(-int64(costs));
+         }
+     }
+ 
+@@ -6432,7 +6438,7 @@ void Player::SetHonorPoints(uint32 value)
+             // Only convert points on login, not when awarded honor points.
+             if (isBeingLoaded())
+             {
+-                int32 excessPoints = value - sWorld->getIntConfig(CONFIG_MAX_HONOR_POINTS);
++                int64 excessPoints = int64(value) - sWorld->getIntConfig(CONFIG_MAX_HONOR_POINTS);
+                 ModifyMoney(excessPoints * copperPerPoint);
+             }
+         }
+@@ -10508,6 +10514,12 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+             return false;
+         }
+ 
++        if (cost > MAX_MONEY_AMOUNT - totalcost)
++        {
++            GetSession()->SendActivateTaxiReply(ERR_TAXINOTENOUGHMONEY);
++            m_taxi.ClearTaxiDestinations();
++            return false;
++        }
+         totalcost += cost;
+         if (i == 1)
+             firstcost = cost;
+@@ -10541,8 +10553,8 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+     if (npc)
+     {
+         float discount = GetReputationPriceDiscount(npc);
+-        totalcost = uint32(ceil(totalcost * discount));
+-        firstcost = uint32(ceil(firstcost * discount));
++        totalcost = uint32(std::min(double(MAX_MONEY_AMOUNT), ceil(double(totalcost) * discount)));
++        firstcost = uint32(std::min(double(MAX_MONEY_AMOUNT), ceil(double(firstcost) * discount)));
+         m_taxi.SetFlightMasterFactionTemplateId(npc->GetFaction());
+     }
+     else
+@@ -10568,7 +10580,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+     {
+         TaxiNodesEntry const* lastPathNode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+         m_taxi.ClearTaxiDestinations();
+-        ModifyMoney(-(int32)totalcost);
++        ModifyMoney(-int64(totalcost));
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TRAVELLING, totalcost);
+         TeleportTo(lastPathNode->map_id, lastPathNode->x, lastPathNode->y, lastPathNode->z, GetOrientation());
+         return false;
+@@ -10576,7 +10588,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc
+     else
+     {
+         m_flightSpellActivated = spellid;
+-        ModifyMoney(-(int32)firstcost);
++        ModifyMoney(-int64(firstcost));
+         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TRAVELLING, firstcost);
+         GetSession()->SendActivateTaxiReply(ERR_TAXIOK);
+         GetSession()->SendDoFlight(mount_display_id, sourcepath);
+@@ -10818,7 +10830,7 @@ void Player::InitDisplayIds()
+     }
+ }
+ 
+-inline bool Player::_StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot, int32 price, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore)
++inline bool Player::_StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot, uint32 price, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore)
+ {
+     ItemPosCountVec vDest;
+     uint16 uiDest = 0;
+@@ -10831,7 +10843,7 @@ inline bool Player::_StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 c
+         return false;
+     }
+ 
+-    ModifyMoney(-price);
++    ModifyMoney(-int64(price));
+ 
+     if (crItem->ExtendedCost)                            // case for new honor system
+     {
+@@ -11027,7 +11039,7 @@ bool Player::BuyItemFromVendorSlot(ObjectGuid vendorguid, uint32 vendorslot, uin
+         price = pProto->BuyPrice * count; //it should not exceed MAX_MONEY_AMOUNT
+ 
+         // reputation discount
+-        price = uint32(std::floor(price * GetReputationPriceDiscount(creature)));
++        price = uint32(std::min(double(MAX_MONEY_AMOUNT), std::floor(double(price) * GetReputationPriceDiscount(creature))));
+ 
+         if (!HasEnoughMoney(price))
+         {
+@@ -11683,38 +11695,41 @@ void Player::InitPrimaryProfessions()
+     SetFreePrimaryProfessions(sWorld->getIntConfig(CONFIG_MAX_PRIMARY_TRADE_SKILL));
+ }
+ 
+-bool Player::ModifyMoney(int32 amount, bool sendError /*= true*/)
++bool Player::ModifyMoney(int64 amount, bool sendError /*= true*/)
+ {
+     if (!amount)
+         return true;
+ 
+-    sScriptMgr->OnPlayerMoneyChanged(this, amount);
+-
+-    if (amount < 0)
+-        SetMoney (GetMoney() > uint32(-amount) ? GetMoney() + amount : 0);
+-    else
++    // Preserve legacy callbacks only for deltas their signed 32-bit API can represent.
++    // The wide hook runs afterwards for every nonzero delta; never truncate into Lua/modules.
++    if (amount >= INT32_MIN && amount <= INT32_MAX)
+     {
+-        // Trial account money cap (0 disables the cap)
+-        if (uint32 trialMoneyCap = sWorld->getIntConfig(CONFIG_TRIAL_MONEY_CAP))
+-        {
+-            if (GetSession()->IsTrialAccount() && GetMoney() + uint32(amount) > trialMoneyCap)
+-            {
+-                if (sendError)
+-                    SendEquipError(EQUIP_ERR_TOO_MUCH_GOLD, nullptr, nullptr);
+-                return false;
+-            }
+-        }
++        int32 legacyAmount = int32(amount);
++        sScriptMgr->OnPlayerMoneyChanged(this, legacyAmount);
++        amount = legacyAmount;
++    }
++    sScriptMgr->OnPlayerMoneyChangedWide(this, amount);
+ 
+-        if (GetMoney() < uint32(MAX_MONEY_AMOUNT - amount))
+-            SetMoney(GetMoney() + amount);
+-        else
+-        {
+-            if (sendError)
+-                SendEquipError(EQUIP_ERR_TOO_MUCH_GOLD, nullptr, nullptr);
+-            return false;
+-        }
++    if (amount <= 0)
++    {
++        // Compare before adding/negating, including INT64_MIN. Retain saturating debits.
++        SetMoney(amount <= -int64(GetMoney()) ? 0 : uint32(int64(GetMoney()) + amount));
++        return true;
+     }
+ 
++    uint32 cap = MAX_MONEY_AMOUNT;
++    if (uint32 trialMoneyCap = sWorld->getIntConfig(CONFIG_TRIAL_MONEY_CAP))
++        if (GetSession()->IsTrialAccount())
++            cap = std::min(cap, trialMoneyCap);
++
++    // Subtract in the wide domain before adding, so even INT64_MAX cannot overflow.
++    if (GetMoney() > cap || uint64(amount) > uint64(cap) - GetMoney())
++    {
++        if (sendError)
++            SendEquipError(EQUIP_ERR_TOO_MUCH_GOLD, nullptr, nullptr);
++        return false;
++    }
++    SetMoney(uint32(uint64(GetMoney()) + uint64(amount)));
+     return true;
+ }
+ 
+--- a/src/server/game/Entities/Player/Player.h
++++ b/src/server/game/Entities/Player/Player.h
+@@ -921,7 +921,7 @@ enum PlayerCharmedAISpells
+ 
+ // Player summoning auto-decline time (in secs)
+ #define MAX_PLAYER_SUMMON_DELAY                   (2*MINUTE)
+-#define MAX_MONEY_AMOUNT                       (0x7FFFFFFF-1)
++#define MAX_MONEY_AMOUNT                       0xFFFFFFFFu
+ 
+ struct ProgressionRequirement
+ {
+@@ -1391,7 +1391,7 @@ public:
+     }
+     void SendNewItem(Item* item, uint32 count, bool received, bool created, bool broadcast = false, bool sendChatMessage = true);
+     bool BuyItemFromVendorSlot(ObjectGuid vendorguid, uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot);
+-    bool _StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot, int32 price, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore);
++    bool _StoreOrEquipNewItem(uint32 vendorslot, uint32 item, uint8 count, uint8 bag, uint8 slot, uint32 price, ItemTemplate const* pProto, Creature* pVendor, VendorItem const* crItem, bool bStore);
+ 
+     [[nodiscard]] float GetReputationPriceDiscount(Creature const* creature) const;
+     [[nodiscard]] float GetReputationPriceDiscount(FactionTemplateEntry const* factionTemplate) const;
+@@ -1629,7 +1629,7 @@ public:
+     void setWeaponChangeTimer(uint32 time) {m_weaponChangeTimer = time;}
+ 
+     [[nodiscard]] uint32 GetMoney() const { return GetUInt32Value(PLAYER_FIELD_COINAGE); }
+-    bool ModifyMoney(int32 amount, bool sendError = true);
++    bool ModifyMoney(int64 amount, bool sendError = true);
+     [[nodiscard]] bool HasEnoughMoney(uint32 amount) const { return (GetMoney() >= amount); }
+     [[nodiscard]] bool HasEnoughMoney(int32 amount) const
+     {
+--- a/src/server/game/Entities/Player/PlayerGossip.cpp
++++ b/src/server/game/Entities/Player/PlayerGossip.cpp
+@@ -290,7 +290,7 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
+     if (!menuItemData)
+         return;
+ 
+-    int32 cost = int32(item->BoxMoney);
++    uint32 cost = item->BoxMoney;
+     if (!HasEnoughMoney(cost))
+     {
+         SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, 0, 0, 0);
+@@ -395,7 +395,7 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
+         }
+     }
+ 
+-    ModifyMoney(-cost);
++    ModifyMoney(-int64(cost));
+ }
+ 
+ uint32 Player::GetGossipTextId(WorldObject* source)
+--- a/src/server/game/Entities/Player/PlayerQuest.cpp
++++ b/src/server/game/Entities/Player/PlayerQuest.cpp
+@@ -762,7 +762,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver,
+     uint32 XP = rewarded ? 0 : CalculateQuestRewardXP(quest);
+ 
+     sScriptMgr->OnPlayerQuestComputeXP(this, quest, XP);
+-    int32 moneyRew = 0;
++    int64 moneyRew = 0;
+     if (GetLevel() >= sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL) || sScriptMgr->OnPlayerShouldBeRewardedWithMoneyInsteadOfExp(this))
+     {
+         moneyRew = quest->GetRewMoneyMaxLevel();
+@@ -794,7 +794,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver,
+         ModifyMoney(moneyRew);
+ 
+         if (moneyRew > 0)
+-            UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_MONEY_FROM_QUEST_REWARD, uint32(moneyRew));
++            UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_MONEY_FROM_QUEST_REWARD, uint32(std::min<int64>(moneyRew, MAX_MONEY_AMOUNT)));
+     }
+ 
+     // honor reward
+--- a/src/server/game/Guilds/Guild.cpp
++++ b/src/server/game/Guilds/Guild.cpp
+@@ -1334,7 +1334,7 @@ void Guild::HandleSetEmblem(WorldSession* session, EmblemInfo const& emblemInfo)
+         SendSaveEmblemResult(session, ERR_GUILDEMBLEM_NOTENOUGHMONEY); // "You can't afford to do that."
+     else
+     {
+-        player->ModifyMoney(-int32(EMBLEM_PRICE));
++        player->ModifyMoney(-int64(EMBLEM_PRICE));
+ 
+         HandleSetEmblem(emblemInfo);
+ 
+@@ -1465,7 +1465,7 @@ void Guild::HandleBuyBankTab(WorldSession* session, uint8 tabId)
+     if (!player->HasEnoughMoney(tabCost))                   // Should not happen, this is checked by client
+         return;
+ 
+-    player->ModifyMoney(-int32(tabCost));
++    player->ModifyMoney(-int64(tabCost));
+ 
+     _CreateNewBankTab();
+     _BroadcastEvent(GE_BANK_TAB_PURCHASED);
+@@ -1719,7 +1719,7 @@ void Guild::HandleMemberDepositMoney(WorldSession* session, uint32 amount)
+     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+     _ModifyBankMoney(trans, amount, true);
+ 
+-    player->ModifyMoney(-int32(amount));
++    player->ModifyMoney(-int64(amount));
+     player->SaveGoldToDB(trans);
+     _LogBankEvent(trans, GUILD_BANK_LOG_DEPOSIT_MONEY, uint8(0), player->GetGUID(), amount);
+ 
+--- a/src/server/game/Handlers/AuctionHouseHandler.cpp
++++ b/src/server/game/Handlers/AuctionHouseHandler.cpp
+@@ -269,7 +269,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recvData)
+             return;
+         }
+ 
+-        _player->ModifyMoney(-int32(deposit));
++        _player->ModifyMoney(-int64(deposit));
+ 
+         AuctionEntry* AH = new AuctionEntry;
+         AH->Id = sObjectMgr->GenerateAuctionID();
+@@ -490,7 +490,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
+ 
+     // price too low for next bid if not buyout
+     if ((price < auction->buyout || auction->buyout == 0) &&
+-            price < auction->bid + AuctionEntry::CalculateAuctionOutBid(auction->bid))
++            uint64(price) < uint64(auction->bid) + AuctionEntry::CalculateAuctionOutBid(auction->bid))
+     {
+         //auction has already higher bid, client tests it!
+         return;
+@@ -510,16 +510,16 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
+         if (auction->bidder)
+         {
+             if (auction->bidder == player->GetGUID())
+-                player->ModifyMoney(-int32(price - auction->bid));
++                player->ModifyMoney(-int64(price - auction->bid));
+             else
+             {
+                 // mail to last bidder and return money
+                 sAuctionMgr->SendAuctionOutbiddedMail(auction, price, GetPlayer(), trans);
+-                player->ModifyMoney(-int32(price));
++                player->ModifyMoney(-int64(price));
+             }
+         }
+         else
+-            player->ModifyMoney(-int32(price));
++            player->ModifyMoney(-int64(price));
+ 
+         auction->bidder = player->GetGUID();
+         auction->bid = price;
+@@ -551,10 +551,10 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
+     {
+         //buyout:
+         if (player->GetGUID() == auction->bidder)
+-            player->ModifyMoney(-int32(auction->buyout - auction->bid));
++            player->ModifyMoney(-int64(auction->buyout - auction->bid));
+         else
+         {
+-            player->ModifyMoney(-int32(auction->buyout));
++            player->ModifyMoney(-int64(auction->buyout));
+             if (auction->bidder)                          //buyout for bidded auction ..
+                 sAuctionMgr->SendAuctionOutbiddedMail(auction, auction->buyout, GetPlayer(), trans);
+         }
+@@ -634,7 +634,7 @@ void WorldSession::HandleAuctionRemoveItem(WorldPacket& recvData)
+                 return;
+             //some auctionBidderNotification would be needed, but don't know that parts..
+             sAuctionMgr->SendAuctionCancelledToBidderMail(auction, trans);
+-            player->ModifyMoney(-int32(auctionCut));
++            player->ModifyMoney(-int64(auctionCut));
+         }
+ 
+         // item will deleted or added to received mail list
+--- a/src/server/game/Handlers/BankHandler.cpp
++++ b/src/server/game/Handlers/BankHandler.cpp
+@@ -175,7 +175,7 @@ void WorldSession::HandleBuyBankSlotOpcode(WorldPackets::Bank::BuyBankSlot& buyB
+     }
+ 
+     _player->SetBankBagSlotCount(slot);
+-    _player->ModifyMoney(-int32(price));
++    _player->ModifyMoney(-int64(price));
+ 
+     packet.Result = ERR_BANKSLOT_OK;
+     SendPacket(packet.Write());
+--- a/src/server/game/Handlers/CharacterHandler.cpp
++++ b/src/server/game/Handlers/CharacterHandler.cpp
+@@ -1582,7 +1582,7 @@ void WorldSession::HandleAlterAppearance(WorldPacket& recvData)
+         SendPacket(&data);
+     }
+ 
+-    _player->ModifyMoney(-int32(cost));                     // it isn't free
++    _player->ModifyMoney(-int64(cost));                     // it isn't free
+     _player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_AT_BARBER, cost);
+ 
+     _player->SetByteValue(PLAYER_BYTES, 2, uint8(bs_hair->hair_id));
+--- a/src/server/game/Handlers/ItemHandler.cpp
++++ b/src/server/game/Handlers/ItemHandler.cpp
+@@ -652,14 +652,16 @@ void WorldSession::HandleSellItemOpcode(WorldPackets::Item::SellItem& packet)
+         {
+             if (pProto->SellPrice > 0)
+             {
+-                uint32 money = pProto->SellPrice * packet.Count;
+-                if (_player->GetMoney() >= MAX_MONEY_AMOUNT - money)               // prevent exceeding gold limit
++                uint64 totalMoney = uint64(pProto->SellPrice) * packet.Count;
++                if (totalMoney > uint64(MAX_MONEY_AMOUNT) - _player->GetMoney())               // prevent exceeding gold limit
+                 {
+                     _player->SendEquipError(EQUIP_ERR_TOO_MUCH_GOLD, nullptr, nullptr);
+                     _player->SendSellError(SELL_ERR_UNK, creature, packet.ItemGuid, 0);
+                     return;
+                 }
+ 
++                uint32 money = uint32(totalMoney); // Validated before narrowing.
++
+                 if (sWorld->getBoolConfig(CONFIG_ITEMDELETE_VENDOR))
+                     recoveryItem(pItem);
+ 
+@@ -782,7 +784,7 @@ void WorldSession::HandleBuybackItem(WorldPackets::Item::BuybackItem& packet)
+                 CharacterDatabase.Execute(stmt);
+             }
+ 
+-            _player->ModifyMoney(-(int32)price);
++            _player->ModifyMoney(-int64(price));
+             _player->RemoveItemFromBuyBackSlot(packet.Slot, false);
+             _player->ItemAddedQuestCheck(pItem->GetEntry(), pItem->GetCount());
+             _player->StoreItem(dest, pItem, true);
+--- a/src/server/game/Handlers/MailHandler.cpp
++++ b/src/server/game/Handlers/MailHandler.cpp
+@@ -162,15 +162,16 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
+ 
+     uint32 cost = items_count ? 30 * items_count : 30; // price hardcoded in client
+ 
+-    uint32 reqmoney = cost + money;
++    uint64 totalCost = uint64(cost) + money;
+ 
+     // Check for overflow
+-    if (reqmoney < money)
++    if (totalCost > MAX_MONEY_AMOUNT)
+     {
+         player->SendMailResult(0, MAIL_SEND, MAIL_ERR_NOT_ENOUGH_MONEY);
+         return;
+     }
+ 
++    uint32 reqmoney = uint32(totalCost);
+     if (!player->HasEnoughMoney(reqmoney))
+     {
+         player->SendMailResult(0, MAIL_SEND, MAIL_ERR_NOT_ENOUGH_MONEY);
+@@ -313,7 +314,7 @@ void WorldSession::HandleSendMail(WorldPacket& recvData)
+         }
+     }
+ 
+-    player->ModifyMoney(-int32(reqmoney));
++    player->ModifyMoney(-int64(reqmoney));
+     player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_MAIL, cost);
+ 
+     bool needItemDelay = false;
+@@ -600,7 +601,7 @@ void WorldSession::HandleMailTakeItem(WorldPacket& recvData)
+                 }
+             }
+ 
+-            player->ModifyMoney(-int32(m->COD));
++            player->ModifyMoney(-int64(m->COD));
+         }
+ 
+         m->COD = 0;
+--- a/src/server/game/Handlers/NPCHandler.cpp
++++ b/src/server/game/Handlers/NPCHandler.cpp
+@@ -628,7 +628,7 @@ void WorldSession::HandleBuyStableSlot(WorldPacket& recvData)
+         if (_player->HasEnoughMoney(SlotPrice->Price))
+         {
+             ++petStable.MaxStabledPets;
+-            _player->ModifyMoney(-int32(SlotPrice->Price));
++            _player->ModifyMoney(-int64(SlotPrice->Price));
+             SendStableResult(STABLE_SUCCESS_BUY_SLOT);
+         }
+         else
+--- a/src/server/game/Handlers/PetitionsHandler.cpp
++++ b/src/server/game/Handlers/PetitionsHandler.cpp
+@@ -184,7 +184,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket& recvData)
+         return;
+     }
+ 
+-    _player->ModifyMoney(-(int32)cost);
++    _player->ModifyMoney(-int64(cost));
+     Item* charter = _player->StoreNewItem(dest, charterid, true);
+     if (!charter)
+         return;
+--- a/src/server/game/Handlers/TradeHandler.cpp
++++ b/src/server/game/Handlers/TradeHandler.cpp
+@@ -281,7 +281,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         return;
+     }
+ 
+-    if (_player->GetMoney() >= MAX_MONEY_AMOUNT - his_trade->GetMoney())
++    if (uint64(_player->GetMoney()) - my_trade->GetMoney() + his_trade->GetMoney() > MAX_MONEY_AMOUNT)
+     {
+         info.Status = TRADE_STATUS_CLOSE_WINDOW;
+         info.Result = EQUIP_ERR_TOO_MUCH_GOLD;
+@@ -290,7 +290,7 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         return;
+     }
+ 
+-    if (trader->GetMoney() >= MAX_MONEY_AMOUNT - my_trade->GetMoney())
++    if (uint64(trader->GetMoney()) - his_trade->GetMoney() + my_trade->GetMoney() > MAX_MONEY_AMOUNT)
+     {
+         info.Status = TRADE_STATUS_CLOSE_WINDOW;
+         info.Result = EQUIP_ERR_TOO_MUCH_GOLD;
+@@ -595,9 +595,9 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& /*recvPacket*/)
+         }
+ 
+         // update money
+-        _player->ModifyMoney(-int32(my_trade->GetMoney()));
++        _player->ModifyMoney(-int64(my_trade->GetMoney()));
+         _player->ModifyMoney(his_trade->GetMoney());
+-        trader->ModifyMoney(-int32(his_trade->GetMoney()));
++        trader->ModifyMoney(-int64(his_trade->GetMoney()));
+         trader->ModifyMoney(my_trade->GetMoney());
+ 
+         if (HasPermission(rbac::RBAC_PERM_LOG_GM_TRADE))
+--- a/src/server/game/Movement/MovementGenerators/WaypointMovementGenerator.cpp
++++ b/src/server/game/Movement/MovementGenerators/WaypointMovementGenerator.cpp
+@@ -626,7 +626,7 @@ bool FlightPathMovementGenerator::LoadPath(Player* player)
+         if (!addedPathNode || i_path.empty())
+             return fail();
+ 
+-        _pointsForPathSwitch.push_back({ uint32(i_path.size() - 1), int32(ceil(cost * discount)) });
++        _pointsForPathSwitch.push_back({ uint32(i_path.size() - 1), uint32(std::min(double(MAX_MONEY_AMOUNT), ceil(double(cost) * discount))) });
+     }
+ 
+     // TODO: fixes crash, but can be handled in a better way once we will know how to reproduce it.
+@@ -736,7 +736,7 @@ bool FlightPathMovementGenerator::DoUpdate(Player* player, uint32 /*diff*/)
+                 if (!_pointsForPathSwitch.empty())
+                 {
+                     player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_GOLD_SPENT_FOR_TRAVELLING, _pointsForPathSwitch.front().Cost);
+-                    player->ModifyMoney(-_pointsForPathSwitch.front().Cost);
++                    player->ModifyMoney(-int64(_pointsForPathSwitch.front().Cost));
+                 }
+             }
+ 
+--- a/src/server/game/Movement/MovementGenerators/WaypointMovementGenerator.h
++++ b/src/server/game/Movement/MovementGenerators/WaypointMovementGenerator.h
+@@ -137,7 +137,7 @@ class FlightPathMovementGenerator : public MovementGeneratorMedium< Player, Flig
+         struct TaxiNodeChangeInfo
+         {
+             uint32 PathIndex;
+-            int32 Cost;
++            uint32 Cost;
+         };
+ 
+         std::deque<TaxiNodeChangeInfo> _pointsForPathSwitch;    //! node indexes and costs where TaxiPath changes
+--- a/src/server/game/Scripting/ScriptDefines/PlayerScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/PlayerScript.cpp
+@@ -132,6 +132,11 @@ void ScriptMgr::OnPlayerMoneyChanged(Player* player, int32& amount)
+     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_MONEY_CHANGED, script->OnPlayerMoneyChanged(player, amount));
+ }
+ 
++void ScriptMgr::OnPlayerMoneyChangedWide(Player* player, int64& amount)
++{
++    CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_MONEY_CHANGED_WIDE, script->OnPlayerMoneyChangedWide(player, amount));
++}
++
+ void ScriptMgr::OnPlayerBeforeLootMoney(Player* player, Loot* loot)
+ {
+     CALL_ENABLED_HOOKS(PlayerScript, PLAYERHOOK_ON_BEFORE_LOOT_MONEY, script->OnPlayerBeforeLootMoney(player, loot));
+--- a/src/server/game/Scripting/ScriptDefines/PlayerScript.h
++++ b/src/server/game/Scripting/ScriptDefines/PlayerScript.h
+@@ -237,6 +237,7 @@ enum PlayerHook
+     PLAYERHOOK_ON_AFTER_TRAIN_SPELL,
+     PLAYERHOOK_ON_UPDATE_CRIT_CHANCE,
+     PLAYERHOOK_ON_UPDATE_SPELL_CRIT_CHANCE,
++    PLAYERHOOK_ON_MONEY_CHANGED_WIDE,
+     PLAYERHOOK_END
+ };
+ 
+@@ -306,6 +307,9 @@ public:
+     // Called when a player's money is modified (before the modification is done)
+     virtual void OnPlayerMoneyChanged(Player* /*player*/, int32& /*amount*/) { }
+ 
++    // Runs after the legacy hook, with the complete delta. Default leaves core accounting unchanged.
++    virtual void OnPlayerMoneyChangedWide(Player* /*player*/, int64& /*amount*/) { }
++
+     // Called before looted money is added to a player
+     virtual void OnPlayerBeforeLootMoney(Player* /*player*/, Loot* /*loot*/) {}
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -316,6 +316,7 @@ public: /* PlayerScript */
+     bool OnPlayerCanLearnTalent(Player* player, TalentEntry const* talent, uint32 rank);
+     void OnPlayerAfterSpecSlotChanged(Player* player, uint8 newSlot);
+     void OnPlayerMoneyChanged(Player* player, int32& amount);
++    void OnPlayerMoneyChangedWide(Player* player, int64& amount);
+     void OnPlayerBeforeLootMoney(Player* player, Loot* loot);
+     void OnPlayerBeforeSendLoot(Player* player, ObjectGuid lootGuid, Loot* loot);
+     void OnPlayerGiveXP(Player* player, uint32& amount, Unit* victim, uint8 xpSource);
+--- a/src/server/scripts/Commands/cs_modify.cpp
++++ b/src/server/scripts/Commands/cs_modify.cpp
+@@ -602,12 +602,12 @@ public:
+             return false;
+         }
+ 
+-        int32 moneyToAdd = *moneyToAddO;
++        int64 moneyToAdd = *moneyToAddO;
+         uint32 targetMoney = target->GetMoney();
+ 
+         if (moneyToAdd < 0)
+         {
+-            int32 newmoney = int32(targetMoney) + moneyToAdd;
++            int64 newmoney = int64(targetMoney) + moneyToAdd;
+ 
+             LOG_DEBUG("chat.system", handler->GetAcoreString(LANG_CURRENT_MONEY), targetMoney, moneyToAdd, newmoney);
+             if (newmoney <= 0)
+@@ -626,7 +626,7 @@ public:
+                 handler->PSendSysMessage(LANG_YOU_TAKE_MONEY, std::abs(moneyToAdd), handler->GetNameLink(target));
+                 if (handler->needReportToTarget(target))
+                     ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_MONEY_TAKEN, handler->GetNameLink(), std::abs(moneyToAdd));
+-                target->SetMoney(newmoney);
++                target->SetMoney(uint32(newmoney));
+             }
+         }
+         else
+@@ -639,7 +639,7 @@ public:
+                 moneyToAdd = MAX_MONEY_AMOUNT;
+ 
+             if (targetMoney >= uint32(MAX_MONEY_AMOUNT) - moneyToAdd)
+-                moneyToAdd -= targetMoney;
++                moneyToAdd = int64(MAX_MONEY_AMOUNT) - targetMoney;
+ 
+             target->ModifyMoney(moneyToAdd);
+         }
+--- a/src/server/scripts/Commands/cs_quest.cpp
++++ b/src/server/scripts/Commands/cs_quest.cpp
+@@ -329,7 +329,7 @@ public:
+             int32 ReqOrRewMoney = quest->GetRewOrReqMoney(player->GetLevel());
+             if (ReqOrRewMoney < 0)
+             {
+-                player->ModifyMoney(-ReqOrRewMoney);
++                player->ModifyMoney(-int64(ReqOrRewMoney));
+             }
+ 
+             player->CompleteQuest(entry);
+--- a/src/server/scripts/World/npc_professions.cpp
++++ b/src/server/scripts/World/npc_professions.cpp
+@@ -416,7 +416,7 @@ void ProcessCastaction(Player* player, Creature* creature, uint32 spellId, uint3
+     if ((!spellId || !player->HasSpell(spellId)) && player->HasEnoughMoney(cost))
+     {
+         player->CastSpell(player, triggeredSpellId, true);
+-        player->ModifyMoney(-cost);
++        player->ModifyMoney(-int64(cost));
+ 
+         // xinef: save spells!
+         player->SaveToDB(false, false);
+@@ -434,7 +434,7 @@ void ProcessUnlearnAction(Player* player, Creature* creature, uint32 spellId, ui
+         {
+             player->CastSpell(player, spellId, true);
+             ProfessionUnlearnSpells(player, spellId);
+-            player->ModifyMoney(-cost);
++            player->ModifyMoney(-int64(cost));
+             if (alternativeSpellId)
+                 creature->CastSpell(player, alternativeSpellId, true);
+ 
+--- a/src/server/scripts/World/npcs_special.cpp
++++ b/src/server/scripts/World/npcs_special.cpp
+@@ -2002,7 +2002,7 @@ public:
+             return true;
+         }
+ 
+-        player->ModifyMoney(-toggleXpCost);
++        player->ModifyMoney(-int64(toggleXpCost));
+ 
+         switch (action)
+         {

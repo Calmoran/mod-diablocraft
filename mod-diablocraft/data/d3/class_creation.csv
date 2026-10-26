@@ -1,0 +1,7 @@
+d3_class,parent_wow_class_id,migration,source
+Monk,1,world_0047_class_monk.sql,"ruling 2026-10-12 (Monk brief, Part 1): the parent is Warrior, not Rogue (melee, already the Barbarian slot, no Death Knight start rules); copied at creation only"
+Crusader,2,world_0063_class_crusader.sql,"diablocraft-txze9 Crusader 1a (brief crusader-build-2026-10-14): the Paladin slot (decisions.md 2026-09-22 roster), so the parent is the class itself: stock rows kept, every race added"
+Necromancer,9,world_0059_class_necromancer.sql,"ruling 2026-10-15 (Necromancer build brief, step 1): the parent is Warlock, a caster with the pet bar the summons need (the Monk's parent was Warrior for the same kind of reason); copied at creation only"
+Demon Hunter,3,world_0069_class_demon_hunter.sql,"diablocraft-vawmy.1 Demon Hunter 1a (brief demon-hunter-build-2026-10-17, step 1): the Hunter slot (decisions.md 2026-09-22 roster), so the parent is the class itself: stock rows kept, every race added"
+Witch Doctor,9,world_0075_class_witch_doctor.sql,"diablocraft-vxrcu.1 Witch Doctor 1a (brief witch-doctor-build-2026-10-17, step 1): the parent is Warlock, a caster with the stock pet bar (the Necromancer's parent, kept for the same reason; no Shaman reason found); copied at creation only"
+Shaman,7,world_0081_class_shaman.sql,"diablocraft-xnrvn.2 Shaman 1a (brief shaman-build-2026-10-22, step 1): the Shaman slot (wow class 7), so the parent is the class itself: stock rows kept, every race added"

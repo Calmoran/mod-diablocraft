@@ -1,0 +1,2 @@
+map_id,area_id,x,y,z,o,placement_source,source_guid,guid_source
+750,4273,1935.3857,-23.56033,327.82968,3.1909845,"the designer's .gps reading, card q-1003-39 item 12 (FloorZ 327.8302): the Tester's Coffer; applied by diablocraft-ftoz. Sanctum of Torment, map 750 area 4273 (diablocraft-976b)",8000112,PM live acore_world collision audit 2026-09-26; 8000112-8000121 free in creature and dc_area_source and dc_area_spawn

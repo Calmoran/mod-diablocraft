@@ -1,0 +1,9 @@
+column,item_entry,d3_name,source
+1,100089,Ring of Royal Grandeur,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 1 Ring of Royal Grandeur"
+2,100570,Illusory Boots,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 2 Illusory Boots"
+3,100950,Avarice Band,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 3 Avarice Band"
+4,100089,Ring of Royal Grandeur,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 4 rolls from the other acts' pools"
+4,100570,Illusory Boots,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 4 rolls from the other acts' pools"
+4,100950,Avarice Band,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 4 rolls from the other acts' pools"
+4,100951,Pandemonium Loop,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 4 rolls from the other acts' pools"
+5,100951,Pandemonium Loop,"decisions 2026-10-10 (4006a91d): each act's cache rolls its legendaries from its own act's pool, as D3 (maxroll bounties section 5): Act 5 Pandemonium Loop"

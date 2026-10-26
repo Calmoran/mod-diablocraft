@@ -1,0 +1,225 @@
+affix_name,parameter,value,unit,notes,source_url
+Arcane Enchanted,damage,not published,,"No numeric damage or % of weapon damage published. maxroll (updated for patch 2.7.3): beam deals 'very high damage'; fandom: Arcane Sentries deal 'significant Arcane damage per tick'",https://maxroll.gg/d3/resources/elite-affixes
+Arcane Enchanted,duration,10,seconds,"maxroll: 'lasts 10 sec when activated'; fandom: the beam completes one full rotation and then disappears (no separate duration stated)",https://maxroll.gg/d3/resources/elite-affixes
+Arcane Enchanted,radius_or_size,25,yards,maxroll: '25 yards radius (circling)',https://maxroll.gg/d3/resources/elite-affixes
+Arcane Enchanted,arming_delay,2,seconds,"maxroll: '2 sec delay after cast'; fandom: orb 'fully form[s] after a few seconds'",https://maxroll.gg/d3/resources/elite-affixes
+Arcane Enchanted,cooldown_or_frequency,not published,,"Cast interval for the orb is not stated on maxroll or fandom",https://maxroll.gg/d3/resources/elite-affixes
+Arcane Enchanted,projectile_count_or_speed,not applicable,,"Single rotating beam (Arcane Sentry) doing one full circle; not projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Arcane Enchanted,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,damage,not published,,"Remaining champions gain 'extra speed, damage' (maxroll) / 'greater strength and speed' (fandom); buff magnitude not quantified",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,duration,not applicable,,"Buff persists on surviving members until the pack is dead; no duration stated",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,arming_delay,not applicable,,"Triggered by the death of a pack member (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,cooldown_or_frequency,1,per pack member killed,"Applies once per member death: maxroll 'increases in intensity as members of the pack are killed'; fandom 'The death of each Champion ... imbues the remaining Champions'",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Avenger,damage_taken_increase,+50,% per application,maxroll: survivors also gain damage taken 'which increases by 50% per application',https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,damage,not published,,"Base damage not quantified (fandom: 'very little damage at first'); growth while standing in the pool is in damage_stacking",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Desecrator,duration,not published,,"Pool lifetime not stated on either source; maxroll: damage 'starts/ends with 1sec delay' (the delay applies when leaving, see arming_delay)",https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,radius_or_size,6,yards,maxroll: '6 yards radius',https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,arming_delay,1,seconds,maxroll: 'damage starts/ends with 1sec delay',https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,cooldown_or_frequency,not published,,"Cast interval not stated; pool is conjured 'directly underneath the Player Character' (fandom)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Desecrator,projectile_count_or_speed,not applicable,,"Ground pool; no projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Desecrator,damage_stacking,"x2 per 0.5 s, max 10 stacks",multiplier,"maxroll: 'base damage doubles every 0.5sec'; fandom: 'the damage doubles every 0.5 seconds you remain in that pool, up to ten stacks'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Electrified,damage,not published,,"fandom: sparks deal 'slight Lightning damage'; maxroll: 'grows in intensity at low life'; official 2.4.3 notes state the affix damage was reduced by about 35% at that time; no per-hit number or % of weapon damage published",https://maxroll.gg/d3/resources/elite-affixes
+Electrified,duration,not applicable,,"Sparks fly outward on trigger; no duration stated",https://maxroll.gg/d3/resources/elite-affixes
+Electrified,radius_or_size,not published,,"fandom: sparks 'fly in all directions'; no radius stated",https://maxroll.gg/d3/resources/elite-affixes
+Electrified,arming_delay,not applicable,,"Triggered when the monster is hit by a damaging attack (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Electrified,cooldown_or_frequency,0.1,seconds,"fandom: 'As of Patch 2.1.1, there is a 0.1 second internal cooldown on spark generation'; official 2.1.1 notes confirm a cooldown but give no value ('now has a short internal cooldown')",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Electrified,projectile_count_or_speed,4,bolts per trigger,"maxroll: '4 bolts each time'; fandom: the number of sparks per hit grows as the monster loses Life (see spark_count_scaling)",https://maxroll.gg/d3/resources/elite-affixes
+Electrified,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Electrified,spark_count_scaling,increases as monster Life drops,,"fandom: 'The number of sparks released per hit grows as the monster loses Life'; maxroll: 'grows in intensity at low life'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Electrified,piercing,yes (since 2.4.3),,"Official 2.4.3 notes: 'Crawling lightning generated by this affix now pierces, allowing it to damage multiple targets in succession'",https://web.archive.org/web/20170120183454/http://us.battle.net/d3/en/blog/20426802
+Fast,damage,not applicable,,"Passive speed buff; no damage component",https://maxroll.gg/d3/resources/elite-affixes
+Fast,duration,not applicable,,"Permanent while the monster is alive",https://maxroll.gg/d3/resources/elite-affixes
+Fast,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Fast,arming_delay,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Fast,cooldown_or_frequency,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Fast,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Fast,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Fast,speed_increase,"+40% move, +20% attack, +10% cast",%,Identical values on maxroll and fandom,https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,damage,not published,,"maxroll: 'deals very high damage'; fandom: 'significant Fire damage on contact'; no number published",https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,duration,not published,,"Chains persist while at least 2 members are alive; fandom: 'disabled when only one monster remains'; no time stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Fire Chains,radius_or_size,not published,,"Chain length / damage radius not quantified; official 2.3.0 notes confirm a 'damage radius' was reduced to match the visual but give no value",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Fire Chains,arming_delay,not applicable,,"Active while pack members are chained",https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,cooldown_or_frequency,not published,,"Applied 'periodically' (maxroll, fandom); no interval stated",https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,projectile_count_or_speed,not applicable,,"Chains are not projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,tick_rate,10,ticks per second,"maxroll: '10 ticks per second, only activate with at least 2 members nearby, can be dodged'",https://maxroll.gg/d3/resources/elite-affixes
+Fire Chains,activation_condition,2 or more pack members,,"maxroll: 'only activate with at least 2 members nearby'; fandom: 'disabled when only one monster remains'",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,damage,not published,,"Crystals deal periodic Cold DoT while charging and the explosion deals 'heavy Cold damage' (fandom); no numbers published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Frozen,duration,4,seconds,"Orbs charge then explode: maxroll '4 sec to explode'; fandom 'explode after 4 seconds'",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,radius_or_size,15,yards,"maxroll: '15 yard radius' (DoT/explosion area visible on the ground per fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,arming_delay,not applicable,,"Explosion at the end of the 4 s charge (see duration)",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,cooldown_or_frequency,not published,,"Cast interval not stated on either source",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,projectile_count_or_speed,6,orbs per cast,"maxroll: '6 orbs per cast'; fandom: 'create 6 frozen bombs around the player'",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Frozen,freeze_duration,2.5,seconds,"CONFLICT: maxroll (updated for 2.7.3) says '2.5 second Freeze'; fandom says 3 s for heroes with no crowd control resistance (https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III))",https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,damage,not published,,"fandom: 'heavy Cold damage'; no number published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Frozen Pulse,duration,10,seconds,maxroll: 'pulses for 10 sec after triggered',https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,radius_or_size,15,yards,maxroll: '15 yards radius',https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,arming_delay,1.5,seconds,"maxroll: 'inert for 1.5 second on cast'; fandom: 'a delay between the pulse reaching its final spot and its first pulse' (no value)",https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,cooldown_or_frequency,not published,,"Cast interval not stated on either source",https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,projectile_count_or_speed,1,tracking sphere per cast,"fandom: 'a crystalline globe of ice that will home in on a player'; maxroll: the pulse follows until it reaches the player once, then stays",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Frozen Pulse,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Frozen Pulse,slow_percent,60,%,maxroll: 'applies 60% slow'; fandom: Chilling on a successful hit (no value),https://maxroll.gg/d3/resources/elite-affixes
+Health Link,damage,not applicable,,"No damage; splits damage taken among pack members (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Health Link,duration,not applicable,,"Active while two or more members are alive (fandom)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Health Link,radius_or_size,not published,,"maxroll: members 'in range (around 1 screen)'; fandom: 'nearby Champions', isolated members do not share; no value",https://maxroll.gg/d3/resources/elite-affixes
+Health Link,arming_delay,not applicable,,"Passive while the pack is alive",https://maxroll.gg/d3/resources/elite-affixes
+Health Link,cooldown_or_frequency,not published,,"maxroll: damage is shared 'on every tick of damage'; no interval stated",https://maxroll.gg/d3/resources/elite-affixes
+Health Link,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Health Link,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Health Link,low_life_threshold,5,%,"fandom: 'At 5% Life left, monsters can still share their own damage with others, but will stop taking shared damage from others'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Horde,damage,not applicable,,"Minion-count buff; no damage",https://maxroll.gg/d3/resources/elite-affixes
+Horde,duration,not applicable,,"Permanent for the pack",https://maxroll.gg/d3/resources/elite-affixes
+Horde,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Horde,arming_delay,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Horde,cooldown_or_frequency,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Horde,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Horde,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Horde,minion_count,2x,multiplier,"maxroll: 'doubles the amount of minions'; fandom: 'increasing (usually doubling) the number of Minions'; no absolute counts stated on either source",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,damage,not applicable,,"Illusions deal 'normal damage' (fandom); the affix itself deals no damage",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Illusionist,duration,not published,,"No fixed lifetime; maxroll: illusions despawn at distance (see despawn_distance) and typically respawn",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,arming_delay,not applicable,,"Triggered on damage taken (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,cooldown_or_frequency,not published,,"maxroll: 'cast happens only when damage is taken (after cooldown is ready)'; cooldown value not stated",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,illusion_life,5,%,maxroll and fandom: illusions have 5% of normal Life,https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,trigger_hp,95,%,maxroll: spawning starts 'when hit points are reduced slightly under full life (~95% HP)',https://maxroll.gg/d3/resources/elite-affixes
+Illusionist,despawn_distance,not published,,"maxroll: 'around 3 screens' (qualitative); no value",https://maxroll.gg/d3/resources/elite-affixes
+Jailer,damage,not published,,"fandom: 'dealing low damage at lower levels and scales to average damage in higher difficulties'; maxroll: 'a medium amount of damage instantly'; no number",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Jailer,duration,1.5-2.5,seconds,fandom: '1.5-2.5 seconds'; maxroll states '2.5 second duration',https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Jailer,radius_or_size,60,yards,"fandom: 'When cast, it traps all enemies within 60 yards, including NPCs, followers, and minions'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Jailer,arming_delay,not applicable,,"Instant on cast",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Jailer,cooldown_or_frequency,not published,,"fandom: 'There is a small cooldown between monsters from the same pack using this skill'; no value",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Jailer,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Jailer,tier_scaling,low to average across difficulties,qualitative,fandom: damage 'scales to average damage in higher difficulties' (no per-tier numbers),https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Juggernaut,damage,not applicable,,"Deals no damage; permanent crowd control immunity (maxroll, fandom, official 2.4.3 notes)",https://maxroll.gg/d3/resources/elite-affixes
+Juggernaut,duration,not applicable,,"Permanent immunity",https://web.archive.org/web/20170120183454/http://us.battle.net/d3/en/blog/20426802
+Juggernaut,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Juggernaut,arming_delay,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Juggernaut,cooldown_or_frequency,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Juggernaut,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Juggernaut,tier_scaling,not published,,"Added in patch 2.4.3 (fandom, official notes); no per-tier numbers",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Juggernaut,damage_taken_increase,+30,%,Official 2.4.3 notes: 'enemies with this affix take 30% more damage from all sources'; maxroll and fandom agree,https://web.archive.org/web/20170120183454/http://us.battle.net/d3/en/blog/20426802
+Juggernaut,movement_speed,not published,,"Official 2.4.3 notes: 'move more slowly than normal monsters'; no percentage published",https://web.archive.org/web/20170120183454/http://us.battle.net/d3/en/blog/20426802
+Knockback,damage,none,,"fandom: 'There is no extra damage' (explicit)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Knockback,duration,3,seconds,"Slow duration: maxroll '80% slow for 3 seconds'; fandom '80% slow effect for 3 seconds'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Knockback,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Knockback,arming_delay,not applicable,,"On each landed attack (fandom)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Knockback,cooldown_or_frequency,not published,,"fandom: 'chance to send a target flying backwards with each attack that lands'; the chance is not stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Knockback,projectile_count_or_speed,not applicable,,"Knockback is not a projectile (see knockback_distance)",https://maxroll.gg/d3/resources/elite-affixes
+Knockback,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Knockback,slow_percent,80,%,maxroll and fandom,https://maxroll.gg/d3/resources/elite-affixes
+Knockback,knockback_distance,30,yards,maxroll: 'after being knocked back ~30 yards' (approximate),https://maxroll.gg/d3/resources/elite-affixes
+Missile Dampening,damage,not applicable,,"fandom: 'does not reduce the damage done by projectiles'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Missile Dampening,duration,not applicable,,"Permanently active while the elite is alive (fandom: 'permanently active')",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Missile Dampening,radius_or_size,not published,,"'blue dome' (fandom) / bubble (maxroll); size not stated",https://maxroll.gg/d3/resources/elite-affixes
+Missile Dampening,arming_delay,not published,,"maxroll: bubble 'appears shortly after the Elite takes aggro on a player or pet'; no value",https://maxroll.gg/d3/resources/elite-affixes
+Missile Dampening,cooldown_or_frequency,not applicable,,"Passive",https://maxroll.gg/d3/resources/elite-affixes
+Missile Dampening,projectile_count_or_speed,90% reduction,%,"maxroll: 'slows projectiles by 90%'; fandom: 'speed decreased by 90%'; no effect on beams, torrents or non-missile ranged attacks (fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Missile Dampening,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Molten,damage,not published,,"Trail: 'high Fire damage' (fandom) / 'medium amount' (maxroll); death explosion: 'extremely high-damaging' (fandom) / 'massive damage that will usually oneshot you' (maxroll); no number or % of weapon damage published",https://maxroll.gg/d3/resources/elite-affixes
+Molten,duration,5,seconds,"CONFLICT: trail ground effect - maxroll (updated for 2.7.3) says '5 sec duration (ground effect)'; fandom says 'high Fire damage over 4 seconds' (https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III))",https://maxroll.gg/d3/resources/elite-affixes
+Molten,radius_or_size,5 (trail); 18 (explosion),yards,maxroll: '5 yards radius around the monster' trail; '18 yards radius explosion (can be dodged)',https://maxroll.gg/d3/resources/elite-affixes
+Molten,arming_delay,3,seconds,"Death explosion arms 3 s after the monster dies: maxroll 'When killed, they explode after 3 seconds'; fandom '3 seconds after they die, their bodies explode'",https://maxroll.gg/d3/resources/elite-affixes
+Molten,cooldown_or_frequency,not published,,"Trail is laid continuously while the monster moves (fandom: 'while they move'); no cast cycle stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Molten,projectile_count_or_speed,not applicable,,"Ground trail plus body explosion; no projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Molten,tier_scaling,not published,,"No per-difficulty numbers; fandom notes the explosion deals Physical instead of Fire only inside Echoing Nightmare (mode-specific, not tier scaling)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Molten,trail_stacking,stacks,qualitative,"fandom: 'Multiple lava trails in the same area stack, increasing damage proportionally'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Mortar,damage,not published,,"Direct hit 'heavy damage', collateral 'significantly less' (maxroll); no number published",https://maxroll.gg/d3/resources/elite-affixes
+Mortar,duration,not applicable,,"No lingering effect after impact; impact-zone warning is in arming_delay",https://maxroll.gg/d3/resources/elite-affixes
+Mortar,radius_or_size,3 (direct); 11.5 (collateral),yards,"maxroll: '3 yards radius for direct hit, 11.5 yards for collateral damage'",https://maxroll.gg/d3/resources/elite-affixes
+Mortar,arming_delay,0.5-1,seconds,fandom: impact zone 'show[n] ... roughly 0.5-1 second before they hit',https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Mortar,cooldown_or_frequency,4-5,seconds per volley,fandom: 'fire three Grenades at the player every 4-5 seconds',https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Mortar,projectile_count_or_speed,3,per cast,maxroll: '3 projectiles per cast'; fandom: 'fire three Grenades'; projectile speed not published,https://maxroll.gg/d3/resources/elite-affixes
+Mortar,tier_scaling,not published,,"fandom: damage 'has been greatly reduced over time' (historical change, not per-tier numbers)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Mortar,min_range,25,yards,maxroll: shells 'can't fall closer than 25 yards away from the monster',https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,damage,not applicable,,"Fear effect; no damage (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,duration,1,seconds,"CONFLICT: maxroll (updated for 2.7.3) says '1 second fear when hit'; fandom says 3 s for a hero with no crowd control resistance (https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III))",https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,arming_delay,not applicable,,"Triggered on a successful hit (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,cooldown_or_frequency,not published,,"fandom: 'a chance to send a hero running in fear on successful attacks'; chance not stated; maxroll: 'can be triggered by other affixes'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Nightmarish,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Nightmarish,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Orbiter,damage,not published,,"fandom: main globe 'deals more damage', satellites 'low damage, but tick very fast'; maxroll: 'very high damage'; no number published",https://maxroll.gg/d3/resources/elite-affixes
+Orbiter,duration,15,seconds,maxroll: 'lasts 15 sec',https://maxroll.gg/d3/resources/elite-affixes
+Orbiter,radius_or_size,5 (central); 3 (orbiting),yards,maxroll: '1 central orb (5 yards radius) with 5-9 orbiting (3 yards)',https://maxroll.gg/d3/resources/elite-affixes
+Orbiter,arming_delay,not published,,"fandom: 'occasionally call up a Lightning Globe'; no arm time stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Orbiter,cooldown_or_frequency,not published,,"fandom: 'Each monster can only summon one Globe at a time'; interval not stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Orbiter,projectile_count_or_speed,1 central + 5-9 orbiting,orbs,maxroll,https://maxroll.gg/d3/resources/elite-affixes
+Orbiter,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Plagued,damage,not published,,"Base damage 'very small' (fandom) / 'very low' (maxroll); growth while in the pool is in damage_stacking; no base number published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Plagued,duration,not published,,"Pool lifetime not stated; fandom: pools 'disappear immediately when the monster that spawned the pool is killed, and can disappear on their own after a long time'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Plagued,radius_or_size,10,yards,maxroll: '10 yards radius',https://maxroll.gg/d3/resources/elite-affixes
+Plagued,arming_delay,not published,,"No arming time stated; maxroll's 'damage stops with 1 sec delay' is the delay when leaving the pool",https://maxroll.gg/d3/resources/elite-affixes
+Plagued,cooldown_or_frequency,not published,,"fandom: 'occasionally summon green toxin pools'; no interval stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Plagued,projectile_count_or_speed,not applicable,,"Ground pools; no projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Plagued,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Plagued,damage_stacking,"x2 per 0.5 s, max 10 stacks",multiplier,"fandom: 'effectively doubles every 0.5 seconds, to a limit of ten stacks'; maxroll: damage 'slowly ramps up over time the longer you stay in it'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Poison Enchanted,damage,not published,,"fandom: 'fast ticks of damage'; maxroll: 'very high DoT-damage'; no number published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Poison Enchanted,duration,6,seconds,"Trail lifetime: maxroll 'ground effect lasts for 6 sec'; fandom 'Each trail lasts 6 seconds'",https://maxroll.gg/d3/resources/elite-affixes
+Poison Enchanted,radius_or_size,3,yards,Trail width: maxroll '3 yards width',https://maxroll.gg/d3/resources/elite-affixes
+Poison Enchanted,arming_delay,2,seconds,"CONFLICT: maxroll says '2 sec trigger time'; fandom says the slimes 'spread out after 3 seconds' (https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III))",https://maxroll.gg/d3/resources/elite-affixes
+Poison Enchanted,cooldown_or_frequency,not published,,"Shared pack cooldown with no value: official 2.3.0 notes 'Monsters in the same pack now have a shared cooldown on casting this ability', 'Monsters now only cast 1 poison bomb at once', 'Individual monster cooldown has been slightly reduced'",https://web.archive.org/web/20160101131039/http://us.battle.net/d3/en/blog/19859662/
+Poison Enchanted,projectile_count_or_speed,4,pools per cast,maxroll: 'summons 4 pools per cast'; fandom: the slimes spread leaving poison in an X shape,https://maxroll.gg/d3/resources/elite-affixes
+Poison Enchanted,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Reflects Damage,damage,100% of the triggering attack's basic damage (pre-crit),,"fandom: 'The exact amount equals basic damage of the attack, before Critical Hits'; maxroll: damage is independent of player damage and matches the triggering element",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Reflects Damage,duration,4,seconds,"Active duration: official 2.4.3 notes 'its active duration has been reduced from 6 seconds to 4'; CONFLICT: maxroll (updated for 2.7.3) says 'lasts for up to 15 sec'",https://web.archive.org/web/20170120183454/http://us.battle.net/d3/en/blog/20426802
+Reflects Damage,radius_or_size,not applicable,,"Projectiles fly at the player; no area",https://maxroll.gg/d3/resources/elite-affixes
+Reflects Damage,arming_delay,1,seconds,"Warning duration: official 2.4.3 notes 'reduced from 2 seconds to 1'; the warning visual was introduced in 2.3.0",https://web.archive.org/web/20170120183454/http://us.battle.net/d3/en/blog/20426802
+Reflects Damage,cooldown_or_frequency,not published,,"fandom: 'small internal cooldown on how often it can deal damage to attackers'; official 2.3.0 notes: 'very short internal cooldown'; no value published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Reflects Damage,projectile_count_or_speed,not published,,"Fires projectiles (count and speed not stated); only one monster in a pack reflects at a time (maxroll, fandom, official 2.3.0 notes)",https://maxroll.gg/d3/resources/elite-affixes
+Reflects Damage,tier_scaling,fixed per difficulty tier,qualitative,maxroll: 'depending on the difficulty setting it will always deal the same amount of damage' (no per-tier numbers published),https://maxroll.gg/d3/resources/elite-affixes
+Reflects Damage,suppression,Hex suppresses the affix,,"fandom: 'Being Hexed suppresses this affix'; official 2.3.0 notes: 'Monsters can no longer reflect damage while afflicted by a Witch Doctor's Hex'",https://web.archive.org/web/20160101131039/http://us.battle.net/d3/en/blog/19859662/
+Shielding,damage,not applicable,,"Grants 100% damage immunity to the shielded monster; deals no damage (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Shielding,duration,5,seconds,maxroll: '5 sec duration'; fandom: 'immune to all forms of damage and status effects for 5 seconds',https://maxroll.gg/d3/resources/elite-affixes
+Shielding,radius_or_size,not applicable,,"No radius in the effect",https://maxroll.gg/d3/resources/elite-affixes
+Shielding,arming_delay,not published,,"maxroll: 'a short animation to warn you'; no value",https://maxroll.gg/d3/resources/elite-affixes
+Shielding,cooldown_or_frequency,not published,,"Cast interval not stated on either source",https://maxroll.gg/d3/resources/elite-affixes
+Shielding,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Shielding,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Shielding,pack_limit,1,monster at a time,"maxroll: 'one monster at a time'; official 2.4.3 notes: 'Will now be cancelled immediately if the shielded monster is the last remaining monster in a pack'",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,damage,not applicable,,"No damage (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,duration,not applicable,,"Instant reposition",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Teleporter,radius_or_size,not published,,"'another nearby spot' (maxroll); range not stated",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,arming_delay,not applicable,,"No arming phase",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,cooldown_or_frequency,not published,,"maxroll: 'Every few seconds, the elites will randomly move'; fandom: 'at will'; no value",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Teleporter,direction,to and away from the player,,"maxroll: 'can teleport both to and away from the player'; fandom: away when too close, towards when too far",https://maxroll.gg/d3/resources/elite-affixes
+Thunderstorm,damage,not published,,"fandom: 'light to moderate Lightning damage'; no number published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Thunderstorm,duration,not applicable,,"Strikes are instant; 'several times in rapid succession' (fandom)",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Thunderstorm,radius_or_size,12,yards,maxroll: 'impact area of 12 yards radius',https://maxroll.gg/d3/resources/elite-affixes
+Thunderstorm,arming_delay,not published,,"maxroll: can be moved out 'after the first 1-2 hits'; fandom: strikes 'can follow the player, but is rather slow'; no warning-delay value",https://maxroll.gg/d3/resources/elite-affixes
+Thunderstorm,cooldown_or_frequency,not published,,"fandom: 'periodically call in a thunderstorm'; no interval stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Thunderstorm,projectile_count_or_speed,5,strikes per cast,maxroll: '5 strikes per cast',https://maxroll.gg/d3/resources/elite-affixes
+Thunderstorm,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Vortex,damage,not published,,"fandom: 'a small, but unavoidable, amount of Physical damage'; no number published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Vortex,duration,not applicable,,"Instant pull",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Vortex,radius_or_size,50,yards,maxroll: 'pulls players within 50 yards to the monster',https://maxroll.gg/d3/resources/elite-affixes
+Vortex,arming_delay,not applicable,,"No arming phase",https://maxroll.gg/d3/resources/elite-affixes
+Vortex,cooldown_or_frequency,not published,,"fandom: 'occasionally pull the player to their position'; no interval stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Vortex,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Vortex,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Vortex,pull_limits,no pull through walls; can pull through allies/enemies,,"fandom: 'Vortex cannot pull you through walls, obstacles, or impassable terrain (you will stop right next to the intervening object), but can pull you through allies and other enemies'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Waller,damage,not applicable,,"Walls deal no damage (maxroll, fandom)",https://maxroll.gg/d3/resources/elite-affixes
+Waller,duration,6,seconds,maxroll: '6 second duration'; fandom: 'Summoned walls vanish after 6 seconds',https://maxroll.gg/d3/resources/elite-affixes
+Waller,radius_or_size,not published,,"Wall size/length not stated on either source",https://maxroll.gg/d3/resources/elite-affixes
+Waller,arming_delay,not applicable,,"Walls appear on cast",https://maxroll.gg/d3/resources/elite-affixes
+Waller,cooldown_or_frequency,not published,,"maxroll: 'the short cooldown of the affix'; fandom: 'for a short period of time'; no value",https://maxroll.gg/d3/resources/elite-affixes
+Waller,projectile_count_or_speed,not applicable,,"No projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Waller,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Waller,wall_count,1 (Champion); 3 (Rare),walls,"maxroll: 'Blues summon one wall, Yellows summon three walls in a rectangular shape with one exit'; fandom: Champions place one section each, Rares 'summons 3 walls at once, placing a U-shaped trap'",https://maxroll.gg/d3/resources/elite-affixes
+Waller,min_wall_spacing,3,yards,"Official 2.3.0 notes: 'Champion packs with the Waller affix can no longer summon a wall within 3 yards of another wall'",https://web.archive.org/web/20160101131039/http://us.battle.net/d3/en/blog/19859662/
+Wormhole,damage,not published,,"fandom: 'a small amount of Arcane damage' on teleport; maxroll: 'the teleport itself deals a lot of damage'; no number published",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Wormhole,duration,not published,,"No lifetime value; fandom: 'After a single teleportation, the Wormhole dissipates'; maxroll: 'They stay on the ground for quite long'",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Wormhole,radius_or_size,6,yards,maxroll: 'two circles with 6 yards radius',https://maxroll.gg/d3/resources/elite-affixes
+Wormhole,arming_delay,not published,,"fandom: 'There is a delay before one cast on a player activates'; no value",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Wormhole,cooldown_or_frequency,not published,,"fandom: 'occasionally raise two glowing columns of Arcane energy'; no interval stated",https://diablo.fandom.com/wiki/Monster_Traits_(Diablo_III)
+Wormhole,projectile_count_or_speed,not applicable,,"Two stationary portals; not projectiles",https://maxroll.gg/d3/resources/elite-affixes
+Wormhole,tier_scaling,not published,,"No per-difficulty numbers in the allowed sources",https://maxroll.gg/d3/resources/elite-affixes
+Wormhole,transfer_time,1,seconds,maxroll: '1 second transfer time',https://maxroll.gg/d3/resources/elite-affixes

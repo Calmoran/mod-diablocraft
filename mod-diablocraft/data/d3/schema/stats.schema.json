@@ -1,0 +1,38 @@
+{
+  "_comment": "Generated 2026-09-07 from the committed CSV. Columns are exact and ordered; validate_csv.py refuses a header that differs. Edit this file only when the CSV genuinely gains or loses a column, and say so in docs/decisions.md.",
+  "columns": [
+    "stat",
+    "what_it_does",
+    "formula_for_effect",
+    "cap_or_soft_cap",
+    "how_it_stacks",
+    "notes",
+    "base_pct",
+    "cap_numeric",
+    "xp_penalty_level",
+    "xp_divisor",
+    "dual_wield_ias_pct",
+    "dual_wield_ias_pct_source"
+  ],
+  "number_columns": [
+    "base_pct",
+    "cap_numeric",
+    "xp_penalty_level",
+    "xp_divisor",
+    "dual_wield_ias_pct"
+  ],
+  "percent_columns": [],
+  "notes_columns": [
+    "notes",
+    "dual_wield_ias_pct_source"
+  ],
+  "allow_empty": [
+    "base_pct",
+    "cap_numeric",
+    "xp_penalty_level",
+    "xp_divisor",
+    "dual_wield_ias_pct",
+    "dual_wield_ias_pct_source"
+  ],
+  "min_rows": 22
+}

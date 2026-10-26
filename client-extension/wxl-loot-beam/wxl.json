@@ -1,0 +1,32 @@
+{
+  "manifest": 1,
+
+  "extension": {
+    "id": "wxl-loot-beam",
+    "version": "1.2.0",
+    "abi": "1.1",
+    "entry": "wxl-loot-beam.dll",
+    "assets": ["wxl-loot-beam.ini"],
+    "requires": {},
+    "conflicts": [],
+
+    "hooks": []
+  },
+
+  "deploy": {
+    "mode": "release",
+    "match": "*.dll"
+  },
+
+  "listing": {
+    "title": "Loot Beam",
+    "tagline": "A pillar of light over every corpse that can still be looted.",
+    "description": "store/description.md",
+    "gallery": ["screenshot.jpg"],
+    "categories": ["rendering", "gameplay"],
+    "accent": "#ffd070"
+  },
+
+  "license": "GPL-3.0-or-later",
+  "signature": null
+}

@@ -1,0 +1,2 @@
+name,d3_value,value,unit,notes
+missile_dampening_rollable,,0,flag,"Section B audit line 585, Architect ruling 2026-09-19: whether Missile Dampening is in the roll pool is an engine-feasibility switch of ours, not D3 pool membership. 3.3.5a has no per-projectile speed control, so it is excluded rather than left a no-op that eats a Rare pack's one Defensive slot; set it to 1 when the engine can carry it. D3 pool membership stays sourced in elite_affix_pools.csv"

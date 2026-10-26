@@ -1,0 +1,57 @@
+Reason: Let the Outland copy (map 753, the bounty acts' act 5) read its liquid as Outland does: liquid type 2 is green lava (15) there too.
+Target: AzerothCore at core-commit.txt, after patches 0001-0022. Map 530 and every other map are stock.
+
+--- a/src/server/game/Maps/Map.cpp
++++ b/src/server/game/Maps/Map.cpp
+@@ -48,6 +48,15 @@
+ 
+ #define MAP_INVALID_ZONE        0xFFFFFFFF
+ 
++// Torment's Outland copy (map 753, mod-diablocraft/data/d3/world_open_rift_outland_dbc.csv; core patch 0023) reads its
++// liquid as Outland does: the client's map-530 rule turns liquid type 2 into 15, green lava.
++static constexpr uint32 MAP_OUTLAND_COPY = 753;
++
++static bool HasOutlandLiquid(uint32 mapId)
++{
++    return mapId == MAP_OUTLAND || mapId == MAP_OUTLAND_COPY;
++}
++
+ ZoneDynamicInfo::ZoneDynamicInfo() : MusicId(0), DefaultWeather(nullptr), WeatherId(WEATHER_STATE_FINE),
+                                      WeatherGrade(0.0f), OverrideLightId(0), LightFadeInTime(0) { }
+ 
+@@ -1348,7 +1357,7 @@
+         if (vmapData.liquidInfo->level > vmapData.floorZ && G3D::fuzzyGe(z, vmapData.floorZ - GROUND_HEIGHT_TOLERANCE))
+         {
+             // hardcoded in client like this
+-            if (GetId() == MAP_OUTLAND && vmapData.liquidInfo->type == 2)
++            if (HasOutlandLiquid(GetId()) && vmapData.liquidInfo->type == 2)
+                 vmapData.liquidInfo->type = 15;
+ 
+             uint32 liquidFlagType = 0;
+@@ -1404,7 +1413,7 @@
+             {
+                 // hardcoded in client like this
+                 uint32 liquidEntry = map_data.Entry;
+-                if (GetId() == MAP_OUTLAND && liquidEntry == 2)
++                if (HasOutlandLiquid(GetId()) && liquidEntry == 2)
+                     liquidEntry = 15;
+ 
+                 liquidData = map_data;
+@@ -1498,7 +1507,7 @@
+     if (wmoData && wmoData->liquidInfo && wmoData->liquidInfo->level > wmoData->floorZ)
+     {
+         uint32 liquidType = wmoData->liquidInfo->type;
+-        if (GetId() == MAP_OUTLAND && liquidType == 2) // gotta love blizzard hacks
++        if (HasOutlandLiquid(GetId()) && liquidType == 2) // gotta love blizzard hacks
+             liquidType = 15;
+ 
+         uint32 liquidFlagType = 0;
+@@ -1547,7 +1556,7 @@
+         if (gridLiquidData.Status != LIQUID_MAP_NO_WATER && (!wmoData || gridLiquidData.Level > wmoData->floorZ))
+         {
+             uint32 liquidEntry = gridLiquidData.Entry;
+-            if (GetId() == MAP_OUTLAND && liquidEntry == 2)
++            if (HasOutlandLiquid(GetId()) && liquidEntry == 2)
+                 liquidEntry = 15;
+ 
+             data.liquidInfo = gridLiquidData;

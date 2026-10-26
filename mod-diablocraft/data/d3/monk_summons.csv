@@ -1,0 +1,7 @@
+summon,skill,rune,entry,donor_creature,script,why
+Mystic Ally,Mystic Ally,,900130,29264,dc_monk_ally,"Spirit Wolf (display 21114), the creature the visuals sheet's donor Feral Spirit (51533) summons: a spirit companion that fights beside its caster"
+Fire Ally,Mystic Ally,Fire Ally,900131,15438,dc_monk_ally,"Greater Fire Elemental (display 1204), the creature the visuals sheet's donor Fire Elemental Totem (2894) summons; the Active's exploding allies are this entry too"
+Water Ally,Mystic Ally,Water Ally,900132,510,dc_monk_ally,"Water Elemental (display 525), the creature the visuals sheet's donor Summon Water Elemental (31687) summons"
+Earth Ally,Mystic Ally,Earth Ally,900133,15352,dc_monk_ally,"Greater Earth Elemental (display 14511), the creature the visuals sheet's donor Earth Elemental Totem (2062) summons"
+Air Ally,Mystic Ally,Air Ally,900134,26726,dc_monk_ally,"Borean Tundra Air Elemental (display 24021): a stock air elemental as the placeholder (the visuals sheet's donor Windfury Totem summons a totem, not a fighter); the designer's pick is card q-1014-06 (PM 2026-10-14)"
+Enduring Ally,Mystic Ally,Enduring Ally,900135,29264,dc_monk_ally,"Spirit Wolf (display 21114): the visuals sheet keeps the skill's donor Feral Spirit (51533) for this rune"

@@ -1,0 +1,374 @@
+Reason: carry a hit in 64 bits along the paths Torment uses (native 64-bit health Part 1, Patch B): the damage providers of 0009 and 0016, the periodic tick and DealDamage. The 32-bit consumers see the hit through a view. The spell damage log and the periodic damage log write the hit and the overkill as 64 bits, always, for the rebuilt client (docs/contracts/life-64bit-wire.md); there is no cap and no edge hook. One new UnitScript hook, ModifyExactDamage, hands the exact hit to the module first.
+
+--- a/src/server/game/Entities/Object/Object.cpp
++++ b/src/server/game/Entities/Object/Object.cpp
+@@ -3854,8 +3854,8 @@ void WorldObject::SendSpellNonMeleeDamageLog(Unit* target, SpellInfo const* spel
+     data << target->GetPackGUID();
+     data << GetPackGUID();
+     data << uint32(spellInfo->Id);
+-    data << uint32(damage);
+-    data << LifeToUInt32(LifeOverkill(damage, target->GetHealth()));
++    data << uint64(damage);                                 // 64 bits since core patch 0028, as the unit senders of this opcode
++    data << uint64(LifeOverkill(damage, target->GetHealth()));
+     data << uint8(schoolMask);
+     data << uint32(absorb);
+     data << uint32(resist);
+--- a/src/server/game/Entities/Unit/Unit.cpp
++++ b/src/server/game/Entities/Unit/Unit.cpp
+@@ -181,7 +181,7 @@ DamageInfo::DamageInfo(CalcDamageInfo const& dmgInfo, uint8 damageIndex)
+ }
+ 
+ DamageInfo::DamageInfo(SpellNonMeleeDamage const& spellNonMeleeDamage, DamageEffectType damageType, WeaponAttackType attackType, uint32 hitMask)
+-    : m_attacker(spellNonMeleeDamage.attacker), m_victim(spellNonMeleeDamage.target), m_damage(spellNonMeleeDamage.damage),
++    : m_attacker(spellNonMeleeDamage.attacker), m_victim(spellNonMeleeDamage.target), m_damage(LifeToUInt32(spellNonMeleeDamage.damage)),
+       m_spellInfo(spellNonMeleeDamage.spellInfo), m_schoolMask(SpellSchoolMask(spellNonMeleeDamage.schoolMask)), m_damageType(damageType),
+       m_attackType(attackType), m_absorb(spellNonMeleeDamage.absorb), m_resist(spellNonMeleeDamage.resist), m_block(spellNonMeleeDamage.blocked),
+       m_cleanDamage(spellNonMeleeDamage.cleanDamage), m_hitMask(hitMask)
+@@ -193,7 +193,7 @@ DamageInfo::DamageInfo(SpellNonMeleeDamage const& spellNonMeleeDamage, DamageEff
+ }
+ 
+ DamageInfo::DamageInfo(SpellNonMeleeDamage const& spellNonMeleeDamage, DamageEffectType damageType, WeaponAttackType attackType, SpellMissInfo missInfo)
+-    : m_attacker(spellNonMeleeDamage.attacker), m_victim(spellNonMeleeDamage.target), m_damage(spellNonMeleeDamage.damage),
++    : m_attacker(spellNonMeleeDamage.attacker), m_victim(spellNonMeleeDamage.target), m_damage(LifeToUInt32(spellNonMeleeDamage.damage)),
+       m_spellInfo(spellNonMeleeDamage.spellInfo), m_schoolMask(SpellSchoolMask(spellNonMeleeDamage.schoolMask)), m_damageType(damageType),
+       m_attackType(attackType), m_absorb(spellNonMeleeDamage.absorb), m_resist(spellNonMeleeDamage.resist), m_block(spellNonMeleeDamage.blocked),
+       m_cleanDamage(spellNonMeleeDamage.cleanDamage), m_hitMask(PROC_HIT_NONE)
+@@ -987,8 +987,19 @@ void Unit::DealDamageMods(Unit const* victim, uint32& damage, uint32* absorb)
+     }
+ }
+ 
++void Unit::DealDamageMods(Unit const* victim, uint64& damage, uint32* absorb)
++{
++    if (!victim || !victim->IsAlive() || victim->IsInFlight() || (victim->IsCreature() && victim->ToCreature()->IsEvadingAttacks()))
++    {
++        if (absorb)
++            *absorb = LifeToUInt32(static_cast<uint64>(*absorb) + damage);
++        damage = 0;
++    }
++}
++
+ uint64 Unit::DealDamage(Unit* attacker, Unit* victim, uint64 damage, CleanDamage const* cleanDamage, DamageEffectType damagetype, SpellSchoolMask damageSchoolMask, SpellInfo const* spellProto, bool durabilityLoss, bool /*allowGM*/, Spell const* damageSpell /*= nullptr*/)
+ {
++    sScriptMgr->ModifyExactDamage(attacker, victim, damage, damagetype);
+     ApplyThroughView(damage, [&](uint32& view) { view = sScriptMgr->DealDamage(attacker, victim, view, damagetype); });
+     // Xinef: initialize damage done for rage calculations
+     // Xinef: its rare to modify damage in hooks, however training dummy's sets damage to 0
+@@ -6459,8 +6470,8 @@ void Unit::SendSpellNonMeleeReflectLog(SpellNonMeleeDamage* log, Unit* attacker)
+ 
+     WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG, (16 + 4 + 4 + 4 + 1 + 4 + 4 + 1 + 1 + 4 + 4 + 1)); // we guess size
+     // If we are in cheat mode we swap absorb with damage and set damage to 0, this way we can still debug damage but our HP bar will not drop
+-    uint32 damage = log->damage;
+-    uint32 absorb = log->absorb;
++    uint64 damage = log->damage;
++    uint64 absorb = log->absorb;
+     if (log->target->IsPlayer() && log->target->ToPlayer()->GetCommandStatus(CHEAT_GOD))
+     {
+         absorb = damage;
+@@ -6469,10 +6480,10 @@ void Unit::SendSpellNonMeleeReflectLog(SpellNonMeleeDamage* log, Unit* attacker)
+     data << log->target->GetPackGUID();
+     data << attacker->GetPackGUID();
+     data << uint32(log->spellInfo->Id);
+-    data << uint32(damage);                                 // damage amount
+-    data << LifeToUInt32(LifeOverkill(damage, log->target->GetHealth())); // overkill
++    data << uint64(damage);                                 // damage amount, 64 bits since core patch 0028
++    data << uint64(LifeOverkill(damage, log->target->GetHealth())); // overkill, 64 bits
+     data << uint8 (log->schoolMask);                        // damage school
+-    data << uint32(absorb);                                 // AbsorbedDamage
++    data << LifeToUInt32(absorb);                           // AbsorbedDamage
+     data << uint32(log->resist);                            // resist
+     data << uint8 (log->physicalLog);                       // if 1, then client show spell name (example: %s's ranged shot hit %s for %u school or %s suffers %u school damage from %s's spell_name
+     data << uint8 (log->unused);                            // unused
+@@ -6486,8 +6497,8 @@ void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
+ {
+     WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG, (16 + 4 + 4 + 4 + 1 + 4 + 4 + 1 + 1 + 4 + 4 + 1)); // we guess size
+     //IF we are in cheat mode we swap absorb with damage and set damage to 0, this way we can still debug damage but our hp bar will not drop
+-    uint32 damage = log->damage;
+-    uint32 absorb = log->absorb;
++    uint64 damage = log->damage;
++    uint64 absorb = log->absorb;
+     if (log->target->IsPlayer() && log->target->ToPlayer()->GetCommandStatus(CHEAT_GOD))
+     {
+         absorb = damage;
+@@ -6496,10 +6507,10 @@ void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
+     data << log->target->GetPackGUID();
+     data << log->attacker->GetPackGUID();
+     data << uint32(log->spellInfo->Id);
+-    data << uint32(damage);                                 // damage amount
+-    data << LifeToUInt32(LifeOverkill(damage, log->target->GetHealth())); // overkill
++    data << uint64(damage);                                 // damage amount, 64 bits since core patch 0028
++    data << uint64(LifeOverkill(damage, log->target->GetHealth())); // overkill, 64 bits
+     data << uint8 (log->schoolMask);                        // damage school
+-    data << uint32(absorb);                                 // AbsorbedDamage
++    data << LifeToUInt32(absorb);                           // AbsorbedDamage
+     data << uint32(log->resist);                            // resist
+     data << uint8 (log->physicalLog);                       // if 1, then client show spell name (example: %s's ranged shot hit %s for %u school or %s suffers %u school damage from %s's spell_name
+     data << uint8 (log->unused);                            // unused
+@@ -6597,18 +6608,18 @@ void Unit::SendPeriodicAuraLog(SpellPeriodicAuraLogInfo* pInfo)
+         case SPELL_AURA_PERIODIC_DAMAGE_PERCENT:
+             {
+                 //IF we are in cheat mode we swap absorb with damage and set damage to 0, this way we can still debug damage but our hp bar will not drop
+-                uint32 damage = pInfo->damage;
+-                uint32 absorb = pInfo->absorb;
++                uint64 damage = pInfo->damage;
++                uint64 absorb = pInfo->absorb;
+                 if (IsPlayer() && ToPlayer()->GetCommandStatus(CHEAT_GOD))
+                 {
+                     absorb = damage;
+                     damage = 0;
+                 }
+ 
+-                data << uint32(damage);                         // damage
+-                data << uint32(pInfo->overDamage);              // overkill?
++                data << uint64(damage);                         // damage, 64 bits since core patch 0028
++                data << uint64(pInfo->overDamage);              // overkill?, 64 bits
+                 data << uint32(aura->GetSpellInfo()->GetSchoolMask());
+-                data << uint32(absorb);                         // absorb
++                data << LifeToUInt32(absorb);                   // absorb
+                 data << uint32(pInfo->resist);                  // resist
+                 data << uint8(pInfo->critical);                 // new 3.1.2 critical tick
+             }
+--- a/src/server/game/Entities/Unit/Unit.h
++++ b/src/server/game/Entities/Unit/Unit.h
+@@ -518,8 +518,8 @@ struct SpellNonMeleeDamage
+     Unit* target;
+     Unit* attacker;
+     SpellInfo const* spellInfo;
+-    uint32 damage;
+-    uint32 overkill;
++    uint64 damage;
++    uint64 overkill;
+     uint32 schoolMask;
+     uint32 absorb;
+     uint32 resist;
+@@ -533,12 +533,12 @@ struct SpellNonMeleeDamage
+ 
+ struct SpellPeriodicAuraLogInfo
+ {
+-    SpellPeriodicAuraLogInfo(AuraEffect const* _auraEff, uint32 _damage, uint32 _overDamage, uint32 _absorb, uint32 _resist, float _multiplier, bool _critical)
++    SpellPeriodicAuraLogInfo(AuraEffect const* _auraEff, uint64 _damage, uint64 _overDamage, uint32 _absorb, uint32 _resist, float _multiplier, bool _critical)
+         : auraEff(_auraEff), damage(_damage), overDamage(_overDamage), absorb(_absorb), resist(_resist), multiplier(_multiplier), critical(_critical) {}
+ 
+     AuraEffect const* auraEff;
+-    uint32 damage;
+-    uint32 overDamage;                                      // overkill/overheal
++    uint64 damage;
++    uint64 overDamage;                                      // overkill/overheal
+     uint32 absorb;
+     uint32 resist;
+     float  multiplier;
+@@ -1285,6 +1285,7 @@ public:
+     void DealSpellDamage(SpellNonMeleeDamage* damageInfo, bool durabilityLoss, Spell const* spell = nullptr);
+     void DealDamageShieldDamage(Unit* victim);
+     static void DealDamageMods(Unit const* victim, uint32& damage, uint32* absorb);
++    static void DealDamageMods(Unit const* victim, uint64& damage, uint32* absorb);
+ 
+     static void Kill(Unit* killer, Unit* victim, bool durabilityLoss = true, WeaponAttackType attackType = BASE_ATTACK, SpellInfo const* spellProto = nullptr, Spell const* spell = nullptr);
+     void KillSelf(bool durabilityLoss = true, WeaponAttackType attackType = BASE_ATTACK, SpellInfo const* spellProto = nullptr, Spell const* spell = nullptr) { Kill(this, this, durabilityLoss, attackType, spellProto, spell); };
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
+@@ -25,12 +25,12 @@ bool ScriptMgr::CanRewardRage(Unit* unit, uint32 damage, uint32 weaponSpeedHitFa
+ }
+ 
+ bool ScriptMgr::ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim,
+-    SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical)
++    SpellInfo const* info, uint8 effectMask, uint64& damage, bool& critical)
+ {
+     // A declining provider cannot contaminate either the next provider or stock.
+     for (auto const& script : ScriptRegistry<UnitScript>::EnabledHooks[UNITHOOK_PROVIDE_FINAL_SPELL_DAMAGE])
+     {
+-        uint32 candidateDamage = damage;
++        uint64 candidateDamage = damage;
+         bool candidateCritical = critical;
+         if (script->ProvideFinalSpellDamage(cast, attacker, victim, info, effectMask, candidateDamage, candidateCritical))
+         {
+@@ -43,12 +43,12 @@ bool ScriptMgr::ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victi
+ }
+ 
+ bool ScriptMgr::ProvideFinalPeriodicDamage(AuraEffect const* aura, Unit* caster, Unit* target,
+-    uint32& damage, bool& critical)
++    uint64& damage, bool& critical)
+ {
+     // A declining provider cannot contaminate either the next provider or stock.
+     for (auto const& script : ScriptRegistry<UnitScript>::EnabledHooks[UNITHOOK_PROVIDE_FINAL_PERIODIC_DAMAGE])
+     {
+-        uint32 candidateDamage = damage;
++        uint64 candidateDamage = damage;
+         bool candidateCritical = critical;
+         if (script->ProvideFinalPeriodicDamage(aura, caster, target, candidateDamage, candidateCritical))
+         {
+@@ -60,6 +60,11 @@ bool ScriptMgr::ProvideFinalPeriodicDamage(AuraEffect const* aura, Unit* caster,
+     return false;
+ }
+ 
++void ScriptMgr::ModifyExactDamage(Unit* attacker, Unit* victim, uint64& damage, DamageEffectType damagetype)
++{
++    CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_MODIFY_EXACT_DAMAGE, script->ModifyExactDamage(attacker, victim, damage, damagetype));
++}
++
+ void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)
+ {
+     CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_HEAL, script->OnHeal(healer, reciever, gain));
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.h
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.h
+@@ -51,6 +51,7 @@ enum UnitHook
+     UNITHOOK_IS_SPELL_DIMINISHING_EXEMPT,
+     UNITHOOK_PROVIDE_SPELL_LINE_GEOMETRY,
+     UNITHOOK_ON_EFFECT_MOVEMENT_FINALIZED,
++    UNITHOOK_MODIFY_EXACT_DAMAGE,
+     UNITHOOK_END
+ };
+ 
+@@ -90,13 +91,13 @@ public:
+     // the identity of this live cast; do not retain it past the cast lifetime.
+     // True replaces native crit/armor/resist/absorb calculation for this target.
+     virtual bool ProvideFinalSpellDamage(Spell* /*cast*/, Unit* /*attacker*/, Unit* /*victim*/,
+-        SpellInfo const* /*info*/, uint8 /*effectMask*/, uint32& /*damage*/, bool& /*critical*/) { return false; }
++        SpellInfo const* /*info*/, uint8 /*effectMask*/, uint64& /*damage*/, bool& /*critical*/) { return false; }
+ 
+     // Opt-in tick formula. The aura is valid only during this tick; caster may be null.
+     // True skips native tick bonuses, armor, crit, AOE reduction and resilience.
+     // Absorb, resist, logging, DOT delivery and periodic procs remain native.
+     virtual bool ProvideFinalPeriodicDamage(AuraEffect const* /*aura*/, Unit* /*caster*/,
+-        Unit* /*target*/, uint32& /*damage*/, bool& /*critical*/) { return false; }
++        Unit* /*target*/, uint64& /*damage*/, bool& /*critical*/) { return false; }
+ 
+     virtual bool IsSpellDiminishingExempt(Spell* /*cast*/, Unit* /*caster*/, Unit* /*target*/, SpellInfo const* /*info*/) { return false; }
+ 
+@@ -106,6 +107,10 @@ public:
+ 
+     virtual void OnEffectMovementFinalized(Unit* /*unit*/, uint32 /*effectId*/, uint32 /*splineId*/, bool /*completed*/) { }
+ 
++    // The exact hit, in 64 bits, before the 32-bit hooks above see it. A module may lower it (a hit shared between
++    // linked creatures); the 32-bit consumers then see what is left.
++    virtual void ModifyExactDamage(Unit* /*attacker*/, Unit* /*victim*/, uint64& /*damage*/, DamageEffectType /*damagetype*/) { }
++
+     // Called when Heal is Recieved
+     virtual void ModifyHealReceived(Unit* /*target*/, Unit* /*healer*/, uint32& /*heal*/, SpellInfo const* /*spellInfo*/) { }
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -574,8 +574,9 @@ public: /* UnitScript */
+     bool ProvideSpellLineGeometry(Spell* cast, uint8 effect, Unit* caster, Position& origin, float& direction, float& length, float& width);
+     void OnEffectMovementFinalized(Unit* unit, uint32 effectId, uint32 splineId, bool completed);
+     bool IsSpellDiminishingExempt(Spell* cast, Unit* caster, Unit* target, SpellInfo const* info);
+-    bool ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim, SpellInfo const* info, uint8 effectMask, uint32& damage, bool& critical);
+-    bool ProvideFinalPeriodicDamage(AuraEffect const* aura, Unit* caster, Unit* target, uint32& damage, bool& critical);
++    bool ProvideFinalSpellDamage(Spell* cast, Unit* attacker, Unit* victim, SpellInfo const* info, uint8 effectMask, uint64& damage, bool& critical);
++    bool ProvideFinalPeriodicDamage(AuraEffect const* aura, Unit* caster, Unit* target, uint64& damage, bool& critical);
++    void ModifyExactDamage(Unit* attacker, Unit* victim, uint64& damage, DamageEffectType damagetype);
+     void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* spellInfo);
+     void ModifyHealReceived(Unit* target, Unit* healer, uint32& addHealth, SpellInfo const* spellInfo);
+     uint32 DealDamage(Unit* AttackerUnit, Unit* pVictim, uint32 damage, DamageEffectType damagetype);
+--- a/src/server/game/Spells/Auras/SpellAuraEffects.cpp
++++ b/src/server/game/Spells/Auras/SpellAuraEffects.cpp
+@@ -6346,13 +6346,17 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster) const
+ 
+     // Script Hook For HandlePeriodicDamageAurasTick -- Allow scripts to change the Damage pre class mitigation calculations
+     sScriptMgr->ModifyPeriodicDamageAurasTick(target, caster, damage, GetSpellInfo());
++    // The provider may hand over a tick of more than 32 bits; the stock path below stays in 32 and the 32-bit callbacks
++    // see the exact tick through a view.
++    uint64 exactDamage = damage;
+     bool crit = false;
+-    bool const provided = sScriptMgr->ProvideFinalPeriodicDamage(this, caster, target, damage, crit);
++    bool const provided = sScriptMgr->ProvideFinalPeriodicDamage(this, caster, target, exactDamage, crit);
+ 
+     if (target->GetAI())
+     {
+-        target->GetAI()->OnCalculatePeriodicTickReceived(damage, caster);
++        ApplyThroughView(exactDamage, [&](uint32& view) { target->GetAI()->OnCalculatePeriodicTickReceived(view, caster); });
+     }
++    damage = LifeToUInt32(exactDamage);
+ 
+     if (!provided)
+     {
+@@ -6405,40 +6409,40 @@ void AuraEffect::HandlePeriodicDamageAurasTick(Unit* target, Unit* caster) const
+ 
+         damage = std::max(0, dmg);
+         cleanDamage.mitigated_damage = std::max(0, mitigatedDamage);
+-
++        exactDamage = damage;
+     }
+ 
+-    DamageInfo dmgInfo(caster, target, damage, GetSpellInfo(), GetSpellInfo()->GetSchoolMask(), DOT, cleanDamage.mitigated_damage);
++    uint32 const damageView = LifeToUInt32(exactDamage);
++    DamageInfo dmgInfo(caster, target, damageView, GetSpellInfo(), GetSpellInfo()->GetSchoolMask(), DOT, cleanDamage.mitigated_damage);
+     Unit::CalcAbsorbResist(dmgInfo, false, GetCasterLevel());
+ 
+     uint32 absorb = dmgInfo.GetAbsorb();
+     uint32 resist = dmgInfo.GetResist();
+-    damage = dmgInfo.GetDamage();
++    // absorb and resist take from the exact tick what they took from its view
++    exactDamage -= damageView - dmgInfo.GetDamage();
+ 
+     LOG_DEBUG("spells.aura.effect", "PeriodicTick: {} attacked {} for {} dmg inflicted by {} abs is {}",
+-                    GetCasterGUID().ToString(), target->GetGUID().ToString(), damage, GetId(), absorb);
+-    Unit::DealDamageMods(target, damage, &absorb);
++                    GetCasterGUID().ToString(), target->GetGUID().ToString(), exactDamage, GetId(), absorb);
++    Unit::DealDamageMods(target, exactDamage, &absorb);
+ 
+     // Set trigger flag
+     uint32 procAttacker = PROC_FLAG_DONE_PERIODIC;
+     uint32 procVictim   = PROC_FLAG_TAKEN_PERIODIC;
+     uint32 procEx = PROC_EX_INTERNAL_DOT;
+-    if (damage)
++    if (exactDamage)
+         procEx |= crit ? PROC_EX_CRITICAL_HIT : PROC_EX_NORMAL_HIT;
+     if (absorb > 0)
+         procEx |= PROC_EX_ABSORB;
+ 
+-    if (damage)
++    if (exactDamage)
+         procVictim |= PROC_FLAG_TAKEN_DAMAGE;
+ 
+-    uint32 overkill = LifeToUInt32(LifeOverkill(damage, target->GetHealth()));
+-
+-    SpellPeriodicAuraLogInfo pInfo(this, damage, overkill, absorb, resist, 0.0f, crit);
++    SpellPeriodicAuraLogInfo pInfo(this, exactDamage, LifeOverkill(exactDamage, target->GetHealth()), absorb, resist, 0.0f, crit);
+     target->SendPeriodicAuraLog(&pInfo);
+ 
+-    Unit::DealDamage(caster, target, damage, &cleanDamage, DOT, GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), true);
++    Unit::DealDamage(caster, target, exactDamage, &cleanDamage, DOT, GetSpellInfo()->GetSchoolMask(), GetSpellInfo(), true);
+ 
+-    Unit::ProcSkillsAndAuras(caster, target, caster ? procAttacker : 0, procVictim, procEx, damage, BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, &dmgInfo);
++    Unit::ProcSkillsAndAuras(caster, target, caster ? procAttacker : 0, procVictim, procEx, LifeToUInt32(exactDamage), BASE_ATTACK, GetSpellInfo(), nullptr, GetEffIndex(), nullptr, &dmgInfo);
+ }
+ 
+ void AuraEffect::HandlePeriodicHealthLeechAuraTick(Unit* target, Unit* caster) const
+--- a/src/server/game/Spells/Spell.cpp
++++ b/src/server/game/Spells/Spell.cpp
+@@ -2914,7 +2914,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
+             }
+             else
+             {
+-                uint32 providedDamage = 0;
++                uint64 providedDamage = 0;
+                 bool providedCritical = target->crit;
+                 bool const provided = sScriptMgr->ProvideFinalSpellDamage(this, caster, unitTarget,
+                     m_spellInfo, mask, providedDamage, providedCritical);
+@@ -2965,7 +2965,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
+                     float healMultiplier = m_spellInfo->Effects[effIndex].CalcValueMultiplier(m_originalCaster, this);
+ 
+                     // get max possible damage, don't count overkill for heal
+-                    uint32 healthGain = uint32(-unitTarget->GetHealthGain(-int32(damageInfo.damage)) * healMultiplier);
++                    uint32 healthGain = LifeToUInt32(static_cast<uint64>(static_cast<double>(-unitTarget->GetHealthGain(-static_cast<int64>(std::min<uint64>(damageInfo.damage, std::numeric_limits<int64>::max())))) * healMultiplier));
+ 
+                     if (unitCaster && unitCaster->IsAlive())
+                     {
+@@ -2995,7 +2995,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
+                 {
+                     DamageInfo dmgInfo(damageInfo, SPELL_DIRECT_DAMAGE, m_attackType, missInfo);
+                     uint32 hitMask = m_procEx | dmgInfo.GetHitMask();
+-                    Unit::ProcSkillsAndAuras(caster, unitTarget, procAttacker, procVictim, hitMask, damageInfo.damage, m_attackType, m_spellInfo, m_triggeredByAuraSpell.spellInfo,
++                    Unit::ProcSkillsAndAuras(caster, unitTarget, procAttacker, procVictim, hitMask, LifeToUInt32(damageInfo.damage), m_attackType, m_spellInfo, m_triggeredByAuraSpell.spellInfo,
+                         m_triggeredByAuraSpell.effectIndex, this, &dmgInfo);
+ 
+                     if (caster->IsPlayer() && m_spellInfo->HasAttribute(SPELL_ATTR0_CANCELS_AUTO_ATTACK_COMBAT) == 0 &&
+@@ -3003,7 +3003,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
+                         caster->ToPlayer()->CastItemCombatSpell(unitTarget, m_attackType, procVictim, dmgInfo.GetHitMask());
+                 }
+ 
+-                m_damage = damageInfo.damage;
++                m_damage = LifeToInt32(damageInfo.damage);
+             }
+         }
+         // Passive spell hits/misses or active spells only misses (only triggers)

@@ -1,0 +1,25 @@
+recipe_sno,d3_id,item_entry,amount,source
+364041,x1_Ruby_06,103035,1,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Marquise gem
+364041,x1_Emerald_06,103025,1,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Marquise gem
+364041,x1_Topaz_06,103045,1,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Marquise gem
+364042,x1_Diamond_06,103015,1,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Marquise gem
+364042,x1_Amethyst_06,103005,1,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Marquise gem
+364711,DemonOrgan_SkeletonKing_x1,103200,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+364711,DemonOrgan_Ghom_x1,103201,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+364711,DemonOrgan_SiegeBreaker_x1,103202,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+364711,DemonOrgan_Diablo_x1,103203,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398284,DemonOrgan_SkeletonKing_x1,103200,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398284,DemonOrgan_Ghom_x1,103201,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398284,DemonOrgan_SiegeBreaker_x1,103202,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398284,DemonOrgan_Diablo_x1,103203,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398285,DemonOrgan_SkeletonKing_x1,103200,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398285,DemonOrgan_Ghom_x1,103201,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398285,DemonOrgan_SiegeBreaker_x1,103202,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398285,DemonOrgan_Diablo_x1,103203,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398286,DemonOrgan_SkeletonKing_x1,103200,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398286,DemonOrgan_Ghom_x1,103201,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398286,DemonOrgan_SiegeBreaker_x1,103202,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398286,DemonOrgan_Diablo_x1,103203,1,"RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Infernal Machine organ, item in hellfire_organs.csv"
+398284,Crafting_Legendary_01,102004,10,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Forgotten Soul
+398285,Crafting_Legendary_01,102004,10,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Forgotten Soul
+398286,Crafting_Legendary_01,102004,10,RecipesJeweler.gam (blizzless-diiis 6292f950; Core.mpq); Forgotten Soul

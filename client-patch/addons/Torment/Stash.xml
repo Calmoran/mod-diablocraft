@@ -1,0 +1,191 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+    <!--
+        Account stash (11-hardcore §4).
+
+        Anatomy: the title across the top, tab column down the left, stash grid, gold
+        line bottom left, buy-tab button bottom right. The window is drawn like the
+        Jeweler: the stock dialog backdrop, a native
+        UIPanelCloseButton and a native UIPanelButtonTemplate, all three built in Lua
+        from Diablocraft.Style, so this file declares no close button, no banner and no
+        buy button. The slots and tabs are
+        the shared DCUI ones too - WindowStyle.lua gives them the flat ground and the
+        palette in Diablocraft.Style.palette - and the coin art is gone: the gold line is
+        the Jeweler's "Your gold: N" in the gold font.
+
+        There is ONE inventory in this game and it is not this window's.
+        The second bag grid that used to sit
+        beside the stash grid is gone: opening the stash opens the player's bags
+        (ElvUI's) beside it, the stash's right edge touching the bags' left edge.
+
+        The grid is built in Lua - 70 stash slots per tab in 7 rows of 10 - and
+        everything inside sits clear of the dialog's border inset.
+    -->
+
+    <Button name="DiablocraftSlotTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="34" y="34"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBack" setAllPoints="true"/>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture name="$parentRarity" setAllPoints="true"/>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture name="$parentIcon">
+                    <Size>
+                        <AbsDimension x="28" y="28"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentCount" inherits="NumberFontNormalSmall" justifyH="RIGHT">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT">
+                            <Offset>
+                                <AbsDimension x="-2" y="2"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture name="$parentSelect" setAllPoints="true" hidden="true"/>
+            </Layer>
+        </Layers>
+        <HighlightTexture name="$parentHighlight" alphaMode="ADD" setAllPoints="true"/>
+        <Scripts>
+            <OnLoad>Diablocraft.Slot_OnLoad(self)</OnLoad>
+            <OnClick>Diablocraft.Slot_OnClick(self, button)</OnClick>
+            <OnEnter>Diablocraft.Slot_OnEnter(self)</OnEnter>
+            <OnLeave>Diablocraft.Slot_OnLeave(self)</OnLeave>
+            <!-- Drag and drop. The slot registers for
+                 LeftButton drag in Slot_OnLoad; a press that does not move is
+                 still OnClick, so the click-select path is unchanged. The drop
+                 target is resolved from the cursor position in OnDragStop, not
+                 by OnReceiveDrag, because nothing is ever on the stock cursor -
+                 a stash item is in no container the client knows. -->
+            <OnDragStart>Diablocraft.Slot_OnDragStart(self)</OnDragStart>
+            <OnDragStop>Diablocraft.Slot_OnDragStop(self)</OnDragStop>
+            <!-- And a real drop target for the STOCK cursor, which is what a
+                 drag out of one of WoW's own bag frames is carrying. Our own
+                 drags never put anything on it, so this handler can only ever
+                 be a stock pickup; Stash.lua resolves which bag slot it
+                 came from from the two hooked pickup calls. -->
+            <OnReceiveDrag>Diablocraft.Slot_OnReceiveDrag(self)</OnReceiveDrag>
+        </Scripts>
+    </Button>
+
+    <Button name="DiablocraftTabTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="40" y="40"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBack" setAllPoints="true"/>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentLabel" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture name="$parentHighlight" alphaMode="ADD" setAllPoints="true"/>
+        <Scripts>
+            <OnLoad>Diablocraft.Tab_OnLoad(self)</OnLoad>
+            <OnClick>Diablocraft.Tab_OnClick(self)</OnClick>
+            <OnEnter>Diablocraft.Tab_OnEnter(self)</OnEnter>
+            <OnLeave>Diablocraft.Slot_OnLeave(self)</OnLeave>
+            <!-- A tab is a drop target too: dropping an item
+                 on tab 1-5 moves it into that tab's first free slot. The virtual
+                 cursor resolves it in Slot_OnDragStop; this is the stock-cursor
+                 half. -->
+            <OnReceiveDrag>Diablocraft.Tab_OnReceiveDrag(self)</OnReceiveDrag>
+        </Scripts>
+    </Button>
+
+    <Button name="DiablocraftButtonTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="170" y="62"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBack" setAllPoints="true"/>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentLabel" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>Diablocraft.Button_OnLoad(self)</OnLoad>
+            <OnMouseDown>Diablocraft.Button_OnMouseDown(self)</OnMouseDown>
+            <OnMouseUp>Diablocraft.Button_OnMouseUp(self)</OnMouseUp>
+        </Scripts>
+    </Button>
+
+    <Frame name="DiablocraftStashFrame" parent="UIParent" toplevel="true" enableMouse="true" movable="true" hidden="true" frameStrata="HIGH">
+        <!-- Stash.lua resizes this from its own grid constants in OnLoad;
+             with the bag grid gone that is 464x590, and the size here only holds
+             until OnLoad runs. -->
+        <Size>
+            <AbsDimension x="464" y="590"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentTitle" inherits="GameFontNormalLarge" text="Stash">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-18"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <!-- The Jeweler's gold line: "Your gold: N" in the gold font, on the left
+                     margin, level with the buy button on the right. -->
+                <FontString name="$parentGold" inherits="GameFontNormal" justifyH="LEFT" text="Your gold: 0">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="26" y="65"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <!-- Its own full-width row at the top of the bottom block. The
+                     panel is the stash grid's width now, so there is no room for
+                     a status line BESIDE the balance and the BUY TAB button, and
+                     a refusal is the one line here that has to be readable. -->
+                <FontString name="$parentStatus" inherits="GameFontHighlightSmall" justifyH="LEFT">
+                    <Size>
+                        <AbsDimension x="412" y="28"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="26" y="156"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>Diablocraft.Frame_OnLoad(self)</OnLoad>
+            <OnHide>Diablocraft.Frame_OnHide(self)</OnHide>
+            <OnDragStart>self:StartMoving()</OnDragStart>
+            <OnDragStop>self:StopMovingOrSizing()</OnDragStop>
+        </Scripts>
+    </Frame>
+</Ui>

@@ -1,0 +1,19 @@
+{
+  "note": "The D3 tooltip's two tints (diablocraft-tooltip-reskin-slice, step 1). Both are DRAWN by us, not ripped from D3: the mockup's own diamond bullet and the glow behind the weapon's damage-per-second number. White pixels only - the Lua tints them with SetVertexColor (grey or orange for a bullet, the damage element's colour for the glow), so no colour is baked in and nothing here is Blizzard art.",
+  "source": "client-patch/art/ui/tooltip/draw_tooltip_art.py (PIL, drawn at 8x and downscaled; deterministic, no randomness)",
+  "pieces": [
+    {
+      "texture": "client-patch/art/ui/tooltip/dc_diamond.png",
+      "canvas": [16, 16],
+      "blp": "client-patch/addons/Torment/art/dc_diamond.blp",
+      "used_by": "mod-diablocraft/lua/aio/dc_tooltip.lua (LOOK.diamond), a 9x9 bullet on every Primary and Secondary affix line"
+    },
+    {
+      "texture": "client-patch/art/ui/tooltip/dc_glow.png",
+      "canvas": [128, 128],
+      "blp": "client-patch/addons/Torment/art/dc_glow.blp",
+      "used_by": "mod-diablocraft/lua/aio/dc_tooltip.lua (LOOK.glow), behind the big DPS number, tinted from dc_skillbar.lua's one element palette (DCELEMENT)"
+    }
+  ],
+  "built_by": "client-patch/build_ui_art.py (DXT5, power-of-two, no scaling; the tooltip kit was added to its SOURCES and TARGETS)"
+}

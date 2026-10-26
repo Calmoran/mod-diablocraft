@@ -1,0 +1,56 @@
+Torment patch for ElvUI-WotLK 6.09 at 8c0ac9d0d87ba2c8aa5f9bfa3083d25569033af8 (diablocraft-i6jgl).
+A class token ElvUI does not know (MONK and every later Torment class) no longer breaks ElvUI's init:
+no talent tabs, no E.ClassRole row, no spellRangeCheck row. StatusReport lines are /estatus only.
+Apply from the archive's top folder: patch -p1 < torment-unknown-class.patch
+
+--- a/ElvUI/Core/API.lua
++++ b/ElvUI/Core/API.lua
+@@ -90,7 +90,7 @@
+ 
+ 	for i = 1, MAX_TALENT_TABS do
+ 		local name, icon, pointsSpent = GetTalentTabInfo(i, isInspect, nil, talantGroup)
+-		if maxPoints < pointsSpent then
++		if pointsSpent and maxPoints < pointsSpent then
+ 			maxPoints = pointsSpent
+ 			specIdx = i
+ 			specName = name
+@@ -114,7 +114,7 @@
+ 
+ 	if type(self.ClassRole[self.myclass]) == "string" then
+ 		role = self.ClassRole[self.myclass]
+-	elseif talentTree then
++	elseif talentTree and self.ClassRole[self.myclass] then
+ 		if self.myclass == "DRUID" and talentTree == 2 then
+ 			role = select(5, GetTalentInfo(talentTree, 22)) > 0 and "Tank" or "Melee"
+ 		elseif self.myclass == "DEATHKNIGHT" and talentTree == 2 then
+--- a/ElvUI/Core/StatusReport.lua
++++ b/ElvUI/Core/StatusReport.lua
+@@ -112,7 +112,7 @@
+ 	local specIdx, specName = E:GetTalentSpecInfo()
+ 
+ 	if (specIdx and specIdx ~= 0) and (specName and specName ~= "") then
+-		return EnglishSpecName[E.myclass][specIdx]
++		return EnglishSpecName[E.myclass] and EnglishSpecName[E.myclass][specIdx] or specName
+ 	else
+ 		return "None"
+ 	end
+@@ -241,7 +241,7 @@
+ 
+ 	StatusFrame.Section3.Content.Line1.Text:SetFormattedText("Faction: |cff4beb2c%s|r", E.myfaction)
+ 	StatusFrame.Section3.Content.Line2.Text:SetFormattedText("Race: |cff4beb2c%s|r", E.myrace)
+-	StatusFrame.Section3.Content.Line3.Text:SetFormattedText("Class: |cff4beb2c%s|r", EnglishClassName[E.myclass])
++	StatusFrame.Section3.Content.Line3.Text:SetFormattedText("Class: |cff4beb2c%s|r", EnglishClassName[E.myclass] or E.myLocalizedClass)
+ 	StatusFrame.Section3.Content.Line4.Text:SetFormattedText("Specialization: |cff4beb2c%s|r", GetSpecName())
+ 	StatusFrame.Section3.Content.Line5.Text:SetFormattedText("Level: |cff4beb2c%s|r", E.mylevel)
+ 	StatusFrame.Section3.Content.Line6.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GetRealZoneText())
+--- a/ElvUI/Modules/UnitFrames/Elements/Range.lua
++++ b/ElvUI/Modules/UnitFrames/Elements/Range.lua
+@@ -27,7 +27,7 @@
+ function UF:UpdateRangeCheckSpells()
+ 	if not SRT[E.myclass] then SRT[E.myclass] = {} end
+ 
+-	for tbl, spells in pairs(E.global.unitframe.spellRangeCheck[E.myclass]) do
++	for tbl, spells in pairs(E.global.unitframe.spellRangeCheck[E.myclass] or {}) do
+ 		AddTable(tbl) --Create the table holding spells, even if it ends up being an empty table
+ 		for spellID in pairs(spells) do
+ 			local enabled = spells[spellID]

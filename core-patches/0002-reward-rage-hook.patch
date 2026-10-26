@@ -1,0 +1,59 @@
+Reason: Allow modules to cancel or replace combat Rage rewards without changing spell gains or decay.
+
+--- a/src/server/game/Entities/Unit/Unit.cpp
++++ b/src/server/game/Entities/Unit/Unit.cpp
+@@ -15702,6 +15702,9 @@ void Unit::RewardRage(uint32 damage, uint32 weaponSpeedHitFactor, bool attacker)
+ 
+     addRage *= sWorld->getRate(RATE_POWER_RAGE_INCOME);
+ 
++    if (!sScriptMgr->CanRewardRage(this, damage, weaponSpeedHitFactor, attacker, addRage))
++        return;
++
+     ModifyPower(POWER_RAGE, uint32(addRage * 10));
+ }
+ 
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.cpp
+@@ -19,6 +19,11 @@
+ #include "ScriptMgr.h"
+ #include "ScriptMgrMacros.h"
+ 
++bool ScriptMgr::CanRewardRage(Unit* unit, uint32 damage, uint32 weaponSpeedHitFactor, bool attacker, float& rage)
++{
++    CALL_ENABLED_BOOLEAN_HOOKS(UnitScript, UNITHOOK_CAN_REWARD_RAGE, !script->CanRewardRage(unit, damage, weaponSpeedHitFactor, attacker, rage));
++}
++
+ void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)
+ {
+     CALL_ENABLED_HOOKS(UnitScript, UNITHOOK_ON_HEAL, script->OnHeal(healer, reciever, gain));
+--- a/src/server/game/Scripting/ScriptDefines/UnitScript.h
++++ b/src/server/game/Scripting/ScriptDefines/UnitScript.h
+@@ -44,6 +44,7 @@ enum UnitHook
+     UNITHOOK_ON_UNIT_EXIT_COMBAT,
+     UNITHOOK_ON_UNIT_DEATH,
+     UNITHOOK_ON_UNIT_SET_SHAPESHIFT_FORM,
++    UNITHOOK_CAN_REWARD_RAGE,
+     UNITHOOK_END
+ };
+ 
+@@ -60,6 +61,10 @@ public:
+     // Called when a unit deals healing to another unit
+     virtual void OnHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }
+ 
++    // Reward in displayed Rage units (10 internal power units per Rage), after rates.
++    // Return false to cancel; modify rage to replace the reward.
++    [[nodiscard]] virtual bool CanRewardRage(Unit* /*unit*/, uint32 /*damage*/, uint32 /*weaponSpeedHitFactor*/, bool /*attacker*/, float& /*rage*/) { return true; }
++
+     // Called when a unit deals damage to another unit
+     virtual void OnDamage(Unit* /*attacker*/, Unit* /*victim*/, uint32& /*damage*/) { }
+ 
+--- a/src/server/game/Scripting/ScriptMgr.h
++++ b/src/server/game/Scripting/ScriptMgr.h
+@@ -563,6 +563,7 @@ public: /* Scheduled scripts */
+ 
+ public: /* UnitScript */
+     void OnHeal(Unit* healer, Unit* reciever, uint32& gain);
++    bool CanRewardRage(Unit* unit, uint32 damage, uint32 weaponSpeedHitFactor, bool attacker, float& rage);
+     void OnDamage(Unit* attacker, Unit* victim, uint32& damage);
+     void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage, SpellInfo const* spellInfo);
+     void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);

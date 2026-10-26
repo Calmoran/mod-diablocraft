@@ -1,0 +1,29 @@
+{
+  "_comment": "Generated 2026-09-07 from the committed CSV. Columns are exact and ordered; validate_csv.py refuses a header that differs. Edit this file only when the CSV genuinely gains or loses a column, and say so in docs/decisions.md.",
+  "columns": [
+    "step",
+    "formula",
+    "notes_on_buckets",
+    "area_damage_chance",
+    "area_damage_chance_source",
+    "area_damage_radius_yards",
+    "area_damage_radius_yards_source"
+  ],
+  "number_columns": [
+    "area_damage_chance",
+    "area_damage_radius_yards"
+  ],
+  "percent_columns": [],
+  "notes_columns": [
+    "notes_on_buckets",
+    "area_damage_chance_source",
+    "area_damage_radius_yards_source"
+  ],
+  "allow_empty": [
+    "area_damage_chance",
+    "area_damage_chance_source",
+    "area_damage_radius_yards",
+    "area_damage_radius_yards_source"
+  ],
+  "min_rows": 11
+}
